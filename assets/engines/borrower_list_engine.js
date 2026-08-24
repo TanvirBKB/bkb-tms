@@ -294,10 +294,15 @@ function toBanglaNumbers(str) {
                                     "ঋণের ধরণ": loan.loan_type || loan.product || '',
                                     "_sector": loan.loan_sector || loan.loan_type || loan.product || '',
                                     "নাম ও পিতার নাম": (customer.applicant_name_bn || '') + (customer.applicant_father_name_bn ? ' ও ' + customer.applicant_father_name_bn : ''),
+                                    "নাম": customer.applicant_name_bn || '',
+                                    "পিতা/স্বামীর নাম": customer.applicant_father_name_bn || '',
                                     "বাড়ি ও গ্রাম": (customer.applicant_curr_addr_house || '') + (customer.applicant_curr_addr_village ? ' ' + customer.applicant_curr_addr_village : ''),
+                                    "বাড়ি": customer.applicant_curr_addr_house || '',
+                                    "গ্রাম": customer.applicant_curr_addr_village || '',
                                     "পোস্ট": customer.applicant_curr_addr_post || '',
                                     "থানা/উপজেলা": customer.applicant_present_upozila || '',
                                     "_district": customer.applicant_present_district || '',
+                                    "জেলা": customer.applicant_present_district || '',
                                     "ঋণের পরিমাণ": loan.loan_amount || loan.sanction_amount || loan.sanctioned_amount || '',
                                     "interest_rate": loan.interest_rate || loan.interest || loan.rate || '',
                                     "বিতরণের তারিখ": loan.dist_date || loan.sanction_date || '',
@@ -1681,7 +1686,160 @@ if (window.parent && window.parent.document) {
         else if (type === 'Camp Notice') url = 'forms/notice/camp_notice.html';
         
         if (url) {
-            const selectedLoans = currentData.filter(item => selectedIds.includes(String(item._id)));
+            // Helper for Number to Bangla Words
+            function convertToBanglaWords(num) {
+                if (!num || isNaN(num) || num <= 0) return '';
+                const units = ['', 'এক', 'দুই', 'তিন', 'চার', 'পাঁচ', 'ছয়', 'সাত', 'আট', 'নয়', 'দশ', 'এগারো', 'বারো', 'তেরো', 'চৌদ্দ', 'পনেরো', 'ষোল', 'সতেরো', 'আঠারো', 'উনিশ', 'বিশ', 'একুশ', 'বাইশ', 'তেইশ', 'চব্বিশ', 'পঁচিশ', 'ছাব্বিশ', 'সাতাশ', 'আঠাশ', 'উনত্রিশ', 'ত্রিশ', 'একত্রিশ', 'বত্রিশ', 'তেত্রিশ', 'চৌত্রিশ', 'পঁয়ত্রিশ', 'ছত্রিশ', 'সাঁইত্রিশ', 'আটত্রিশ', 'উনচল্লিশ', 'চল্লিশ', 'একচল্লিশ', 'বিয়াল্লিশ', 'তেতাল্লিশ', 'চুয়াল্লিশ', 'পঁয়তাল্লিশ', 'ছেচল্লিশ', 'সাতচল্লিশ', 'আটচল্লিশ', 'উনপঞ্চাশ', 'পঞ্চাশ', 'একান্ন', 'বায়ান্ন', 'তিপ্পান্ন', 'চুয়ান্ন', 'পঞ্চান্ন', 'ছাপ্পান্ন', 'সাতান্ন', 'আটান্ন', 'উনষাট', 'ষাট', 'একষট্টি', 'বাষট্টি', 'তেষট্টি', 'চৌষট্টি', 'পঁয়ষট্টি', 'ছেষট্টি', 'সাতষট্টি', 'আটষট্টি', 'উনসত্তর', 'সত্তর', 'একাত্তর', 'বাহাত্তর', 'তিয়াত্তর', 'চুয়াত্তর', 'পঁচাত্তর', 'ছিয়াত্তর', 'সাতাত্তর', 'আটাত্তর', 'উনআশি', 'আশি', 'একাশি', 'বিরাশি', 'তিরাশি', 'চুরাশি', 'পঁচাশি', 'ছিয়াশি', 'সাতাশি', 'আটাশি', 'উননব্বই', 'নব্বই', 'একানব্বই', 'বিরানব্বই', 'তিরানব্বই', 'চুরানব্বই', 'পঁচানব্বই', 'ছিয়ানব্বই', 'সাতানব্বই', 'আটানব্বই', 'নিরানব্বই'];
+                function convert(n) {
+                    if (n < 100) return units[n];
+                    if (n < 1000) return units[Math.floor(n / 100)] + ' শত' + (n % 100 !== 0 ? ' ' + convert(n % 100) : '');
+                    if (n < 100000) return convert(Math.floor(n / 1000)) + ' হাজার' + (n % 1000 !== 0 ? ' ' + convert(n % 1000) : '');
+                    if (n < 10000000) return convert(Math.floor(n / 100000)) + ' লক্ষ' + (n % 100000 !== 0 ? ' ' + convert(n % 100000) : '');
+                    if (n >= 10000000) return convert(Math.floor(n / 10000000)) + ' কোটি' + (n % 10000000 !== 0 ? ' ' + convert(n % 10000000) : '');
+                    return '';
+                }
+                return convert(Math.floor(Number(num)));
+            }
+
+            // Get Date from "As Of:" or default to Today
+            let noticeDate = '';
+            const asOfInput = document.getElementById('ui-as-of-date');
+            if (asOfInput && asOfInput.value) {
+                const parts = asOfInput.value.split('-');
+                if (parts.length === 3) noticeDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            if (!noticeDate) {
+                const d = new Date();
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                noticeDate = `${day}/${month}/${year}`;
+            }
+
+            const selectedLoans = currentData.filter(item => selectedIds.includes(String(item._id))).map(item => {
+                let loan = { ...item };
+                loan.notice_date = noticeDate;
+                
+                // 1. Extract Name & Father's Name
+                let name = loan['নাম'] || '';
+                let father = loan['পিতা/স্বামীর নাম'] || loan['পিতার নাম'] || loan['পিতা'] || '';
+                if (!name || !father) {
+                    const full = (loan['নাম ও পিতার নাম'] || '').trim();
+                    if (full) {
+                        if (full.includes('\n')) {
+                            const lines = full.split('\n').map(s => s.trim()).filter(Boolean);
+                            if (!name && lines[0]) name = lines[0].replace(/^নাম\s*[:ঃ\-]/, '').trim();
+                            if (!father && lines[1]) father = lines[1].replace(/^(পিতা|স্বামী|পিতা\/স্বামী)\s*[:ঃ\-]?/, '').trim();
+                        } else {
+                            const match = full.match(/^(.*?)(?:[\s,]+|\s+ও\s+)(?:পিতা|স্বামী|পিতা\/স্বামী)\s*[:ঃ\-\s]+(.*)$/i);
+                            if (match) {
+                                if (!name) name = match[1].replace(/^নাম\s*[:ঃ\-]/, '').trim();
+                                if (!father) father = match[2].trim();
+                            } else {
+                                const oMatch = full.match(/^(.*?)\s+ও\s+(.*)$/);
+                                if (oMatch) {
+                                    if (!name) name = oMatch[1].trim();
+                                    if (!father) father = oMatch[2].replace(/^(পিতা|স্বামী)\s*[:ঃ\-]?/, '').trim();
+                                } else if (!name) {
+                                    name = full;
+                                }
+                            }
+                        }
+                    }
+                }
+                loan['নাম'] = name;
+                loan['পিতা/স্বামীর নাম'] = father;
+
+                // 2. Extract Village, Post, Upazila, District
+                let village = loan['গ্রাম'] || '';
+                let post = loan['পোস্ট'] || '';
+                let upazila = loan['থানা/উপজেলা'] || loan['উপজেলা'] || loan['থানা'] || '';
+                let district = loan['জেলা'] || loan['_district'] || '';
+                let mobile = loan['মোবাইল'] || loan['মোবাইল নম্বর'] || '';
+
+                const rawAddr = (loan['বাড়ি ও গ্রাম (পোস্ট, উপজেলা, জেলা)'] || loan['বাড়ি ও গ্রাম'] || '').trim();
+                if (rawAddr) {
+                    const vMatch = rawAddr.match(/গ্রাম\s*[:ঃ\-]?\s*([^,]+)/);
+                    const pMatch = rawAddr.match(/পোস্ট\s*[:ঃ\-]?\s*([^,]+)/);
+                    const uMatch = rawAddr.match(/(?:উপজেলা|থানা)\s*[:ঃ\-]?\s*([^,]+)/);
+                    const dMatch = rawAddr.match(/জেলা\s*[:ঃ\-]?\s*([^,]+)/);
+
+                    if (!village && vMatch) village = vMatch[1].trim();
+                    if (!post && pMatch) post = pMatch[1].trim();
+                    if (!upazila && uMatch) upazila = uMatch[1].trim();
+                    if (!district && dMatch) district = dMatch[1].trim();
+
+                    if (!village) {
+                        const parts = rawAddr.split(/[,;\/]/).map(s => s.trim()).filter(Boolean);
+                        if (parts.length === 1) {
+                            village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                        } else if (parts.length >= 2) {
+                            if (!village) village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                            if (!post && parts[1]) post = parts[1].replace(/^পোস্ট\s*[:ঃ\-]?/, '').trim();
+                            if (!upazila && parts[2]) upazila = parts[2].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
+                            if (!district && parts[3]) district = parts[3].replace(/^জেলা\s*[:ঃ\-]?/, '').trim();
+                        }
+                    }
+                }
+
+                loan['গ্রাম'] = village;
+                loan['পোস্ট'] = post;
+                loan['থানা/উপজেলা'] = upazila;
+                
+                // Branch District lookup
+                let branchDistrict = '';
+                try {
+                    if (window.parent && typeof window.parent.getCentralBranchData === 'function') {
+                        const bData = window.parent.getCentralBranchData();
+                        if (bData && bData.districtBn) branchDistrict = bData.districtBn;
+                    } else if (typeof window.getCentralBranchData === 'function') {
+                        const bData = window.getCentralBranchData();
+                        if (bData && bData.districtBn) branchDistrict = bData.districtBn;
+                    }
+                } catch(e) {}
+
+                // Use branch district as primary district, fallback to extracted district
+                let finalDistrict = branchDistrict || district || '';
+                
+                // Format District with Mobile
+                let districtFormatted = finalDistrict;
+                if (mobile) {
+                    let mobileBn = toBanglaNumbers(mobile);
+                    districtFormatted = districtFormatted ? (districtFormatted + ', মোবাইল নং: ' + mobileBn) : ('মোবাইল নং: ' + mobileBn);
+                }
+                loan['জেলা'] = districtFormatted;
+
+                // 3. Format Dates (Bangla)
+                let distDate = loan['বিতরণের তারিখ'] || '';
+                if (loan._distDate instanceof Date && !isNaN(loan._distDate)) {
+                    distDate = `${loan._distDate.getDate().toString().padStart(2,'0')}/${(loan._distDate.getMonth()+1).toString().padStart(2,'0')}/${loan._distDate.getFullYear()}`;
+                }
+                loan['বিতরণের তারিখ'] = toBanglaNumbers(distDate);
+
+                let expDate = loan['দেয় তারিখ'] || loan['মেয়াদ উত্তীর্ণ'] || '';
+                if (loan._expDate instanceof Date && !isNaN(loan._expDate)) {
+                    expDate = `${loan._expDate.getDate().toString().padStart(2,'0')}/${(loan._expDate.getMonth()+1).toString().padStart(2,'0')}/${loan._expDate.getFullYear()}`;
+                }
+                loan['দেয় তারিখ'] = toBanglaNumbers(expDate);
+                loan['notice_date'] = toBanglaNumbers(noticeDate);
+
+                // Account Number to Bangla
+                loan['হিসাব নম্বর'] = toBanglaNumbers(loan['হিসাব নম্বর'] || loan['_caseNo'] || '');
+
+                // 4. Format Amounts and Words
+                let principal = parseFloat(String(loan['ঋণের পরিমাণ'] || loan['মঞ্জুরীকৃত পরিমাণ'] || 0).replace(/[^\d.]/g, '')) || 0;
+                let balance = parseFloat(String(loan['বর্তমান স্থিতি'] || loan['বকেয়া স্থিতি'] || loan['cbs_balance'] || 0).replace(/[^\d.]/g, '')) || 0;
+
+                loan['ঋণের পরিমাণ'] = toBanglaNumbers(principal ? principal.toLocaleString('en-IN') : (loan['ঋণের পরিমাণ'] || ''));
+                loan['loan_amount_words'] = convertToBanglaWords(principal);
+
+                loan['বর্তমান স্থিতি'] = toBanglaNumbers(balance ? balance.toLocaleString('en-IN') : (loan['বর্তমান স্থিতি'] || ''));
+                loan['total_due_words'] = convertToBanglaWords(balance);
+                loan['upcoming_total_num'] = loan['বর্তমান স্থিতি'];
+                loan['upcoming_total_words'] = loan['total_due_words'];
+                
+                return loan;
+            });
             window.parent.sessionStorage.setItem('pending_notice_data', JSON.stringify(selectedLoans));
             window.parent.sessionStorage.setItem('pending_notice_ids', JSON.stringify(selectedIds));
             window.parent.sessionStorage.setItem('pending_notice_type', type);

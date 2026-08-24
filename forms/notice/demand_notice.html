@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demand Notice — তাগিদ পত্র</title>
     <style>
-        body {
+        body, input, textarea, select, button, span, div {
             font-family: 'SolaimanLipi', 'Noto Serif Bengali', Arial, sans-serif;
+        }
+
+        body {
             background-color: #f0f2f5;
             margin: 0;
             padding: 15pt 0;
@@ -363,9 +366,9 @@
                 <!-- Top Row -->
                 <div class="top-row">
                     <div>ফোলিও নং:&nbsp;<span class="df" style="min-width: 0.5in;" contenteditable="true" id="folio_no"
-                            data-placeholder="নং"></span></div>
+                            data-db-field="হিসাব নম্বর" data-placeholder="নং" class="bangla-numbers"></span></div>
                     <div>তারিখ :&nbsp;<span class="df" style="min-width: 0.5in;" contenteditable="true" id="notice_date"
-                            data-placeholder="তারিখ"></span>ইং</div>
+                            data-db-field="notice_date" data-placeholder="তারিখ" class="bangla-numbers"></span>ইং</div>
                 </div>
 
                 <!-- Recipient -->
@@ -374,22 +377,22 @@
                     <div class="recipient-grid">
                         <div>নাম</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_name"
-                                data-placeholder="প্রাপকের নাম"></span></div>
+                                data-db-field="নাম" data-placeholder="প্রাপকের নাম"></span></div>
                         <div>পিতা/স্বামী</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_father_husband"
-                                data-placeholder="পিতা/স্বামীর নাম"></span></div>
+                                data-db-field="পিতা/স্বামীর নাম" data-placeholder="পিতা/স্বামীর নাম"></span></div>
                         <div>গ্রাম</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_village"
-                                data-placeholder="গ্রাম"></span></div>
+                                data-db-field="গ্রাম" data-placeholder="গ্রাম"></span></div>
                         <div>পোস্ট</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_post"
-                                data-placeholder="পোস্ট অফিস"></span></div>
+                                data-db-field="পোস্ট" data-placeholder="পোস্ট অফিস"></span></div>
                         <div>উপজেলা</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_upazila"
-                                data-placeholder="উপজেলা"></span></div>
+                                data-db-field="থানা/উপজেলা" data-placeholder="উপজেলা"></span></div>
                         <div>জেলা</div>
                         <div>: <span class="df-address" contenteditable="true" id="recipient_district_addr"
-                                data-placeholder="জেলা"></span></div>
+                                data-db-field="জেলা" data-placeholder="জেলা"></span></div>
                     </div>
                 </div>
 
@@ -400,11 +403,11 @@
                 <div class="body-para">
                     <span style="font-weight: bold;">জনাব/মহোদয়,</span><br>
                     <span class="indent">এতদ্বারা আপনাকে জানানো যাইতেছে যে, কৃষি ব্যাংক হইতে আপনি যে,
-                        <span class="df" contenteditable="true" id="loan_amount_num"
-                            data-placeholder="পরিমাণ"></span>/-&nbsp;টাকা&nbsp;(কথায়:&nbsp;<span class="df"
-                            contenteditable="true" id="loan_amount_words" data-placeholder="কথায়"></span>)
+                        <span class="df bangla-numbers" contenteditable="true" id="loan_amount_num"
+                            data-db-field="ঋণের পরিমাণ" data-placeholder="পরিমাণ"></span>/-&nbsp;টাকা&nbsp;(কথায়:&nbsp;<span class="df"
+                            contenteditable="true" id="loan_amount_words" data-db-field="loan_amount_words" data-placeholder="কথায়"></span>)
                         মাত্র ঋণ লইয়াছেন তাহা চুক্তি মোতাবেক
-                        <span class="df" contenteditable="true" id="agreement_date" data-placeholder="তারিখ"></span>ইং
+                        <span class="df bangla-numbers" contenteditable="true" id="agreement_date" data-db-field="বিতরণের তারিখ" data-placeholder="তারিখ"></span>ইং
                         তারিখে সুদ ও
                         অন্যান্য খরচসহ দেয় কিস্তির পূর্ণ বিবরণ নিম্নে দেওয়া হইল:
                 </div>
@@ -432,9 +435,9 @@
                     </div>
                     <div class="dues-divider"></div>
                     <div class="dues-total">
-                        মোট : <span class="df" contenteditable="true" id="total_due_num"
-                            data-placeholder="মোট টাকা"></span>/-&nbsp;টাকা&nbsp;—&nbsp;(কথায়:&nbsp;<span class="df"
-                            contenteditable="true" id="total_due_words" data-placeholder="কথায়"></span>)
+                        মোট : <span class="df bangla-numbers" contenteditable="true" id="total_due_num"
+                            data-db-field="বর্তমান স্থিতি" data-placeholder="মোট টাকা"></span>/-&nbsp;টাকা&nbsp;—&nbsp;(কথায়:&nbsp;<span class="df"
+                            contenteditable="true" id="total_due_words" data-db-field="total_due_words" data-placeholder="কথায়"></span>)
                     </div>
                     <div class="dues-row" style="margin-top: 4.5pt;">
                         <div class="dues-label" style="padding-left: 18pt;">এযাবৎ পরিশোধিত</div>
@@ -446,11 +449,11 @@
 
                 <!-- Upcoming Payment -->
                 <div class="body-para" style="margin-top: 9pt;">
-                    আগামী <span class="df" contenteditable="true" id="due_date" data-placeholder="তারিখ"></span> তারিখে
+                    আগামী <span class="df bangla-numbers" contenteditable="true" id="due_date" data-db-field="দেয় তারিখ" data-placeholder="তারিখ"></span> তারিখে
                     দেয় মোট
-                    <span class="df" contenteditable="true" id="upcoming_total_num"
+                    <span class="df bangla-numbers" contenteditable="true" id="upcoming_total_num" data-db-field="upcoming_total_num"
                         data-placeholder="টাকা"></span>/-&nbsp;টাকা&nbsp;+&nbsp;হালনাগাদ&nbsp;সুদ&nbsp;(কথায়—&nbsp;<span
-                        class="df" contenteditable="true" id="upcoming_total_words"
+                        class="df" contenteditable="true" id="upcoming_total_words" data-db-field="upcoming_total_words"
                         data-placeholder="কথায়"></span>&nbsp;+&nbsp;হালনাগাদ&nbsp;সুদ।)
                 </div>
 
@@ -474,7 +477,7 @@
                     <span class="df-sig" contenteditable="true" id="branch_name" data-db-field="branch_name"
                         data-placeholder="শাখা"></span> শাখা,
                 </div>
-                <div><span class="df-sig" contenteditable="true" id="branch_district" data-placeholder="জেলা"></span>
+                <div><span class="df-sig" contenteditable="true" id="branch_district" data-db-field="branch_location_2" data-placeholder="জেলা"></span>
                 </div>
             </div>
             <div class="bottom-note">
