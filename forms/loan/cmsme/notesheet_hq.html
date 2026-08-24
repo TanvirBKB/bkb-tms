@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশ কৃষি ব্যাংক - নোটশিট (প্রধান কার্যালয় মঞ্জুরী)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Hind Siliguri', 'Arial', sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 0.5in;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Unshaded, flat interactive database-friendly blanks */
+        [contenteditable] {
+            display: inline-block;
+            min-width: 1px;
+            /* Standardized per AGENTS.md */
+            border-bottom: 1px dotted #000;
+            outline: none;
+            padding: 0 1px;
+            text-align: center;
+            min-height: 1.2em;
+            background: transparent;
+            color: #000;
+            transition: border-bottom 0.15s;
+            vertical-align: bottom;
+            white-space: nowrap;
+        }
+
+        [contenteditable]:focus {
+            border-bottom: 1.5px solid #000;
+        }
+
+        [contenteditable]:empty {
+            min-width: 1in;
+        }
+
+        [contenteditable]:empty::before {
+            content: attr(data-placeholder);
+            color: #888888;
+            font-weight: normal;
+        }
+
+        .header-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .header-left-center {
+            flex-grow: 1;
+            text-align: center;
+            padding-left: 100px;
+            /* Centers the text alignment visually */
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 9.5pt;
+            line-height: 1.3;
+            min-width: 180px;
+        }
+
+        .bank-title {
+            font-size: 13.5pt;
+            font-weight: bold;
+            margin: 0;
+            text-decoration: underline;
+        }
+
+        .divider-line {
+            border-top: 1px solid #000;
+            margin: 4px 0 10px 0;
+            width: 100%;
+        }
+
+        .meta-container {
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: flex-end;
+            row-gap: 5px;
+            column-gap: 15px;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .meta-full-width {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .meta-value {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .notesheet-block {
+            margin-bottom: 24px;
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                display: block;
+            }
+
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                min-height: 100%;
+            }
+
+            [contenteditable] {
+                border-bottom: none !important;
+                /* Flat rendering on paper */
+                background: transparent !important;
+                padding: 0;
+            }
+
+            [contenteditable]:empty {
+                min-width: 1in;
+            }
+
+            [contenteditable]:empty::before {
+                content: "" !important;
+                /* Hide placeholders in hard copy output */
+            }
+        }
+
+        /* Input Focus and Select Fixes */
+        input,
+        textarea,
+        select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+
+<body>
+
+    <!-- Main Notesheet Wrapper -->
+    <div class="a4-page">
+
+        <div class="header-container">
+            <div class="header-left-center">
+                <h1 class="bank-title">বাংলাদেশ কৃষি ব্যাংক</h1>
+                <div style="margin-top: 4px;">
+                    <span contenteditable="true" data-placeholder="শাখার নাম" data-db-field="branch_name"
+                        style="font-weight: bold; min-width: 1.2in;"></span> শাখা,
+                </div>
+                <div style="margin-top: 4px;">
+                    <span contenteditable="true" data-placeholder="অবস্থান" data-db-field="branch_location_1"
+                        style="min-width: 1in;"></span>, <span contenteditable="true" data-placeholder="জেলা"
+                        data-db-field="branch_location_2" style="min-width: 1in;"></span>।
+                </div>
+            </div>
+
+            <div class="header-right">
+                মোবাইল: <span contenteditable="true" data-placeholder="মোবাইল নম্বর" data-db-field="branch_mobile"
+                    class="bangla-numbers" style="min-width: 1.1in;"></span><br>
+                ইমেইল: <span contenteditable="true" data-placeholder="ইমেইল এড্রেস" data-db-field="branch_email"
+                    style="min-width: 1.1in;"></span>
+            </div>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <div class="meta-container">
+            <div style="margin: 0 auto 5px auto; font-weight: bold;">
+                <span contenteditable="true" data-placeholder="নোটশিট রেফারেন্স নম্বর" data-db-field="notesheet_ref"
+                    style="min-width: 2.5in; font-weight: bold;"></span>
+            </div>
+
+            <div class="meta-grid">
+                <!-- Row 1 -->
+                <span class="meta-label">প্রোপাইটার :</span>
+                <span contenteditable="true" data-placeholder="প্রোপাইটারের নাম" data-db-field="applicant_name_bn"
+                    class="meta-value" style="min-width: 2.5in;"></span>
+                <div>
+                    <span class="bold">এলসি নং :</span>
+                    <span contenteditable="true" data-placeholder="এলসি নং" data-db-field="lc_no"
+                        style="min-width: 1.2in;"></span>
+                </div>
+
+                <!-- Row 2 -->
+                <span class="meta-label">পিতা :</span>
+                <span contenteditable="true" data-placeholder="পিতার নাম" data-db-field="father_name" class="meta-value"
+                    style="min-width: 2.5in;"></span>
+                <div>
+                    <span class="bold">তারিখ :</span>
+                    <span contenteditable="true" data-placeholder="তারিখ" data-db-field="date_header"
+                        class="bangla-numbers" style="min-width: 1.2in;"></span>
+                </div>
+
+                <!-- Row 3 -->
+                <span class="meta-label">মাতা :</span>
+                <span contenteditable="true" data-placeholder="মাতার নাম" data-db-field="mother_name" class="meta-value"
+                    style="min-width: 2.5in;"></span>
+                <div>
+                    <span class="bold">মোবাইল নং :</span>
+                    <span contenteditable="true" data-placeholder="মোবাইল নং" data-db-field="mobile_no"
+                        class="bangla-numbers" style="min-width: 1.2in;"></span>
+                </div>
+
+                <!-- Row 4 (Full Width) -->
+                <div class="meta-full-width">
+                    <span class="meta-label">ঠিকানা :</span>
+                    <span contenteditable="true" data-placeholder="ঠিকানা" data-db-field="address" class="meta-value"
+                        style="min-width: 4.5in;"></span>
+                </div>
+
+                <!-- Row 5 (Full Width) -->
+                <div class="meta-full-width">
+                    <span class="meta-label">ব্যবসায়িক ঠিকানা:</span>
+                    <span contenteditable="true" data-placeholder="ব্যবসায়িক ঠিকানা" data-db-field="biz_address"
+                        class="meta-value" style="min-width: 4.5in;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paragraph 1: Headquarters Reference Authority Approval -->
+        <div class="notesheet-block">
+            আবেদনকারীর আবেদন, সরেজমিন পরিদর্শনে প্রকল্পের অবস্থা সন্তোষজনক, ঋণের পরিমাণ জামানতি সম্পত্তি দ্বারা ১০০%
+            আবৃত থাকা এবং বিকেবি <span contenteditable="true" data-placeholder="বিভাগ/কার্যালয়"
+                data-db-field="hq_office_name" style="min-width: 1.5in;"></span> এর মঞ্জুরীপত্র নং <span
+                contenteditable="true" data-placeholder="মঞ্জুরীপত্র নম্বর" data-db-field="hq_approval_no"
+                class="bangla-numbers" style="min-width: 1.5in;"></span>, তারিখ: <span contenteditable="true"
+                data-placeholder="তারিখ" data-db-field="hq_approval_date" class="bangla-numbers"
+                style="min-width: 1.1in;"></span>ইং মোতাবেক <span contenteditable="true"
+                data-placeholder="গ্রাহক/প্রতিষ্ঠানের নাম" data-db-field="customer_name_1"
+                style="min-width: 1.5in;"></span> এর অনুকূলে <span contenteditable="true" data-placeholder="ঋণের খাত"
+                data-db-field="loan_sector_1" style="min-width: 1.5in;"></span> এর আওতায় <span contenteditable="true"
+                data-placeholder="ব্যবসার ধরন" data-db-field="business_type_1" style="min-width: 1.2in;"></span> ব্যবসা
+            পরিচালনার জন্য <span contenteditable="true" data-placeholder="ঋণের ধরন" data-db-field="loan_type_1"
+                style="min-width: 1.2in;"></span> হিসেবে <span contenteditable="true" data-placeholder="সুদের হার"
+                data-db-field="interest_rate_1" style="min-width: 0.8in;"></span> সুদে <span contenteditable="true"
+                data-placeholder="টাকার পরিমাণ (অংকে)" data-db-field="loan_amount_1" class="bangla-numbers"
+                style="min-width: 1.2in;"></span> (<span contenteditable="true" data-placeholder="টাকার পরিমাণ (কথায়)"
+                data-db-field="loan_amount_words_1" style="min-width: 1.8in;"></span>) ঋণ মঞ্জুরীর সুপারিশ করা হলো।
+        </div>
+
+        <!-- Paragraph 2: Manager Order -->
+        <div class="notesheet-block">
+            <span class="bold">ব্যবস্থাপক:</span><br>
+            মাঠ কর্মকর্তার সুপারিশ মোতাবেক <span contenteditable="true" data-placeholder="গ্রাহক/প্রতিষ্ঠানের নাম"
+                data-db-field="customer_name_2" style="min-width: 1.5in;"></span> এর অনুকূলে <span
+                contenteditable="true" data-placeholder="ঋণের খাত" data-db-field="loan_sector_2"
+                style="min-width: 1.5in;"></span> এর আওতায় <span contenteditable="true" data-placeholder="ব্যবসার ধরন"
+                data-db-field="business_type_2" style="min-width: 1.2in;"></span> ব্যবসা পরিচালনার জন্য <span
+                contenteditable="true" data-placeholder="ঋণের ধরন" data-db-field="loan_type_2"
+                style="min-width: 1.2in;"></span> হিসেবে <span contenteditable="true" data-placeholder="সুদের হার"
+                data-db-field="interest_rate_2" style="min-width: 0.8in;"></span> সুদে <span contenteditable="true"
+                data-placeholder="টাকার পরিমাণ (অংকে)" data-db-field="loan_amount_2" class="bangla-numbers"
+                style="min-width: 1.2in;"></span> (<span contenteditable="true" data-placeholder="টাকার পরিমাণ (কথায়)"
+                data-db-field="loan_amount_words_2" style="min-width: 1.8in;"></span>) ঋণ মঞ্জুর করা হলো এবং দলিলায়ন
+            সম্পাদনের নির্দেশনা প্রদান করা হলো।
+        </div>
+
+        <!-- Paragraph 3: Recommending Officer Confirmation -->
+        <div class="notesheet-block">
+            <span class="bold">সুপারিশকারী কর্মকর্তা:</span><br>
+            নির্দেশনা মোতাবেক যথাযথভাবে দলিলায়ন সম্পাদন করা হয়েছে।
+        </div>
+
+        <!-- Paragraph 4: Second Officer Approval Framework -->
+        <div class="notesheet-block">
+            <span class="bold">দ্বিতীয় কর্মকর্তা:</span><br>
+            মাঠ কর্মকর্তার সুপারিশ এবং ব্যবস্থাপকের মঞ্জুরী মোতাবেক <span contenteditable="true"
+                data-placeholder="গ্রাহক/প্রতিষ্ঠানের নাম" data-db-field="customer_name_3"
+                style="min-width: 1.5in;"></span> এর অনুকূলে <span contenteditable="true" data-placeholder="ঋণের খাত"
+                data-db-field="loan_sector_3" style="min-width: 1.5in;"></span> এর আওতায় <span contenteditable="true"
+                data-placeholder="ব্যবসার ধরন" data-db-field="business_type_3" style="min-width: 1.2in;"></span> ব্যবসা
+            পরিচালনার জন্য <span contenteditable="true" data-placeholder="ঋণের ধরন" data-db-field="loan_type_3"
+                style="min-width: 1.2in;"></span> হিসেবে <span contenteditable="true" data-placeholder="সুদের হার"
+                data-db-field="interest_rate_3" style="min-width: 0.8in;"></span> সুদে <span contenteditable="true"
+                data-placeholder="টাকার পরিমাণ (অংকে)" data-db-field="loan_amount_3" class="bangla-numbers"
+                style="min-width: 1.2in;"></span> (<span contenteditable="true" data-placeholder="টাকার পরিমাণ (কথায়)"
+                data-db-field="loan_amount_words_3" style="min-width: 1.8in;"></span>) ঋণ অদ্য <span
+                contenteditable="true" data-placeholder="তারিখ" data-db-field="start_date_1" class="bangla-numbers"
+                style="min-width: 1.1in;"></span>ইং হতে <span contenteditable="true" data-placeholder="তারিখ"
+                data-db-field="end_date_1" class="bangla-numbers" style="min-width: 1.1in;"></span>ইং পর্যন্ত লেনদেনের
+            অনুমতি প্রদান করা যেতে পারে।
+        </div>
+
+        <!-- Paragraph 5: Manager Disbursement Order -->
+        <div class="notesheet-block">
+            <span class="bold">ব্যবস্থাপক :</span><br>
+            মঞ্জুরী অনুযায়ী <span contenteditable="true" data-placeholder="গ্রাহক/প্রতিষ্ঠানের নাম"
+                data-db-field="customer_name_4" style="min-width: 1.5in;"></span> এর অনুকূলে <span
+                contenteditable="true" data-placeholder="টাকার পরিমাণ (অংকে)" data-db-field="loan_amount_4"
+                class="bangla-numbers" style="min-width: 1.2in;"></span> (......................) <span
+                contenteditable="true" data-placeholder="ঋণের ধরন" data-db-field="loan_type_4"
+                style="min-width: 1.2in;"></span> ঋণ হিসাবে গ্রাহকের চলতি হিসাব নং <span contenteditable="true"
+                data-placeholder="চলতি হিসাব নম্বর" data-db-field="current_ac_no" class="bangla-numbers"
+                style="min-width: 1.5in;"></span> এর মাধ্যমে বিতরণ এবং অদ্য <span contenteditable="true"
+                data-placeholder="তারিখ" data-db-field="start_date_2" class="bangla-numbers"
+                style="min-width: 1.1in;"></span>ইং হতে <span contenteditable="true" data-placeholder="তারিখ"
+                data-db-field="end_date_2" class="bangla-numbers" style="min-width: 1.1in;"></span>ইং পর্যন্ত লেনদেনের
+            সুবিধা প্রদান করুন।
+        </div>
+
+    </div>
+
+
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+
+</html>

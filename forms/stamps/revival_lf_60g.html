@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revival Letter</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: Arial, 'SolaimanLipi', sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    [contenteditable="true"],
+
+
+    [contenteditable="true"]:empty,
+
+
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+      text-transform: uppercase;
+      font-size: 16pt;
+      margin-top: 5mm;
+      margin-bottom: 5mm;
+    }
+
+    /* =========================================================
+     PRINT RULES FOR REAL STAMP PAPER / PDF EXPORT
+     ========================================================= */
+    @media print {
+      @page {
+        size: 8.5in 14in portrait;
+        margin: 0;
+      }
+
+      html,
+      body,
+      body.stamp-body-wrapper {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 8.5in !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+      }
+
+      .stamp-page {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        width: 8.5in !important;
+        height: 13.85in !important;
+        max-height: 13.85in !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        padding-top: 4.3in !important;
+        padding-bottom: 0.8in !important;
+        padding-left: 0.7in !important;
+        padding-right: 0.7in !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+      }
+
+      .stamp-page:not(:last-of-type) {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .stamp-page:last-of-type {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
+
+    .stamp-name {
+      text-align: right;
+      font-size: 10pt;
+      font-weight: bold;
+    }
+
+    .manager-address {
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .page1-body,
+    .page2-body,
+    .page3-body {
+      text-align: justify;
+      line-height: 1.6;
+      font-size: 12pt;
+    }
+
+    /* Revenue Stamp Box Placeholder */
+    .revenue-stamp-box {
+      width: 1.2in;
+      height: 1.5in;
+      border: 1px dashed #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 10pt;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- Legal Stamp Paper Page Container (8.5in x 14in) -->
+  <div class="stamp-page">
+
+    <!-- Input Area Page-1 -->
+    <p class="stamp-name">LF 60(g)</p>
+
+    <h1>REVIVAL LETTER</h1>
+
+    <div style="text-align: right; margin-top: 5mm; font-size: 12pt;">
+      Date: <span class="dotted-input" contenteditable="true" data-field="date" placeholder="dd/mm/yyyy"></span>
+    </div>
+
+    <div class="manager-address" style="font-size: 12pt; margin-top: 5mm;">
+      The Manager<br>
+      Bangladesh Krishi Bank<br>
+      <span class="dotted-input" contenteditable="true" data-db-field="branch_name_en" placeholder="Branch Name"></span>
+      Branch,<br>
+      <span class="dotted-input" contenteditable="true" data-db-field="branch_thana_en" placeholder="Thana"></span>,
+      <span class="dotted-input" contenteditable="true" data-db-field="branch_district_en"
+        placeholder="District"></span>
+    </div>
+
+    <div class="page1-body" style="margin-top: 8mm;">
+      Dear Sir,<br>
+      With reference to my/our Cash Credit account with you secured by a Demand Promissory Note dated on
+      <span class="dotted-input" contenteditable="true" data-field="dpn_date" placeholder="dd/mm/yyyy"></span>
+      for Tk. <span class="dotted-input" contenteditable="true" data-db-field="loan_amount"
+        placeholder="Amount"></span>/-
+      (in words: <span class="dotted-input" contenteditable="true" data-db-field="loan_amount_words"
+        placeholder="Amount in words"></span>)
+      with interest made by me/us in your favour.
+    </div>
+
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%; border: none;"
+      placeholder="Type here..."></div>
+
+    <div class="stamp-footer-slogan"></div>
+
+  </div>
+
+  <!-- Page 2 Container -->
+  <div class="stamp-page">
+
+    <!-- Input Area Page-2 -->
+    <p class="page2-body">
+      I/We acknowledge for the purpose of section 19 of the Limitation Act IX of 1908 and any like Limitation Law in
+      order to preclude any question of Limitation Law that
+    </p>
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%; border: none;"
+      placeholder="Type here..."></div>
+
+    <div class="stamp-footer-slogan"></div>
+
+  </div>
+
+  <!-- Page 3 Container -->
+  <div class="stamp-page">
+
+    <!-- Input Area Page-3 -->
+    <p class="page3-body">
+      I am/we are liable to you for payment of the said Promissory Note with interest and the same is to remain in force
+      with all relative securities, agreement and obligations.
+    </p>
+
+    <!-- Signatures & Revenue Stamp Alignment -->
+    <div style="margin-top: 0.5in; display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+
+      <!-- Left Aligned: Revenue Stamp Box -->
+      <div class="revenue-stamp-box">
+        Revenue<br>Stamp
+      </div>
+
+      <!-- Right Aligned: Yours faithfully (shifted 0.5in to the left) -->
+      <div style="text-align: right; padding-right: 0.5in;">
+        <p style="font-size: 12pt;">Yours faithfully,</p>
+      </div>
+
+    </div>
+
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%; border: none;"
+      placeholder="Type here..."></div>
+
+    <div class="stamp-footer-slogan"></div>
+
+  </div>
+
+  <style>
+    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+    .stamp-page,
+    .page,
+    .a4-page {
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Fix excessive line gap - ONLY IN STAMPS */
+    .stamp-page {
+      line-height: 1.6 !important;
+    }
+
+    .stamp-page .content-body,
+    .stamp-page .paragraph,
+    .stamp-page p {
+      line-height: 1.6 !important;
+    }
+
+    /* Input Field Fixes: Keeps baseline tight and avoids line-height expansion */
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"] {
+      display: inline !important;
+      vertical-align: baseline !important;
+      font-weight: bold !important;
+      outline: none;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+      line-height: inherit !important;
+    }
+
+    /* Padding trick ensures empty fields show dots without breaking line height */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      padding-left: 0.25in;
+      padding-right: 0.25in;
+    }
+  </style>
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          // Seamless caret position restoration
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            // Automatically convert digits to Bangla if the class is present
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

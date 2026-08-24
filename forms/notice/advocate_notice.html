@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advocate Notice</title>
+    <style>
+        body {
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page {
+            width: 8.27in;
+            min-height: 11.69in;
+            background: #fff;
+            padding: 0.5in;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                margin-bottom: 0;
+                page-break-after: always;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        [contenteditable="true"] {
+            border-bottom: 1px dotted #ccc;
+            min-width: 1px;
+            display: inline-block;
+            outline: none;
+            padding: 0 2px;
+            transition: background-color 0.2s;
+        }
+
+        [contenteditable="true"]:empty {
+            min-width: 0.5in;
+        }
+
+        [contenteditable="true"]:focus {
+            background-color: #fff3cd;
+            border-bottom: 1px solid #ffc107;
+        }
+
+        [contenteditable="true"]:empty::before {
+            content: attr(data-placeholder);
+            color: #aaa;
+            pointer-events: none;
+            font-style: italic;
+        }
+
+        .header-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .bank-title {
+            font-size: 16.5pt;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .divider-line {
+            border-top: 1px solid #000;
+            margin: 4px 0 15px 0;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body>
+    <!-- Main Document -->
+    <div class="page" id="main-page">
+        <!-- BKB Header Layout with perfectly centered title -->
+        <div class="header-container" style="position: relative; margin-bottom: 5px;">
+            <!-- Absolutely position logo on the left to not disrupt center alignment -->
+            <img src="../../assets/images/bkb_logo.png" alt="BKB Logo"
+                style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 0.7in; object-fit: contain; filter: grayscale(100%) brightness(0%); z-index: 10;">
+
+            <!-- Center Aligned Block for Bank Name and Branch Location -->
+            <div style="text-align: center; width: 100%; position: relative; z-index: 1;">
+                <h1 class="bank-title" style="font-size: 16.5pt; margin: 0; text-decoration: none; line-height: 1.1;">
+                    বাংলাদেশ কৃষি ব্যাংক
+                </h1>
+
+                <div style="font-size: 14pt; margin-top: 0; line-height: 1.3;">
+                    <span contenteditable="true" spellcheck="false" data-placeholder="শাখার নাম"
+                        data-db-field="branch_name" style="font-weight: bold;"></span> শাখা, <br>
+                    <span contenteditable="true" spellcheck="false" data-placeholder="অবস্থান"
+                        data-db-field="branch_location_1"></span>, <span contenteditable="true" spellcheck="false"
+                        data-placeholder="জেলা" data-db-field="branch_location_2"></span>।
+                </div>
+            </div>
+
+            <!-- Absolutely position contact info on the right -->
+            <div style="position: absolute; right: 0; bottom: 0; text-align: right; z-index: 10;">
+                <div style="font-size: 9.5pt;">
+                    মোবাইলঃ <span contenteditable="true" spellcheck="false" data-placeholder="মোবাইল নম্বর"
+                        data-db-field="branch_mobile" class="bangla-numbers"></span>
+                </div>
+                <div style="font-size: 8pt; margin-top: 2px;">
+                    ইমেইলঃ <span contenteditable="true" spellcheck="false" data-placeholder="ইমেইল এড্রেস"
+                        data-db-field="branch_email"></span>
+                </div>
+            </div>
+        </div>
+        <div class="divider-line" style="border-top: 1px solid #000; margin: 4px 0 15px 0; width: 100%;"></div>
+
+        <!-- Blank Body Space for User Design -->
+
+    </div>
+
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+    <!-- Notice Engine Logic -->
+    <script src="../../assets/engines/notice-engine.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্টক রিপোর্ট (Stock Report)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Arial', sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: #eee;
+            margin: 0;
+            padding: 20px 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .a4-page {
+            width: 210mm;
+            height: 297mm;
+            background: #ffffff;
+            padding: 0.5in;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            position: relative;
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .a4-page:last-child {
+            page-break-after: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .business-name {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+        }
+
+        .proprietor,
+        .address,
+        .contact {
+            font-size: 11pt;
+            margin: 0 0 3px 0;
+            color: #333;
+        }
+
+        .report-title {
+            font-size: 13pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            text-decoration: underline;
+        }
+
+        .report-date {
+            font-size: 10pt;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .text-left {
+            text-align: left !important;
+        }
+
+        .text-right {
+            text-align: right !important;
+        }
+
+        /* Absolute positioning for signatures at the bottom of the page */
+        .signature-section {
+            position: absolute;
+            bottom: 0.5in;
+            left: 0.5in;
+            right: 0.5in;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 30%;
+        }
+
+        .signature-line {
+            border-top: 1px dashed #000;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .signature-title {
+            font-size: 10pt;
+            font-weight: bold;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 0.2in;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+        }
+
+        /* Input Focus and Select Fixes */
+        input,
+        textarea,
+        select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+
+<body id="cmsme-stock-report">
+    <div id="pages_container"></div>
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Default Loan Calculator</title>
+
+<!-- Minimal, self-contained CSS (Tailwind-like tokens for the classes you used) -->
+<!-- =================================================================================
+     CSS STYLES
+     ================================================================================= -->
+<style>
+  :root{
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-600:#4b5563;--gray-800:#1f2937;
+    --blue-500:#3b82f6;--blue-600:#2563eb;
+    --blue-50: #eff6ff;
+    --blue-700: #1d4ed8;
+    --green-700:#047857;
+    --custom-green: #00664F;
+    --purple-600:#7c3aed; 
+    --purple-700: #6d28d9; /* Darker purple for hover */
+    --teal-700: #0f766e; --teal-800: #115e59;
+    --red-600:#dc2626;--red-800:#991b1b;
+    --red-50: #fef2f2;
+    --yellow-500:#eab308;
+    --shadow:0 1px 2px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.08);
+    --shadow-md:0 4px 10px rgba(0,0,0,.12);
+    --shadow-xl:0 10px 25px rgba(0,0,0,.15);
+    --radius:12px; --radius-md:10px; --radius-lg:16px; --radius-2xl:20px;
+  }
+  /* Base */
+  html,body{margin:0;padding:0;background:var(--gray-100);color:#111827;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.5;}
+  html { font-size: 87.5%; /* Set base font size to 14px for better scaling on various displays */ }
+  *,*::before,*::after{box-sizing:border-box}
+  h1,h2,h3{margin:0}
+  button{font:inherit;border:none;}
+  input,select{font:inherit}
+  table{border-collapse:collapse}
+  /* Utilities (subset) */
+  .bg-white{background:#fff}
+  .bg-gray-100{background:var(--gray-100)}
+  .bg-gray-200{background:var(--gray-200)}
+  .bg-gray-600{background:var(--gray-600)}
+  .bg-green-700{background:var(--green-700)}
+  .bg-custom-green{background:var(--custom-green)}
+  .bg-teal-700{background:var(--teal-700)}
+  .bg-purple-600{background:var(--purple-600)}
+  .bg-blue-600{background:var(--blue-600)}
+  .bg-red-600{background:var(--red-600)}
+  .bg-blue-50{background-color:var(--blue-50)}
+  .bg-red-50{background-color:var(--red-50)}
+  .bg-red-800{background:var(--red-800)}
+  .bg-yellow-500{background:var(--yellow-500)}
+  .bg-gray-800{background:var(--gray-800)}
+  .text-white{color:#fff}
+  .text-black{color:#000}
+  .text-gray-800{color:#1f2937}
+  .text-red-600{color:var(--red-600)}
+  .text-blue-700{color:var(--blue-700)}
+  .text-sm{font-size: .875rem; line-height: 1.25rem;}
+  .text-lg{font-size:1.125rem;line-height:1.75rem}
+  .text-xl{font-size:1.25rem;line-height:1.75rem}
+  .text-2xl{font-size:1.5rem;line-height:2rem}
+  .font-bold{font-weight:700}
+  .font-semibold{font-weight:600}
+  .font-medium{font-weight:500}
+  .text-base{font-size:1rem;line-height:1.5rem}
+  .p-2{padding:.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-4{padding-left:1rem;padding-right:1rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}
+  .mt-1{margin-top:.25rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.mt-20{margin-top:5rem}.ml-4{margin-left:1rem}
+  .mb-4{margin-bottom:1rem}.mb-12{margin-bottom:3rem}
+  .pb-4{padding-bottom:1rem}
+  .rounded-md{border-radius:var(--radius-md)}
+  .rounded-lg{border-radius:var(--radius-lg)}
+  .rounded-2xl{border-radius:var(--radius-2xl)}
+  .shadow-md{box-shadow:var(--shadow-md)}
+  .shadow-xl{box-shadow:var(--shadow-xl)}
+  .shadow{box-shadow:var(--shadow)}
+  .w-full{width:100%}.w-24{width:6rem}.w-64{width:16rem}
+  .min-h-screen{min-height:100vh}
+  .max-w-7xl{max-width:80rem} /* 1120px at 14px base */
+  .max-w-screen-xl{max-width: 1680px; width: 98vw; } /* Constrain max width and use most of the screen */
+  .mx-auto{margin-left:auto;margin-right:auto}
+  .text-center{text-align:center}.gap-8{gap:2rem}
+  .flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.flex-col{flex-direction:column}.flex-row{flex-direction:row}
+  .flex-grow{flex-grow:1}
+  .flex-shrink-0{flex-shrink:0}
+  .fixed{position:fixed}.sticky{position:sticky}
+  .inset-0{top:0;right:0;bottom:0;left:0}.top-5{top:1.25rem}.right-5{right:1.25rem}
+  .top-4{top:1rem}.right-4{right:1rem}
+  .z-50{z-index:50}
+  .gap-2{gap:.5rem}.gap-4{gap:1rem}
+  .gap-y-2{row-gap:.5rem}.gap-x-4{column-gap:1rem}.border{border:1px solid var(--gray-300)}
+  .border-2{border:2px solid #adadad}
+  .border-l-4{border-left-width:4px}
+  .border-gray-400{border-color:var(--gray-400)}
+  .border-b{border-bottom:1px solid var(--gray-300)}
+  .bg-opacity-50{background-color:rgba(75, 85, 99, 0.5)}
+  .overflow-y-auto{overflow-y:auto}
+  .overflow-x-auto{overflow-x:auto}
+  .grid{display:grid}
+  .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}
+  .md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .col-span-1{grid-column:span 1 / span 1}
+  .col-span-2{grid-column:span 2 / span 2}
+  .md\:col-span-1{grid-column:span 1 / span 1}
+  .lg\:col-span-2{grid-column:span 2 / span 2}
+  .block{display:block}
+  .hidden{display:none}
+  .rounded-md{border-radius:var(--radius-md)}
+  .focus\:ring-2:focus{outline:2px solid rgba(59,130,246,.5)}
+  .focus\:ring-blue-300:focus{outline-color:rgba(59,130,246,.5)}
+  .focus\:border-blue-500:focus{border-color:var(--blue-500)}
+  .focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+  .hover\:bg-teal-800:hover{background:var(--teal-800)}
+  .hover\:bg-purple-700:hover{background:var(--purple-700)}
+  .border-blue-500{border-color:var(--blue-500)}
+  .hover\:bg-blue-600:hover{background:var(--blue-600)}
+  .hover\:scale-105:hover{transform:scale(1.05)}
+  .hover\:text-gray-800:hover{color:var(--gray-800)}
+  .active\:scale-95:active{transform:scale(.95)}
+  .transition{transition:all .2s ease}
+  .transform{transform:translateZ(0)}
+  .table-container th,.table-container td{white-space:nowrap}
+  .border-red-500{border-color:#ef4444!important}
+  .particulars-col{text-align:left}
+  .styled-button{cursor:pointer;transition:all .2s;padding:0.25rem 0.5rem}
+  .styled-button:active{transform:scale(.98)}
+  #loanDetailsForm label {
+    white-space: normal;
+    font-size: 0.95rem;
+  }
+  #loanDetailsForm {
+    min-width: 0;
+    width: 100%;
+  }
+  .printable-area {
+    box-sizing: border-box;
+    width: min(100%, calc(210mm - 10mm));
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 5mm;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #fff;
+  }
+  .printable-area table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  #loanTable th, #loanTable td {
+    font-size: 9pt;
+  }
+  /* Inputs */
+  .button-disabled {
+      background-color: var(--gray-400) !important;
+      cursor: not-allowed;
+      transform: none !important;
+  }
+  .bg-inserted-row { background-color: var(--gray-200); }
+  input[type="text"],input[type="date"],select{
+    width:100%;padding:.5rem .6rem;border-radius:10px;border:2px solid #050c6e;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.03) inset
+  }
+  input[readonly] {
+    /* background-color: var(--gray-100); */ /* Shading removed as requested */
+    cursor: not-allowed; /* Show restricted cursor on readonly fields */
+  }
+
+  /* PDF-friendly helpers (used for A4 export) */
+  .printable-area table { width: 100%; table-layout: auto; border-collapse: collapse; }
+  .printable-area thead { display: table-header-group; }
+  .printable-area tfoot { display: table-footer-group; }
+  .printable-area tr { page-break-inside: avoid; break-inside: avoid; }
+  .printable-area th, .printable-area td { word-break: break-word; hyphens: auto; }
+  #loanTable th { text-align: center; color: #000 !important; background: #f9fafb !important; }
+  #headerMeta { display: none; }
+  .print-only { display: none; }
+  .print-summary-row { display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .print-summary-item { text-align: center; min-width: 10rem; }
+  .print-summary-label { display: block; font-weight: 600; margin-bottom: .15rem; }
+  #headerMeta { margin-top: 0.75rem; }
+  #headerMeta .text-sm { font-size: 0.95rem; }
+
+  /* Simple responsive breakpoints (mimic md/lg) */
+  @media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:col-span-1{grid-column:span 1 / span 1}.md\:p-8{padding:2rem}}
+  @media (min-width:1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-8{grid-template-columns:repeat(8,minmax(0,1fr))}.lg\:col-span-1{grid-column:span 1 / span 1}.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:flex-row{flex-direction:row}.lg\:w-64{width:16rem}}
+
+  /* Print-specific styles */
+  @page {
+    size: A4 portrait;
+    margin: 5mm !important;
+  }
+  @media print {
+    html, body { width: auto !important; min-width: auto !important; background: #fff !important; padding: 0; margin: 0; font-size: 11pt; }
+    .print-only { display: none !important; }
+    .no-print, #controls-sidebar { display: none !important; }
+    .printable-area {
+      box-shadow: none;
+      padding: 5mm !important; /* ensure 5mm padding on print */
+      border-radius: 0;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: auto !important;
+      margin: 0 auto !important;
+      border: none;
+    }
+    #headerMeta { display: none !important; }
+    #loanTable { 
+      font-size: 9pt; 
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse; /* Use collapse for cleaner borders */
+    }
+    #loanTable thead { display: table-header-group; } /* Ensures header repeats on each page */
+    #loanTable th, #loanTable td { padding: 2px; border: 1px solid #000; text-align: right; vertical-align: top; }
+    #loanTable th { text-align: center; }
+    #loanTable th:nth-child(1), #loanTable td:nth-child(1) { width: 3%; text-align: center; } /* Sl */
+    #loanTable th:nth-child(2), #loanTable td:nth-child(2) { width: 8%; text-align: center; } /* Date */
+    #loanTable th:nth-child(3) { width: 18%; white-space: normal; word-break: break-word; }
+    #loanTable td:nth-child(3) { width: 18%; text-align: left; white-space: normal; word-break: break-word; } /* Particulars */
+    #loanTable th:nth-child(4), #loanTable td:nth-child(4) { width: 9%; }  /* Amount */
+    #loanTable th:nth-child(5), #loanTable td:nth-child(5) { width: 9%; white-space: normal; word-break: break-word; }  /* Debit */
+    #loanTable th:nth-child(6), #loanTable td:nth-child(6) { width: 11%; white-space: normal; word-break: break-word; }  /* Penalty */
+    #loanTable th:nth-child(7), #loanTable td:nth-child(7) { width: 9%; white-space: normal; word-break: break-word; }  /* Credit */
+    #loanTable th:nth-child(8), #loanTable td:nth-child(8) { width: 12%; white-space: normal; word-break: break-word; } /* Balance */
+    #loanTable th:nth-child(9), #loanTable td:nth-child(9) { width: 4%; text-align: center; } /* Days */
+    #loanTable th:nth-child(10), #loanTable td:nth-child(10){ width: 6%; } /* Rate */
+    #loanTable th:nth-child(11), #loanTable td:nth-child(11){ width: 11%; } /* Interest */
+    #loanTable td:nth-child(11) { text-align: center; } /* Center align Interest data */
+    h1, h2, p { line-height: 1.2 !important; }
+  }
+  /* Ensure the form takes full width in the workspace */
+  #loanDetailsForm {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+  }
+  @media (max-width: 1024px) {
+    #loanDetailsForm { grid-template-columns: repeat(2, 1fr); }
+  }
+
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+<!-- =================================================================================
+     HTML STRUCTURE
+     ================================================================================= -->
+<body class="bg-gray-100 min-h-screen p-4">
+  <!-- Message Box -->
+  <div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div id="messageBoxContent" class="relative p-5 border w-96 shadow-lg rounded-md bg-blue-50 text-center">
+      <p id="messageText" class="text-gray-800 text-lg"></p>
+      <div class="mt-4">
+        <button onclick="InterestCalcLogic.hideMessageBox()" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-24 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan Product & Rate Configurator Modal -->
+  <div id="rateChangeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div class="relative p-5 border w-full shadow-lg rounded-md bg-white flex flex-col" style="max-width: 850px; max-height: 90vh;">
+      <div class="flex justify-between items-center mb-4 flex-shrink-0">
+        <h3 class="text-xl font-bold text-green-700">Loan Product & Rate Configurator</h3>
+        <button onclick="InterestCalcLogic.hideRateChangeModal()" class="text-gray-500 hover:text-gray-800 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      
+      <!-- Top Section: Product Selection / Creation -->
+      <div class="p-4 rounded-lg border border-gray-200 mb-4 flex-shrink-0" style="background-color: #f9fafb;">
+        <!-- View/Select Mode -->
+        <div id="productSelectMode">
+          <label class="block text-sm font-bold mb-1 text-gray-700">Select Existing Loan Product:</label>
+          <div class="flex gap-2">
+            <select id="rateManagerLoanSelector" class="flex-grow rounded-md border-gray-300 shadow-sm p-2 border" onchange="InterestCalcLogic.refreshRateManagerTable()">
+              <!-- Populated dynamically -->
+            </select>
+            <button onclick="InterestCalcLogic.editSelectedProduct()" class="px-3 py-2 bg-yellow-500 text-white text-sm font-medium rounded-md hover:bg-yellow-600 shadow-sm whitespace-nowrap styled-button">Edit Product</button>
+            <button onclick="InterestCalcLogic.deleteSelectedProduct()" class="px-3 py-2 bg-red-50 text-red-600 border border-red-500 text-sm font-medium rounded-md hover:bg-red-100 shadow-sm whitespace-nowrap styled-button">Delete Product</button>
+            <button onclick="InterestCalcLogic.toggleAddProductMode(true)" class="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow-sm whitespace-nowrap styled-button">+ Add New Product</button>
+          </div>
+        </div>
+
+        <!-- Add New Product Mode (Hidden by default) -->
+        <div id="productAddMode" class="hidden">
+          <h4 class="text-sm font-bold text-blue-700 mb-2 border-b pb-1">Define New Loan Product</h4>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">4-Digit GL Code</label>
+              <input type="text" id="newProductCode" placeholder="e.g. 3055" class="w-full p-2 border rounded text-sm focus:ring-blue-300" maxlength="4">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Loan Type Name</label>
+              <input type="text" id="newProductName" placeholder="e.g. SPECIAL PERSONAL LOAN" class="w-full p-2 border rounded text-sm focus:ring-blue-300">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Category</label>
+              <select id="newProductCategory" class="w-full p-2 border rounded text-sm focus:ring-blue-300">
+                <option value="AGRI">AGRI</option>
+                <option value="CMSME">CMSME</option>
+                <option value="PROJECT">PROJECT</option>
+                <option value="PERSONAL">PERSONAL</option>
+                <option value="TERM">TERM</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Capitalization</label>
+              <select id="newProductCap" class="w-full p-2 border rounded text-sm focus:ring-blue-300">
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Half Yearly">Half Yearly</option>
+                <option value="Yearly">Yearly</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="mt-4 p-3 border border-gray-300 border-dashed rounded-md bg-white">
+            <h5 class="text-xs font-bold text-gray-700 mb-1">Optional: Import Rate History from Excel</h5>
+            <p class="text-xs text-gray-500 mb-2">Excel format: First column must be Date (dd/mm/yyyy), a subsequent column must be Rate (e.g. 9.00). Headers don't strictly matter.</p>
+            <input type="file" id="newProductExcelFile" accept=".xlsx, .xls" class="block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" onchange="InterestCalcLogic.importRatesFromExcel(event)">
+          </div>
+
+          <div class="mt-4 flex gap-2 justify-end">
+            <button onclick="InterestCalcLogic.toggleAddProductMode(false)" class="px-4 py-1 text-white text-sm rounded styled-button" style="background-color: var(--gray-600);">Cancel</button>
+            <button onclick="InterestCalcLogic.saveNewProduct()" class="px-4 py-1 bg-green-700 text-white text-sm font-bold rounded styled-button">Save Product</button>
+          </div>
+        </div>
+
+        <!-- Read-only Display of Selected Product Properties -->
+        <div id="productPropertiesDisplay" class="mt-3 pt-3 border-t grid gap-2 text-sm text-gray-700 hidden" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+          <div><span class="font-bold text-gray-500">Code:</span> <span id="dispProductCode">-</span></div>
+          <div><span class="font-bold text-gray-500">Category:</span> <span id="dispProductCategory">-</span></div>
+          <div><span class="font-bold text-gray-500">Capitalization:</span> <span id="dispProductCap">-</span></div>
+        </div>
+      </div>
+
+      <!-- Rate Table Section -->
+      <div class="flex-grow overflow-y-auto border rounded-lg" style="min-height: 200px; max-height: 45vh;">
+        <table class="w-full text-sm text-left border-collapse relative">
+          <thead class="bg-gray-100 sticky top-0 shadow-sm z-10 text-gray-700 text-xs uppercase" style="top: 0; background-color: var(--gray-100);">
+            <tr>
+              <th class="p-2 border-b border-gray-300 text-center" style="width: 3rem;">Sl</th>
+              <th class="p-2 border-b border-gray-300">Start Date</th>
+              <th class="p-2 border-b border-gray-300">To Date</th>
+              <th class="p-2 border-b border-gray-300" style="width: 8rem;">Rate (%)</th>
+              <th class="p-2 border-b border-gray-300 text-center" style="width: 6rem;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rateManagerTableBody">
+            <!-- Rows populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex justify-between items-center mt-4 flex-shrink-0 border-t pt-4">
+        <button type="button" onclick="InterestCalcLogic.addRateRow()" class="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded shadow-sm styled-button" id="btnAddRateRow">+ Add Rate Row</button>
+        <div class="flex gap-4">
+          <button type="button" onclick="InterestCalcLogic.hideRateChangeModal()" class="px-4 py-2 text-white text-sm rounded shadow-sm styled-button" style="background-color: var(--gray-600);">Close</button>
+          <button type="button" onclick="InterestCalcLogic.saveRateManager()" class="px-4 py-2 bg-red-600 text-white text-sm font-bold rounded shadow-sm styled-button" id="btnSaveRates">Save Rates</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- Add Rate Entry Sub-Modal -->
+  <div id="addRateEntryModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full z-[60] hidden justify-center items-center">
+    <div class="relative p-5 border w-96 shadow-2xl rounded-md bg-white">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">New Rate Entry</h3>
+      <div class="flex flex-col gap-4">
+        <div>
+          <label class="block text-sm font-medium">Target Category</label>
+          <select id="addRateLoanType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Effective Date</label>
+          <input type="date" id="addRateDate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Rate (%)</label>
+          <input type="number" step="0.01" id="addRateValue" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g. 9.50"/>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button onclick="InterestCalcLogic.hideAddRateModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
+        <button onclick="InterestCalcLogic.saveNewRateEntry()" class="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-teal-800">Save Rate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Installment Modal -->
+  <div id="installmentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium text-gray-800 text-center">Term Loan Details Required</h3>
+      <p class="text-sm text-gray-600 text-center mt-1">Please provide the installment details for this loan.</p>
+      <div class="mt-4 flex flex-col gap-4">
+        <div><label class="block text-sm font-medium">Grace Period (in Months)</label><input type="text" id="gracePeriodModal" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g., 6"/></div>
+        <div><label class="block text-sm font-medium">Installment Frequency</label><select id="installmentFrequencyModal" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"><option value="">Select...</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="half-yearly">Half-Yearly</option><option value="yearly">Yearly</option></select></div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2"><button onclick="InterestCalcLogic.saveInstallmentDataAndContinue()" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700">Save and Continue</button></div>
+    </div>
+  </div>
+
+  <!-- Add New Loan Type Modal -->
+  <div id="addLoanTypeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium text-gray-800 text-center">Add New Loan Type</h3>
+      <p class="text-sm text-gray-600 text-center mt-1">This will add a new loan type to the calculator's internal maps.</p>
+      <div class="mt-4 flex flex-col gap-4">
+        <div>
+          <label class="block text-sm font-medium">Loan Rate Type</label>
+          <select id="newLoanRateType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" onchange="handleNewLoanRateTypeChange()">
+            <option value="general" selected>General Rate Loan</option>
+            <option value="special">Special Rate Loan</option>
+          </select>
+        </div>
+        <div><label class="block text-sm font-medium">Loan Head (4-digit code)</label><input type="text" id="newLoanHead" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g., 9999" maxlength="4" /></div>
+        <div><label class="block text-sm font-medium">Loan Type</label><input type="text" id="newLoanTypeName" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g., PERSONAL LOAN" /></div>
+        <div id="specialRateContainer" class="hidden flex flex-col gap-4 border-t-2 border-b-2 border-gray-200 py-4">
+            <h4 class="text-sm font-semibold text-center text-gray-700">Special Rate Configuration</h4>
+            <div><label class="block text-sm font-medium">Fixed Interest Rate (%)</label><input type="text" id="newFixedRate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g., 7.0"/></div>
+            <div>
+              <label class="block text-sm font-medium">Fixed Rate Applicable Till</label>
+              <select id="newFixedRateApplicableTill" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+                <option value="loan_due_date" selected>Loan Due Date</option>
+                <option value="whole_period">Whole Calculation Period</option>
+              </select>
+            </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium" id="pullRateHistoryLabel">Pull Interest Rate History From</label>
+          <select id="newLoanCopyRates" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" onchange="handleNewLoanGroupChange()"></select>
+        </div>
+        <div id="newLoanCmsmeSubTypeContainer" class="hidden">
+          <label class="block text-sm font-medium">CMSME Sub-Type</label>
+          <select id="newLoanCmsmeSubType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+            <option value="MANUFACTURING">Manufacturing</option>
+            <option value="TRADING">Trading</option>
+            <option value="SERVICE">Service</option>
+          </select>
+        </div>
+        <div id="newLoanPersonalLoanSubTypeContainer" class="hidden">
+          <label class="block text-sm font-medium">Personal Loan Sub-Type</label>
+          <select id="newLoanPersonalLoanSubType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+            <option value="OTHERS">Others</option>
+            <option value="BKB STAFF">BKB Staff</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Interest Capitalization</label>
+          <select id="newLoanCapitalization" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+            <option value="monthly">Monthly</option>
+            <option value="quarterly" selected>Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Loan Structure (for Penalty Logic)</label>
+          <select id="newLoanStructure" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+            <option value="Continuous">Continuous</option>
+            <option value="Term" selected>Term</option>
+            <option value="Agri">Agri</option>
+            <option value="Project">Project</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Apply Penalty?</label>
+          <select id="newLoanPenalty" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button onclick="InterestCalcLogic.hideAddLoanTypeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md hover:bg-gray-300">Cancel</button>
+        <button onclick="InterestCalcLogic.saveNewLoanType()" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700">Save Loan Type</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculation Method Modal -->
+  <div id="calculationMethodModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium text-gray-800 text-center">Select Calculation Method</h3>
+      <p class="text-sm text-gray-600 text-center mt-1">Choose the source of the loan data.</p>
+      <div class="mt-4 flex flex-col gap-4">
+        <button onclick="InterestCalcLogic.selectCalculationMethod('ledger')" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700">
+          Calculation of loans from Ledger
+        </button>
+        <button onclick="InterestCalcLogic.selectCalculationMethod('cbs')" class="px-4 py-2 bg-green-700 text-white text-base font-medium rounded-md hover:bg-teal-800">
+          Calculation of Loans from CBS
+        </button>
+        <button onclick="InterestCalcLogic.selectCalculationMethod('headChange')" class="px-4 py-2 bg-purple-600 text-white text-base font-medium rounded-md hover:bg-purple-700">
+          Calculate head Change loans
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Show Available Loans Modal -->
+  <div id="availableLoansModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
+    <div class="relative p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-medium text-gray-800 text-center">Available Loan Types</h3>
+      <p class="text-sm text-gray-600 text-center mt-1">List of all loan types currently configured in the calculator.</p>
+      <div class="mt-4 h-96 overflow-y-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-200 sticky top-0">
+            <tr>
+              <th scope="col" class="px-1 py-3 w-16 text-center">Sl. No.</th>
+              <th scope="col" class="px-2 py-3">Loan Head</th>
+              <th scope="col" class="px-2 py-3">Loan Type Name</th>
+            </tr>
+          </thead>
+          <tbody id="availableLoansTableBody">
+            <!-- Loan types will be injected here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button onclick="InterestCalcLogic.hideAvailableLoansModal()" class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-screen-xl w-full mx-auto">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="bg-white p-4 md:p-8 rounded-lg shadow-xl printable-area flex-grow">
+            <!-- Header (moved to top for print-only logo) -->
+        <div class="flex flex-col items-center justify-center text-center border-b pb-1 mb-4" style="position: relative;">
+          <h1 class="text-2xl font-bold" style="line-height: 1.2;">Bangladesh Krishi Bank</h1>
+          <p class="text-xl font-medium" style="line-height: 1.2;">Default Loan Calculator</p>
+              <div id="headerMeta" class="mt-2 text-center no-print">
+            <div id="headerAccountNumber" class="text-sm font-medium">A/C No: </div>
+            <div id="headerCalculationDate" class="text-sm font-medium">Calculation Date: </div>
+          </div>
+        </div>
+        <!-- Logo for Print -->
+        <div class="print-only" style="position: absolute; top: 10px; left: 10px;">
+            <img src="../../assets/images/bkb_logo.png" alt="BKB Logo" style="height: 50px;">
+        </div>
+
+        <!-- Loan Details -->
+        <div id="loanDetailsForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-x-4 gap-y-2 mb-4">
+          <!-- Row 1 -->
+            <div class="lg:col-span-1 no-print">
+            <label class="block text-sm font-medium">Calculation Start date</label>
+              <input type="date" id="calcStartDate" onchange="InterestCalcLogic.updateHeaderMeta()" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+            </div>
+            <div class="lg:col-span-1 no-print">
+            <label class="block text-sm font-medium">Calculation End Date</label>
+            <input type="date" id="calcEndDate" onchange="InterestCalcLogic.updateHeaderMeta()" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm focus:border-blue-500 focus:ring-blue-500"/>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium">Branch Name</label><input type="text" id="branch_name" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium">A/C Number</label><input type="text" id="deposit_account_no" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium">A/C Name</label><input type="text" id="applicant_name_bn" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Loan Due Date</label>
+            <input type="text" id="loanDueDate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div id="classificationWrapper" class="lg:col-span-1">
+            <label class="block text-sm font-medium">Classification</label><input type="text" id="classification" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">CL Date</label><input type="text" id="clDate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium">Loan Type</label><input type="text" id="loan_scheme_name" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="block text-sm font-medium">Address</label>
+            <input type="text" id="address" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Loan Term (in months)</label><input type="text" id="loanTerm" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Sanction Date</label>
+            <input type="text" id="sanction_date" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Installment Due Date</label><input type="text" id="installmentDueDate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Installment Size</label><input type="text" id="installmentSize" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Sanction Amount</label>
+            <input type="text" id="sanctionAmount" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Sanction Rate</label>
+            <input type="text" id="sanctionRate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" readonly/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Grace Period</label><input type="text" id="gracePeriod" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"/>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Installment Frequency</label>
+            <select id="installmentFrequency" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
+              <option value="">Select...</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="half-yearly">Half-Yearly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <div class="lg:col-span-1">
+            <label class="block text-sm font-medium">Penalty Rate</label>
+            <input type="text" id="penaltyRate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" value="1.50%"/>
+          </div>
+
+          <!-- Fields not in layout but needed for JS -->
+          <div class="hidden">
+          </div>
+        </div>
+
+        <!-- Transaction Table -->
+        <div class="table-container w-full">
+          <table id="loanTable" class="w-full">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="p-2 border border-gray-400">Sl</th>
+                <th class="p-2 border border-gray-400">Date</th>
+                <th class="p-2 border border-gray-400">Particulars</th>
+                <th class="p-2 border border-gray-400">Amount</th>
+                <th class="p-2 border border-gray-400">Debit</th>
+                <th class="p-2 border border-gray-400">Penalty</th>
+                <th class="p-2 border border-gray-400">Credit</th>
+                <th class="p-2 border border-gray-400">Balance</th>
+                <th class="p-2 border border-gray-400">Days</th>
+                <th class="p-2 border border-gray-400">Rate</th>
+                <th class="p-2 border border-gray-400">Interest</th>
+              </tr>
+            </thead>
+            <tbody id="loanTableBody">
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Print-only Footer -->
+        <div id="print-footer" class="hidden">
+          <p>This Calculation is subject to Calculation Dates and Interest Rates.<br>
+            Developed by- Tanvir Ahmed, T-829, Officer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+window.onerror = function(message, source, lineno, colno, error) {
+    if (window.require) {
+        const fs = require('fs');
+        fs.appendFileSync('C:/Users/User/.gemini/antigravity-ide/brain/76f411ee-aeef-494b-97ad-faf66b17746f/scratch/renderer_errors.txt', `Error: ${message} at ${source}:${lineno}:${colno}\n`);
+    }
+};
+window.addEventListener("unhandledrejection", function(promiseRejectionEvent) { 
+    if (window.require) {
+        const fs = require('fs');
+        fs.appendFileSync('C:/Users/User/.gemini/antigravity-ide/brain/76f411ee-aeef-494b-97ad-faf66b17746f/scratch/renderer_errors.txt', `Unhandled Rejection: ${promiseRejectionEvent.reason}\n`);
+    }
+});
+</script>
+<script src="../../assets/js/xlsx.full.min.js"></script>
+<script src="../../assets/js/jspdf.umd.min.js"></script>
+<script src="../../assets/js/jspdf.plugin.autotable.min.js"></script>
+<script src="../../assets/js/html2pdf.bundle.min.js"></script>
+<script src="../../assets/js/date-fns.min.js"></script>
+<script src="../../assets/js/decimal.min.js"></script>
+<script src="../../assets/js/interest-rates.js"></script>
+<script src="../../assets/engines/interest-calc-engine.js"></script>
+</body>
+</html>

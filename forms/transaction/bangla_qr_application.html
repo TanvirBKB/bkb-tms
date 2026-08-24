@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangla QR Merchant Application Form - 3 Pages (Offline Ready)</title>
+
+    <style>
+        :root {
+            --brand-green: #00a651;
+            --border-color: #718096;
+            --text-color: #000000;
+            --bg-page: #ffffff;
+            --bg-body: #f1f5f9;
+
+            /* TYPOGRAPHY ASSIGNMENTS AS REQUESTED */
+            --font-size-body: 11.5pt;
+            /* Form body size (adjusted for readability) */
+            --font-size-header: 12.5pt;
+            /* Section headers size */
+            --font-size-bank-title: 16pt;
+            /* Bank main title size */
+            --font-size-subtitle: 12.5pt;
+            /* Bank subtitle size */
+        }
+
+        /* 
+           Offline-capable font stack. Will instantly render SolaimanLipi if installed 
+           locally, or seamlessly fallback to high-quality system-level Bengali fonts.
+        */
+        body {
+            font-family: 'SolaimanLipi', 'Siyam Rupali', 'Kalpurush', 'Vrinda', 'Nirmala UI', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            font-size: var(--font-size-body);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Ensure form fields inherit SolaimanLipi font from body */
+        input, textarea, select {
+            font-family: inherit;
+        }
+
+        /* A4 Page Setup for Web Preview and Electron rendering */
+        .a4-page {
+            width: 8.27in;
+            height: 11.69in;
+            min-height: 11.69in;
+            padding: 0.5in;
+            margin: 1.5rem auto;
+            background: var(--bg-page);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+
+        /* Print Media Setup */
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .a4-page {
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: 8.27in !important;
+                height: 11.69in !important;
+                padding: 0.5in !important;
+                page-break-after: always;
+                position: relative;
+                float: none;
+            }
+
+            /* Force exact 0.5-inch margins through print engine */
+            @page {
+                size: A4 portrait;
+                margin: 0.5in;
+            }
+        }
+
+        /* Flex rows to align left-side boxes perfectly vertically */
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            /* Reduced from 9px */
+            width: 100%;
+        }
+
+        /* Consistent standard label width for vertical alignment on the left side */
+        .form-label {
+            width: 170px;
+            flex-shrink: 0;
+            font-weight: 600;
+            color: #000000;
+            padding-right: 8px;
+            box-sizing: border-box;
+            line-height: 1.4;
+        }
+
+        /* Standardized form inputs with adjusted height to fit 11.5pt font comfortably */
+        .form-input-box {
+            border: 1px solid #718096;
+            border-radius: 2px;
+            padding: 2px 6px;
+            font-size: var(--font-size-body);
+            height: 25px;
+            /* Increased from 22px to prevent clipping of the 11.5pt text */
+            outline: none;
+            width: 100%;
+            transition: border-color 0.15s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input-box:focus {
+            border-color: #00a651;
+            background-color: #fcfdfa;
+        }
+
+        /* Checkbox customization - Force BLACK ticks and 14px square box matching the original image */
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1px solid #718096;
+            border-radius: 2px;
+            display: inline-grid;
+            place-content: center;
+            cursor: pointer;
+            outline: none;
+            background: #fff;
+            position: relative;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox:checked::before {
+            content: "✓";
+            font-size: 11px;
+            font-weight: bold;
+            color: #000000;
+            /* STRICT BLACK CHECKMARKS */
+        }
+
+        /* Box grids for letters/numbers */
+        .char-grid-box {
+            width: 18px;
+            height: 22px;
+            border: 1px solid #718096;
+            border-right: none;
+            text-align: center;
+            font-size: var(--font-size-body);
+            font-family: inherit;
+            font-weight: 500;
+            text-transform: uppercase;
+            outline: none;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .char-grid-box:last-child {
+            border-right: 1px solid #718096;
+        }
+
+        /* Form titles and headers */
+        .section-header {
+            background-color: #00a651;
+            color: #ffffff;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 700;
+            font-size: var(--font-size-header);
+            /* EXACTLY 12.5pt */
+            padding: 5px 0;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Utility classes replacement for offline operation */
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+
+        .shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .items-start {
+            align-items: flex-start;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .items-stretch {
+            align-items: stretch;
+        }
+
+        .gap-1 {
+            gap: 0.25rem;
+        }
+
+        .gap-1\.5 {
+            gap: 0.375rem;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 0.75rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .gap-x-4 {
+            column-gap: 1rem;
+        }
+
+        .gap-y-2 {
+            row-gap: 0.5rem;
+        }
+
+        .gap-y-1\.5 {
+            row-gap: 0.375rem;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid-cols-12 {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+        }
+
+        .col-span-4 {
+            grid-column: span 4 / span 4;
+        }
+
+        .col-span-5 {
+            grid-column: span 5 / span 5;
+        }
+
+        .col-span-7 {
+            grid-column: span 7 / span 7;
+        }
+
+        .col-span-8 {
+            grid-column: span 8 / span 8;
+        }
+
+        .col-span-12 {
+            grid-column: span 12 / span 12;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .h-auto {
+            height: auto;
+        }
+
+        .w-3\.5 {
+            width: 14px;
+        }
+
+        .h-\[15px\] {
+            height: 15px;
+        }
+
+        .w-5 {
+            width: 1.25rem;
+        }
+
+        .h-5 {
+            height: 1.25rem;
+        }
+
+        .w-8 {
+            width: 2rem;
+        }
+
+        .h-8 {
+            height: 2rem;
+        }
+
+        /* Percentages */
+        .w-\[15\%\] {
+            width: 15%;
+        }
+
+        .w-\[18\%\] {
+            width: 18%;
+        }
+
+        .w-\[20\%\] {
+            width: 20%;
+        }
+
+        .w-\[22\%\] {
+            width: 22%;
+        }
+
+        .w-\[28\%\] {
+            width: 28%;
+        }
+
+        .w-\[30\%\] {
+            width: 30%;
+        }
+
+        .w-\[35\%\] {
+            width: 35%;
+        }
+
+        .w-\[40\%\] {
+            width: 40%;
+        }
+
+        .w-\[45\%\] {
+            width: 45%;
+        }
+
+        .w-\[50\%\] {
+            width: 50%;
+        }
+
+        /* Spacing offsets */
+        .mt-0\.5 {
+            margin-top: 0.125rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 0.75rem;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mr-1 {
+            margin-right: 0.25rem;
+        }
+
+        .mx-2 {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .mx-0\.5 {
+            margin-left: 0.125rem;
+            margin-right: 0.125rem;
+        }
+
+        .p-0 {
+            padding: 0;
+        }
+
+        .p-1 {
+            padding: 0.25rem;
+        }
+
+        .p-1\.5 {
+            padding: 0.375rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .pl-1 {
+            padding-left: 0.25rem;
+        }
+
+        .pl-2 {
+            padding-left: 0.5rem;
+        }
+
+        .pr-1 {
+            padding-right: 0.25rem;
+        }
+
+        .pr-2 {
+            padding-right: 0.5rem;
+        }
+
+        .pt-0\.5 {
+            padding-top: 0.125rem;
+        }
+
+        .pt-1 {
+            padding-top: 0.25rem;
+        }
+
+        .pt-1\.5 {
+            padding-top: 0.375rem;
+        }
+
+        .pt-2 {
+            padding-top: 0.5rem;
+        }
+
+        /* Colors & Borders */
+        .bg-slate-100 {
+            background-color: #f1f5f9;
+        }
+
+        .bg-slate-50 {
+            background-color: #f8fafc;
+        }
+
+        .bg-white {
+            background-color: #ffffff;
+        }
+
+        .bg-transparent {
+            background-color: transparent;
+        }
+
+        .bg-\[\#00a651\] {
+            background-color: #00a651;
+        }
+
+        .border-slate-200 {
+            border-color: #e2e8f0;
+        }
+
+        .border-slate-300 {
+            border-color: #cbd5e1;
+        }
+
+        .border-slate-400 {
+            border-color: #94a3b8;
+        }
+
+        .border-slate-500 {
+            border-color: #64748b;
+        }
+
+        .border-red-400 {
+            border-color: #f87171;
+        }
+
+        .border-none {
+            border-style: none;
+        }
+
+        .border-t {
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .border-l {
+            border-left: 1px solid #cbd5e1;
+        }
+
+        .border {
+            border: 1px solid #94a3b8;
+        }
+
+        .border-dashed {
+            border-style: dashed;
+        }
+
+        .rounded {
+            border-radius: 4px;
+        }
+
+        .rounded-md {
+            border-radius: 6px;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        /* Position Utilities */
+        .absolute {
+            position: absolute;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .inset-0 {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .inset-x-0 {
+            left: 0;
+            right: 0;
+        }
+
+        .bottom-0 {
+            bottom: 0;
+        }
+
+        .bottom-4 {
+            bottom: 1rem;
+        }
+
+        .left-8 {
+            left: 2rem;
+        }
+
+        .right-8 {
+            right: 2rem;
+        }
+
+        /* Typography sizing & alignment */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-justify {
+            text-align: justify;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-normal {
+            font-weight: 400;
+        }
+
+        .font-mono {
+            font-family: monospace, Courier, monospace;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .tracking-wide {
+            letter-spacing: 0.025em;
+        }
+
+        .tracking-tighter {
+            letter-spacing: -0.05em;
+        }
+
+        .leading-none {
+            line-height: 1;
+        }
+
+        .leading-tight {
+            line-height: 1.25;
+        }
+
+        .leading-relaxed {
+            line-height: 1.625;
+        }
+
+        .text-white {
+            color: #ffffff;
+        }
+
+        .text-slate-300 {
+            color: #cbd5e1;
+        }
+
+        .text-slate-400 {
+            color: #94a3b8;
+        }
+
+        .text-slate-500 {
+            color: #64748b;
+        }
+
+        .text-slate-600 {
+            color: #000000;
+        }
+
+        .text-slate-700 {
+            color: #000000;
+        }
+
+        .text-slate-800 {
+            color: #000000;
+        }
+
+        .text-green-600 {
+            color: #16a34a;
+        }
+
+        .text-red-600 {
+            color: #dc2626;
+        }
+
+        .text-\[\#00a651\] {
+            color: #00a651;
+        }
+
+        /* ASSIGNED EXPLICIT PT VALUE RULES */
+        .text-body-size {
+            font-size: var(--font-size-body);
+        }
+
+        .text-header-size {
+            font-size: var(--font-size-header);
+        }
+
+        .text-bank-title {
+            font-size: var(--font-size-bank-title);
+        }
+
+        .text-subtitle {
+            font-size: var(--font-size-subtitle);
+        }
+
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body class="bg-slate-100 text-slate-800 text-body-size">
+
+    <!-- PAGE 1 CONTAINER -->
+    <div class="a4-page relative" id="page-1">
+
+        <!-- Header Section (Tightened vertical margins) -->
+        <div class="flex justify-between items-start mb-1">
+            <!-- Left Logo Placeholder (0.7-inch perfectly circular as requested) -->
+            <div class="flex flex-col items-start">
+                <div id="logo-container" class="flex items-center justify-center relative overflow-hidden"
+                    style="width: 0.7in; height: 0.7in;">
+                    <img id="logo-img" class="absolute inset-0 w-full h-full object-cover rounded-full"
+                        src="../../assets/images/bkb_logo.png" alt="Bank Logo">
+                </div>
+            </div>
+
+            <!-- Central Title Texts (Reduced vertical gaps) -->
+            <div class="text-center flex-1 mx-2">
+                <h2 class="text-[#00a651] font-bold text-bank-title leading-tight" style="margin: 0;">বাংলাদেশ কৃষি
+                    ব্যাংক</h2>
+                <h3 class="font-bold text-subtitle tracking-wide text-slate-700 leading-none"
+                    style="margin: 2px 0 0 0;">BANGLADESH KRISHI BANK</h3>
+                <p class="text-body-size text-slate-600 font-medium mt-0.5" style="margin: 2px 0 0 0;">এডিসি
+                    ম্যানেজমেন্ট বিভাগ, প্রধান কার্যালয়</p>
+            </div>
+
+            <!-- Right Side Bangla QR Logo Placeholder -->
+            <div class="flex flex-col items-end">
+                <div id="bangla-qr-container" class="flex items-center justify-center relative overflow-hidden"
+                    style="width: 0.7in; height: 0.7in;">
+                    <img id="bangla-qr-img" class="absolute inset-0 w-full h-full object-contain"
+                        src="../../assets/images/bangla_qr_logo.svg" alt="Bangla QR Logo">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form Title -->
+        <div class="bg-[#00a651] text-white text-center font-bold py-1 rounded-md text-header-size shadow-sm mb-2">
+            Bangla QR মার্চেন্ট আবেদন ফরম
+        </div>
+
+        <!-- Header Information Fields Group (Realigned to match exact layout offsets from original scan) -->
+        <div class="text-body-size">
+            <!-- Row 1: Applicant Branch Name (Aligned to 175px label width) -->
+            <div class="form-row">
+                <span class="font-semibold text-slate-700 shrink-0" style="width: 175px;">আবেদনকারী শাখার নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="branch_name" data-db-field="branch_name_bn" class="form-input-box font-medium">
+                </div>
+            </div>
+
+            <!-- Row 2: Date Grid, Application No, Merchant No (Aligned sequentially following image flow) -->
+            <div class="form-row justify-between">
+                <!-- Date Grid Segment -->
+                <div class="flex items-center">
+                    <span class="font-semibold pr-2 text-slate-700 shrink-0" style="width: 55px;">তারিখঃ</span>
+                    <div class="flex" id="date-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-date"
+                            onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+
+                <!-- Application Number -->
+                <div class="flex items-center" style="margin-left: 10px;">
+                    <span class="font-semibold pr-1 shrink-0 text-slate-700">আবেদন নং-</span>
+                    <input type="text" id="app_no" class="form-input-box" style="width: 140px;">
+                </div>
+
+                <!-- Merchant Number -->
+                <div class="flex items-center" style="margin-left: 10px;">
+                    <span class="font-semibold pr-1 shrink-0 text-slate-700">মার্চেন্ট নং-</span>
+                    <input type="text" id="merchant_no" class="form-input-box" style="width: 140px;">
+                </div>
+            </div>
+
+            <!-- Row 3: Merchant Type (Perfectly aligned horizontally to 175px label width) -->
+            <div class="form-row">
+                <span class="font-semibold text-slate-700 shrink-0" style="width: 175px;">মার্চেন্ট ধরণঃ</span>
+                <div class="flex items-center" style="width: 250px;">
+                    <input type="checkbox" id="merchant_type_regular" class="custom-checkbox"
+                        onclick="toggleOnlyOne('merchant_type', this)">
+                    <span class="font-medium text-slate-800">সাধারন (রেগুলার) মার্চেন্ট</span>
+                </div>
+                <div class="flex items-center" style="margin-left: 20px;">
+                    <input type="checkbox" id="merchant_type_micro" class="custom-checkbox"
+                        onclick="toggleOnlyOne('merchant_type', this)">
+                    <span class="font-medium text-slate-800">ক্ষুদ্র (মাইক্রো) মার্চেন্ট</span>
+                </div>
+            </div>
+
+            <!-- Row 4: Merchant Discount Rate (Label width aligned horizontally to 255px) -->
+            <div class="form-row">
+                <span class="font-semibold text-slate-700 shrink-0" style="width: 255px;">মার্চেন্ট ডিসকাউন্ট রেট
+                    (MDR):</span>
+                <div class="flex-1">
+                    <input type="text" id="mdr_rate" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Row 5: Prior Bangla QR usage (Label width aligned horizontally to 255px) -->
+            <div class="form-row">
+                <span class="font-semibold text-slate-700 shrink-0" style="width: 255px;">পূর্বে Bangla QR নেওয়া
+                    হয়েছেঃ</span>
+                <div class="flex items-center" style="width: 100px;">
+                    <input type="checkbox" id="prior_qr_yes" class="custom-checkbox"
+                        onclick="toggleOnlyOne('prior_qr', this)">
+                    <span class="font-medium text-slate-800">হ্যাঁ</span>
+                </div>
+                <div class="flex items-center" style="margin-left: 20px;">
+                    <input type="checkbox" id="prior_qr_no" class="custom-checkbox"
+                        onclick="toggleOnlyOne('prior_qr', this)">
+                    <span class="font-medium text-slate-800">না</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: MARCHENT / ESTABLISHMENT DETAILS -->
+        <div class="section-header">
+            মার্চেন্ট / প্রতিষ্ঠানের তথ্য
+        </div>
+
+        <div class="text-body-size">
+            <!-- Merchant Name (Bengali) -->
+            <div class="form-row">
+                <span class="form-label">মার্চেন্ট নাম (বাংলা)</span>
+                <div class="flex-1">
+                    <input type="text" id="merchant_name_bn" data-db-field="business_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Merchant Name (English) in Character Grid -->
+            <div class="form-row" style="align-items: flex-start;">
+                <div class="form-label" style="padding-top: 3px;">মার্চেন্ট নাম (ইংরেজি)</div>
+                <div class="flex-1">
+                    <div class="flex flex-wrap" id="eng-name-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-eng" onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ownership type -->
+            <div class="form-row">
+                <span class="form-label">ব্যবসার মালিকানাঃ</span>
+                <div class="flex-1 flex items-center gap-6">
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="ownership_single" class="custom-checkbox"
+                            onclick="toggleOnlyOne('ownership', this)">
+                        <span>ব্যক্তি মালিকানাধীন</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="ownership_partner" class="custom-checkbox"
+                            onclick="toggleOnlyOne('ownership', this)">
+                        <span>অংশীদার ভিত্তিক</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Organization Type -->
+            <div class="form-row" style="align-items: flex-start; margin-bottom: 12px;">
+                <div class="form-label" style="padding-top: 2px;">প্রতিষ্ঠানের ধরনঃ</div>
+                <div class="flex-1 grid grid-cols-3 gap-y-2.5">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_govt" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>সরকারী প্রতিষ্ঠান</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_business" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>ব্যবসা প্রতিষ্ঠান</span>
+                        </label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_semigovt" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>আধা সরকারী প্রতিষ্ঠান</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_edu" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>শিক্ষা প্রতিষ্ঠান</span>
+                        </label>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_auto" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>স্বায়ত্ত শাসিত প্রতিষ্ঠান</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="type_other" class="custom-checkbox"
+                                onclick="toggleOnlyOne('org_type', this)">
+                            <span>অন্যান্য</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address lines -->
+            <div class="form-row">
+                <span class="form-label">প্রতিষ্ঠানের ঠিকানাঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="org_address" data-db-field="business_address" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Thana and Zilla (Aligned layout) -->
+            <div class="form-row">
+                <span class="form-label">থানা ও জেলাঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">থানাঃ</span>
+                        <input type="text" id="thana" class="form-input-box">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">জেলাঃ</span>
+                        <input type="text" id="zilla" class="form-input-box">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service type with MCC embedded right -->
+            <div class="form-row">
+                <span class="form-label">সেবার ধরণঃ</span>
+                <div class="flex-1 flex items-center border border-slate-500 rounded px-1.5 py-0.5 bg-white h-[27px]"
+                    style="box-sizing: border-box;">
+                    <input type="text" id="service_type"
+                        class="flex-1 border-none outline-none text-body-size bg-transparent h-full" placeholder="">
+                    <div class="flex items-center gap-1 shrink-0 text-body-size border-l pl-2 border-slate-300">
+                        <span class="text-slate-600 font-medium">MCC <span
+                                class="text-[8px] text-slate-400 font-normal">(Merchant Category Code)</span></span>
+                        <div class="flex">
+                            <input type="text" maxlength="1"
+                                class="w-3.5 h-[16px] border border-slate-500 text-center text-[10px] font-mono p-0"
+                                id="mcc_1">
+                            <input type="text" maxlength="1"
+                                class="w-3.5 h-[16px] border border-slate-500 border-l-0 text-center text-[10px] font-mono p-0"
+                                id="mcc_2">
+                            <input type="text" maxlength="1"
+                                class="w-3.5 h-[16px] border border-slate-500 border-l-0 text-center text-[10px] font-mono p-0"
+                                id="mcc_3">
+                            <input type="text" maxlength="1"
+                                class="w-3.5 h-[16px] border border-slate-500 border-l-0 text-center text-[10px] font-mono p-0"
+                                id="mcc_4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile numbers -->
+            <div class="form-row">
+                <span class="form-label">মোবাইল নম্বরসমূহঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 100px; flex-shrink: 0;" class="font-semibold text-slate-700">মোবাইলঃ</span>
+                        <input type="text" id="mobile_no" data-db-field="mobile_no" class="form-input-box font-mono">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">QR
+                            মোবাইলঃ</span>
+                        <input type="text" id="qr_mobile_no" class="form-input-box font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="form-row">
+                <span class="form-label">ই-মেইল আইডিঃ</span>
+                <div class="flex-1">
+                    <input type="email" id="email" data-db-field="email" class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- Trade License No -->
+            <div class="form-row">
+                <span class="form-label">ট্রেড লাইসেন্স নম্বরঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="trade_license" data-db-field="trade_license_no"
+                        class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- eTIN -->
+            <div class="form-row">
+                <span class="form-label">ই-টিন নম্বরঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="etin" data-db-field="tin_no" class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- Monthly volume and metrics -->
+            <div class="form-row">
+                <span class="form-label">মাসিক লেনদেন তথ্যঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 120px; flex-shrink: 0;"
+                            class="font-semibold text-slate-700 leading-tight">লেনদেনের সংখ্যাঃ</span>
+                        <input type="text" id="monthly_tx_count" class="form-input-box">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 130px; flex-shrink: 0;"
+                            class="font-semibold text-slate-700 leading-tight">পরিমাণ (টাকা):</span>
+                        <input type="text" id="monthly_tx_vol" class="form-input-box">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maximum single limit (Expanded label offset to prevent line-wrapping) -->
+            <div class="form-row">
+                <span class="font-semibold text-slate-700 shrink-0 pr-2" style="width: 230px;">সর্বোচ্চ লেনদেনের পরিমান
+                    (টাকা):</span>
+                <div class="flex-1">
+                    <input type="text" id="max_tx_vol" class="form-input-box">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: PAYMENT / SETTLEMENT -->
+        <div class="section-header">
+            পেমেন্ট
+        </div>
+
+        <div class="text-body-size">
+            <!-- Bank Account Number -->
+            <div class="form-row">
+                <span class="form-label">ব্যাংক হিসাব নম্বরঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="bank_acc_no" class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- Bank Account Name -->
+            <div class="form-row">
+                <span class="form-label">ব্যাংক হিসাবের নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="bank_acc_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Bank Name -->
+            <div class="form-row">
+                <span class="form-label">ব্যাংক নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="bank_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Branch Name -->
+            <div class="form-row">
+                <span class="form-label">শাখার নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="bank_branch_name" data-db-field="branch_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Settlement Mode -->
+            <div class="form-row">
+                <span class="form-label">পরিশোধের ধরণঃ</span>
+                <div class="flex-1 flex items-center gap-6">
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="settle_instant" class="custom-checkbox"
+                            onclick="toggleOnlyOne('settle_mode', this)">
+                        <span>তাৎক্ষণিক</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="settle_eod" class="custom-checkbox"
+                            onclick="toggleOnlyOne('settle_mode', this)">
+                        <span>দিন শেষে</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="settle_next_day" class="custom-checkbox"
+                            onclick="toggleOnlyOne('settle_mode', this)">
+                        <span>লেনদেনের পরের দিন</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PAGE 2 CONTAINER -->
+    <div class="a4-page relative" id="page-2">
+
+        <!-- SECTION 1: MARCHENT'S PERSONAL DETAILS -->
+        <div class="section-header">
+            মার্চেন্টের ব্যক্তিগত তথ্য
+        </div>
+
+        <div class="text-body-size">
+            <!-- Name (Bengali) -->
+            <div class="form-row">
+                <span class="form-label">নাম (বাংলা):</span>
+                <div class="flex-1">
+                    <input type="text" id="m_personal_name_bn" data-db-field="applicant_name_bn" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Name (English) Grid (28 blocks matching Page 1 style) -->
+            <div class="form-row" style="align-items: flex-start;">
+                <div class="form-label" style="padding-top: 3px;">নাম (ইংরেজি):</div>
+                <div class="flex-1">
+                    <div class="flex flex-wrap" id="m-eng-name-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-m-eng"
+                            onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Father's Name -->
+            <div class="form-row">
+                <span class="form-label">পিতার নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="m_father_name" data-db-field="fathers_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Mother's Name -->
+            <div class="form-row">
+                <span class="form-label">মাতার নামঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="m_mother_name" data-db-field="mothers_name" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Date of Birth and Mobile No -->
+            <div class="form-row">
+                <span class="form-label">জন্ম ও মোবাইলঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <!-- DOB Grid -->
+                    <div class="flex items-center">
+                        <span class="font-semibold pr-2 text-slate-700">জন্ম তারিখঃ</span>
+                        <div class="flex" id="dob-grid">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                            <input type="text" maxlength="1" class="char-grid-box char-dob"
+                                onkeyup="moveNext(this, event)">
+                        </div>
+                    </div>
+
+                    <!-- Mobile No -->
+                    <div class="flex items-center flex-1">
+                        <span style="width: 100px; flex-shrink: 0;" class="font-semibold text-slate-700">মোবাইলঃ</span>
+                        <input type="text" id="m_personal_mobile" data-db-field="mobile_no"
+                            class="form-input-box font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- National ID No Grid (17 blocks standard) -->
+            <div class="form-row" style="align-items: flex-start;">
+                <span class="form-label" style="padding-top: 3px;">ন্যাশনাল আইডি নম্বরঃ</span>
+                <div class="flex-1">
+                    <div class="flex flex-wrap" id="nid-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-nid" onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Card No Grid (10 blocks) -->
+            <div class="form-row" style="align-items: flex-start;">
+                <span class="form-label" style="padding-top: 3px;">স্মার্ট কার্ড নম্বরঃ</span>
+                <div class="flex-1">
+                    <div class="flex flex-wrap" id="smart-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-smart"
+                            onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Present Address -->
+            <div class="form-row">
+                <span class="form-label">বর্তমান ঠিকানাঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="m_present_address" data-db-field="present_address_street"
+                        class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Present Address Thana & Zilla -->
+            <div class="form-row">
+                <span class="form-label">থানা ও জেলাঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">থানাঃ</span>
+                        <input type="text" id="m_present_thana" data-db-field="present_address_upazila"
+                            class="form-input-box">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">জেলাঃ</span>
+                        <input type="text" id="m_present_zilla" data-db-field="present_address_district"
+                            class="form-input-box">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permanent Address -->
+            <div class="form-row">
+                <span class="form-label">স্থায়ী ঠিকানাঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="m_permanent_address" data-db-field="permanent_address_street"
+                        class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Permanent Address Thana & Zilla -->
+            <div class="form-row">
+                <span class="form-label">থানা ও জেলাঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">থানাঃ</span>
+                        <input type="text" id="m_permanent_thana" data-db-field="permanent_address_upazila"
+                            class="form-input-box">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">জেলাঃ</span>
+                        <input type="text" id="m_permanent_zilla" data-db-field="permanent_address_district"
+                            class="form-input-box">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SECTION 2: DECLARATION (ঘোষণা) -->
+        <div class="section-header">
+            ঘোষণা
+        </div>
+
+        <!-- Added clean line spacing to prevent text mingling -->
+        <div class="text-body-size text-justify font-medium px-1 mb-3"
+            style="line-height: 1.6; letter-spacing: 0.01em;">
+            আমি নিম্নস্বাক্ষরকারী এই মর্মে ঘোষণা দিচ্ছি যে এই আবেদনপত্রে আমার দ্বারা প্রদত্ত সমস্ত তথ্য সত্য, সম্পূর্ণ
+            এবং নির্ভুল এবং আমি ইচ্ছাকৃতভাবে কোনো বস্তুগত তথ্য গোপন করিনি এবং ব্যাংক এই ধরণের তথ্যের উপর নির্ভর করতে
+            পারে। যদি যে কোনো সময়ে ব্যাংকের কাছে প্রমাণিত হয় যে এই আবেদনে আমার দেওয়া যে কোনো তথ্য অসত্য, মিথ্যা,
+            অসম্পূর্ণ বা ভুল; ব্যাংক কোনও নোটিশ ছাড়াই অবিলম্বে পরিষেবাটি স্থগিত/বন্ধ করতে পারে এবং আমার বিরুদ্ধে যথাযথ
+            আইনী ব্যবস্থা নিতে পারে। আমি আরো অঙ্গীকার করছি যে আমি সর্বদা এই চুক্তির শর্তাবলী মানতে বাধ্য থাকবো এবং কখনই
+            Bangla QR Code Based পেমেন্টের ক্ষেত্রে গ্রাহকের উপর কোনো ফি/চার্জ আরোপ করবো না।
+        </div>
+
+        <!-- Signature and Photo Grid -->
+        <div class="grid grid-cols-12 gap-3 items-stretch mt-3" style="margin-bottom: 12px;">
+            <!-- Left: Passport Photo -->
+            <div class="col-span-4 flex justify-center">
+                <div class="border border-dashed border-slate-500 rounded bg-slate-50 flex flex-col justify-center items-center text-center p-2"
+                    style="width: 1.3in; height: 1.5in;">
+                    <svg class="w-8 h-8 text-slate-300 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-[9px] text-slate-500 font-bold leading-tight">পাসপোর্ট সাইজ ছবি</span>
+                </div>
+            </div>
+
+            <!-- Right: Signature box & Date -->
+            <div class="col-span-8 flex flex-col justify-between" style="gap: 12px;">
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-slate-700" style="width: 70px; flex-shrink: 0;">স্বাক্ষরঃ</span>
+                    <!-- Digital Interactive signature container -->
+                    <div class="flex-1 border border-slate-500 rounded bg-slate-50 flex items-center justify-center p-2"
+                        style="height: 0.9in;">
+                        <span class="text-body-size text-slate-400 font-bold italic">প্রতিষ্ঠান প্রধান / মালিকের
+                            স্বাক্ষর</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-slate-700" style="width: 70px; flex-shrink: 0;">তারিখঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="m_signature_date" class="form-input-box font-mono">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SECTION 3: CONTACT INFORMATION (যোগাযোগের তথ্য) -->
+        <div class="section-header">
+            যোগাযোগের তথ্য
+        </div>
+
+        <div class="text-body-size">
+            <!-- Name (Bengali) -->
+            <div class="form-row">
+                <span class="form-label">নাম (বাংলা):</span>
+                <div class="flex-1">
+                    <input type="text" id="contact_name_bn" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Designation -->
+            <div class="form-row">
+                <span class="form-label">পদবীঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="contact_designation" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Email & Mobile No -->
+            <div class="form-row">
+                <span class="form-label">যোগাযোগের তথ্যঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 60px; flex-shrink: 0;" class="font-semibold text-slate-700">ই-মেইলঃ</span>
+                        <input type="email" id="contact_email" class="form-input-box font-mono">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 100px; flex-shrink: 0;" class="font-semibold text-slate-700">মোবাইলঃ</span>
+                        <input type="text" id="contact_mobile" class="form-input-box font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Present Address -->
+            <div class="form-row">
+                <span class="form-label">বর্তমান ঠিকানাঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="contact_address" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Contact Present Address Thana & Zilla -->
+            <div class="form-row">
+                <span class="form-label">থানা ও জেলাঃ</span>
+                <div class="flex-1 flex gap-4">
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">থানাঃ</span>
+                        <input type="text" id="contact_thana" class="form-input-box">
+                    </div>
+                    <div class="flex items-center flex-1">
+                        <span style="width: 50px; flex-shrink: 0;" class="font-semibold text-slate-700">জেলাঃ</span>
+                        <input type="text" id="contact_zilla" class="form-input-box">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PAGE 3 CONTAINER -->
+    <div class="a4-page relative" id="page-3">
+
+        <!-- SECTION 1: BRANCH USE (শাখার ব্যবহারের জন্য) -->
+        <div class="section-header">
+            শাখার ব্যবহারের জন্য
+        </div>
+
+        <div class="grid grid-cols-12 gap-x-4 gap-y-2 text-body-size mb-4" style="row-gap: 10px;">
+            <!-- Left Column: Officers' Info and Signatures -->
+            <div class="col-span-7" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">দায়িত্বপ্রাপ্ত
+                        কর্মকর্তার নামঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_name" class="form-input-box">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">পদবীঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_designation" class="form-input-box">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">স্বাক্ষরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_signature" class="form-input-box">
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200" style="margin: 4px 0;"></div>
+
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">শাখা ম্যানেজারের
+                        নামঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_name" class="form-input-box">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">পদবীঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_designation" class="form-input-box">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 160px; flex-shrink: 0;" class="font-semibold text-slate-700">স্বাক্ষরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_signature" class="form-input-box">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Meta Metrics -->
+            <div class="col-span-5 border-l border-slate-200 pl-4"
+                style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">ইনডেক্স
+                        নম্বরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_index" class="form-input-box font-mono">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">মোবাইল
+                        নম্বরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_mobile" class="form-input-box font-mono">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">তারিখঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_officer_date" class="form-input-box font-mono">
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-transparent" style="margin: 4px 0;"></div>
+
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">ইনডেক্স
+                        নম্বরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_index" class="form-input-box font-mono">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">মোবাইল
+                        নম্বরঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_mobile" class="form-input-box font-mono">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span style="width: 110px; flex-shrink: 0;" class="font-semibold text-slate-700">তারিখঃ</span>
+                    <div class="flex-1">
+                        <input type="text" id="branch_manager_date" class="form-input-box font-mono">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SECTION 2: ADC MANAGEMENT DIVISION USE (এডিসি ম্যানেজমেন্ট বিভাগের ব্যবহারের জন্য) -->
+        <div class="section-header">
+            এডিসি ম্যানেজমেন্ট বিভাগের ব্যবহারের জন্য
+        </div>
+
+        <div class="text-body-size mb-4" style="display: flex; flex-direction: column; gap: 9px;">
+            <!-- Row 1: Date, App No, Merchant No -->
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+                <!-- Date Grid Segment -->
+                <div class="flex items-center">
+                    <span class="font-semibold pr-2 text-slate-700">তারিখঃ</span>
+                    <div class="flex" id="adc-date-grid">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                        <input type="text" maxlength="1" class="char-grid-box char-adc-date"
+                            onkeyup="moveNext(this, event)">
+                    </div>
+                </div>
+
+                <!-- Application Number -->
+                <div class="flex items-center flex-1 min-w-[150px]">
+                    <span class="font-semibold px-2 shrink-0 text-slate-700">আবেদন নং-</span>
+                    <input type="text" id="adc_app_no" class="form-input-box">
+                </div>
+
+                <!-- Merchant Number -->
+                <div class="flex items-center flex-1 min-w-[150px]">
+                    <span class="font-semibold px-2 shrink-0 text-slate-700">মার্চেন্ট নং-</span>
+                    <input type="text" id="adc_merchant_no" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Row 2: Business Type -->
+            <div class="flex items-center">
+                <span style="width: 130px; flex-shrink: 0;" class="font-semibold text-slate-700">ব্যবসার ধরনঃ</span>
+                <div class="flex-1">
+                    <input type="text" id="adc_business_type" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Row 3: Terminal IDs (3 box layout) -->
+            <div class="flex items-center gap-2">
+                <span style="width: 130px; flex-shrink: 0;" class="font-semibold text-slate-700">টার্মিনাল আইডি：</span>
+                <div class="flex-1 grid grid-cols-3 gap-2">
+                    <input type="text" id="adc_terminal_id_1" class="form-input-box font-mono">
+                    <input type="text" id="adc_terminal_id_2" class="form-input-box font-mono">
+                    <input type="text" id="adc_terminal_id_3" class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- Row 4: Merchant Discount Rate (3 box layout) -->
+            <div class="flex items-center gap-2">
+                <span style="width: 170px; flex-shrink: 0;" class="font-semibold text-slate-700">মার্চেন্ট ডিসকাউন্ট রেট
+                    (MDR):</span>
+                <div class="flex-1 grid grid-cols-3 gap-2">
+                    <input type="text" id="adc_mdr_1" class="form-input-box">
+                    <input type="text" id="adc_mdr_2" class="form-input-box">
+                    <input type="text" id="adc_mdr_3" class="form-input-box">
+                </div>
+            </div>
+
+            <!-- Row 5: Merchant Type (Checkboxes with Black Tick Custom Styles) -->
+            <div class="flex items-center gap-6 py-1">
+                <span style="width: 130px; flex-shrink: 0;" class="font-semibold text-slate-700">মার্চেন্ট ধরণঃ</span>
+                <div class="flex-grow flex gap-6">
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="adc_merchant_type_regular" class="custom-checkbox"
+                            onclick="toggleOnlyOne('adc_merchant_type', this)">
+                        <span>সাধারন (রেগুলার) মার্চেন্ট</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="adc_merchant_type_micro" class="custom-checkbox"
+                            onclick="toggleOnlyOne('adc_merchant_type', this)">
+                        <span>ক্ষুদ্র (মাইক্রো) মার্চেন্ট</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Row 6: Merchant Creation Date & MCC -->
+            <div class="flex items-center gap-4">
+                <div class="flex items-center flex-1">
+                    <span style="width: 150px; flex-shrink: 0;" class="font-semibold text-slate-700">মার্চেন্ট তৈরীর
+                        তারিখঃ</span>
+                    <input type="text" id="adc_merchant_created_date" class="form-input-box font-mono">
+                </div>
+                <div class="flex items-center flex-1">
+                    <span style="width: 60px; flex-shrink: 0;" class="font-semibold text-slate-700">এমসিসিঃ</span>
+                    <input type="text" id="adc_mcc" class="form-input-box font-mono">
+                </div>
+            </div>
+
+            <!-- Row 7: Remarks -->
+            <div class="flex items-start">
+                <span style="width: 130px; flex-shrink: 0; padding-top: 4px;"
+                    class="font-semibold text-slate-700">মন্তব্যঃ</span>
+                <div class="flex-1">
+                    <textarea id="adc_remarks"
+                        class="w-full border border-slate-500 rounded p-1.5 text-body-size focus:outline-[#00a651] transition"
+                        rows="3" style="resize: none; font-family: inherit; box-sizing: border-box;"></textarea>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SECTION 3: ATTACHMENTS (সংযুক্তি) -->
+        <div class="section-header">
+            সংযুক্তি
+        </div>
+
+        <!-- Enhanced line height and spacing for offline legal checklists -->
+        <div class="text-body-size px-2 mb-4">
+            <p class="font-bold text-slate-800" style="margin-bottom: 8px;">সংযুক্তিঃ মার্চেন্ট আবেদন ফর্মের সাথে
+                নিম্নবর্ণিত দলিলাদি সংযুক্ত করতে হবে।</p>
+            <ol class="list-decimal list-inside text-slate-700 pl-1 font-medium"
+                style="margin: 0; padding-left: 10px; display: flex; flex-direction: column; gap: 6px; line-height: 1.6;">
+                <li>ন্যাশনাল আইডি অথবা স্মার্টকার্ড এর ফটোকপি (রেগুলার ও মাইক্রো মার্চেন্ট উভয়ের জন্য)।</li>
+                <li>এক কপি পাসপোর্ট সাইজের রঙিন ছবি (রেগুলার ও মাইক্রো মার্চেন্ট উভয়ের জন্য)।</li>
+                <li>সাধারন (রেগুলার) মার্চেন্ট এর ক্ষেত্রে TIN সার্টিফিকেটের ফটোকপি।</li>
+                <li>সাধারন (রেগুলার) মার্চেন্ট এর ক্ষেত্রে ট্রেডলাইসেন্সের ফটোকপি।</li>
+            </ol>
+        </div>
+
+
+        <!-- SECTION 4: EMERGENCY CONTACTS (জরুরী প্রয়োজনে যোগাযোগ) -->
+        <div class="section-header">
+            জরুরী প্রয়োজনে যোগাযোগ
+        </div>
+
+        <div class="text-center text-[10px] text-slate-700 font-medium space-y-0.5 pt-1.5" style="line-height: 1.4;">
+            <p class="font-bold text-slate-800" style="margin: 0;">Alternative Delivery Channel (ADC) Management
+                Department, Bangladesh Krishi Bank, Head Office (3<sup>rd</sup> Floor),</p>
+            <p style="margin: 2px 0;">Motijheel C/A, Dhaka-1000, Bangladesh. Tel: +8802 9513691</p>
+            <p class="text-[#00a651] font-bold" style="margin: 0;">E-mail: banglaqr@krishibank.org.bd</p>
+        </div>
+
+        <!-- Helper Javascript for Interactive Features -->
+        <script>
+            // Auto-navigation between adjacent character grid boxes
+            function moveNext(current, event) {
+                const val = current.value;
+                const key = event.key;
+
+                // Avoid tab, shift etc.
+                if (['Tab', 'Shift', 'ArrowLeft', 'ArrowRight', 'Backspace'].includes(key)) {
+                    if (key === 'Backspace' && val === "") {
+                        // Go backward on backspace
+                        const inputs = Array.from(current.parentElement.querySelectorAll('input'));
+                        const currentIndex = inputs.indexOf(current);
+                        if (currentIndex > 0) {
+                            inputs[currentIndex - 1].focus();
+                        }
+                    }
+                    return;
+                }
+
+                if (val.length >= current.maxLength) {
+                    const inputs = Array.from(current.parentElement.querySelectorAll('input'));
+                    const currentIndex = inputs.indexOf(current);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                    }
+                }
+            }
+
+            // Logic for single-selection checkboxes (Radio simulations)
+            function toggleOnlyOne(groupName, selectedCheckbox) {
+                const groupings = {
+                    'merchant_type': ['merchant_type_regular', 'merchant_type_micro'],
+                    'prior_qr': ['prior_qr_yes', 'prior_qr_no'],
+                    'ownership': ['ownership_single', 'ownership_partner'],
+                    'org_type': ['type_govt', 'type_business', 'type_semigovt', 'type_edu', 'type_auto', 'type_other'],
+                    'settle_mode': ['settle_instant', 'settle_eod', 'settle_next_day'],
+                    'adc_merchant_type': ['adc_merchant_type_regular', 'adc_merchant_type_micro']
+                };
+
+                const ids = groupings[groupName];
+                if (ids && selectedCheckbox.checked) {
+                    ids.forEach(id => {
+                        if (id !== selectedCheckbox.id) {
+                            const el = document.getElementById(id);
+                            if (el) el.checked = false;
+                        }
+                    });
+                }
+            }
+        </script>
+        <script>
+            // ── Centralized customer data import support ──
+            window.populate = function(customer) {
+                if (!customer) return;
+                const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+
+                // Helper to convert digits to Bengali for character grids
+                const toBn = (str) => {
+                    if (!str) return '';
+                    return str.replace(/[0-9]/g, match => enToBn[match]);
+                };
+
+                // Branch name (English fallback if FILL isn't working)
+                set('branch_name', customer.branch_name_bn || customer.branch_name);
+
+                // Section 1: Merchant / Establishment Details (Business Info)
+                // "মার্চেন্ট নাম (বাংলা) here the মার্চেন্ট is the customer in the custome rrprofile"
+                set('merchant_name_bn', customer.applicant_name_bn || customer.applicant_name_en);
+                
+                // conditional: "The প্রতিষ্ঠানের ঠিকানাঃ is applicable if the customer profession is business."
+                const isBusiness = customer.profession && customer.profession.toLowerCase().includes('business');
+                if (isBusiness || customer.business_name || customer.applicant_business_name) {
+                    set('org_address', customer.business_address || customer.present_address_street || customer.applicant_curr_addr_village);
+                    set('trade_license', customer.trade_license_no || customer.applicant_trade_license);
+                    set('thana', customer.business_address_upazila || customer.present_address_upazila || customer.applicant_curr_addr_upazila);
+                    set('zilla', customer.business_address_district || customer.present_address_district || customer.applicant_curr_addr_district);
+                }
+                
+                set('mobile_no', customer.mobile_no || customer.applicant_mobile);
+                set('qr_mobile_no', customer.mobile_no || customer.applicant_mobile);
+                set('email', customer.email || customer.applicant_email);
+                set('etin', customer.tin_no || customer.applicant_tin);
+
+                // Section 2: Merchant's Personal Details
+                set('m_personal_name_bn', customer.applicant_name_bn || customer.applicant_name_en);
+                set('m_father_name', customer.applicant_father_name_bn || customer.applicant_father_name_en);
+                set('m_mother_name', customer.applicant_mother_name_bn || customer.applicant_mother_name_en);
+                set('m_personal_mobile', customer.mobile_no || customer.applicant_mobile);
+                set('m_present_address', customer.present_address_street || customer.applicant_curr_addr_village);
+                set('m_present_thana', customer.present_address_upazila || customer.applicant_curr_addr_upazila);
+                set('m_present_zilla', customer.present_address_district || customer.applicant_curr_addr_district);
+                set('m_permanent_address', customer.permanent_address_street || customer.applicant_perm_addr_village);
+                set('m_permanent_thana', customer.permanent_address_upazila || customer.applicant_perm_addr_upazila);
+                set('m_permanent_zilla', customer.permanent_address_district || customer.applicant_perm_addr_district);
+                
+                // Contact Info
+                set('contact_name_bn', customer.applicant_name_bn || customer.applicant_name_en);
+                set('contact_email', customer.email || customer.applicant_email);
+                set('contact_mobile', customer.mobile_no || customer.applicant_mobile);
+                set('contact_address', customer.present_address_street || customer.applicant_curr_addr_village);
+                set('contact_thana', customer.present_address_upazila || customer.applicant_curr_addr_upazila);
+                set('contact_zilla', customer.present_address_district || customer.applicant_curr_addr_district);
+
+                // Date of birth char grid
+                if (customer.date_of_birth || customer.applicant_dob) {
+                    const dob = customer.date_of_birth || customer.applicant_dob; // YYYY-MM-DD
+                    const parts = dob.split('-');
+                    if (parts.length === 3) {
+                        const dateStr = parts[2] + parts[1] + parts[0]; // DDMMYYYY
+                        const dobBoxes = document.querySelectorAll('.char-dob');
+                        dobBoxes.forEach((box, i) => { box.value = toBn(dateStr[i]); });
+                    }
+                }
+
+                // NID char grid
+                if (customer.nid_no || customer.applicant_nid) {
+                    let nidStr = (customer.nid_no || customer.applicant_nid).toString();
+                    if (nidStr.length > 0) {
+                        const isSmart = nidStr.length === 10;
+                        const targetBoxes = isSmart ? document.querySelectorAll('.char-smart') : document.querySelectorAll('.char-nid');
+                        targetBoxes.forEach((box, i) => { box.value = toBn(nidStr[i]); });
+                    }
+                }
+            };
+
+            const enToBn = {
+                '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+                '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+            };
+
+            // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+            document.addEventListener('input', (e) => {
+                if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                    let range = document.getSelection().getRangeAt(0);
+                    let currentPos = range.startOffset;
+
+                    let val = e.target.innerText;
+                    let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                    if (val !== converted) {
+                        e.target.innerText = converted;
+
+                        // Seamless caret position restoration
+                        let newRange = document.createRange();
+                        let selection = window.getSelection();
+
+                        if (e.target.childNodes.length > 0) {
+                            let textNode = e.target.childNodes[0];
+                            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                        } else {
+                            newRange.setStart(e.target, 0);
+                        }
+                        newRange.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
+                    }
+                }
+            });
+
+            // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+            window.addEventListener('message', function (event) {
+                if (event.data && event.data.command === 'FILL') {
+                    const data = event.data.data;
+                    Object.keys(data).forEach(key => {
+                        const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                        const els = document.querySelectorAll(queryStr);
+                        els.forEach(el => {
+                            let val = data[key] || '';
+
+                            // Automatically convert digits to Bangla if the class is present
+                            if (el.classList.contains('bangla-numbers') && val) {
+                                val = val.replace(/[0-9]/g, match => enToBn[match]);
+                            }
+
+                            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                                el.innerText = val;
+                            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                                el.value = val;
+                            }
+                        });
+                    });
+                }
+            });
+        </script>
+
+</body>
+
+</html>

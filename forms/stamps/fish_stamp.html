@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>মৎস্য বন্ধকী দলিল (এল.এফ-২৩)</title>
+
+  <style>
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', 'Noto Serif Bengali', Arial, sans-serif;
+      color: #000000;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* Legal size fit clearance */
+      padding-top: 4.3in;
+      /* Clearance for cartridge/stamp emblem */
+      padding-bottom: 0.8in;
+      padding-left: 0.8in;
+      padding-right: 0.8in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.4);
+      position: relative;
+      margin-bottom: 10mm;
+      font-size: 11pt;
+      line-height: 2.2;
+      overflow: hidden;
+    }
+
+    /* Page badge for visual preview */
+    .page-badge {
+      display: block;
+      text-align: right;
+      font-size: 9pt;
+      font-weight: 600;
+      color: #64748b;
+      position: absolute;
+      top: 15px;
+      left: 0.8in;
+    }
+
+    /* Form Reference Code (Top Right) */
+    .form-code-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 12pt;
+      font-weight: 700;
+      border-bottom: 1.5px solid #000000;
+      padding-bottom: 1px;
+    }
+
+    /* Header Titles */
+    .doc-main-title {
+      text-align: center;
+      font-size: 16pt;
+      font-weight: 700;
+      margin-top: 2mm;
+      margin-bottom: 1mm;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-sub-title {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: 700;
+      margin-bottom: 6mm;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Paragraph and Body Text */
+    .bengali-p {
+      font-size: 12pt;
+      text-align: justify;
+      line-height: 2.2;
+      margin-bottom: 4mm;
+      word-spacing: 1px;
+      text-justify: inter-word;
+    }
+
+    .clause-block {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 4mm;
+      font-size: 12pt;
+      line-height: 2.2;
+      text-align: justify;
+    }
+
+    .clause-num {
+      font-weight: bold;
+      min-width: 0.4in;
+      flex-shrink: 0;
+    }
+
+    .clause-content {
+      flex-grow: 1;
+    }
+
+    .dotted-input,
+    span[contenteditable="true"],
+    .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: left;
+      min-width: 1px;
+      font-weight: bold;
+    }
+
+    .dotted-input:empty,
+    span[contenteditable="true"]:empty,
+    .data-input:empty {
+      min-width: 0.5in;
+    }
+
+    /* Execution Table Styling */
+    .execution-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 3mm;
+      margin-bottom: 6mm;
+    }
+
+    .execution-table th,
+    .execution-table td {
+      border: 1px solid #000000;
+      padding: 6px 8px;
+      font-size: 10.5pt;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .execution-table th {
+      font-weight: 700;
+      background-color: #f8fafc;
+    }
+
+    /* Signatures & Witness Layout */
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+
+    .witness-table td {
+      padding: 4px 0;
+      vertical-align: bottom;
+      border: none;
+    }
+
+    .witness-table td:nth-child(1) {
+      width: 6%;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(2) {
+      width: 20%;
+    }
+
+    .witness-table td:nth-child(3) {
+      width: 4%;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(4) {
+      width: 70%;
+    }
+
+    .witness-table .dotted-input {
+      width: 100%;
+      display: block;
+    }
+
+    @media print {
+      @page {
+        size: legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .page-badge {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- PAGE 1 SHEET -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 1 OF 3</span>
+
+    <!-- Document Header Titles -->
+    <div style="position: relative;">
+      <div class="form-code-right">এল.এফ-২৩</div>
+      <div class="doc-main-title">বাংলাদেশ কৃষি ব্যাংক</div>
+      <div class="doc-sub-title">মৎস্য বন্ধকী দলিল</div>
+    </div>
+
+    <!-- Main Preamble Paragraph -->
+    <p class="bengali-p">
+      যেহেতু বাংলাদেশ কৃষি ব্যাংক (অতঃপর ব্যাংক বলিয়া বর্ণিত) আমার/আমাদের <span class="dotted-input"
+        contenteditable="true"></span>ইং তারিখের আবেদন অনুসারে বিভিন্ন মৎস উৎপাদন/<span class="dotted-input"
+        contenteditable="true"></span>কার্যে ব্যবহারের উদ্দেশ্যে মং-<span class="dotted-input"
+        contenteditable="true"></span>/- (কথায়:<span class="dotted-input" contenteditable="true"></span>) টাকা মাত্র
+      বার্ষিক শতকরা <span class="dotted-input" contenteditable="true"></span> টাকা সুদে স্বল্প/মধ্য/দীর্ঘমেয়াদি ঋণ
+      মঞ্জুর করিতে
+      স্বীকৃত হইয়াছেন এবং যেহেতু উক্ত ঋণের জামানত হিসাবে আমার/আমাদের মৎসাদি যাহা উৎপাদিত হইতেছে বা হইবে মেয় মৎসাদি যাহা
+      অন্যস্থানে নীত হইতেছে বা হইবে বা যাহা আমার/আমাদের নিজ হেফাজতে অথবা আমার/আমাদের পক্ষে অপরের হেফাজতে অথবা
+      আমার/আমাদের পক্ষে অপরের হেফাজতে আছে বা থাকিবে, উহা দায়বদ্ধকরণের দাবী করিয়াছেন,
+    </p>
+
+    <p class="bengali-p" style="margin-bottom: 4mm;">
+      অতএব, আমি/আমরা এতদ্বারা অঙ্গীকার করিতেছি যেঃ
+    </p>
+
+    <!-- Clause (1) -->
+    <div class="clause-block">
+      <div class="clause-num">(১)</div>
+      <div class="clause-content">
+        আমার/আমাদের নিম্ন তফসিল বর্ণিত নিজ তালিকাধীন/চাষাধীন পুকুরে যে মৎস উৎপন্ন হইতেছে বা হইবে তৎসমুদয় অথবা
+        আমার/আমাদের উৎপাদিত মজুদ মৎসাদি যাহা আমার নিজ হেফাজতে অথবা অন্য কাহারও হেফাজতে আছে বা থাকিবে তাহা উক্ত ঋণের
+        জামানত স্বরূপ গণ্য হইবে এবং উক্ত ঋণ পরিশোধ না করা পর্যন্ত ব্যাংক এর নিকট দায়বদ্ধ থাকিবে, যেন প্রয়োজনবোধে ব্যাংক
+        উক্ত মৎসাদি বিক্রয় করিয়া ব্যাংকের ঋণ বাবদ পাওনা আসলও সুদসহ ওয়াশীল করিয়া নিতে পারিবেন। এতে আমার/আমাদের কোন ওজর
+        আপত্তি থাকিবে না ও আইনতঃ গ্রাহ্য হইবে না।
+      </div>
+    </div>
+
+    <!-- Clause (2) -->
+    <div class="clause-block">
+      <div class="clause-num">(২)</div>
+      <div class="clause-content">
+        ব্যাংক হইতে গৃহীত ঋণ পরিশোধ না করা পর্যন্ত তফসিল বর্ণিত জমি/পুকুর কাহারও নিকট দায়বদ্ধ অথবা হস্তান্তর করিব না এবং
+        উক্ত জমির/পুকুরের খাজনাদি নিয়মিত পরিশোধ করিতে থাকিব।
+      </div>
+    </div>
+
+    <!-- Clause (3) -->
+    <div class="clause-block">
+      <div class="clause-num">(৩)</div>
+      <div class="clause-content">
+        ব্যাংক যে উদ্দেশ্যে ঋণ মঞ্জুর করিতে স্বীকৃত হইয়াছেন, ঋণের টাকা সেই উদ্দেশ্য ব্যতীত অন্য কোন অনুৎপাদনমূলক কাজে
+        ব্যবহার করা হইবে না, ইহার অন্যথা হইলে ব্যাংক কর্তৃক মঞ্জুরীকৃত ঋণের সমুদয় টাকা চাহিবামাত্র সুদসহ পরিশোধ করিতে
+        বাধ্য থাকিব।
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- PAGE 2 SHEET -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 2 OF 3</span>
+
+    <!-- Clause (4) -->
+    <div class="clause-block">
+      <div class="clause-num">(৪)</div>
+      <div class="clause-content">
+        উল্লেখিত শর্তে ব্যাংক কর্তৃক মঞ্জুরকৃত নং-<span class="dotted-input" contenteditable="true"></span>/-
+        (কথায়:<span class="dotted-input" contenteditable="true"></span>) টাকা মাত্র গ্রহণ করিয়া আমি/আমরা স্বেচ্ছায় ও
+        সজ্ঞানে এই দলিল সম্পাদন করিলাম।
+      </div>
+    </div>
+
+    <p class="bengali-p" style="margin-top: 2mm; margin-bottom: 4mm;">
+      দলিল সম্পাদনের তারিখঃ <span class="dotted-input" contenteditable="true"></span>
+    </p>
+
+    <!-- Execution Table -->
+    <table class="execution-table">
+      <thead>
+        <tr>
+          <th style="width: 8%;"></th>
+          <th style="width: 28%;">নাম</th>
+          <th style="width: 28%;">পিতার নাম</th>
+          <th style="width: 20%;">ঠিকানা</th>
+          <th style="width: 16%;">স্বাক্ষর</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>১।</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td>২।</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td>৩।</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td>৪।</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Guarantor Preamble Paragraph -->
+    <p class="bengali-p" style="margin-top: 6mm; margin-bottom: 6mm;">
+      আমরা স্বেচ্ছায় ও সজ্ঞানে এবং বিনা সুদে উৎপাদিত উল্লেখিত ঋণের টাকা উহার সুদ ও আসল আদায়ের নিমিত্ত এবং ঐ টাকা যে
+      উদ্দেশ্যে গ্রহণ হইয়াছে তাহাতে ব্যবহার করা হয় তাহার জন্য জামিন রহিলাম।
+    </p>
+
+    <!-- Date Line & Witness Blocks -->
+    <div style="margin-top: 6mm;">
+      <div style="float: left; font-size: 11pt; margin-top: 4px;">
+        তারিখঃ <span class="dotted-input" contenteditable="true"></span>
+      </div>
+
+      <div style="float: right; width: 4.2in;">
+        <!-- Witness 1 -->
+        <table class="witness-table" style="margin-bottom: 6mm;">
+          <tr>
+            <td>১।</td>
+            <td>স্বাক্ষর</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>নাম</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>পিতার নাম</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>ঠিকানা</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+        </table>
+
+        <!-- Witness 2 -->
+        <table class="witness-table">
+          <tr>
+            <td>২।</td>
+            <td>স্বাক্ষর</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>নাম</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>পিতার নাম</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>ঠিকানা</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+        </table>
+      </div>
+      <div style="clear: both;"></div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 3 SHEET -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 3 OF 3</span>
+
+    <!-- Top Preamble / Disbursement Statement -->
+    <p class="bengali-p" style="margin-bottom: 6mm;">
+      উপরোক্ত ঋণের <span class="dotted-input" contenteditable="true"></span>/- টাকা আমাদের
+      সম্মুখে প্রদত্ত হইল।
+    </p>
+
+    <!-- Witness Signature Section Header -->
+    <div style="text-align: left; font-weight: bold; font-size: 11pt; margin-bottom: 4mm;">
+      স্বাক্ষীগণের স্বাক্ষর
+    </div>
+
+    <!-- Witness Blocks -->
+    <div style="width: 4.8in; font-size: 11pt; line-height: 2.0; margin-bottom: 8mm;">
+      <!-- Witness 1 -->
+      <table class="witness-table" style="margin-bottom: 6mm;">
+        <tr>
+          <td>১।</td>
+          <td>স্বাক্ষর</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>নাম</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>পিতার নাম</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>ঠিকানা</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+      </table>
+
+      <!-- Witness 2 -->
+      <table class="witness-table">
+        <tr>
+          <td>২।</td>
+          <td>স্বাক্ষর</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>নাম</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>পিতার নাম</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>ঠিকানা</td>
+          <td>:</td>
+          <td><span class="dotted-input" contenteditable="true"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Property Schedule Table (জমির/পুকুরের তফসিল) -->
+    <table class="execution-table">
+      <thead>
+        <tr>
+          <th colspan="5" style="font-size: 12pt; padding: 8px;">জমির/পুকুরের তফসিল</th>
+        </tr>
+        <tr>
+          <th rowspan="2" style="width: 22%;">মৌজা</th>
+          <th style="width: 20%;">খতিয়ান</th>
+          <th style="width: 20%;">দাগ</th>
+          <th style="width: 18%;">পরিমাণ</th>
+          <th rowspan="2" style="width: 20%;">উত্তরে দখলকারী</th>
+        </tr>
+        <tr>
+          <th>এসএ/আরএস</th>
+          <th>এসএ/আরএস</th>
+          <th>একর/শতাংশ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true" style="height: 0.4in;"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true" style="height: 0.4in;"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true" style="height: 0.4in;"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true" style="height: 0.4in;"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <style>
+    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+    .stamp-page,
+    .page,
+    .a4-page {
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Fix excessive line gap - ONLY IN STAMPS */
+    .stamp-page {
+      line-height: 1.6 !important;
+    }
+
+    .stamp-page .content-body,
+    .stamp-page .paragraph,
+    .stamp-page p {
+      line-height: 1.6 !important;
+    }
+
+    /* Fix dotted line alignment and wrapping behavior */
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"] {
+      font-weight: bold !important;
+      display: inline !important;
+      /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+      vertical-align: baseline !important;
+      /* Align exactly with text */
+      line-height: inherit !important;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+    }
+
+    /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      display: inline-block !important;
+      min-width: 0.5in !important;
+      text-decoration: none !important;
+      border-bottom: 1.5px dotted #000000 !important;
+    }
+  </style>
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          // Seamless caret position restoration
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            // Automatically convert digits to Bangla if the class is present
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

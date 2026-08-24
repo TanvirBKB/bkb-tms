@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFTN Instruction Form - Bangladesh Krishi Bank</title>
+    <style>
+        /* Standalone Utility Styles (Tailwind Replacements) */
+        *,
+        ::after,
+        ::before {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+            border-color: #e5e7eb
+        }
+
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"
+        }
+
+        body {
+            margin: 0;
+            line-height: inherit
+        }
+
+        .flex {
+            display: flex
+        }
+
+        .flex-col {
+            flex-direction: column
+        }
+
+        .items-center {
+            align-items: center
+        }
+
+        .items-start {
+            align-items: flex-start
+        }
+
+        .items-baseline {
+            align-items: baseline
+        }
+
+        .justify-center {
+            justify-content: center
+        }
+
+        .justify-between {
+            justify-content: space-between
+        }
+
+        .justify-end {
+            justify-content: flex-end
+        }
+
+        .grid {
+            display: grid
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr))
+        }
+
+        .gap-2 {
+            gap: 0.5rem
+        }
+
+        .gap-4 {
+            gap: 1rem
+        }
+
+        .gap-6 {
+            gap: 1.5rem
+        }
+
+        .w-full {
+            width: 100%
+        }
+
+        .w-8 {
+            width: 2rem
+        }
+
+        .w-56 {
+            width: 14rem
+        }
+
+        .w-4 {
+            width: 1rem
+        }
+
+        .w-48 {
+            width: 12rem
+        }
+
+        .w-44 {
+            width: 11rem
+        }
+
+        .w-1\/2 {
+            width: 50%
+        }
+
+        .flex-grow {
+            flex-grow: 1
+        }
+
+        .min-w-full {
+            min-width: 100%
+        }
+
+        .min-w-\[128px\] {
+            min-width: 128px
+        }
+
+        .min-w-\[112px\] {
+            min-width: 112px
+        }
+
+        .min-w-\[100px\] {
+            min-width: 100px
+        }
+
+        .min-w-\[60px\] {
+            min-width: 60px
+        }
+
+        .min-w-\[200px\] {
+            min-width: 200px
+        }
+
+        .min-w-\[150px\] {
+            min-width: 150px
+        }
+
+        .min-w-\[120px\] {
+            min-width: 120px
+        }
+
+        .m-0 {
+            margin: 0
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem
+        }
+
+        .mb-10 {
+            margin-bottom: 2.5rem
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem
+        }
+
+        .mt-3 {
+            margin-top: 0.75rem
+        }
+
+        .mt-4 {
+            margin-top: 1rem
+        }
+
+        .mt-6 {
+            margin-top: 1.5rem
+        }
+
+        .my-4 {
+            margin-top: 1rem;
+            margin-bottom: 1rem
+        }
+
+        .ml-5 {
+            margin-left: 1.25rem
+        }
+
+        .ml-10 {
+            margin-left: 2.5rem
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem
+        }
+
+        .p-1 {
+            padding: 0.25rem
+        }
+
+        .p-3 {
+            padding: 0.75rem
+        }
+
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem
+        }
+
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem
+        }
+
+        .pt-1 {
+            padding-top: 0.25rem
+        }
+
+        .pb-1 {
+            padding-bottom: 0.25rem
+        }
+
+        .text-center {
+            text-align: center
+        }
+
+        .text-justify {
+            text-align: justify
+        }
+
+        .text-right {
+            text-align: right
+        }
+
+        .text-xs {
+            font-size: .75rem
+        }
+
+        .text-sm {
+            font-size: .875rem
+        }
+
+        .text-base {
+            font-size: 1rem
+        }
+
+        .text-lg {
+            font-size: 1.125rem
+        }
+
+        .text-xl {
+            font-size: 1.25rem
+        }
+
+        .text-\[10px\] {
+            font-size: 10px
+        }
+
+        .text-gray-400 {
+            color: #9ca3af
+        }
+
+        .text-white {
+            color: #fff
+        }
+
+        .font-bold {
+            font-weight: 700
+        }
+
+        .uppercase {
+            text-transform: uppercase
+        }
+
+        .tracking-tight {
+            letter-spacing: -.025em
+        }
+
+        .tracking-wider {
+            letter-spacing: .05em
+        }
+
+        .leading-tight {
+            line-height: 1.25
+        }
+
+        .leading-relaxed {
+            line-height: 1.625
+        }
+
+        .bg-black {
+            background-color: #000
+        }
+
+        .bg-white {
+            background-color: #fff
+        }
+
+        .bg-gray-50 {
+            background-color: #f9fafb
+        }
+
+        .bg-gray-100 {
+            background-color: #f3f4f6
+        }
+
+        .bg-green-600 {
+            background-color: #16a34a
+        }
+
+        .bg-blue-600 {
+            background-color: #2563eb
+        }
+
+        .bg-red-600 {
+            background-color: #dc2626
+        }
+
+        .bg-indigo-600 {
+            background-color: #4f46e5
+        }
+
+        .bg-purple-600 {
+            background-color: #9333ea
+        }
+
+        .bg-gray-500 {
+            background-color: #6b7280
+        }
+
+        .border {
+            border-width: 1px
+        }
+
+        .border-t {
+            border-top-width: 1px
+        }
+
+        .border-black {
+            border-color: #000
+        }
+
+        .border-dashed {
+            border-style: dashed
+        }
+
+        .rounded {
+            border-radius: .25rem
+        }
+
+        .rounded-md {
+            border-radius: .375rem
+        }
+
+        .rounded-lg {
+            border-radius: .5rem
+        }
+
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05)
+        }
+
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1)
+        }
+
+        .absolute {
+            position: absolute
+        }
+
+        .top-2 {
+            top: 0.5rem
+        }
+
+        .right-2 {
+            right: 0.5rem
+        }
+
+        .hidden {
+            display: none
+        }
+
+        .block {
+            display: block
+        }
+
+        .inline-block {
+            display: inline-block
+        }
+
+        .whitespace-nowrap {
+            white-space: nowrap
+        }
+
+        @media (min-width:768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr))
+            }
+
+            .md\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr))
+            }
+
+            .md\:col-span-3 {
+                grid-column: span 3/span 3
+            }
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+    <style>
+        /* A4 Sizing and Print Logic */
+        :root {
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .a4-page {
+            width: var(--a4-width);
+            min-height: var(--a4-height);
+            padding: 0.5in;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            font-size: 10pt;
+            position: relative;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: calc(0.5in - 5mm) 0.5in 0.5in 0.5in;
+            }
+
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .a4-page {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                padding: 0;
+                min-height: auto;
+            }
+
+            .no-print,
+            .modal-overlay {
+                display: none !important;
+            }
+        }
+
+        .dotted-border {
+            border-bottom: 1px dotted #000;
+        }
+
+        .solid-border-bottom {
+            border-bottom: 1px solid #000;
+        }
+
+        .a4-page span[id] {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            outline: none;
+            width: 100%;
+            padding: 1px 4px;
+            font-size: 0.875rem;
+        }
+
+        input[type="text"]:focus {
+            border-bottom: 1px solid #000;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: inherit;
+        }
+
+        /* Information tables: Removing internal middle lines */
+        .info-table td,
+        .info-table th {
+            border: 1px solid black;
+            padding: 2px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .info-table td:nth-child(2) {
+            white-space: nowrap;
+        }
+
+        .info-table td.no-border-right {
+            border-right: none;
+        }
+
+        .info-table td.no-border-left {
+            border-left: none;
+        }
+
+        /* Bank use table: keeping all borders */
+        .bank-use-table td {
+            border: 1px solid black;
+            padding: 2px 6px;
+        }
+
+        .header-box {
+            background-color: black;
+            color: white;
+            padding: 2px 10px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .bank-logo {
+            width: 0.6in;
+            height: 0.6in;
+            border: none;
+            border-radius: 0;
+            display: inline-block;
+            vertical-align: middle;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        /* Floating Controls */
+        .floating-controls {
+            position: fixed;
+            top: 18px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9998;
+        }
+
+        .floating-controls .fbtn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+            border: none;
+            font-family: 'Calibri', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .floating-controls .fbtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+        }
+
+        .fbtn:active {
+            transform: scale(.98);
+        }
+
+        .fbtn-data {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .fbtn-print {
+            background: linear-gradient(135deg, #06b6d4, #0ea5a4);
+        }
+
+        .fbtn-new {
+            background: linear-gradient(135deg, #374151, #111827);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            /* Hide by default */
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .modal-body input[type="text"],
+        .modal-body input[type="number"],
+        .modal-body input[type="date"] {
+            border: 1px solid #ccc;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+<!-- Shared form controls: floating buttons, BKB account normalizer, page scaling, toast/confirm -->
+<script src="../../assets/form-controls.js"></script>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body>
+
+    <!-- Main Form Container -->
+    <div class="a4-page">
+
+        <!-- Print-only Header -->
+        <div class="hidden print:block text-[10px] text-gray-400 absolute top-2 right-2">
+            BFTN Instruction Form - BKB
+        </div>
+
+        <!-- Header Section -->
+        <div class="flex items-center justify-center gap-4 mb-4">
+            <img id="formLogo" src="../../assets/images/bkb_logo.png" alt="BKB Logo" class="bank-logo">
+            <div class="text-center">
+                <h1 class="text-xl font-bold uppercase tracking-tight leading-tight">Bangladesh Krishi Bank</h1>
+                <div class="mt-1">
+                    <span class="header-box uppercase text-sm">BFTN Instruction Form</span>
+                </div>
+            </div>
+            <!-- Invisible spacer to maintain title centering -->
+            <div style="width: 45px;"></div>
+        </div>
+
+        <div class="mb-2 flex justify-between items-baseline leading-tight">
+            <div id="branchInfoDisplay">
+                <p class="m-0">The Manager</p>
+                <p class="m-0"><span id="displayBranchName"
+                        class="solid-border-bottom inline-block min-w-[128px]">&nbsp;</span> Branch</p>
+                <p class="m-0">Bangladesh Krishi Bank</p>
+            </div>
+            <div class="whitespace-nowrap">
+                Date: <span id="displayFormDate" class="solid-border-bottom inline-block min-w-[112px]">&nbsp;</span>
+            </div>
+        </div>
+
+        <div class="mb-2 leading-tight">
+            <p class="m-0"><span class="font-bold">Subject:</span> Fund transfer through BFTN (Bangladesh Electronic
+                Funds Transfer Network).</p>
+        </div>
+
+        <div class="mb-2 leading-tight text-justify">
+            <p class="m-0">Dear Sir/Madam,</p>
+            <p class="m-0">We want to transfer money/fund through BEFTN facility from your branch. We have read and
+                understood and shall abide by all terms and conditions of Bangladesh Krishi Bank governing the said
+                BEFTN.</p>
+        </div>
+
+        <!-- Sender Information Table -->
+        <div class="mb-3" style="font-size: 10pt;">
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="text-center bg-black text-white py-1 uppercase tracking-wider text-xs">
+                            Sender Information</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="w-8">01.</td>
+                        <td class="w-56">Sender Name</td>
+                        <td class="w-4 text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputSenderName" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>02.</td>
+                        <td>Account Title (Sender)</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputSenderAccountTitle" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>03.</td>
+                        <td>Account Number {Min 13 Digits}*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputSenderAccountNumber" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>04.</td>
+                        <td>Phone Number*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputSenderPhone" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>05.</td>
+                        <td>NID No.</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputSenderNid" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Receiver Information Table -->
+        <div style="margin-bottom: 3mm; font-size: 10pt;">
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="text-center bg-black text-white py-1 uppercase tracking-wider text-xs">
+                            Receiver Information</th>
+                    </tr>
+                </thead>
+                <tbody id="receiverInfoTableBody">
+                    <tr>
+                        <td class="w-8">01.</td>
+                        <td class="w-56">Receiving Bank Name*</td>
+                        <td class="w-4 text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverBank" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>02.</td>
+                        <td>Receiving Branch name & Address</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverBranch" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>03.</td>
+                        <td>Receiving Branch Routing Number</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverRouting" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>04.</td>
+                        <td>Account Title (Beneficiary)</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverAccountTitle" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>05.</td>
+                        <td>Account Number {Min 13 Digits}*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverAccountNumber" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>06.</td>
+                        <td>Account Type</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverAccountType" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>07.</td>
+                        <td>Amount (TK)*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputAmount" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>08.</td>
+                        <td>Amount in Words*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputAmountWords" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>09.</td>
+                        <td>NID no/Mobile no*</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputReceiverIdPhone" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                    <tr>
+                        <td>10.</td>
+                        <td>Purpose</td>
+                        <td class="text-center" style="border-left: none; border-right: none;">:</td>
+                        <td><span id="inputPurpose" class="inline-block min-w-full">&nbsp;</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Signatures Section -->
+        <div class="flex justify-between items-start mb-2">
+            <div class="w-56 text-center">
+                <p style="line-height: 1.2; margin-bottom: 15mm;">Faithfully yours,</p>
+                <div class="border-t border-black"></div>
+                <div class="text-[10.5pt] leading-none pt-1">Applicant Signature</div>
+                <div class="py-1">
+                    <span id="displayApplicantName" class="text-[9pt] block">&nbsp;</span>
+                </div>
+                <div class="border-t border-black"></div> <!-- Line 2 -->
+                <div class="text-[10.5pt] leading-none pt-1">Applicant Name</div>
+            </div>
+
+            <div class="w-1/2 mt-0">
+                <table class="bank-use-table" style="font-size: 9pt;">
+                    <tr>
+                        <td colspan="2" class="text-center font-bold" style="padding: 0;">For Bank use Only</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center" style="padding: 0;">Signature verified by Branch Office</td>
+                    </tr>
+                    <tr style="height: 80px;">
+                        <td class="w-1/2 p-1" style="vertical-align: bottom;">
+                            <p class="m-0 leading-tight">Name: <span
+                                    class="dotted-border inline-block min-w-[80px]">&nbsp;</span></p>
+                            <p class="m-0 leading-tight">Designation: <span
+                                    class="dotted-border inline-block min-w-[80px]">&nbsp;</span></p>
+                        </td>
+                        <td class="w-1/2 p-1" style="vertical-align: bottom;">
+                            <p class="m-0 leading-tight">Signature: <span
+                                    class="dotted-border inline-block min-w-[80px]">&nbsp;</span></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scissor Cut Line -->
+        <div class="mt-2 mb-0 text-center text-[10px] overflow-hidden whitespace-nowrap" style="letter-spacing: 4px;">
+            ******************** ✂ ******************** ✂ ******************* ✂ ***************
+        </div>
+
+        <!-- Acknowledgement Section -->
+        <div class="flex items-center justify-center gap-4 mb-1 mt-0">
+            <img id="ackLogo" src="../../assets/images/bkb_logo.png" alt="BKB Logo" class="bank-logo"
+                style="width: 35px; height: 35px;">
+            <div class="text-center" id="ackHeader">
+                <h2 class="text-lg font-bold uppercase tracking-tight leading-none">Bangladesh Krishi Bank</h2>
+                <div class="m-0">
+                    <span class="header-box uppercase text-[10px]">Bank's Acknowledgement</span>
+                </div>
+            </div>
+            <!-- Invisible spacer to maintain title centering -->
+            <div style="width: 35px;"></div>
+        </div>
+
+        <div class="leading-tight text-justify">
+            Certified that Bangladesh Krishi Bank, <span id="ackBranch"
+                class="dotted-border inline-block min-w-[100px]">&nbsp;</span> Branch has received TK <span
+                id="ackAmount" class="dotted-border inline-block min-w-[60px]">&nbsp;</span>
+            (In words: <span id="ackAmountWords" class="dotted-border inline-block min-w-[200px]">&nbsp;</span>) only
+            from Mr./Mrs./Ms.: <span id="ackSenderName" class="dotted-border inline-block min-w-[150px]">&nbsp;</span>
+            A/C No: <span id="ackSenderAccount" class="dotted-border inline-block min-w-[120px]">&nbsp;</span>
+            For Electronic Fund Transfer (EFT) to <span id="ackReceiverBank"
+                class="dotted-border inline-block min-w-[150px]">&nbsp;</span> Bank <span id="ackReceiverBranch"
+                class="dotted-border inline-block min-w-[150px]">&nbsp;</span> Branch. {Address Favouring A/C No: <span
+                id="ackReceiverAccount" class="dotted-border inline-block min-w-[120px]">&nbsp;</span>
+        </div>
+
+        <div class="flex justify-end" style="margin-top: 2rem;">
+            <div class="text-center w-56 font-bold leading-tight" id="ackSignature">
+                <p class="border-t border-black pt-1 m-0">Authorized Signature</p>
+                <div class="text-[10.5pt]">(Name & Designation)</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Floating Controls removed: use App Shell controls -->
+
+    <!-- Data Input Modal -->
+    <div id="dataInputModal" class="modal-overlay">
+        <div class="modal max-w-4xl">
+            <h3>Data Input</h3>
+            <div class="modal-body">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Sender Column -->
+                    <div class="border p-3 rounded bg-gray-50">
+                        <label class="block text-sm font-bold mb-2">Select Sender</label>
+                        <select id="ddlSender" class="w-full border p-1 mb-3 rounded"
+                            onchange="loadSenderProfile(this.value)">
+                            <option value="">-- Select Saved Sender --</option>
+                        </select>
+
+                        <div class="space-y-2">
+                            <input type="text" id="modalSenderName" placeholder="Sender Name">
+                            <input type="text" id="modalSenderAccountNumber" placeholder="Account Number">
+                            <input type="text" id="modalSenderAccountTitle" placeholder="Account Title">
+                            <input type="text" id="modalSenderPhone" placeholder="Phone Number">
+                            <input type="text" id="modalSenderNid" placeholder="NID No.">
+                        </div>
+                        <div class="mt-3 flex flex-col items-end gap-2">
+                            <button id="btnSenderSave" onclick="saveSenderProfile()"
+                                class="text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Save
+                                Info</button>
+                            <div class="flex gap-2">
+                                <button id="btnSenderEdit" onclick="handleSenderEdit()"
+                                    class="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 hidden">Edit
+                                    Info</button>
+                                <button id="btnSenderDelete" onclick="deleteSenderProfile()"
+                                    class="text-xs bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 hidden">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receiver Column -->
+                    <div class="border p-3 rounded bg-gray-50">
+                        <label class="block text-sm font-bold mb-2">Select Receiver</label>
+                        <select id="ddlReceiver" class="w-full border p-1 mb-3 rounded"
+                            onchange="loadReceiverProfile(this.value)">
+                            <option value="">-- Select Saved Receiver --</option>
+                        </select>
+
+                        <div class="space-y-2">
+                            <select id="modalReceiverBank" class="w-full border p-1 rounded bg-white" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+    <option value="">-- Select Bank --</option>
+    <option value="AB BANK LTD.">AB BANK LTD.</option>
+    <option value="AGRANI BANK PLC">AGRANI BANK PLC</option>
+    <option value="AL-ARAFAH ISLAMI BANK LTD.">AL-ARAFAH ISLAMI BANK LTD.</option>
+    <option value="AVIVA FINANCE LTD">AVIVA FINANCE LTD</option>
+    <option value="BANGLADESH BANK">BANGLADESH BANK</option>
+    <option value="BANGLADESH COMMERCE BANK LTD.">BANGLADESH COMMERCE BANK LTD.</option>
+    <option value="BANGLADESH DEVELOPMENT BANK PLC">BANGLADESH DEVELOPMENT BANK PLC</option>
+    <option value="BANGLADESH SAMABAY BANK LTD.">BANGLADESH SAMABAY BANK LTD.</option>
+    <option value="BANGLADESH SHILPA BANK LTD.">BANGLADESH SHILPA BANK LTD.</option>
+    <option value="BANGLADESH SHILPA RIN SANGSTHA">BANGLADESH SHILPA RIN SANGSTHA</option>
+    <option value="BANK AL FALAH LTD.">BANK AL FALAH LTD.</option>
+    <option value="BANK ASIA LTD.">BANK ASIA LTD.</option>
+    <option value="BASIC BANK LTD.">BASIC BANK LTD.</option>
+    <option value="BENGAL COMMERCIAL BANK PLC">BENGAL COMMERCIAL BANK PLC</option>
+    <option value="BRAC BANK PLC">BRAC BANK PLC</option>
+    <option value="CITI BANK N A">CITI BANK N A</option>
+    <option value="CITIZEN BANK PLC">CITIZEN BANK PLC</option>
+    <option value="CITY BANK LTD.">CITY BANK LTD.</option>
+    <option value="COMMERCIAL BANK OF CEYLON">COMMERCIAL BANK OF CEYLON</option>
+    <option value="COMMUNITY BANK BANGLADESH LTD.">COMMUNITY BANK BANGLADESH LTD.</option>
+    <option value="CVC FINANCE LIMITED">CVC FINANCE LIMITED</option>
+    <option value="DHAKA BANK PLC">DHAKA BANK PLC</option>
+    <option value="DUTCH BANGLA BANK LTD.">DUTCH BANGLA BANK LTD.</option>
+    <option value="EASTERN BANK PLC">EASTERN BANK PLC</option>
+    <option value="EXIM BANK LTD.">EXIM BANK LTD.</option>
+    <option value="FIRST SECURITY ISLAMI BANK LTD.">FIRST SECURITY ISLAMI BANK LTD.</option>
+    <option value="GLOBAL ISLAMI BANK PLC">GLOBAL ISLAMI BANK PLC</option>
+    <option value="HABIB BANK LTD.">HABIB BANK LTD.</option>
+    <option value="HONGKONG AND SANGHAI BANKING CORPORATION">HONGKONG AND SANGHAI BANKING CORPORATION</option>
+    <option value="ICB ISLAMI BANK LTD.">ICB ISLAMI BANK LTD.</option>
+    <option value="IFIC BANK PLC">IFIC BANK PLC</option>
+    <option value="ISLAMI BANK BANGLADESH LTD.">ISLAMI BANK BANGLADESH LTD.</option>
+    <option value="JAMUNA BANK LTD">JAMUNA BANK LTD</option>
+    <option value="JANATA BANK PLC">JANATA BANK PLC</option>
+    <option value="LANKAN ALLIANCE FINANCE LIMITED">LANKAN ALLIANCE FINANCE LIMITED</option>
+    <option value="MEGHNA BANK LTD">MEGHNA BANK LTD</option>
+    <option value="MERCANTILE BANK LTD">MERCANTILE BANK LTD</option>
+    <option value="MIDLAND BANK LTD.">MIDLAND BANK LTD.</option>
+    <option value="MODHUMOTI BANK LIMITED">MODHUMOTI BANK LIMITED</option>
+    <option value="MUTUAL TRUST BANK LTD.">MUTUAL TRUST BANK LTD.</option>
+    <option value="NATIONAL BANK LTD.">NATIONAL BANK LTD.</option>
+    <option value="NATIONAL BANK OF PAKISTAN">NATIONAL BANK OF PAKISTAN</option>
+    <option value="NATIONAL CREDIT AND COMMERCE BANK LTD">NATIONAL CREDIT AND COMMERCE BANK LTD</option>
+    <option value="NRB BANK LIMITED">NRB BANK LIMITED</option>
+    <option value="NRB COMMERCIAL BANK LIMITED">NRB COMMERCIAL BANK LIMITED</option>
+    <option value="ONE BANK LTD.">ONE BANK LTD.</option>
+    <option value="PADMA BANK LTD">PADMA BANK LTD</option>
+    <option value="PRIME BANK LTD.">PRIME BANK LTD.</option>
+    <option value="PUBALI BANK PLC">PUBALI BANK PLC</option>
+    <option value="RAJSHAHI KRISHI UNNAYAN BANK">RAJSHAHI KRISHI UNNAYAN BANK</option>
+    <option value="RUPALI BANK LTD.">RUPALI BANK LTD.</option>
+    <option value="SHAHJALAL ISLAMI BANK LTD.">SHAHJALAL ISLAMI BANK LTD.</option>
+    <option value="SHIMANTO BANK LTD.">SHIMANTO BANK LTD.</option>
+    <option value="SOCIAL ISLAMI BANK LTD.">SOCIAL ISLAMI BANK LTD.</option>
+    <option value="SONALI BANK PLC">SONALI BANK PLC</option>
+    <option value="SOUTH BANGLA AGRICULTURE and COMMERCE BANK LTD">SOUTH BANGLA AGRICULTURE and COMMERCE BANK LTD</option>
+    <option value="SOUTHEAST BANK LTD.">SOUTHEAST BANK LTD.</option>
+    <option value="STANDARD BANK LTD.">STANDARD BANK LTD.</option>
+    <option value="STANDARD CHARTERED BANK">STANDARD CHARTERED BANK</option>
+    <option value="STATE BANK OF INDIA">STATE BANK OF INDIA</option>
+    <option value="THE PREMIER BANK LTD.">THE PREMIER BANK LTD.</option>
+    <option value="TRUST BANK LTD.">TRUST BANK LTD.</option>
+    <option value="UNION BANK LTD">UNION BANK LTD</option>
+    <option value="UNITED COMMERCIAL BANK LTD.">UNITED COMMERCIAL BANK LTD.</option>
+    <option value="UTTARA BANK PLC">UTTARA BANK PLC</option>
+    <option value="WOORI BANK LTD.">WOORI BANK LTD.</option>
+</select>
+                            <input type="text" id="modalReceiverBranch" placeholder="Branch Name & Address">
+                            <input type="text" id="modalReceiverRouting" placeholder="Routing Number">
+                            <input type="text" id="modalReceiverAccountTitle" placeholder="Receiver Account Title">
+                            <input type="text" id="modalReceiverAccountNumber" placeholder="Receiver Account Number">
+                            <input type="text" id="modalReceiverAccountType" placeholder="Account Type">
+                            <input type="text" id="modalReceiverIdPhone" placeholder="NID no/Mobile no">
+                        </div>
+                        <div class="mt-3 flex flex-col items-end gap-2">
+                            <button id="btnReceiverSave" onclick="saveReceiverProfile()"
+                                class="text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Save
+                                Info</button>
+                            <div class="flex gap-2">
+                                <button id="btnReceiverEdit" onclick="handleReceiverEdit()"
+                                    class="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 hidden">Edit
+                                    Info</button>
+                                <button id="btnReceiverDelete" onclick="deleteReceiverProfile()"
+                                    class="text-xs bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 hidden">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Details -->
+                <div class="mt-4 border-t pt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="col-span-1">
+                            <label>Amount (TK)</label>
+                            <input type="number" id="modalAmount" oninput="updateModalAmountWords()">
+                        </div>
+                        <div class="col-span-1 md:col-span-3">
+                            <label>Amount in Words</label>
+                            <input type="text" id="modalAmountWords" readonly class="bg-gray-100">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label>Purpose</label>
+                            <input type="text" id="modalPurpose">
+                        </div>
+                        <div>
+                            <label>Branch Name</label>
+                            <input type="text" id="modalBranchName">
+                        </div>
+                        <div>
+                            <label>Eftn Date</label>
+                            <input type="date" id="modalFormDate">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="flex-grow flex gap-2">
+                    <button onclick="saveToCustomerDB()"
+                        style="padding: 8px 16px; background: linear-gradient(135deg, #062e16, #1a7a47); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 0.9rem;">💾
+                        Save to Customer DB</button>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
+                    onclick="populateFormFromModal()">Populate Form</button>
+                <button class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600"
+                    onclick="closeDataInputModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Polyfill AppStorage within iframe context
+        window.AppStorage = window.AppStorage || window.parent.AppStorage || {
+            getItem: (k) => localStorage.getItem(k),
+            setItem: (k, v) => localStorage.setItem(k, v),
+            removeItem: (k) => localStorage.removeItem(k),
+            clear: () => localStorage.clear()
+        };
+
+        function numberToWords(num) {
+            const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            if ((num = num.toString()).length > 9) return 'Overflow';
+            let n = ('000000000' + num).slice(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return '';
+            let str = '';
+            str += (Number(n[1]) !== 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+            str += (Number(n[2]) !== 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+            str += (Number(n[3]) !== 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+            str += (Number(n[4]) !== 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+            str += (Number(n[5]) !== 0) ? ((str !== '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+            return str.trim() + ' Taka Only';
+        }
+
+        
+        function formatDisplayDate(dateStr) {
+            if (!dateStr || !dateStr.includes('-')) return dateStr;
+            const parts = dateStr.split('-');
+            if (parts.length === 3 && parts[0].length === 4) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            if (parts.length === 3 && parts[2].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`;
+            return dateStr;
+        }
+
+        // --- Profile Management ---
+
+        function populateSenderDropdown() {
+            const senders = JSON.parse(window.AppStorage.getItem('eftn_senders') || '[]');
+            const ddl = document.getElementById('ddlSender');
+            ddl.innerHTML = '<option value="">-- Select Saved Sender --</option>';
+            senders.forEach((s, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.text = `${s.name} (${s.acc})`;
+                ddl.appendChild(opt);
+            });
+        }
+
+        function loadSenderProfile(idx) {
+            if (idx === "") { resetSenderForm(); return; }
+            const s = JSON.parse(window.AppStorage.getItem('eftn_senders'))[idx];
+            document.getElementById('modalSenderName').value = s.name;
+            document.getElementById('modalSenderAccountNumber').value = s.acc;
+            document.getElementById('modalSenderAccountTitle').value = s.title;
+            document.getElementById('modalSenderPhone').value = s.phone;
+            document.getElementById('modalSenderNid').value = s.nid;
+
+            document.getElementById('btnSenderSave').classList.add('hidden');
+            document.getElementById('btnSenderEdit').classList.remove('hidden');
+            document.getElementById('btnSenderDelete').classList.remove('hidden');
+            document.getElementById('btnSenderEdit').innerText = 'Edit Info';
+        }
+
+        function syncCustomerToCentralDb(sender) {
+            const ipc = window.ipcRenderer || (window.parent && window.parent.ipcRenderer);
+            if (!ipc || typeof ipc.invoke !== 'function') return;
+
+            const nid = sender.nid || `TEMP-EFTN-${sender.acc}`;
+            ipc.invoke('db-get-customer', nid).then(existing => {
+                let accounts = [];
+                if (existing) {
+                    try {
+                        accounts = typeof existing.accounts === 'string' ? JSON.parse(existing.accounts || '[]') : (existing.accounts || []);
+                    } catch (e) { accounts = []; }
+                    const exists = accounts.some(a => a.account_no === sender.acc);
+                    if (!exists) {
+                        accounts.push({ account_no: sender.acc, account_title: sender.title || sender.name, account_type: 'EFTN' });
+                        existing.accounts = JSON.stringify(accounts);
+                    }
+                    existing.applicant_name_en = sender.name.toUpperCase();
+                    existing.applicant_mobile = sender.phone;
+                    ipc.invoke('db-save-customer', existing).catch(err => console.error('Error updating customer:', err));
+                } else {
+                    const customer = {
+                        applicant_nid: nid,
+                        applicant_name_en: sender.name.toUpperCase(),
+                        applicant_mobile: sender.phone,
+                        accounts: JSON.stringify([{ account_no: sender.acc, account_title: sender.title || sender.name, account_type: 'EFTN' }])
+                    };
+                    ipc.invoke('db-save-customer', customer).catch(err => console.error('Error saving customer:', err));
+                }
+            }).catch(err => console.error('Error fetching customer:', err));
+        }
+
+        function saveSenderProfile(silent = false) {
+                const sender = {
+                    name: document.getElementById('modalSenderName').value,
+                    acc: document.getElementById('modalSenderAccountNumber').value,
+                    title: document.getElementById('modalSenderAccountTitle').value,
+                    phone: document.getElementById('modalSenderPhone').value,
+                    nid: document.getElementById('modalSenderNid').value
+                };
+                let senders = JSON.parse(window.AppStorage.getItem('eftn_senders') || '[]');
+                senders.push(sender);
+                window.AppStorage.setItem('eftn_senders', JSON.stringify(senders));
+
+                syncCustomerToCentralDb(sender);
+                populateSenderDropdown();
+
+                if (!silent) {
+                    appToast('Sender profile saved.');
+                    resetSenderForm();
+                }
+            }
+
+            function handleSenderEdit() {
+                const btn = document.getElementById('btnSenderEdit');
+                if (btn.innerText === 'Edit Info') {
+                    btn.innerText = 'Save Edit';
+                    return;
+                }
+                const idx = document.getElementById('ddlSender').value;
+                let senders = JSON.parse(window.AppStorage.getItem('eftn_senders'));
+                senders[idx] = {
+                    name: document.getElementById('modalSenderName').value,
+                    acc: document.getElementById('modalSenderAccountNumber').value,
+                    title: document.getElementById('modalSenderAccountTitle').value,
+                    phone: document.getElementById('modalSenderPhone').value,
+                    nid: document.getElementById('modalSenderNid').value
+                };
+                window.AppStorage.setItem('eftn_senders', JSON.stringify(senders));
+
+                // Sync updated profile to central database
+                syncCustomerToCentralDb(senders[idx]);
+
+                populateSenderDropdown();
+                appToast('Profile updated.');
+                resetSenderForm();
+            }
+
+            function deleteSenderProfile() {
+                // confirm replaced - use appConfirm for delete sender
+                const idx = document.getElementById('ddlSender').value;
+                let senders = JSON.parse(window.AppStorage.getItem('eftn_senders'));
+                senders.splice(idx, 1);
+                window.AppStorage.setItem('eftn_senders', JSON.stringify(senders));
+                populateSenderDropdown();
+                resetSenderForm();
+            }
+
+            function resetSenderForm() {
+                ['modalSenderName', 'modalSenderAccountNumber', 'modalSenderAccountTitle', 'modalSenderPhone', 'modalSenderNid'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('btnSenderSave').classList.remove('hidden');
+                document.getElementById('btnSenderEdit').classList.add('hidden');
+                document.getElementById('btnSenderDelete').classList.add('hidden');
+                document.getElementById('ddlSender').value = "";
+                document.getElementById('btnSenderEdit').innerText = 'Edit Info';
+            }
+
+            // --- Receiver Profile Logic (Mirror of Sender) ---
+
+            function populateReceiverDropdown() {
+                const recs = JSON.parse(window.AppStorage.getItem('eftn_receivers') || '[]');
+                const ddl = document.getElementById('ddlReceiver');
+                ddl.innerHTML = '<option value="">-- Select Saved Receiver --</option>';
+                recs.forEach((r, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.text = `${r.title} (${r.acc})`;
+                    ddl.appendChild(opt);
+                });
+            }
+
+            function loadReceiverProfile(idx) {
+                if (idx === "") { resetReceiverForm(); return; }
+                const r = JSON.parse(window.AppStorage.getItem('eftn_receivers'))[idx];
+                document.getElementById('modalReceiverBank').value = r.bank;
+                document.getElementById('modalReceiverBranch').value = r.branch;
+                document.getElementById('modalReceiverRouting').value = r.routing;
+                document.getElementById('modalReceiverAccountTitle').value = r.title;
+                document.getElementById('modalReceiverAccountNumber').value = r.acc;
+                document.getElementById('modalReceiverAccountType').value = r.type;
+                document.getElementById('modalReceiverIdPhone').value = r.idPhone;
+
+                document.getElementById('btnReceiverSave').classList.add('hidden');
+                document.getElementById('btnReceiverEdit').classList.remove('hidden');
+                document.getElementById('btnReceiverDelete').classList.remove('hidden');
+                document.getElementById('btnReceiverEdit').innerText = 'Edit Info';
+            }
+
+            function syncReceiverToCentralDb(receiver) {
+                const ipc = window.ipcRenderer || (window.parent && window.parent.ipcRenderer);
+                if (!ipc || typeof ipc.invoke !== 'function') return;
+
+                const nid = `TEMP-EFTN-REC-${receiver.acc}`;
+                ipc.invoke('db-get-customer', nid).then(existing => {
+                    let accounts = [];
+                    if (existing) {
+                        try {
+                            accounts = typeof existing.accounts === 'string' ? JSON.parse(existing.accounts || '[]') : (existing.accounts || []);
+                        } catch (e) { accounts = []; }
+                        const exists = accounts.some(a => a.account_no === receiver.acc);
+                        if (!exists) {
+                            accounts.push({
+                                account_no: receiver.acc,
+                                account_title: receiver.title,
+                                account_type: 'EFTN',
+                                bank_name: receiver.bank,
+                                branch_name: receiver.branch,
+                                routing_no: receiver.routing
+                            });
+                            existing.accounts = JSON.stringify(accounts);
+                        }
+                        existing.applicant_name_en = receiver.title.toUpperCase();
+                        existing.applicant_mobile = receiver.idPhone;
+                        existing.is_hidden = 1;
+                        ipc.invoke('db-save-customer', existing).catch(err => console.error('Error updating receiver:', err));
+                    } else {
+                        const customer = {
+                            applicant_nid: nid,
+                            applicant_name_en: receiver.title.toUpperCase(),
+                            applicant_mobile: receiver.idPhone,
+                            is_hidden: 1,
+                            accounts: JSON.stringify([{
+                                account_no: receiver.acc,
+                                account_title: receiver.title,
+                                account_type: 'EFTN',
+                                bank_name: receiver.bank,
+                                branch_name: receiver.branch,
+                                routing_no: receiver.routing
+                            }])
+                        };
+                        ipc.invoke('db-save-customer', customer).catch(err => console.error('Error saving receiver:', err));
+                    }
+                }).catch(err => console.error('Error fetching receiver:', err));
+            }
+
+            function saveReceiverProfile(silent = false) {
+                const rec = {
+                    bank: document.getElementById('modalReceiverBank').value,
+                    branch: document.getElementById('modalReceiverBranch').value,
+                    routing: document.getElementById('modalReceiverRouting').value,
+                    title: document.getElementById('modalReceiverAccountTitle').value,
+                    acc: document.getElementById('modalReceiverAccountNumber').value,
+                    type: document.getElementById('modalReceiverAccountType').value,
+                    idPhone: document.getElementById('modalReceiverIdPhone').value
+                };
+                let recs = JSON.parse(window.AppStorage.getItem('eftn_receivers') || '[]');
+                recs.push(rec);
+                window.AppStorage.setItem('eftn_receivers', JSON.stringify(recs));
+
+                syncReceiverToCentralDb(rec);
+                populateReceiverDropdown();
+
+                if (!silent) {
+                    appToast('Receiver profile saved.');
+                    resetReceiverForm();
+                }
+            }
+
+            function handleReceiverEdit() {
+                const btn = document.getElementById('btnReceiverEdit');
+                if (btn.innerText === 'Edit Info') {
+                    btn.innerText = 'Save Edit';
+                    return;
+                }
+                const idx = document.getElementById('ddlReceiver').value;
+                let recs = JSON.parse(window.AppStorage.getItem('eftn_receivers'));
+                const rec = {
+                    bank: document.getElementById('modalReceiverBank').value,
+                    branch: document.getElementById('modalReceiverBranch').value,
+                    routing: document.getElementById('modalReceiverRouting').value,
+                    title: document.getElementById('modalReceiverAccountTitle').value,
+                    acc: document.getElementById('modalReceiverAccountNumber').value,
+                    type: document.getElementById('modalReceiverAccountType').value,
+                    idPhone: document.getElementById('modalReceiverIdPhone').value
+                };
+                recs[idx] = rec;
+                window.AppStorage.setItem('eftn_receivers', JSON.stringify(recs));
+
+                // Sync updated receiver to central database
+                syncReceiverToCentralDb(rec);
+
+                populateReceiverDropdown();
+                appToast('Profile updated.');
+                resetReceiverForm();
+            }
+
+            function deleteReceiverProfile() {
+                // confirm replaced - use appConfirm for delete receiver
+                const idx = document.getElementById('ddlReceiver').value;
+                let recs = JSON.parse(window.AppStorage.getItem('eftn_receivers'));
+                recs.splice(idx, 1);
+                window.AppStorage.setItem('eftn_receivers', JSON.stringify(recs));
+                populateReceiverDropdown();
+                resetReceiverForm();
+            }
+
+            function resetReceiverForm() {
+                ['modalReceiverBank', 'modalReceiverBranch', 'modalReceiverRouting', 'modalReceiverAccountTitle', 'modalReceiverAccountNumber', 'modalReceiverAccountType', 'modalReceiverIdPhone'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('btnReceiverSave').classList.remove('hidden');
+                document.getElementById('btnReceiverEdit').classList.add('hidden');
+                document.getElementById('btnReceiverDelete').classList.add('hidden');
+                document.getElementById('ddlReceiver').value = "";
+                document.getElementById('btnReceiverEdit').innerText = 'Edit Info';
+            }
+
+            // --- Global Data Actions ---
+
+            function saveAllData() {
+                const data = {
+                    senders: JSON.parse(window.AppStorage.getItem('eftn_senders') || '[]'),
+                    receivers: JSON.parse(window.AppStorage.getItem('eftn_receivers') || '[]'),
+                    timestamp: new Date().toISOString()
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `bkb_eftn_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+            }
+
+            function loadAllData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = e => {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        const data = JSON.parse(ev.target.result);
+                        if (data.senders) window.AppStorage.setItem('eftn_senders', JSON.stringify(data.senders));
+                        if (data.receivers) window.AppStorage.setItem('eftn_receivers', JSON.stringify(data.receivers));
+                        populateSenderDropdown();
+                        populateReceiverDropdown();
+                        appToast('Profiles imported successfully.');
+                    };
+                    reader.readAsText(e.target.files[0]);
+                };
+                input.click();
+            }
+
+            function saveTransactionToDb() {
+                const ipc = window.ipcRenderer || (window.parent && window.parent.ipcRenderer);
+                if (!ipc || typeof ipc.invoke !== 'function') return;
+
+                const amount = document.getElementById('modalAmount').value;
+                if (!amount || parseFloat(amount) <= 0 || isNaN(parseFloat(amount))) {
+                    console.log('EFTN Transaction has no valid amount. Skipping DB save.');
+                    return;
+                }
+
+                const senderAcc = document.getElementById('modalSenderAccountNumber').value;
+                const senderNid = document.getElementById('modalSenderNid').value || `TEMP-EFTN-${senderAcc}`;
+                const senderMobile = document.getElementById('modalSenderPhone').value;
+
+                const transaction = {
+                    applicant_nid: senderNid,
+                    applicant_mobile: senderMobile,
+                    sender_account: senderAcc,
+                    sender_name: document.getElementById('modalSenderName').value,
+                    sender_title: document.getElementById('modalSenderAccountTitle').value,
+                    receiver_name: document.getElementById('modalReceiverAccountTitle').value,
+                    receiver_account: document.getElementById('modalReceiverAccountNumber').value,
+                    receiver_account_type: document.getElementById('modalReceiverAccountType').value,
+                    receiver_id_phone: document.getElementById('modalReceiverIdPhone').value,
+                    receiving_bank: document.getElementById('modalReceiverBank').value,
+                    receiving_branch: document.getElementById('modalReceiverBranch').value,
+                    routing_number: document.getElementById('modalReceiverRouting').value,
+                    amount: amount,
+                    purpose: document.getElementById('modalPurpose').value,
+                    date: document.getElementById('modalFormDate').value
+                };
+
+                ipc.invoke('db-save-transaction', 'eftn', transaction)
+                    .then(() => console.log('EFTN Transaction saved to DB'))
+                    .catch(err => console.error('Error saving EFTN transaction:', err));
+            }
+
+            // --- Utility ---
+
+            function updateModalAmountWords() {
+                const val = document.getElementById('modalAmount').value;
+                document.getElementById('modalAmountWords').value = val ? numberToWords(parseInt(val)) : '';
+            }
+
+            function openDataInputModal() {
+                console.log('EFTNForm: openDataInputModal invoked');
+                populateSenderDropdown();
+                populateReceiverDropdown();
+                // Pre-fill modalBranchName from central branch data or window.AppStorage fallback
+                let branchName = window.AppStorage.getItem('eftn_branchName') || '';
+                if (window.parent && typeof window.parent.getCentralBranchData === 'function') {
+                    const central = window.parent.getCentralBranchData();
+                    branchName = central.nameEn || central.nameBn || branchName;
+                }
+                document.getElementById('modalBranchName').value = branchName;
+                // Pre-fill modalFormDate with current date if not already set
+                if (!document.getElementById('modalFormDate').value) document.getElementById('modalFormDate').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('dataInputModal').classList.add('visible');
+            }
+
+            function closeDataInputModal() {
+                document.getElementById('dataInputModal').classList.remove('visible');
+            }
+
+            function populateFormFromModal() {
+                const mapping = {
+                    'modalSenderName': ['inputSenderName', 'ackSenderName', 'displayApplicantName'],
+                    'modalSenderAccountNumber': ['inputSenderAccountNumber', 'ackSenderAccount'],
+                    'modalSenderAccountTitle': ['inputSenderAccountTitle'],
+                    'modalSenderPhone': ['inputSenderPhone'],
+                    'modalSenderNid': ['inputSenderNid'],
+                    'modalReceiverBank': ['inputReceiverBank', 'ackReceiverBank'],
+                    'modalReceiverBranch': ['inputReceiverBranch', 'ackReceiverBranch'],
+                    'modalReceiverRouting': ['inputReceiverRouting'],
+                    'modalReceiverAccountTitle': ['inputReceiverAccountTitle'],
+                    'modalReceiverAccountNumber': ['inputReceiverAccountNumber', 'ackReceiverAccount'],
+                    'modalReceiverAccountType': ['inputReceiverAccountType'],
+                    'modalAmount': ['inputAmount', 'ackAmount'],
+                    'modalAmountWords': ['inputAmountWords', 'ackAmountWords'],
+                    'modalReceiverIdPhone': ['inputReceiverIdPhone'],
+                    'modalPurpose': ['inputPurpose'],
+                    'modalBranchName': ['displayBranchName', 'ackBranch'], // Keep this as it also saves to window.AppStorage
+                    'modalFormDate': ['displayFormDate']
+                };
+
+                for (const [modalId, targetIds] of Object.entries(mapping)) {
+                    // Save branch name to window.AppStorage
+                    if (modalId === 'modalBranchName') {
+                        window.AppStorage.setItem('eftn_branchName', document.getElementById(modalId).value);
+                    }
+                    // Save form date to window.AppStorage as well
+                    if (modalId === 'modalFormDate') {
+                        window.AppStorage.setItem('eftn_formDate', document.getElementById(modalId).value);
+                    }
+
+                    let value = document.getElementById(modalId).value;
+                    // Format date from YYYY-MM-DD (picker) to DD/MM/YYYY for display
+                    if (modalId === 'modalFormDate' && value && value.includes('-')) {
+                        const parts = value.split('-');
+                        if (parts.length === 3) value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    }
+
+                    targetIds.forEach(targetId => {
+                        const target = document.getElementById(targetId);
+                        if (target) {
+                            target.innerText = value || '\u00A0';
+
+                            // Underline/Border Dissolve logic for top part
+                            if (targetId === 'displayBranchName' || targetId === 'displayFormDate') {
+                                if (value) {
+                                    target.classList.remove('solid-border-bottom');
+                                    target.style.minWidth = '0';
+                                } else {
+                                    target.classList.add('solid-border-bottom');
+                                    target.style.minWidth = (targetId === 'displayBranchName' ? '128px' : '112px');
+                                }
+                            }
+
+                            // Flexible line logic for Customer Copy
+                            if (targetId.startsWith('ack')) {
+                                if (value) {
+                                    target.style.minWidth = '0';
+                                } else {
+                                    // Reset to reasonable default widths if empty
+                                    const widths = { 'ackBranch': '100px', 'ackAmount': '60px', 'ackAmountWords': '200px', 'ackSenderName': '150px', 'ackSenderAccount': '120px', 'ackReceiverBank': '150px', 'ackReceiverBranch': '150px', 'ackReceiverAccount': '120px' };
+                                    target.style.minWidth = widths[targetId] || '50px';
+                                }
+                            }
+                        }
+                    });
+                }
+                saveTransactionToDb();
+                closeDataInputModal();
+            }
+
+            function clearFormData() {
+                // confirm replaced
+                document.querySelectorAll('.a4-page span[id]').forEach(span => span.innerHTML = '&nbsp;');
+                document.querySelectorAll('.modal-body input').forEach(input => input.value = '');
+                document.querySelectorAll('.modal-body select').forEach(select => select.value = '');
+                document.querySelectorAll('.modal-body textarea').forEach(textarea => textarea.value = '');
+
+
+                // Reset dissolve styles
+                const dbn = document.getElementById('displayBranchName');
+                dbn.classList.add('solid-border-bottom');
+                dbn.style.minWidth = '128px';
+
+                const dfd = document.getElementById('displayFormDate');
+                dfd.classList.add('solid-border-bottom');
+                dfd.style.minWidth = '112px';
+
+                // Reset ack line flexibility
+                const ackWidths = { 'ackBranch': '100px', 'ackAmount': '60px', 'ackAmountWords': '200px', 'ackSenderName': '150px', 'ackSenderAccount': '120px', 'ackReceiverBank': '150px', 'ackReceiverBranch': '150px', 'ackReceiverAccount': '120px' };
+                Object.keys(ackWidths).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.minWidth = ackWidths[id];
+                        el.innerHTML = '&nbsp;';
+                    }
+                });
+            }
+
+            // Load saved branch name and form date on page load
+            function applyBranchInfo() {
+                const displayBranch = document.getElementById('displayBranchName');
+                const ackBranch = document.getElementById('ackBranch');
+                let branchName = window.AppStorage.getItem('eftn_branchName') || '';
+
+                if (window.parent && typeof window.parent.getCentralBranchData === 'function') {
+                    const central = window.parent.getCentralBranchData();
+                    branchName = central.nameEn || central.nameBn || branchName;
+                }
+
+                if (branchName) {
+                    displayBranch.innerText = branchName;
+                    displayBranch.classList.remove('solid-border-bottom');
+                    displayBranch.style.minWidth = '0';
+                    if (ackBranch) {
+                        ackBranch.innerText = branchName;
+                        ackBranch.style.minWidth = '0';
+                    }
+                } else {
+                    displayBranch.innerText = '\u00A0';
+                    displayBranch.classList.add('solid-border-bottom');
+                    displayBranch.style.minWidth = '128px';
+                    if (ackBranch) {
+                        ackBranch.innerText = '\u00A0';
+                        ackBranch.style.minWidth = '100px';
+                    }
+                }
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                const fDate = window.AppStorage.getItem('eftn_formDate');
+                const displayDate = document.getElementById('displayFormDate');
+
+                applyBranchInfo();
+
+                displayDate.innerText = formatDisplayDate(fDate) || '\u00A0';
+                if (fDate) {
+                    displayDate.classList.remove('solid-border-bottom');
+                    displayDate.style.minWidth = '0';
+                } else {
+                    displayDate.classList.add('solid-border-bottom');
+                    displayDate.style.minWidth = '112px';
+                }
+            });
+
+
+            window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDataInputModal(); });
+
+
+            // Save transaction to Customer DB (লেনদেন ইতিহাস section)
+            function saveToCustomerDB() {
+                const formData = window.EFTNFormLogic.getFormData();
+                const senderName = formData.applicant_name_en;
+                const mobile = formData.applicant_mobile;
+                const nid = formData.applicant_nid || null;
+
+                // ── Mandatory field validation ──
+                const missing = [];
+                if (!senderName) missing.push('Sender Name');
+                if (!formData.deposit_account_no) missing.push('Sender Account No');
+                if (!formData.receiver_bank) missing.push('Receiver Bank Name');
+                if (!formData.receiver_branch) missing.push('Receiver Branch');
+                if (missing.length > 0) {
+                    appToast('Please fill in: ' + missing.join(', '), true);
+                    return;
+                }
+
+                if (!formData.amount || parseFloat(formData.amount) <= 0 || isNaN(parseFloat(formData.amount))) {
+                    appToast('Please populate the form with transaction details first (click Populate Form).', true);
+                    return;
+                }
+
+                const ipc = window.ipcRenderer || (window.parent && window.parent.ipcRenderer);
+                if (!ipc || typeof ipc.invoke !== 'function') {
+                    appToast('IPC not available.', true);
+                    return;
+                }
+
+                // Sync modal inputs for saveSenderProfile/saveReceiverProfile
+                document.getElementById('modalSenderName').value = senderName || '';
+                document.getElementById('modalSenderAccountNumber').value = formData.deposit_account_no || '';
+                document.getElementById('modalSenderAccountTitle').value = formData.account_title || '';
+                document.getElementById('modalSenderPhone').value = mobile || '';
+                document.getElementById('modalSenderNid').value = nid || '';
+                document.getElementById('modalReceiverBank').value = formData.receiver_bank || '';
+                document.getElementById('modalReceiverBranch').value = formData.receiver_branch || '';
+                document.getElementById('modalReceiverRouting').value = formData.receiver_routing || '';
+                document.getElementById('modalReceiverAccountTitle').value = formData.receiver_account_title || '';
+                document.getElementById('modalReceiverAccountNumber').value = formData.receiver_account_no || '';
+                document.getElementById('modalReceiverAccountType').value = formData.receiver_account_type || '';
+                document.getElementById('modalReceiverIdPhone').value = formData.receiver_id_or_phone || '';
+                document.getElementById('modalAmount').value = formData.amount || '';
+                document.getElementById('modalPurpose').value = formData.payment_purpose || '';
+                document.getElementById('modalFormDate').value = formData.app_date || '';
+
+                // Save sender/receiver to local dropdowns for quick re-use
+                if (formData.deposit_account_no) saveSenderProfile(true);
+                if (formData.receiver_account_no) saveReceiverProfile(true);
+
+                // ── Always persist to eftn_transactions table ──
+                const senderNid = nid || `TEMP-EFTN-${formData.deposit_account_no || Date.now()}`;
+                const transaction = {
+                    applicant_nid: senderNid,
+                    applicant_mobile: mobile || '',
+                    sender_account: formData.deposit_account_no || '',
+                    sender_name: senderName || '',
+                    sender_title: formData.account_title || '',
+                    receiver_name: formData.receiver_account_title || '',
+                    receiver_account: formData.receiver_account_no || '',
+                    receiver_account_type: formData.receiver_account_type || '',
+                    receiver_id_phone: formData.receiver_id_or_phone || '',
+                    receiving_bank: formData.receiver_bank || '',
+                    receiving_branch: formData.receiver_branch || '',
+                    routing_number: formData.receiver_routing || '',
+                    amount: formData.amount || '',
+                    purpose: formData.payment_purpose || '',
+                    date: formData.app_date || ''
+                };
+
+                ipc.invoke('db-save-transaction', 'eftn', transaction)
+                    .then(() => {
+                        // If a real NID exists, also link the transaction to the customer profile record
+                        const isRealNid = nid && !nid.startsWith('EFTN-') && !nid.startsWith('TEMP-');
+                        if (isRealNid) {
+                            window.parent.postMessage({ command: 'SAVE_TRANSACTION_FROM_FORM', customer: {
+                                applicant_name_en: senderName,
+                                applicant_mobile: mobile,
+                                applicant_nid: nid,
+                                new_transaction: {
+                                    date: formData.app_date,
+                                    type: 'EFTN',
+                                    amount: formData.amount,
+                                    to_bank: formData.receiver_bank,
+                                    to_branch: formData.receiver_branch,
+                                    account_no: formData.receiver_account_no,
+                                    reference: formData.receiver_routing,
+                                    sender_account: formData.deposit_account_no,
+                                    receiver_name: formData.receiver_account_title
+                                }
+                            }}, '*');
+                        }
+                        appToast('✅ Profiles & Transaction saved successfully!');
+                    })
+                    .catch(err => {
+                        console.error('Error saving EFTN transaction:', err);
+                        appToast('❌ Error saving transaction: ' + err.message, true);
+                    });
+            }
+
+            window.EFTNFormLogic = {
+                openDataInput: openDataInputModal,
+                openModal: openDataInputModal,
+                startNew: clearFormData,
+                startNewForm: clearFormData,
+                applyBranchInfo,
+                getFormData: function () {
+                    // Return standardized keys matching Placeholders.md / RTGS conventions
+                    return {
+                        applicant_name_en: document.getElementById('inputSenderName').innerText.trim(),
+                        applicant_mobile: document.getElementById('inputSenderPhone').innerText.trim(),
+                        applicant_nid: document.getElementById('inputSenderNid').innerText.trim(),
+                        account_title: document.getElementById('inputSenderAccountTitle').innerText.trim(),
+                        deposit_account_no: document.getElementById('inputSenderAccountNumber').innerText.trim(),
+
+                        receiver_bank: document.getElementById('inputReceiverBank').innerText.trim(),
+                        receiver_branch: document.getElementById('inputReceiverBranch').innerText.trim(),
+                        receiver_routing: document.getElementById('inputReceiverRouting').innerText.trim(),
+                        receiver_account_title: document.getElementById('inputReceiverAccountTitle').innerText.trim(),
+                        receiver_account_no: document.getElementById('inputReceiverAccountNumber').innerText.trim(),
+                        receiver_account_type: document.getElementById('inputReceiverAccountType').innerText.trim(),
+                        receiver_id_or_phone: document.getElementById('inputReceiverIdPhone').innerText.trim(),
+
+                        amount: document.getElementById('inputAmount').innerText.trim(),
+                        amount_words: document.getElementById('inputAmountWords').innerText.trim(),
+                        payment_purpose: document.getElementById('inputPurpose').innerText.trim(),
+
+                        branch_name: document.getElementById('displayBranchName').innerText.trim(),
+                        app_date: document.getElementById('displayFormDate').innerText.trim()
+                    };
+                },
+                populate: function (data = {}) {
+                    // Accept standardized keys and populate modal inputs and displays
+                    if (data.applicant_name_en) {
+                        const el = document.getElementById('modalSenderName'); if (el) el.value = data.applicant_name_en;
+                        const disp = document.getElementById('inputSenderName'); if (disp) disp.innerText = data.applicant_name_en;
+                    }
+                    if (data.applicant_mobile) {
+                        const el = document.getElementById('modalSenderPhone'); if (el) el.value = data.applicant_mobile;
+                        const disp = document.getElementById('inputSenderPhone'); if (disp) disp.innerText = data.applicant_mobile;
+                    }
+                    if (data.applicant_nid) {
+                        const el = document.getElementById('modalSenderNid'); if (el) el.value = data.applicant_nid;
+                        const disp = document.getElementById('inputSenderNid'); if (disp) disp.innerText = data.applicant_nid;
+                    }
+                    // Extract account_no from accounts array if deposit_account_no not directly available
+                    let accNo = data.deposit_account_no || '';
+                    if (!accNo && data.accounts) {
+                        try {
+                            const accs = typeof data.accounts === 'string' ? JSON.parse(data.accounts) : data.accounts;
+                            if (Array.isArray(accs) && accs.length > 0) accNo = accs[0].account_no || '';
+                        } catch(e) {}
+                    }
+                    if (accNo) {
+                        const el = document.getElementById('modalSenderAccountNumber'); if (el) el.value = accNo;
+                        const disp = document.getElementById('inputSenderAccountNumber'); if (disp) disp.innerText = accNo;
+                    }
+                    // Extract account title
+                    let accTitle = data.account_title || '';
+                    if (!accTitle && data.accounts) {
+                        try {
+                            const accs = typeof data.accounts === 'string' ? JSON.parse(data.accounts) : data.accounts;
+                            if (Array.isArray(accs) && accs.length > 0) accTitle = accs[0].account_title || '';
+                        } catch(e) {}
+                    }
+                    if (accTitle) {
+                        const el = document.getElementById('modalSenderAccountTitle'); if (el) el.value = accTitle;
+                        const disp = document.getElementById('inputSenderAccountTitle'); if (disp) disp.innerText = accTitle;
+                    }
+                    if (data.receiver_bank) { const el = document.getElementById('modalReceiverBank'); if (el) el.value = data.receiver_bank; const disp = document.getElementById('inputReceiverBank'); if (disp) disp.innerText = data.receiver_bank; }
+                    if (data.receiver_branch) { const el = document.getElementById('modalReceiverBranch'); if (el) el.value = data.receiver_branch; const disp = document.getElementById('inputReceiverBranch'); if (disp) disp.innerText = data.receiver_branch; }
+                    if (data.receiver_routing) { const el = document.getElementById('modalReceiverRouting'); if (el) el.value = data.receiver_routing; const disp = document.getElementById('inputReceiverRouting'); if (disp) disp.innerText = data.receiver_routing; }
+                    if (data.receiver_account_no) { const el = document.getElementById('modalReceiverAccountNumber'); if (el) el.value = data.receiver_account_no; const disp = document.getElementById('inputReceiverAccountNumber'); if (disp) disp.innerText = data.receiver_account_no; }
+                    if (data.receiver_account_title) { const el = document.getElementById('modalReceiverAccountTitle'); if (el) el.value = data.receiver_account_title; const disp = document.getElementById('inputReceiverAccountTitle'); if (disp) disp.innerText = data.receiver_account_title; }
+                    if (data.amount) { const el = document.getElementById('modalAmount'); if (el) el.value = data.amount; const disp = document.getElementById('inputAmount'); if (disp) disp.innerText = data.amount; }
+                    if (data.amount_words) { const el = document.getElementById('modalAmountWords'); if (el) el.value = data.amount_words; const disp = document.getElementById('inputAmountWords'); if (disp) disp.innerText = data.amount_words; }
+                    if (data.payment_purpose) { const el = document.getElementById('modalPurpose'); if (el) el.value = data.payment_purpose; const disp = document.getElementById('inputPurpose'); if (disp) disp.innerText = data.payment_purpose; }
+                    if (data.branch_name) { const el = document.getElementById('modalBranchName'); if (el) el.value = data.branch_name; const disp = document.getElementById('displayBranchName'); if (disp) { disp.innerText = data.branch_name; disp.classList.remove('solid-border-bottom'); disp.style.minWidth = '0'; } }
+                    if (data.app_date) {
+                        const el = document.getElementById('modalFormDate'); 
+                        if (el) el.value = data.app_date; 
+                        const disp = document.getElementById('displayFormDate'); 
+                        if (disp) { 
+                            disp.innerText = formatDisplayDate(data.app_date); disp.classList.remove('solid-border-bottom'); disp.style.minWidth = '0'; } }
+
+                    // Address from English fields only
+                    const eftnVillage = data.curr_addr_village_en || '';
+                    const eftnUpozila = data.present_upozila_en || '';
+                    const eftnAddr = (eftnVillage && eftnUpozila) ? (eftnVillage + ', ' + eftnUpozila) : (eftnVillage || eftnUpozila);
+                    if (eftnAddr) {
+                        const el = document.getElementById('modalSenderAddress');
+                        if (el) el.value = eftnAddr;
+                        // Note: EFTN form currently doesn't have an address display field, but if it did, set it here
+                    }
+                },
+                saveWork: () => { console.log('EFTN form saveWork is handled by the App Shell.'); }
+            };
+
+            // ── Non-blocking Toast + Confirm helpers ──
+            function appToast(msg, isError = false) {
+                const color = isError ? '#dc3545' : '#28a745';
+                let t = document.getElementById('_app_toast');
+                if (!t) {
+                    t = document.createElement('div');
+                    t.id = '_app_toast';
+                    Object.assign(t.style, {
+                        position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+                        padding: '11px 24px', borderRadius: '8px', color: 'white', fontWeight: 'bold',
+                        zIndex: '99999', boxShadow: '0 4px 12px rgba(0,0,0,0.18)', opacity: '0',
+                        transition: 'opacity 0.3s', pointerEvents: 'none',
+                        fontFamily: "'SolaimanLipi', Arial, sans-serif", fontSize: '0.95rem',
+                        maxWidth: '80vw', textAlign: 'center'
+                    });
+                    document.body.appendChild(t);
+                }
+                t.textContent = msg;
+                t.style.backgroundColor = color;
+                t.style.opacity = '1';
+                clearTimeout(t._tid);
+                t._tid = setTimeout(() => { t.style.opacity = '0'; }, 3200);
+            }
+
+            function appConfirm(msg, onYes, onNo) {
+                let overlay = document.getElementById('_app_confirm_overlay');
+                if (overlay) overlay.remove();
+                overlay = document.createElement('div');
+                overlay.id = '_app_confirm_overlay';
+                Object.assign(overlay.style, {
+                    position: 'fixed', inset: '0', background: 'rgba(0,0,0,0.55)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: '99998', fontFamily: "'SolaimanLipi', Arial, sans-serif"
+                });
+                overlay.innerHTML = `
+                <div style="background:white;border-radius:10px;padding:28px 32px;max-width:400px;width:90%;
+                            box-shadow:0 8px 30px rgba(0,0,0,0.25);text-align:center;">
+                    <p style="margin:0 0 22px;font-size:1rem;color:#333;line-height:1.5;">${msg}</p>
+                    <div style="display:flex;gap:12px;justify-content:center;">
+                        <button id="_app_confirm_yes" style="background:#dc3545;color:white;border:none;
+                            padding:9px 26px;border-radius:6px;cursor:pointer;font-size:0.95rem;font-weight:bold;">
+                            হ্যাঁ / Yes
+                        </button>
+                        <button id="_app_confirm_no" style="background:#6c757d;color:white;border:none;
+                            padding:9px 26px;border-radius:6px;cursor:pointer;font-size:0.95rem;">
+                            না / No
+                        </button>
+                    </div>
+                </div>`;
+                document.body.appendChild(overlay);
+                overlay.querySelector('#_app_confirm_yes').addEventListener('click', () => {
+                    overlay.remove(); if (onYes) onYes();
+                });
+                overlay.querySelector('#_app_confirm_no').addEventListener('click', () => {
+                    overlay.remove(); if (onNo) onNo();
+                });
+            }
+    </script>
+</body>
+
+</html>

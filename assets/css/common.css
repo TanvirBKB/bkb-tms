@@ -1,0 +1,61 @@
+html {
+  font-size: clamp(13px, 0.8vw + 0.4rem, 17px);
+}
+
+.form-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.btn-action {
+  width: clamp(110px, 12vw, 220px);
+  height: clamp(36px, 4vh, 48px);
+  padding: 0.5rem 1rem;
+  font-size: clamp(0.85rem, 1vw, 1.05rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.button-bar .btn-action {
+  flex: 1 1 auto;
+  min-width: 120px;
+  max-width: 250px;
+}
+
+/* Unified Minimalist Editable Blanks */
+span[contenteditable], div[contenteditable]:not(.digit-box) {
+    display: inline-block;
+    min-width: 1px;
+    border-bottom: 0.01in dotted #000;
+    outline: none;
+    padding: 0 0.02in;
+    text-align: left;
+    min-height: 1.2em;
+    background: transparent;
+    color: #000;
+    transition: border-bottom 0.15s;
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+span[contenteditable]:empty, div[contenteditable]:not(.digit-box):empty {
+    min-width: 0.5in;
+}
+
+span[contenteditable]:focus, div[contenteditable]:not(.digit-box):focus {
+    border-bottom: 0.015in solid #000;
+}
+
+td[contenteditable] {
+    outline: none;
+}

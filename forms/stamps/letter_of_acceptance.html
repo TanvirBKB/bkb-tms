@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>সম্মতিপত্র</title>
+
+  <style>
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body.stamp-body-wrapper {
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      color: #0f172a;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Standard Legal Paper Layout for Bangladesh Stamp Printing */
+    .stamp-page {
+      width: 8.5in;
+      height: 14in;
+      padding-top: 4.3in;
+      /* 4.3" clearance for legal stamp cartridge */
+      padding-bottom: 1in;
+      padding-left: 1in;
+      padding-right: 1in;
+      margin: 20px auto;
+      background: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .page-top-label {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .main-title {
+      text-align: center;
+      font-size: 16pt;
+      font-weight: 700;
+      text-decoration: underline;
+      margin-bottom: 35px;
+    }
+
+    .content-body {
+      font-size: 12.5pt;
+      line-height: 2.2;
+      text-align: justify;
+      flex-grow: 1;
+    }
+
+    .clause-item {
+      margin-top: 25px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .clause-num {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .clause-text {
+      flex: 1;
+      text-align: justify;
+    }
+
+    /* Fillable Dotted Lines */
+    .dotted-field,
+    span[contenteditable="true"] {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: left;
+      min-width: 1px;
+      font-weight: bold;
+    }
+
+    .dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      min-width: 0.5in;
+    }
+
+    .dotted-field:focus,
+    .dotted-input:focus,
+    span[contenteditable="true"]:focus,
+    .data-input:focus {
+      border-bottom: 1.5px dotted #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .page-footer-indicator {
+      text-align: right;
+      font-size: 12pt;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    /* Print Controls */
+    @media print {
+      body.stamp-body-wrapper {
+        background: transparent;
+      }
+
+      .stamp-page {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
+
+      @page {
+        size: 8.5in 14in portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- PAGE 1: সম্মতি পত্র -->
+  <div class="stamp-page">
+    <div>
+      <div class="main-title">সম্মতি পত্র</div>
+
+      <div class="content-body" style="margin-top: 0.5in;">
+        <p class="paragraph" style="line-height: 2.8; text-align: justify; font-size: 12.5pt;">
+          আমি/আমরা -<span class="dotted-field" contenteditable="true"
+            id="applicant_name"></span>-এর স্বত্বাধিকারী-<span class="dotted-field"
+            contenteditable="true" id="proprietorship_name"></span>- এই মর্মে অঙ্গীকার করিতেছি যে, বাংলাদেশ কৃষি ব্যাংক,
+          <span class="dotted-field" contenteditable="true" id="branch_name"></span> এর
+          মঞ্জুরী পত্র নং-<span class="dotted-field" contenteditable="true"
+            id="sanction_letter_no"></span> তারিখ <span class="dotted-field"
+            contenteditable="true" id="sanction_date"></span>ইং মোতাবেক আমাদের মালিকানাধীন প্রতিষ্ঠান ।
+        </p>
+      </div>
+    </div>
+
+    <div class="page-footer-indicator">
+      চলমান পাতা-০২
+    </div>
+  </div>
+
+  <!-- PAGE 2: Sanction Acknowledgement -->
+  <div class="stamp-page">
+    <div class="content-body" style="margin-top: 0.5in;">
+      <p class="paragraph" style="line-height: 2.8; text-align: justify; font-size: 12.5pt; margin-bottom: 30px;">
+        বাংলাদেশ কৃষি ব্যাংক <span class="dotted-field" contenteditable="true"
+          id="p2_branch_name"></span> শাখা হতে আমাদের পরিচালিত প্রতিষ্ঠান-<span class="dotted-field"
+           contenteditable="true" id="p2_institution_name"></span> এর অনুকূলে <span
+          class="dotted-field" contenteditable="true" id="p2_amount_num"></span>(কথায়ঃ<span
+          class="dotted-field" contenteditable="true" id="p2_amount_words"></span>) <span
+          class="dotted-field" contenteditable="true" id="p2_loan_type"></span> ঋণ মঞ্জুর করা
+        হয়।
+      </p>
+
+      <p class="paragraph" style="line-height: 2.5; text-align: justify; font-size: 12.5pt;">
+        উক্ত মঞ্জুরীপত্রের সকল শর্তাবলী পড়িয়া বুঝিলাম ও স্বীকারোক্তি করিলাম এবং সকল শর্তাবলী যথাযথভাবে পালন করিব বলিয়া
+        স্বাক্ষর প্রদান করিলাম।
+      </p>
+
+      <div style="margin-top: 1in; text-align: right; padding-right: 15px;">
+        <span style="font-size: 12.5pt; font-weight: 600; padding-top: 5px; display: inline-block;">
+          ঋণ গ্রহীতার স্বাক্ষর
+        </span>
+      </div>
+    </div>
+  </div>
+
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশ কৃষি ব্যাংক - ফরওয়ার্ডিং লেটার</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Arial', sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0.2in 0;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .a4-page {
+            width: 8.27in;
+            min-height: 11.69in;
+            background: #ffffff;
+            padding: 0.5in;
+            box-shadow: 0 0.04in 0.06in -0.01in rgba(0, 0, 0, 0.1), 0 0.02in 0.04in -0.01in rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+        }
+
+        .divider-line {
+            border-top: 0.01in solid #000;
+            margin: 0.04in 0 0.15in 0;
+            width: 100%;
+        }
+
+        .meta-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.15in;
+            width: 100%;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .recipient-block {
+            line-height: 1.4;
+            margin-bottom: 0.15in;
+        }
+
+        .recipient-block div {
+            margin-bottom: 0.02in;
+        }
+
+        .subject-block {
+            text-align: justify;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 0.15in;
+            text-indent: 0.5in;
+        }
+
+        .content-block {
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 0.15in;
+            text-indent: 0.5in;
+        }
+
+        .signoff-container {
+            margin-top: 0.25in;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .attachment-block {
+            font-weight: bold;
+            width: 40%;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 2.6in;
+            line-height: 1.4;
+        }
+
+        .signature-line {
+            margin-bottom: 0.04in;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                display: block;
+            }
+
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                min-height: 100%;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+
+<body>
+
+    <!-- Main Letter Sheet Wrapper -->
+    <div class="a4-page">
+
+        <!-- BKB Header Layout with perfectly centered title -->
+        <div class="header-container" style="position: relative; margin-bottom: 0.05in;">
+            <!-- Absolutely position logo on the left to not disrupt center alignment -->
+            <img src="../../../assets/images/bkb_logo.png" alt="BKB Logo"
+                style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 0.7in; object-fit: contain; filter: grayscale(100%) brightness(0%); z-index: 10;">
+
+            <!-- Center Aligned Block for Bank Name and Branch Location -->
+            <div style="text-align: center; width: 100%; position: relative; z-index: 1;">
+                <h1 class="bank-title" style="font-size: 16.5pt; margin: 0; text-decoration: none; line-height: 1.1;">
+                    বাংলাদেশ কৃষি ব্যাংক
+                </h1>
+
+                <div style="font-size: 14pt; margin-top: 0; line-height: 1.3;">
+                    <span contenteditable="true" spellcheck="false" data-placeholder="শাখার নাম"
+                        data-db-field="branch_name" style="font-weight: bold;"></span> শাখা, <br>
+                    <span contenteditable="true" spellcheck="false" data-placeholder="অবস্থান"
+                        data-db-field="branch_location_1"></span>, <span contenteditable="true" spellcheck="false"
+                        data-placeholder="জেলা" data-db-field="branch_location_2"></span>।
+                </div>
+            </div>
+
+            <!-- Absolutely position contact info on the right -->
+            <div style="position: absolute; right: 0; bottom: 0; text-align: right; z-index: 10;">
+                <div style="font-size: 9.5pt;">
+                    মোবাইলঃ <span contenteditable="true" spellcheck="false" data-placeholder="মোবাইল নম্বর"
+                        data-db-field="branch_mobile" class="bangla-numbers"></span>
+                </div>
+                <div style="font-size: 8pt; margin-top: 0.02in;">
+                    ইমেইলঃ <span contenteditable="true" spellcheck="false" data-placeholder="ইমেইল এড্রেস"
+                        data-db-field="branch_email"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <!-- Meta Identifiers -->
+        <div class="meta-container">
+            <div>
+                <span class="bold">সূত্র নং-</span><span contenteditable="true" spellcheck="false"
+                    data-placeholder="সূত্র নম্বর" data-db-field="ref_no" style="text-align: left;"></span>
+            </div>
+            <div>
+                <span class="bold">তারিখঃ </span><span contenteditable="true" spellcheck="false"
+                    data-placeholder="তারিখ" data-db-field="letter_date" class="bangla-numbers"></span>
+            </div>
+        </div>
+
+        <!-- Recipient Information -->
+        <div class="recipient-block">
+            <div class="bold">মুখ্য আঞ্চলিক ব্যবস্থাপক</div>
+            <div class="bold">বাংলাদেশ কৃষি ব্যাংক</div>
+            <div class="bold">মুখ্য আঞ্চলিক কার্যালয়</div>
+            <div><span contenteditable="true" spellcheck="false" data-placeholder="আঞ্চলিক কার্যালয়ের অবস্থান"
+                    data-db-field="regional_office_location" style="text-align: left;"></span> ।</div>
+        </div>
+
+        <!-- Subject Definition -->
+        <div class="subject-block">
+            বিষয়: <span contenteditable="true" spellcheck="false" data-placeholder="গ্রাহকের নাম"
+                data-db-field="customer_name_subject"></span> এর অনুকূলে <span contenteditable="true" spellcheck="false"
+                data-placeholder="ঋণের খাত" data-db-field="loan_sector_subject"></span>- খাত এর আওতায় <span
+                contenteditable="true" spellcheck="false" data-placeholder="ঋণের ধরন"
+                data-db-field="loan_type_subject"></span> ঋণ হিসেবে <span contenteditable="true" spellcheck="false"
+                data-placeholder="অংকে টাকা" data-db-field="amount_num_subject" class="bangla-numbers"></span>(<span
+                contenteditable="true" spellcheck="false" data-placeholder="কথায় টাকা"
+                data-db-field="amount_words_subject"></span>) টাকা ঋণ <span contenteditable="true" spellcheck="false"
+                data-placeholder="বিষয় বিবরণী" data-db-field="subject_details"></span> প্রসঙ্গে ।
+        </div>
+
+        <!-- Salutation -->
+        <div class="bold" style="margin-bottom: 10px;">প্রিয় মহোদয়,</div>
+
+        <!-- Content Body Part 1 -->
+        <div class="content-block">
+            উপর্যুক্ত বিষয়ে আপনার সদয় দৃষ্টি আকর্ষণ করছি।
+        </div>
+
+        <!-- Content Body Part 2 -->
+        <div class="content-block">
+            ০২। অত্র শাখার প্রস্তাবিত ঋণ গ্রহীতা প্রতিষ্ঠান-<span contenteditable="true" spellcheck="false"
+                data-placeholder="প্রতিষ্ঠানের নাম" data-db-field="organization_name"
+                style="font-weight: bold;"></span>, প্রোঃ <span contenteditable="true" spellcheck="false"
+                data-placeholder="প্রোপাইটরের নাম" data-db-field="proprietor_name" style="font-weight: bold;"></span> এর
+            অনুকূলে <span contenteditable="true" spellcheck="false" data-placeholder="কার্যক্রমের বিবরণ"
+                data-db-field="business_activity"></span> কার্যক্রম পরিচালনার লক্ষ্যে <span contenteditable="true"
+                spellcheck="false" data-placeholder="ঋণের খাত" data-db-field="loan_sector"></span>-খাত এর আওতায় <span
+                contenteditable="true" spellcheck="false" data-placeholder="অংকে টাকা" data-db-field="amount_num"
+                class="bangla-numbers"></span>(<span contenteditable="true" spellcheck="false"
+                data-placeholder="কথায় টাকা" data-db-field="amount_words"></span>) টাকা ঋণ <span contenteditable="true"
+                spellcheck="false" data-placeholder="মঞ্জুরী/নবায়ন" data-db-field="approval_type"></span> জন্য শাখার
+            সুপারিশসহ <span contenteditable="true" spellcheck="false" data-placeholder="সুপারিশ বিবরণী"
+                data-db-field="recommendation_details"></span> প্রশ্নে আপনার সদয় পরবর্তী প্রয়োজনীয় ব্যবস্থা গ্রহণের জন্য
+            এতদসঙ্গে প্রেরণ করা হলো।
+        </div>
+
+        <!-- Signature Card & Attachments Footer Group -->
+        <div class="signoff-container">
+            <div class="attachment-block">
+                সংযুক্তি: <span contenteditable="true" spellcheck="false" data-placeholder="সংযুক্তির বর্ণনা"
+                    data-db-field="enclosure_details" style="text-align: left; font-weight: normal;">বর্ণনামতে</span>।
+            </div>
+
+            <div class="signature-block">
+                <div class="bold" style="margin-bottom: 45px;">আপনার বিশ্বস্ত</div>
+                <div class="signature-line">( <span contenteditable="true" spellcheck="false"
+                        data-placeholder="ব্যবস্থাপকের নাম" data-db-field="manager_name"></span> )</div>
+                <div class="bold">ব্যবস্থাপক</div>
+                <div>বিকেবি, <span contenteditable="true" spellcheck="false" data-placeholder="শাখার নাম"
+                        data-db-field="sign_branch_name"></span> শাখা</div>
+                <div><span contenteditable="true" spellcheck="false" data-placeholder="অবস্থান"
+                        data-db-field="sign_location"></span>।</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- -->
+
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+
+</html>

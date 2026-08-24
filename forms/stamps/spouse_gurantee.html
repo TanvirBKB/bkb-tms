@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spouse Guarantee (সংযুক্তি- 'ঘ')</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      padding-top: 4.3in;
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 2.1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .page-top-label {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .main-title {
+      text-align: center;
+      font-size: 16pt;
+      font-weight: 700;
+      text-decoration: underline;
+      margin-bottom: 35px;
+    }
+
+    .content-body {
+      font-size: 12.5pt;
+      line-height: 2.2;
+      text-align: justify;
+    }
+
+    .clause-item {
+      margin-top: 25px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .clause-num {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .clause-text {
+      flex: 1;
+      text-align: justify;
+    }
+
+    .dotted-field,
+    [contenteditable="true"] {
+      border-bottom: 1.5px dotted #000000;
+      padding: 0 4px;
+      display: inline-block;
+      min-width: 1px;
+      outline: none;
+      vertical-align: baseline;
+      line-height: 1.2;
+      margin: 0 2px;
+      font-weight: bold;
+    }
+
+    .dotted-field:empty,
+    [contenteditable="true"]:empty {
+      min-width: 0.5in;
+    }
+
+    .dotted-field:focus {
+      border-bottom: 2px solid #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .page-footer-indicator {
+      text-align: right;
+      font-size: 12pt;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    .witness-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      font-size: 11pt;
+    }
+
+    .witness-col {
+      flex: 1;
+    }
+
+    .witness-heading {
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 12.5pt;
+    }
+
+    /* Witness Table Styles */
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+    .witness-table td {
+      padding: 4px 0;
+      vertical-align: bottom;
+      border: none;
+    }
+    .witness-table td:nth-child(1) { width: 30%; }
+    .witness-table td:nth-child(2) { width: 5%; text-align: center; font-weight: bold; }
+    .witness-table td:nth-child(3) { width: 65%; }
+    .witness-table .dotted-field { width: 100%; display: block; }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- PAGE 1: Spouse Guarantee -->
+  <div class="stamp-page">
+    <div>
+      <div class="page-top-label">সংযুক্তি- 'ঘ'</div>
+
+      <div class="main-title">Spouse Guarantee</div>
+
+      <div class="content-body">
+        <p class="paragraph" style="line-height: 2.5; text-align: justify;">
+          আমি নিম্ন স্বাক্ষরকারী এই মর্মে নিশ্চয়তা প্রদান করিতেছি যে, আমার স্ত্রী/ স্বামী জনাব
+          <span class="dotted-field" contenteditable="true" data-db-field="spouse_name"></span>
+          পিতা <span class="dotted-field" contenteditable="true" data-db-field="spouse_father_name"></span>
+          মাতা <span class="dotted-field" contenteditable="true" data-db-field="spouse_mother_name"></span>
+          গ্রাম <span class="dotted-field" contenteditable="true" data-db-field="spouse_village"></span>
+          উপজেলা <span class="dotted-field" contenteditable="true" data-db-field="spouse_upazila"></span>
+          জেলা <span class="dotted-field" contenteditable="true" data-db-field="spouse_district"></span>
+          এর নামে বাংলাদেশ কৃষি ব্যাংক, <span class="dotted-field" contenteditable="true"
+            data-db-field="branch_name"></span> শাখা হইতে
+          <span class="dotted-field" contenteditable="true" data-db-field="scheme_name"></span>
+          খাতের আওতায় মঞ্জুরীকৃত টাকা <span class="dotted-field" contenteditable="true"
+            data-db-field="loan_amount"></span>
+          (কথায় <span class="dotted-field" contenteditable="true" data-db-field="loan_amount_words"></span>)
+          মাত্র ঋণ প্রদান করা হইলে উক্ত ঋণের টাকা যথাযথভাবে ব্যবহৃত হইবে এবং ঋণটি সুদে আসলে যথাসময়ে পরিশোধ নিশ্চিত হইবে।
+        </p>
+
+        <div class="clause-item">
+          <span class="clause-num">০২।</span>
+          <span class="clause-text">আমি আরও নিশ্চয়তা প্রদান করিতেছি যে, এই ঋণের সকল নিয়মকানুন যথাযথভাবে মানিয়া চলা
+            হইবে।</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer-indicator">
+      চলমান পাতা-০২
+    </div>
+  </div>
+
+  <!-- PAGE 2: Spouse Guarantee -->
+  <div class="stamp-page">
+    <div>
+      <div class="page-top-label" style="margin-top: 10px;">পাতা-০২</div>
+
+      <div class="content-body" style="margin-top: 0.8in;">
+        <div class="clause-item">
+          <span class="clause-num">০৩।</span>
+          <span class="clause-text">
+            আমি আরও অঙ্গীকার করিতেছি যে, ঋণের টাকা সদ্ব্যবহার না হইলে অথবা যথাসময়ে আদায় নিশ্চিত না হইলে আমি
+            ব্যক্তিগতভাবে ঋণটি সুদাসলে মেয়াদোত্তীর্ণের এক মাসের মধ্যে পরিশোধ করিতে বাধ্য থাকিব। অন্যথায় ব্যাংক
+            ব্যবস্থাপনা কর্তৃপক্ষ ঋণটি আদায়ের ব্যাপারে আমার বিরুদ্ধে যেকোন ব্যবস্থা গ্রহণ করিলে আমি তাহা মানিয়া নিতে
+            বাধ্য থাকিব। ইহাতে আমি কোন আপত্তি করিব নিয়োগ করিব না, করিলেও তাহা আইনতঃ অগ্রাহ্য হইবে।
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer-indicator">
+      চলমান পাতা-০৩
+    </div>
+  </div>
+
+  <!-- PAGE 3: Spouse Guarantee -->
+  <div class="stamp-page">
+    <div>
+      <div class="page-top-label" style="margin-top: 10px;">পাতা-০৩</div>
+
+      <div class="content-body" style="margin-top: 0.6in;">
+        <div class="witness-grid">
+
+          <!-- Left Column: Witness Details -->
+          <div class="witness-col">
+            <div class="witness-heading">স্বাক্ষীঃ</div>
+
+            <!-- Witness 1 -->
+            <div style="margin-bottom: 2mm; font-weight: bold;">১।</div>
+            <table class="witness-table">
+              <tr>
+                <td>নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>পিতার নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>ঠিকানা</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>মোবাইল নং</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+            </table>
+
+            <!-- Witness 2 -->
+            <div style="margin-top: 6mm; margin-bottom: 2mm; font-weight: bold;">২।</div>
+            <table class="witness-table">
+              <tr>
+                <td>নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>পিতার নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>ঠিকানা</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>মোবাইল নং</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Right Column: Borrower Guarantor Signature Details -->
+          <div class="witness-col">
+            <div class="witness-heading">ঋণ গ্রহীতার গ্যারান্টরের স্বাক্ষরঃ</div>
+
+            <table class="witness-table" style="margin-top: 6.5mm;">
+              <tr>
+                <td>নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>পিতার নাম</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>ঠিকানা</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+              <tr>
+                <td>মোবাইল নং</td>
+                <td>:</td>
+                <td><span class="dotted-field" contenteditable="true"></span></td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+    .stamp-page,
+    .page,
+    .a4-page {
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Fix excessive line gap - ONLY IN STAMPS */
+    .stamp-page {
+      line-height: 1.6 !important;
+    }
+
+    .stamp-page .content-body,
+    .stamp-page .paragraph,
+    .stamp-page p {
+      line-height: 1.6 !important;
+    }
+
+    /* Input Field Fixes: Keeps baseline tight and avoids line-height expansion */
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"] {
+      display: inline !important;
+      vertical-align: baseline !important;
+      font-weight: bold !important;
+      outline: none;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+      line-height: inherit !important;
+    }
+
+    /* Padding trick ensures empty fields show dots without breaking line height */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      padding-left: 0.25in;
+      padding-right: 0.25in;
+    }
+  </style>
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          // Seamless caret position restoration
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            // Automatically convert digits to Bangla if the class is present
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

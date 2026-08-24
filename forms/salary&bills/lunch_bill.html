@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিভিন্ন বিল জেনারেটর</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        body {
+            font-family: 'SolaimanLipi', 'Vrinda', 'Arial Unicode MS', 'Siyam Rupali', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: #fff;
+            padding: 0.5in;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #dataModal, #logModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 98%;
+            max-width: 1350px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: nowrap; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+
+        .main-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        .main-table th, .main-table td { border: 1px solid black; padding: 6px 4px; text-align: center; font-size: 13px; }
+        .col-name, .col-desig { text-align: left !important; padding-left: 8px !important; }
+
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h1 { margin: 0; font-size: 26px; font-weight: bold; }
+        .branch-info { margin: 5px 0; font-size: 20px; display: flex; flex-direction: column; gap: 2px; }
+        .subject { font-size: 22px; font-weight: bold; margin: 10px 0; text-decoration: underline; }
+        
+        .footer-text { margin-top: 15px; font-size: 17px; line-height: 1.6; text-align: center; }
+        .signature-area { margin-top: 60px; display: flex; justify-content: space-between; }
+        .sig-box { text-align: center; width: 200px; }
+        .sig-line { border-top: 1px solid #000; padding-top: 5px; font-weight: bold; }
+
+        .controls { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px; }
+        
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 8px; font-family: inherit; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-add { background: #8e44ad; color: white; margin-top: 10px; }
+        .btn-info { background: #16a085; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+
+        .btn-type {
+            padding: 15px; width: 100%; font-size: 18px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+        }
+
+            .flatpickr-day.holiday { color: #e74c3c !important; font-weight: bold; }
+
+        @media print {
+            @page { size: A4 portrait; margin: 0; }
+            body { background: white; }
+            .container { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+            .controls, #dataModal, #logModal, #typeSelectorModal { display: none !important; }
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+<body>
+<div id="dataModal" style="display: none;">
+    <div class="modal-content">
+        <h2 style="text-align: center; margin-bottom: 20px;">তথ্য এন্ট্রি করুন</h2>
+        
+        <div class="form-row">
+            <div class="form-group" style="flex: 0.9;">
+                <label>শাখার নাম</label>
+                <input type="text" id="inBranch" placeholder="যেমন: বনানী শাখা">
+            </div>
+            <div class="form-group" style="flex: 1.0;">
+                <label>অবস্থান (ঠিকানা)</label>
+                <input type="text" id="inLocation" placeholder="যেমন: ঢাকা">
+            </div>
+            <div class="form-group" style="flex: 1.1;">
+                <label>ভাতার ধরন</label>
+                <select id="inBillType" onchange="updateRateFromType()">
+                    <option value="মধ‌্যাহ্নভোজন ভাতা" data-rate="400">মধাহ্নভোজন ভাতা (৪০০/-)</option>
+                    <option value="ইফতার ভাতা" data-rate="400">ইফতার ভাতা (৪০০/-)</option>
+                    <option value="ক্লোজিং ভাতা" data-rate="2000">ক্লোজিং ভাতা (২০০০/-)</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1.3; position: relative;">
+                <label>বিলের তারিখ</label>
+                <div style="display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 6px; padding-right: 8px;">
+                    <input type="text" id="inDate" style="border: none; flex: 1;" placeholder="দিন/মাস/বছর">
+                    <span id="datePickerTrigger" style="cursor: pointer; font-size: 16px;">📅</span>
+                </div>
+            </div>
+            <div class="form-group" style="flex: 0.8;">
+                <label>মাস</label>
+                <select id="inMonth">
+                    <option>জানুয়ারি</option><option>ফেব্রুয়ারি</option><option>মার্চ</option>
+                    <option>এপ্রিল</option><option>মে</option><option>জুন</option>
+                    <option>জুলাই</option><option>আগস্ট</option><option>সেপ্টেম্বর</option>
+                    <option>অক্টোবর</option><option>নভেম্বর</option><option>ডিসেম্বর</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 0.6;">
+                <label>বছর</label>
+                <input type="number" id="inYear" value="2026">
+            </div>
+            <div class="form-group" style="flex: 0.8;">
+                <label>দৈনিক হার (টাকা)</label>
+                <input type="number" id="globalRate" value="400">
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+            <label style="font-weight: bold;">কর্মকর্তাদের তালিকা:</label>
+            <div style="display: flex; gap: 8px;">
+                <button style="padding: 5px 12px; background: #2980b9; color:white; font-size: 12px;" onclick="sortAndReorderModal()">📋 সিরিয়াল ঠিক করুন</button>
+                <button style="padding: 5px 12px; background: #f39c12; color:white; font-size: 12px;" onclick="syncAllDates()">🔄 সবাইকে একই তারিখ দিন</button>
+            </div>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+                <tr style="background: #f4f4f4;">
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="60px">ক্রম</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="20%">নাম</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="15%">পদবি</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="15%">দায়িত্ব</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="30%">তারিখ সমূহ (দিন)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="60px">নির্বাচন</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;" width="40px">-</th>
+                </tr>
+            </thead>
+            <tbody id="modalOfficerBody"></tbody>
+        </table>
+        
+        <button class="btn-add" onclick="addOfficerRowInModal()">+ কর্মকর্তা যোগ করুন</button>
+
+        <div style="margin-top: 30px; display: flex; gap: 10px;">
+            <button class="btn-success" style="flex: 1;" onclick="generateBill()">বিল তৈরি করুন</button>
+            <button class="btn-danger" style="flex: 0.3; background:#95a5a6;" onclick="closeModal()">বন্ধ করুন</button>
+        </div>
+    </div>
+</div>
+
+<div id="logModal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <h2 style="text-align: center; color: #2c3e50;">পূর্ববর্তী বিল সমূহ</h2>
+        <div id="logList" style="margin-top: 20px;"></div>
+        <button class="btn-danger" style="margin-top: 25px; width: 100%;" onclick="document.getElementById('logModal').style.display='none'">বন্ধ করুন</button>
+    </div>
+</div>
+
+<div class="container" id="bill">
+    <div class="header">
+        <h1>বাংলাদেশ কৃষি ব্যাংক</h1>
+        <div class="branch-info">
+            <span id="displayBranchName" style="font-weight: bold;">..........................................</span>
+            <span id="displayBranchLoc" style="font-size: 16px;">..........................</span>
+        </div>
+        <div id="displaySubject" class="subject">ভাতা বিল</div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 17px;">
+        <div>মাস: <span id="displayMonth" style="font-weight: bold;">................</span></div>
+        <div>তারিখ: <span id="displayDate" style="font-weight: bold;">................</span></div>
+    </div>
+
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th width="30px">ক্রম</th>
+                <th class="col-name">কর্মকর্তার নাম</th>
+                <th class="col-desig">পদবী</th>
+                <th>কার্যদিবস</th>
+                <th width="40px">দিন</th>
+                <th width="50px">হার</th>
+                <th width="70px">মোট</th>
+                <th width="90px">স্বাক্ষর</th>
+            </tr>
+        </thead>
+        <tbody id="mainBillBody"></tbody>
+        <tfoot>
+            <tr style="font-weight: bold;">
+                <td colspan="6" style="text-align: right; padding-right: 15px;">সর্বমোট টাকা =</td>
+                <td id="grandTotal">০</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer-text">
+        কথায়: <span id="textAmount" style="font-weight: bold; border-bottom: 1px dotted #000;">........................</span><br>
+        অত্র শাখার কর্মকর্তাগণকে <span id="footerBillType" style="font-weight: bold;">ভাতা</span> বাবদ মং- <span id="numAmount" style="font-weight: bold; border-bottom: 1px dotted #000;">...........</span> টাকা মাত্র প্রদান করা হলো।
+    </div>
+
+    <div class="signature-area">
+        <div class="sig-box"><div class="sig-line">২য় কর্মকর্তা</div></div>
+        <div class="sig-box"><div class="sig-line">ব্যবস্থাপক</div></div>
+    </div>
+</div>
+
+<div class="controls">
+    <button class="btn-primary" onclick="showModal()">✏️ নতুন বিল তৈরী</button>
+    <button class="btn-warning" onclick="showLogModal()">📜 পুরানো বিল</button>
+    <button class="btn-danger" onclick="resetForm()">🧹 সব মুছুন</button>
+    <button class="btn-success" onclick="window.print()">🖨️ প্রিন্ট / PDF</button>
+</div>
+
+<script>
+    window.AppStorage = window.AppStorage || window.parent?.AppStorage || {
+        getItem: (k) => localStorage.getItem(k),
+        setItem: (k, v) => localStorage.setItem(k, v),
+        removeItem: (k) => localStorage.removeItem(k)
+    };
+    const SETTINGS_KEY = 'BK_BILL_V2_OFFICERS';
+    const LOG_KEY = 'BK_BILL_HISTORY';
+    const bNum = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBengali = (num) => String(num).replace(/\d/g, d => bNum[d]);
+    const fromBengali = (str) => String(str).replace(/[০-৯]/g, d => "০১২৩৪৫৬৭৮৯".indexOf(d));
+
+    let fpInstances = [];
+    let selectedSubject = "ভাতা";
+
+    window.onload = function() {
+        const fp = flatpickr("#inDate", { 
+            dateFormat: "d/m/Y", 
+            defaultDate: new Date(),
+            allowInput: true,
+            clickOpens: false,
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                if (dayElem.dateObj.getDay() === 5 || dayElem.dateObj.getDay() === 6) {
+                    dayElem.classList.add("holiday");
+                }
+            }
+        });
+
+        document.getElementById('datePickerTrigger').onclick = () => fp.open();
+
+        document.getElementById('inDate').addEventListener('blur', function() {
+            let val = this.value.trim();
+            // Matches formats like 01/01/20 or 01-01-20
+            const regex = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/;
+            const match = val.match(regex);
+            if (match) {
+                const day = match[1].padStart(2, '0');
+                const month = match[2].padStart(2, '0');
+                const year = "20" + match[3];
+                // Formats to 01-01/2020 as requested
+                this.value = `${day}-${month}/${year}`;
+            }
+        });
+
+        loadSettings();
+    };
+
+    function updateRateFromType() {
+        const select = document.getElementById('inBillType');
+        const rate = select.options[select.selectedIndex].dataset.rate;
+        document.getElementById('globalRate').value = rate;
+        resetOfficerDates();
+    }
+
+    function getRank(duty) {
+        const d = (duty || "").trim().toLowerCase();
+        if (d.includes("ব্যবস্থাপক") || d.includes("manager")) return 1;
+        if (d.includes("২য়") || d.includes("২য়") || d.includes("সেকেন্ড") || d.includes("2nd") || d.includes("second")) return 2;
+        return 3;
+    }
+
+    function sortAndReorderModal() {
+        const officers = [];
+        document.querySelectorAll('#modalOfficerBody tr').forEach((r, i) => {
+            const slVal = r.querySelector('.m-sl-input')?.value || "99";
+            const name = r.querySelector('.m-name').value;
+            const desig = r.querySelector('.m-desig').value;
+            const duty = r.querySelector('.m-duty').value;
+            const dates = r.querySelector('.m-dates').value;
+            const selected = r.querySelector('.m-selected').checked;
+            officers.push({ sl: parseFloat(fromBengali(slVal)) || 99, originalIndex: i, name, desig, duty, dates, selected });
+        });
+
+        // Sort by Serial. If serials match, the one with larger original index (e.g. newly added/modified) shifts ahead.
+        officers.sort((a, b) => (a.sl - b.sl) || (b.originalIndex - a.originalIndex) || (getRank(a.duty) - getRank(b.duty)));
+        
+        const tbody = document.getElementById('modalOfficerBody');
+        tbody.innerHTML = "";
+        fpInstances.forEach(fp => { if(fp) fp.destroy(); });
+        fpInstances = [];
+        officers.forEach(off => addOfficerRowInModal(off));
+        reIndex(); // Normalize serials back to 1, 2, 3...
+    }
+
+    function loadSettings() {
+        const saved = window.AppStorage.getItem(SETTINGS_KEY);
+        if (saved) {
+            const data = JSON.parse(saved);
+            document.getElementById('inBranch').value = data.branch || "";
+            document.getElementById('inLocation').value = data.location || "";
+            document.getElementById('inYear').value = data.year || "2026";
+            if (data.officers && data.officers.length > 0) {
+                data.officers.forEach(off => addOfficerRowInModal(off));
+            } else { setupDefaultOfficers(); }
+        } else { setupDefaultOfficers(); }
+        reIndex();
+    }
+
+    function setupDefaultOfficers() {
+        addOfficerRowInModal({ sl: 1, name: '', desig: '', duty: 'ব্যবস্থাপক', dates: '', selected: true });
+        addOfficerRowInModal({ sl: 2, name: '', desig: '', duty: '২য় কর্মকর্তা', dates: '', selected: true });
+    }
+
+    function addOfficerRowInModal(data = { sl: '', name: '', desig: '', duty: '', dates: '', selected: true }) {
+        const tbody = document.getElementById('modalOfficerBody');
+        const row = tbody.insertRow();
+        const nextSl = data.sl || (tbody.rows.length);
+        
+        row.innerHTML = `
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                <input type="text" class="m-sl-input" value="${toBengali(nextSl)}" style="width:100%; border:none; text-align:center;" onblur="sortAndReorderModal()">
+            </td>
+            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="m-name" value="${data.name || ''}" style="width:100%; border:none;"></td>
+            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="m-desig" value="${data.desig || ''}" style="width:100%; border:none;" placeholder="খালি"></td>
+            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="m-duty" value="${data.duty || ''}" style="width:100%; border:none;"></td>
+            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="m-dates" value="${data.dates || ''}" style="width:100%; border:none;" placeholder="তারিখ বেছে নিন"></td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;"><input type="checkbox" class="m-selected" ${data.selected ? 'checked' : ''}></td>
+            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;"><button class="btn-danger" style="padding: 2px 8px;" onclick="removeRow(this)">✕</button></td>
+        `;
+        
+        const input = row.querySelector('.m-dates');
+        const fp = flatpickr(input, { 
+            mode: "multiple", 
+            dateFormat: "d/m/Y",
+            onValueUpdate: function(selectedDates, dateStr, instance) {
+                const dayStrings = selectedDates.map(date => date.getDate()).sort((a, b) => a - b).join(', ');
+                instance.input.value = dayStrings;
+            },
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                if (dayElem.dateObj.getDay() === 5 || dayElem.dateObj.getDay() === 6) {
+                    dayElem.classList.add("holiday");
+                }
+            }
+        });
+        
+        if (data.dates) {
+            const currentMonthIdx = document.getElementById('inMonth').selectedIndex;
+            const currentYear = document.getElementById('inYear').value;
+            const dayParts = data.dates.split(', ');
+            const dateObjects = dayParts.map(d => {
+                const day = parseInt(d);
+                if(!isNaN(day)) return new Date(currentYear, currentMonthIdx, day);
+                return null;
+            }).filter(d => d !== null);
+            fp.setDate(dateObjects);
+            input.value = data.dates;
+        }
+        input._fp = fp;
+        fpInstances.push(fp);
+        reIndex();
+    }
+
+    function removeRow(btn) {
+        const row = btn.closest('tr');
+        const fpInput = row.querySelector('.m-dates');
+        if (fpInput && fpInput._fp) {
+            fpInstances = fpInstances.filter(inst => inst !== fpInput._fp);
+            fpInput._fp.destroy();
+        }
+        row.remove();
+        reIndex();
+    }
+
+    function reIndex() {
+        document.querySelectorAll('#modalOfficerBody tr').forEach((r, i) => {
+            const slInput = r.querySelector('.m-sl-input');
+            if (slInput) {
+                slInput.value = toBengali(i + 1);
+            }
+        });
+    }
+
+    function generateBill() {
+        const branch = document.getElementById('inBranch').value;
+        const location = document.getElementById('inLocation').value;
+        const month = document.getElementById('inMonth').value;
+        const year = document.getElementById('inYear').value;
+        const billDate = document.getElementById('inDate').value;
+        const rate = parseFloat(document.getElementById('globalRate').value);
+        let rawOfficers = [];
+
+        document.querySelectorAll('#modalOfficerBody tr').forEach(r => {
+            const name = r.querySelector('.m-name').value.trim();
+            const desig = r.querySelector('.m-desig').value.trim();
+            const duty = r.querySelector('.m-duty').value.trim();
+            const fpInput = r.querySelector('.m-dates');
+            const isChecked = r.querySelector('.m-selected').checked;
+            if (!name) return;
+            rawOfficers.push({ name, desig, duty, dates: fpInput.value, selected: isChecked });
+        });
+
+        rawOfficers.sort((a, b) => getRank(a.duty) - getRank(b.duty));
+
+        document.getElementById('displayBranchName').innerText = branch;
+        document.getElementById('displayBranchLoc').innerText = location;
+        document.getElementById('displayMonth').innerText = `${month} ${toBengali(year)}`;
+        document.getElementById('displayDate').innerText = `${toBengali(billDate)} ইং`;
+
+        const billType = document.getElementById('inBillType').value;
+        document.getElementById('displaySubject').innerText = billType;
+        document.getElementById('footerBillType').innerText = billType;
+
+        let grandSum = 0;
+        const tbody = document.getElementById('mainBillBody');
+        tbody.innerHTML = '';
+
+        let activeIndex = 1;
+        rawOfficers.forEach(off => {
+            if (!off.selected) return;
+            const datesArr = off.dates ? off.dates.split(', ').filter(x => x.trim() !== "") : [];
+            const dayCount = datesArr.length;
+            if (dayCount === 0) return;
+            const total = dayCount * rate;
+            grandSum += total;
+
+            const fullDesig = off.desig + (off.duty ? ` (${off.duty})` : '');
+
+            const tr = tbody.insertRow();
+            tr.innerHTML = `
+                <td>${toBengali(activeIndex++)}</td>
+                <td class="col-name" style="font-weight:bold;">${off.name}</td>
+                <td class="col-desig">${fullDesig}</td>
+                <td style="font-size:11px;">${toBengali(off.dates)}</td>
+                <td>${toBengali(dayCount)}</td>
+                <td>${toBengali(rate)}</td>
+                <td style="font-weight:bold;">${toBengali(total)}</td>
+                <td></td>
+            `;
+        });
+
+        document.getElementById('grandTotal').innerText = toBengali(grandSum);
+        document.getElementById('numAmount').innerText = toBengali(grandSum);
+        document.getElementById('textAmount').innerText = numberToBengaliWords(grandSum) + " টাকা মাত্র।";
+        
+        // Save to logs
+        const logs = JSON.parse(window.AppStorage.getItem(LOG_KEY) || "[]");
+        logs.unshift({
+            branch, location, month, year, billDate, rate,
+            type: billType,
+            totalAmount: grandSum,
+            officers: rawOfficers,
+            timestamp: new Date().toLocaleString('bn-BD')
+        });
+        if(logs.length > 20) logs.pop();
+        window.AppStorage.setItem(LOG_KEY, JSON.stringify(logs));
+
+        window.AppStorage.setItem(SETTINGS_KEY, JSON.stringify({ branch, location, year, officers: rawOfficers }));
+        closeModal();
+    }
+
+    function showLogModal() {
+        const list = document.getElementById('logList');
+        const logs = JSON.parse(window.AppStorage.getItem(LOG_KEY) || "[]");
+        if (!logs.length) {
+            list.innerHTML = "<p style='text-align:center;'>রেকর্ড নেই।</p>";
+        } else {
+            let tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+                    <thead>
+                        <tr style="background: #f4f4f4;">
+                            <th style="border: 1px solid #ddd; padding: 8px;">ক্রম</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">বিলের তারিখ</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">বিলের ধরণ</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">বিল মাস</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">টাকার পরিমাণ</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            logs.forEach((log, i) => {
+                const sl = toBengali(i + 1);
+                const bDate = toBengali(log.billDate);
+                const bName = log.type;
+                const bMonth = log.month + " " + toBengali(log.year);
+                const bAmt = log.totalAmount !== undefined ? toBengali(log.totalAmount) : "০";
+                tableHtml += `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${sl}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${bDate}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${bName}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${bMonth}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">${bAmt}/-</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                            <div style="display:flex; gap:5px; justify-content: center;">
+                                <button class="btn-info" style="padding: 4px 8px; font-size: 11px;" onclick="loadLog(${i})">ভিউ</button>
+                                <button class="btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteLog(${i})">মুছুন</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            list.innerHTML = tableHtml;
+        }
+        document.getElementById('logModal').style.display = 'flex';
+    }
+
+    function loadLog(index) {
+        const logs = JSON.parse(window.AppStorage.getItem(LOG_KEY) || "[]");
+        const log = logs[index];
+        if(!log) return;
+
+        document.getElementById('inBranch').value = log.branch;
+        document.getElementById('inLocation').value = log.location;
+        document.getElementById('inMonth').value = log.month;
+        document.getElementById('inYear').value = log.year;
+        document.getElementById('inDate').value = log.billDate;
+        document.getElementById('globalRate').value = log.rate;
+
+        document.getElementById('inBillType').value = (log.type === 'হালকা ভোজন ভাতা') ? 'ক্লোজিং ভাতা' : log.type;
+
+        const tbody = document.getElementById('modalOfficerBody');
+        tbody.innerHTML = "";
+        fpInstances.forEach(fp => { if(fp) fp.destroy(); });
+        fpInstances = [];
+        log.officers.forEach(off => addOfficerRowInModal(off));
+        
+        selectedSubject = log.type;
+        document.getElementById('displaySubject').innerText = selectedSubject;
+        document.getElementById('footerBillType').innerText = selectedSubject;
+
+        document.getElementById('logModal').style.display = 'none';
+        document.getElementById('dataModal').style.display = 'flex';
+    }
+
+    function deleteLog(index) {
+        let logs = JSON.parse(window.AppStorage.getItem(LOG_KEY) || "[]");
+        logs.splice(index, 1);
+        window.AppStorage.setItem(LOG_KEY, JSON.stringify(logs));
+        showLogModal();
+    }
+
+    function syncAllDates() {
+        const firstRowInput = document.querySelector('.m-dates');
+        if (!firstRowInput || !firstRowInput._fp) return;
+        const datesToSync = firstRowInput._fp.selectedDates;
+        if (datesToSync.length === 0) return;
+        fpInstances.forEach(fp => fp.setDate(datesToSync, true));
+    }
+
+    function resetOfficerDates() {
+        fpInstances.forEach(fp => {
+            if (fp && typeof fp.clear === 'function') fp.clear();
+        });
+        document.querySelectorAll('.m-dates').forEach(inp => inp.value = '');
+    }
+
+    function closeModal() { document.getElementById('dataModal').style.display = 'none'; }
+
+    function showModal() {
+        resetOfficerDates();
+        if (document.getElementById('inDate')._flatpickr) document.getElementById('inDate')._flatpickr.setDate(new Date());
+        document.getElementById('dataModal').style.display = 'flex';
+    }
+
+    function resetForm() {
+        if (!confirm('আপনি কি নিশ্চিত যে বিলের তারিখ এবং কর্মকর্তাদের তারিখসমূহ মুছে ফেলতে চান?')) return;
+
+        // Clear bill preview display fields
+        const displayFields = {
+            'displayDate': "................",
+            'grandTotal': '০',
+            'numAmount': '...........',
+            'textAmount': "........................",
+        };
+
+        for (let id in displayFields) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = displayFields[id];
+        }
+
+        document.getElementById('mainBillBody').innerHTML = '';
+
+        // Clear "বিলের তারিখ" in the modal
+        const inDate = document.getElementById('inDate');
+        if (inDate._flatpickr) inDate._flatpickr.clear();
+
+        // Clear "তারিখ সমূহ (দিন)" for all officers in the modal
+        document.querySelectorAll('#modalOfficerBody .m-dates').forEach(input => {
+            if (input._fp) input._fp.clear();
+            input.value = '';
+        });
+    }
+
+    function numberToBengaliWords(amount) {
+        if (amount === 0) return "শূন্য";
+        const units = ["", "এক", "দুই", "তিন", "চার", "পাঁচ", "ছয়", "সাত", "আট", "নয়"];
+        const tens = ["", "দশ", "বিশ", "ত্রিশ", "চল্লিশ", "পঞ্চাশ", "ষাট", "সত্তর", "আশি", "নব্বই"];
+        const unique = {
+            11: "এগারো", 12: "বারো", 13: "তেরো", 14: "চৌদ্দ", 15: "পনেরো", 16: "ষোলো", 17: "সতেরো", 18: "আঠারো", 19: "উনিশ",
+            21: "একুশ", 22: "বাইশ", 23: "তেইশ", 24: "চব্বিশ", 25: "পঁচিশ", 26: "ছাব্বিশ", 27: "সাতাশ", 28: "আঠারো", 29: "ঊনত্রিশ",
+            31: "একত্রিশ", 32: "বত্রিশ", 33: "তেত্রিশ", 34: "চৌত্রিশ", 35: "পঁয়ত্রিশ", 36: "ছত্রিশ", 37: "সাঁয়ত্রিশ", 38: "আটত্রিশ", 39: "ঊনচল্লিশ",
+            41: "একচল্লিশ", 42: "বিয়াল্লিশ", 43: "তেতাল্লিশ", 44: "চুয়াল্লিশ", 45: "পঁয়তাল্লিশ", 46: "ছেচল্লিশ", 47: "সাতচল্লিশ", 48: "আটচল্লিশ", 49: "ঊনপঞ্চাশ",
+            51: "একান্ন", 52: "বায়ান্ন", 53: "তিপ্পান্ন", 54: "চুয়ান্ন", 55: "পঞ্চান্ন", 56: "ছাপ্পান্ন", 57: "সাতান্ন", 58: "আটান্ন", 59: "ঊনষাট",
+            61: "একষট্টি", 62: "বাষট্টি", 63: "তেষট্টি", 64: "চৌষট্টি", 65: "পঁয়ষট্টি", 66: "ছেষট্টি", 67: "সাতষট্টি", 68: "আটষট্টি", 69: "ঊনসত্তর",
+            71: "একাত্তর", 72: "বাহাত্তর", 73: "তেয়াত্তর", 74: "চুয়াত্তর", 75: "পঁচাত্তর", 76: "ছিয়াত্তর", 77: "সাতাত্তর", 78: "আটাত্তর", 79: "ঊনআশি",
+            81: "একাশি", 82: "বিরাশি", 83: "তিরাশি", 84: "চুরাশি", 85: "পঁচাশি", 86: "ছিয়াশি", 87: "সাতাশি", 88: "অষ্টাসি", 89: "ঊননব্বই",
+            91: "একানব্বই", 92: "বিরানব্বই", 93: "তিরানব্বই", 94: "চুরানব্বই", 95: "পঁচানব্বই", 96: "ছিয়ানব্বই", 97: "সাতানব্বই", 98: "আটানব্বই", 99: "নিরানব্বই"
+        };
+        function getTwoDigit(num) {
+            if (num === 0) return "";
+            if (unique[num]) return unique[num];
+            let t = Math.floor(num / 10);
+            let u = num % 10;
+            return tens[t] + units[u];
+        }
+        let words = "";
+        let crore = Math.floor(amount / 10000000);
+        amount %= 10000000;
+        let lakh = Math.floor(amount / 100000);
+        amount %= 100000;
+        let thousand = Math.floor(amount / 1000);
+        amount %= 1000;
+        let hundred = Math.floor(amount / 100);
+        amount %= 100;
+        let remaining = amount;
+        if (crore > 0) words += numberToBengaliWords(crore) + " কোটি ";
+        if (lakh > 0) words += getTwoDigit(lakh) + " লক্ষ ";
+        if (thousand > 0) words += getTwoDigit(thousand) + " হাজার ";
+        if (hundred > 0) words += units[hundred] + "শত ";
+        if (remaining > 0) words += getTwoDigit(remaining);
+        return words.trim();
+    }
+</script>
+</body>
+</html>

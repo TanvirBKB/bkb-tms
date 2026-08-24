@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশ কৃষি ব্যাংক - মূল্যায়ন প্রতিবেদন (পৃষ্ঠা ১)</title>
+    <!-- Tailwind CSS for modern interactive layout styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Inter', sans-serif;
+            font-size: 12.5pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .page {
+            width: 8.27in;
+            min-height: 11.69in;
+            padding: 0.5in;
+            margin: 0.5in auto;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            box-sizing: border-box;
+            position: relative;
+            page-break-after: always;
+        }
+
+        /* Input & Form Styling */
+        .dotted-input {
+            text-decoration: underline dotted; text-decoration-thickness: 1.5pt; text-underline-offset: 4pt;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 12.5pt;
+            color: #1e3a8a;
+            font-weight: 600;
+            padding: 0 0.02in;
+            transition: all 0.2s;
+        }
+
+        .dotted-input:focus {
+            border-bottom: 1.5pt solid #2563eb;
+            background-color: #eff6ff;
+        }
+
+        /* Master Table Structures */
+        .master-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.1in 0;
+        }
+
+        .master-table>tbody>tr>td {
+            border: 1pt solid #000;
+            padding: 0.05in 0.1in;
+            vertical-align: top;
+            font-size: 12.5pt;
+        }
+
+        /* Form inputs inside tables */
+        .cell-textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: vertical;
+            background: transparent;
+            font-family: inherit;
+            font-size: 12.5pt;
+            color: #1e3a8a;
+            font-weight: 500;
+            line-height: 1.5;
+            min-height: 0.5in;
+        }
+
+        .cell-textarea:focus {
+            background-color: #eff6ff;
+        }
+
+        /* Nested Schedule/Tafsil Table */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.02in 0;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1pt solid #000;
+            padding: 0.04in;
+            font-size: 10pt;
+            text-align: center;
+        }
+
+        .schedule-table th {
+            background-color: #f9fafb;
+            font-weight: bold;
+        }
+
+        .schedule-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 10pt;
+            text-align: center;
+            color: #1e3a8a;
+            font-weight: 500;
+        }
+
+        .schedule-input:focus {
+            background-color: #eff6ff;
+        }
+
+        /* Action bar for Electron and browser template interactions */
+        .action-bar {
+            position: fixed;
+            bottom: 0.2in;
+            right: 0.2in;
+            display: flex;
+            gap: 0.1in;
+            z-index: 1000;
+        }
+
+        .btn {
+            background-color: #059669;
+            color: white;
+            padding: 0.1in 0.2in;
+            border-radius: 0.06in;
+            font-family: inherit;
+            font-size: 12pt;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #047857;
+        }
+
+        .btn-secondary {
+            background-color: #4b5563;
+        }
+
+        .btn-secondary:hover {
+            background-color: #374151;
+        }
+
+        .btn-info {
+            background-color: #2563eb;
+        }
+
+        .btn-info:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Print Styles overrides */
+        @media print {
+            body {
+                background: none;
+                font-size: 12.5pt;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                min-height: 100%;
+                padding: 0.5in;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .dotted-input {
+                color: #000;
+            }
+
+            .cell-textarea {
+                color: #000;
+                min-height: auto;
+            }
+
+            .schedule-input {
+                color: #000;
+            }
+
+            .schedule-table th {
+                background-color: #fff !important;
+            }
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+
+<body>
+    <!-----------------Page-1---------------------->
+
+    <!-- Main A4 Page container -->
+    <div class="page">
+
+        <!-- Header Section -->
+        <div class="relative w-full mb-3">
+            <div class="absolute right-0 top-0 font-bold text-xs border border-black px-2 py-0.5">সংযুক্তি- ১</div>
+            <div class="text-center mt-4">
+                <h1 class="text-base font-bold underline leading-normal">“মূল্যায়ন প্রতিবেদনের ছক”</h1>
+                <p class="text-xs font-semibold mt-1">বাংলাদেশ কৃষি ব্যাংক</p>
+                <div class="flex justify-center items-center gap-1 text-xs mt-0.5">
+                    <input id="branch_name" type="text" class="dotted-input w-[1.6in] text-center"
+                        placeholder=".......................................">
+                    <span>শাখা</span>
+                </div>
+                <div class="text-center text-xs text-gray-500 mt-1">
+                    .........................................................</div>
+            </div>
+        </div>
+
+        <!-- Subject & Customer Header -->
+        <div class="mb-4">
+            <div class="text-center font-bold text-[] border-b border-black pb-1.5 mb-2">
+                বিষয়ঃ প্রস্তাবিত জামানতি সম্পত্তির মূল্যায়ন প্রতিবেদন।
+            </div>
+            <div class="flex items-center flex-wrap gap-1">
+                <span class="font-bold">উদ্যোক্তা/প্রতিষ্ঠানের নাম ও ব্যবসায়িক ঠিকানা ঃ</span>
+                <input id="client_meta_info" type="text" class="dotted-input flex-grow"
+                    placeholder="................................................................................................................................................................">
+            </div>
+        </div>
+
+        <!-- Main Form Table -->
+        <table class="master-table">
+            <tbody>
+                <!-- 01 Row -->
+                <tr>
+                    <td class="w-[40%] font-bold">
+                        <div>০১। বন্ধকব্য সম্পত্তির মালিকের নাম ও ঠিকানা</div>
+                        <div class="mt-8">ব্যবসায়িক ঠিকানা ঃ</div>
+                    </td>
+                    <td class="w-[60%]">
+                        <textarea id="val_owner_info" class="cell-textarea"
+                            placeholder="মালিকের নাম ও ঠিকানা এখানে টাইপ করুন..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 02 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ০২। প্রস্তাবিত জামানত সম্পত্তির বর্তমান ভোগ দখলকারীর নাম ও ঠিকানাঃ
+                    </td>
+                    <td>
+                        <textarea id="val_occupant_info" class="cell-textarea"
+                            placeholder="ভোগ দখলকারীর নাম ও বিস্তারিত বিবরণ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 03 Row -->
+                <tr>
+                    <td class="font-bold text-justify leading-relaxed">
+                        ০৩। মালিকানার উৎসঃ ক্রয়/পৈত্রিক, ইজারা, বন্দোবস্ত, ওয়াকফ, দেবোত্তর, হুকুম দখলকারী ইত্যাদি
+                        মূল্যে প্রাপ্ত জমির মূল্য স্বত্বীয় দলিলপত্র যেমন- দলিল, বায়া দলিল, নামজারী খতিয়ান ও পর্চার
+                        ধারাবাহিক পর্যালোচনা।
+                    </td>
+                    <td>
+                        <textarea id="val_ownership_source" class="cell-textarea"
+                            placeholder="মালিকানা অর্জনের ধারাবাহিক পর্যালোচনা বিবরণ এখানে লিখুন..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 04 Row containing Cadastral Schedule details nested table -->
+                <tr>
+                    <td colspan="2" class="!p-1.5">
+                        <div class="font-bold mb-1.5 px-1.5">০৪। প্রস্তাবিত জামানতি সম্পত্তির তফসিল ঃ</div>
+
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-[12%]">জেলা</th>
+                                    <th class="w-[12%]">উপজেলা</th>
+                                    <th class="w-[15%]">মৌজা</th>
+                                    <th class="w-[16%]">খতিয়ান নং<br>(দিয়ারা/আরএস)</th>
+                                    <th class="w-[15%]">দাগ নং<br>(দিয়ারা/আরএস)</th>
+                                    <th class="w-[10%]">জমি<br>(একর)</th>
+                                    <th class="w-[12%]">জমির প্রকৃতি</th>
+                                    <th class="w-[12%]">মালিকানার ধরন</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input id="sch_dist_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_upz_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_mouza_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_kh_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_dag_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_area_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_type_1" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_own_1" type="text" class="schedule-input"></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="sch_dist_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_upz_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_mouza_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_kh_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_dag_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_area_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_type_2" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_own_2" type="text" class="schedule-input"></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="sch_dist_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_upz_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_mouza_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_kh_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_dag_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_area_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_type_3" type="text" class="schedule-input"></td>
+                                    <td><input id="sch_own_3" type="text" class="schedule-input"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- 05 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ০৫। চৌহদ্দীঃ জমির মালিক ও দাগ খতিয়ান ঃ<br>
+                        <span class="font-normal text-[] text-gray-700 italic">পল্টী, শহর, শহরতলী, ক্যান্টনমেন্ট
+                            এরিয়া, আবাসিক/বাণিজ্যিক/পুকুর/ডোবা/খাল</span>
+                    </td>
+                    <td>
+                        <textarea id="val_boundaries_info" class="cell-textarea"
+                            placeholder="চৌহদ্দী ও চারপাশের দাগসমূহের বর্ণনা..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 06 Row -->
+                <tr>
+                    <td class="font-bold leading-normal">
+                        ০৬। প্রস্তাবিত সম্পত্তির অবস্থানঃ<br>
+                        <span class="font-normal text-[] text-gray-700 italic">(যাতায়াত নির্দেশনা, রুট ম্যাপ
+                            সংযুক্ত করতে হবে)</span><br>
+                        <div class="mt-1 pl-2">শহরঃ</div>
+                        <div class="font-normal text-[] text-gray-600 pl-4">বাণিজ্যিক, আবাসিক, শহরতলী, মৌজা ও তৌজি
+                            সিটি কর্পোরেশন/পৌরসভার হোল্ডিং নং ইত্যাদিসহ</div>
+                        <div class="mt-1 pl-2">পল্লীঃ</div>
+                        <div class="font-normal text-[] text-gray-600 pl-4">ফসলী মৌজা, তৌজি ইত্যাদিসহ</div>
+                    </td>
+                    <td>
+                        <textarea id="val_location_desc" class="cell-textarea"
+                            placeholder="প্রস্তাবিত জমির অবস্থান ও যাতায়াত নির্দেশনাবলী এখানে উল্লেখ করুন..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 07 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ০৭। প্রস্তাবিত সম্পত্তিতেঃ<br>
+                        <div class="font-normal pl-3 mt-1">(ক) গ্যাস সংযোগ আছে কিনা?</div>
+                        <div class="font-normal pl-3 mt-0.5">(খ) বিদ্যুৎ সংযোগ আছে কিনা?</div>
+                        <div class="font-normal pl-3 mt-0.5">(গ) পানির সংযোগ আছে কিনা?</div>
+                    </td>
+                    <td>
+                        <textarea id="val_utilities_info" class="cell-textarea"
+                            placeholder="ইউটিলিটি ও সংযোগ সংক্রান্ত বিবরণ (হ্যাঁ/না এবং বিস্তারিত)..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 08 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ০৮। জমির প্রকৃতিঃ উঁচু/মধ্যম/নীচু/সমতল/ডোবা জমি, ইমারতসহ প্রযোজ্য তথ্যাদি উল্লেখ করতে হবে;
+                    </td>
+                    <td>
+                        <textarea id="val_land_profile" class="cell-textarea"
+                            placeholder="জমির ভৌত ও কাঠামোগত প্রকৃতি..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 09 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ০৯। সম্পত্তির উপর নির্মিত সম্পদ (যদি থাকে)ঃ যেমন কাঁচা/সেমিপাকা/পাকা/ঘরের সংখ্যা/তলার
+                        সংখ্যা/ফ্ল্যাট / মোট আয়তন/অনুমোদিত নকশা (প্ল্যান) ইত্যাদি উল্লেখ থাকতে হবে
+                    </td>
+                    <td>
+                        <textarea id="val_structures_info" class="cell-textarea"
+                            placeholder="জমির উপর নির্মিত কোনো স্থাপনার বিশদ বিবরণ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 10 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ১০। জামানতি সম্পত্তির উপর সম্ভাব্য ঝুঁকিঃ নদী ভংগন, বন্যা, জলোচ্ছ্বাস, ঘূর্ণিঝড় প্রবণতা,
+                        অধিগ্রহণ ইত্যাদি উল্লেখ করতে হবে;
+                    </td>
+                    <td>
+                        <textarea id="val_environmental_risks" class="cell-textarea"
+                            placeholder="প্রাকৃতিক ও সরকারি অধিগ্রহণের ঝুঁকি পর্যালোচনা..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- 11 Row -->
+                <tr>
+                    <td class="font-bold">
+                        ১১। দালানকোঠা/ভবনের ক্ষেত্রে প্রয়োজনীয় কাগজপত্র ও তথ্যাদিঃ অনুমোদিত নকশা, নির্মাণ বছর, ভবনের
+                    </td>
+                    <td>
+                        <textarea id="val_building_docs" class="cell-textarea"
+                            placeholder="অনুমোদিত প্ল্যান ও পৌরসভা সংক্রান্ত তথ্যাবলী..."></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Page Number -->
+        <div class="text-center font-bold mt-4">-পৃষ্ঠা নং- ০১-</div>
+    </div>
+    <!-- Main A4 Continuation Page -->
+    <div class="page">
+
+        <!-- Continuation Master Table -->
+        <table class="master-table">
+            <tbody>
+                <!-- Continuation Row 11 details -->
+                <tr>
+                    <td class="w-[40%] font-bold">
+                        প্রকৃতি/ বাণিজ্যিক/ আবাসিক, গমনাগমনের রাস্তা (Approach Road) ইত্যাদি উল্লেখ করতে হবে;
+                    </td>
+                    <td class="w-[60%]">
+                        <textarea id="val_approach_road" class="cell-textarea"
+                            placeholder="চলাচলের রাস্তা, সংযোগ সড়ক ও প্রকৃতি সংক্রান্ত বিবরণ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 12: Machinery requirements details -->
+                <tr>
+                    <td class="font-bold text-justify leading-relaxed">
+                        ১২। যন্ত্রপাতির ক্ষেত্রে প্রয়োজনীয় কাগজপত্র ও তথ্যাদিঃ প্রস্তুতকারী দেশ, প্রস্তুতের বছর,
+                        নতুন/রিকন্ডিশন, এলসি ও ইনভয়েসের কপি, বিল অব এন্ট্রি ইত্যাদি, স্থানীয় মেশিনারীর বেলায় দরপত্র,
+                        বিল, চালান ইত্যাদি কপি গ্রহণ করতে হবে;
+                    </td>
+                    <td>
+                        <textarea id="val_machinery_docs" class="cell-textarea"
+                            placeholder="যন্ত্রপাতি উৎপাদনকারী দেশ, এলসি নং, ইনভয়েস ও আনুসাঙ্গিক দলিলাদি..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 13: Face Value -->
+                <tr>
+                    <td class="font-bold">
+                        ১৩। বর্তমান বাজার মূল্য / অভিহিত মূল্য ঃ<br>
+                        (Face Value) (একর প্রতি মূল্য- <input id="val_13_mouja_rate" type="text"
+                            class="dotted-input w-[1.1in] text-center" placeholder="..................">)
+                    </td>
+                    <td>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(ক) জমির মূল্য</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_13_land" type="number" step="any" class="dotted-input w-[1.3in] text-center"
+                                    placeholder="০.০০" oninput="calculateFaceValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(খ) ইমারত/ফ্ল্যাট</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_13_building" type="number" step="any"
+                                    class="dotted-input w-[1.3in] text-center" placeholder="০.০০"
+                                    oninput="calculateFaceValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(গ) যন্ত্রপাতি</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_13_machinery" type="number" step="any"
+                                    class="dotted-input w-[1.3in] text-center" placeholder="০.০০"
+                                    oninput="calculateFaceValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center font-bold border-t border-gray-300 pt-1 mt-1">
+                                <span class="w-[1.3in]">মোট মূল্য</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_13_total" type="text" class="dotted-input w-[1.3in] text-center bg-gray-50"
+                                    placeholder="০.০০" readonly>
+                                <span class="ml-1">লক্ষ টাকা</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 14: Mouja Sale Value -->
+                <tr>
+                    <td class="font-bold">
+                        ১৪। মৌজার বিক্রয় মূল্য (মৌজা রেট) ঃ প্রতি একর<br>
+                        (Mouja Sale Value) (একর প্রতি মূল্য- <input id="val_14_mouja_rate" type="text"
+                            class="dotted-input w-[1.1in] text-center" placeholder="..................">)
+                    </td>
+                    <td>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(ক) জমির মূল্য</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_14_land" type="number" step="any" class="dotted-input w-[1.3in] text-center"
+                                    placeholder="০.০০" oninput="calculateMoujaValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(খ) ইমারত/ফ্ল্যাট</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_14_building" type="number" step="any"
+                                    class="dotted-input w-[1.3in] text-center" placeholder="০.০০"
+                                    oninput="calculateMoujaValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-[1.3in] font-semibold">(গ) যন্ত্রপাতি</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_14_machinery" type="number" step="any"
+                                    class="dotted-input w-[1.3in] text-center" placeholder="০.০০"
+                                    oninput="calculateMoujaValueTotal()">
+                                <span class="ml-1 text-gray-500">লক্ষ টাকা</span>
+                            </div>
+                            <div class="flex items-center font-bold border-t border-gray-300 pt-1 mt-1">
+                                <span class="w-[1.3in]">মোট মূল্য</span>
+                                <span class="mr-2">=</span>
+                                <input id="val_14_total" type="text" class="dotted-input w-[1.3in] text-center bg-gray-50"
+                                    placeholder="০.০০" readonly>
+                                <span class="ml-1">লক্ষ টাকা</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 15: Valuation History Nested table -->
+                <tr>
+                    <td class="font-bold leading-normal">
+                        ১৫। কততম মূল্যায়ন ও মূল্য (বছর ভিত্তিক) এবং মূল্যায়ন বছর ঃ<br>
+                        <span class="font-normal text-[] text-gray-600 italic">(প্রথম বার/দ্বিতীয় বার/তৃতীয় বার
+                            ইত্যাদি ও সংশ্লিষ্ট বছর)</span>
+                    </td>
+                    <td class="!p-1">
+                        <table class="nested-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-[40%]">মূল্যায়নের তারিখ / বছর</th>
+                                    <th class="w-[30%]">মূল্য (লক্ষ টাকায়)</th>
+                                    <th class="w-[30%]">এমসিএল (৭৫%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input id="val_hist_date_1" type="text" class="table-input"
+                                            placeholder="প্রথম বার (২০২২)"></td>
+                                    <td><input id="val_hist_val_1" type="number" step="any" class="table-input"
+                                            placeholder="০.০০" oninput="calculateHistoryMcl(1)"></td>
+                                    <td><input id="val_hist_mcl_1" type="text" class="table-input" readonly
+                                            placeholder="০.০০"></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="val_hist_date_2" type="text" class="table-input"
+                                            placeholder="দ্বিতীয় বার (২০২৪)"></td>
+                                    <td><input id="val_hist_val_2" type="number" step="any" class="table-input"
+                                            placeholder="০.০০" oninput="calculateHistoryMcl(2)"></td>
+                                    <td><input id="val_hist_mcl_2" type="text" class="table-input" readonly
+                                            placeholder="০.০০"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Row 16: Forced Sale Value -->
+                <tr>
+                    <td class="font-bold">
+                        ১৬। তাৎক্ষনিক বিক্রয় মূল্য ঃ<br>
+                        (Forced Sale Value)
+                    </td>
+                    <td class="!p-1">
+                        <table class="nested-table">
+                            <tbody>
+                                <tr>
+                                    <td class="w-[50%] font-semibold text-left">(ক) জমির মূল্য</td>
+                                    <td class="w-[50%]"><input id="val_16_land" type="number" step="any"
+                                            class="table-input" placeholder="০.০০" oninput="calculateForcedSaleTotal()">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-left">(খ) ইমারত/ফ্ল্যাট</td>
+                                    <td><input id="val_16_building" type="number" step="any" class="table-input"
+                                            placeholder="০.০০" oninput="calculateForcedSaleTotal()"></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-left">(গ) যন্ত্রপাতি</td>
+                                    <td><input id="val_16_machinery" type="number" step="any" class="table-input"
+                                            placeholder="০.০০" oninput="calculateForcedSaleTotal()"></td>
+                                </tr>
+                                <tr class="font-bold bg-gray-50">
+                                    <td class="text-left">মোট মূল্য</td>
+                                    <td><input id="val_16_total" type="text" class="table-input font-bold"
+                                            placeholder="০.০০" readonly></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Row 17: Projected and MCL Value complex splitting table -->
+                <tr>
+                    <td class="font-bold leading-normal">
+                        ১৭। নিরূপিত মূল্য (Projected Value)ঃ<br>
+                        <div class="font-normal pl-2 text-[] text-gray-700 italic mt-0.5">
+                            (ক) জমির মূল্য = <span id="lbl_proj_land" class="font-bold text-blue-800">০.০০</span><br>
+                            (খ) ইমারত/ফ্ল্যাট = <span id="lbl_proj_build"
+                                class="font-bold text-blue-800">০.০০</span><br>
+                            (গ) যন্ত্রপাতি = <span id="lbl_proj_mach" class="font-bold text-blue-800">০.০০</span>
+                        </div>
+                    </td>
+                    <td class="!p-1">
+                        <table class="nested-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="w-[35%]">(ক) নিরূপিত মূল্য<br>(Projected Value)</th>
+                                    <th colspan="2" class="w-[65%]">(খ) গ্রহণযোগ্য মূল্য (MCL)</th>
+                                </tr>
+                                <tr>
+                                    <th class="w-[25%]">MCL হার (%)</th>
+                                    <th class="w-[40%]">MCL মূল্য (লক্ষ টাকা)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Land Row -->
+                                <tr>
+                                    <td><input id="val_17_proj_land" type="number" step="any" class="table-input"
+                                            placeholder="জমির নিরূপিত" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_rate_land" type="number" step="any" class="table-input"
+                                            placeholder="হার" value="75" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_mcl_land" type="text" class="table-input" readonly
+                                            placeholder="০.০০"></td>
+                                </tr>
+                                <!-- Building Row -->
+                                <tr>
+                                    <td><input id="val_17_proj_build" type="number" step="any" class="table-input"
+                                            placeholder="ইমারতের নিরূপিত" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_rate_build" type="number" step="any" class="table-input"
+                                            placeholder="হার" value="50" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_mcl_build" type="text" class="table-input" readonly
+                                            placeholder="০.০০"></td>
+                                </tr>
+                                <!-- Machinery Row -->
+                                <tr>
+                                    <td><input id="val_17_proj_mach" type="number" step="any" class="table-input"
+                                            placeholder="যন্ত্রপাতির নিরূপিত" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_rate_mach" type="number" step="any" class="table-input"
+                                            placeholder="হার" value="50" oninput="calculateProjectedMcl()"></td>
+                                    <td><input id="val_17_mcl_mach" type="text" class="table-input" readonly
+                                            placeholder="০.০০"></td>
+                                </tr>
+                                <!-- Summation totals -->
+                                <tr class="font-bold bg-gray-100">
+                                    <td class="text-right pr-2">মোট Projected: <span id="val_17_proj_total">০.০০</span>
+                                    </td>
+                                    <td colspan="2" class="text-right pr-2">মোট MCL: <input id="val_17_mcl_total"
+                                            type="text" class="dotted-input w-[1in] text-center font-bold text-blue-900"
+                                            style="border:none" placeholder="৪২.৫২" readonly> লক্ষ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Row 18: Basis of valuation -->
+                <tr>
+                    <td class="font-bold">
+                        ১৮। মূল্যায়নের ভিত্তি ঃ<br>
+                        <span class="font-normal text-[] text-gray-700 italic">
+                            ক) জমির মূল্য সম্পর্কে উদ্যোক্তার ঘোষণা<br>
+                            খ) সাব-রেজিস্ট্রি অফিসে রক্ষিত সর্বনিম্ন মৌজা রেট।<br>
+                            গ) প্রচলিত বাজারমূল্য অনুযায়ী
+                        </span>
+                    </td>
+                    <td>
+                        <textarea id="val_basis_comments" class="cell-textarea"
+                            placeholder="মূল্যায়নের ভিত্তির উপর মতামত ও পর্যালোচনা বিবরণ লিখুন..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 19: Mortgage detail status -->
+                <tr>
+                    <td class="font-bold">
+                        ১৯। বন্ধক অবস্থা (যদি থাকে)ঃ কি ধরনের বন্ধক নেয়া হয়েছে তার পূর্ণ বিবরণ
+                    </td>
+                    <td>
+                        <textarea id="val_mortgage_status" class="cell-textarea"
+                            placeholder="কোনো প্রকার পূর্ববর্তী চার্জ বা বন্ধক সংক্রান্ত তথ্য এখানে টাইপ করুন..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 20: Lawyer Opinion -->
+                <tr>
+                    <td class="font-bold">
+                        ২০। সম্পত্তির মালিকানা সম্পর্কে ব্যাংকের তালিকা ভুক্ত আইনজীবীর মতামত ঃ
+                    </td>
+                    <td>
+                        <textarea id="val_lawyer_opinion" class="cell-textarea"
+                            placeholder="তালিকাভুক্ত প্যানেল আইনজীবী কর্তৃক প্রদত্ত টাইটেল ক্লিয়ারেন্স রিপোর্টের সারসংক্ষেপ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 21: Attached records -->
+                <tr>
+                    <td class="font-bold text-justify">
+                        ২১। সংযু্ক্ত দলিল পত্রের তালিকা ঃ মূল দলিল/ পর্চা/ খতিয়ান/ বায়া দলিল/ আয়কর রশিদ/ পৌরকর রশিদ
+                        ইত্যাদি
+                    </td>
+                    <td>
+                        <textarea id="val_attached_docs" class="cell-textarea"
+                            placeholder="১) মূল কবলা দলিল নং-...\n২) পর্চা/খতিয়ান...\n৩) দাখিলা/কর রসিদ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 22: Non-Encumbrance details -->
+                <tr>
+                    <td class="font-bold text-justify leading-relaxed">
+                        ২২। (Non-Encumbrance Certificate) সম্পূরক বন্ধক গ্রহণের পূর্বে তহশিল অফিস ও রেজিস্ট্রি অফিস হতে
+                        তল্লাশী করে দলিলাদির শুদ্ধতার বিষয়ে মতামত
+                    </td>
+                    <td>
+                        <textarea id="val_nec_status" class="cell-textarea"
+                            placeholder="এনইসি তল্লাশী সম্পন্ন করা হইয়াছে কিনা এবং কোনো দ্বৈত স্বত্ব পাওয়া যায় নাই মর্মে বিবরণ..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 23: Overall comments -->
+                <tr>
+                    <td class="font-bold">
+                        ২৩। সার্বিক মন্তব্য ঃ
+                    </td>
+                    <td>
+                        <textarea id="val_overall_remarks" class="cell-textarea"
+                            placeholder="শাখা মূল্যায়ন কমিটির সার্বিক সুপারিশ ও চূড়ান্ত মূল্যায়ন মন্তব্য..."></textarea>
+                    </td>
+                </tr>
+
+                <!-- Row 24: Certification text -->
+                <tr>
+                    <td colspan="2" class="!p-3 text-justify">
+                        <div class="font-bold mb-1">২৪। মূল্যায়ন কমিটির প্রত্যয়ন ঃ</div>
+                        আমরা যৌথভাবে ছকে বর্ণিত জমি এবং সংশ্লিষ্ট দলিল ও কাগজপত্রাদি সরেজমিনে পরিদর্শন ও পরীক্ষা করেছি
+                        এবং সকল তথ্যাদি সঠিক ও সত্য বলে প্রত্যয়ন করছি।
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Page Number -->
+        <div class="text-center font-bold mt-4">-পৃষ্ঠা নং- ০২-</div>
+    </div>
+    <!-- Main Page Container -->
+    <div class="page">
+
+        <div>
+            <!-- Section Title -->
+            <div class="text-left font-bold text-sm underline tracking-wide mb-6">
+                পরিদর্শনকারী কর্মকর্তাবৃন্দ:
+            </div>
+
+            <!-- Signature Row 1: Field Officer, Engineer, Assistant General Manager -->
+            <div class="grid grid-cols-3 gap-6 items-start mt-4 mb-10">
+                <!-- Field Officer -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[]">মাঠ কর্মকর্তা</div>
+                    <div class="text-[] text-gray-700 font-semibold">(সম্পত্তির অবস্থান সংশ্লিষ্ট শাখা)</div>
+                </div>
+
+                <!-- Engineer -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[] underline">প্রকৌশলী</div>
+                </div>
+
+                <!-- Assistant General Manager -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[] leading-tight">সহকারী মহাব্যবস্থাপক (ঋণ)</div>
+                    <div class="text-[] text-gray-700 font-semibold leading-normal">
+                        এসপিও/কর্পোরেট শাখা/মুখ্য আঞ্চলিক কার্যালয়,<br>
+                        ঊর্ধ্বতন মুখ্য কর্মকর্তা<br>
+                        <span class="underline">(আঞ্চলিক কার্যালয়ের ক্ষেত্রে)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature Row 2: Branch Managers, Audit Officer -->
+            <div class="grid grid-cols-3 gap-6 items-start my-12">
+                <!-- Branch Manager 1 -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[]">শাখা প্রধান/ব্যবস্থাপক</div>
+                    <div class="text-[] text-gray-700 font-semibold">(সম্পত্তির অবস্থান সংশ্লিষ্ট শাখা)</div>
+                </div>
+
+                <!-- Branch Manager 2 -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[]">শাখা প্রধান/ব্যবস্থাপক</div>
+                    <div class="text-[] text-gray-700 font-semibold">(ঋণ প্রস্তাবকারী শাখা)</div>
+                </div>
+
+                <!-- Audit Officer -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line"></div>
+                    <div class="font-bold text-[] underline">আঞ্চলিক/বিভাগীয় নিরীক্ষা কর্মকর্তা</div>
+                </div>
+            </div>
+
+            <!-- Signature Row 3: Regional Manager, Deputy General Manager -->
+            <div class="grid grid-cols-3 gap-6 items-start my-12">
+                <!-- Regional Manager / Deputy GM -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line w-full"></div>
+                    <div class="font-bold text-[] leading-tight">আঞ্চলিক/মুখ্য আঞ্চলিক ব্যবস্থাপক</div>
+                    <div class="text-[] text-gray-700 font-semibold leading-normal">
+                        (প্রযোজ্য ক্ষেত্রে)/<br>
+                        উপ-মহাব্যবস্থাপক<br>
+                        <span class="underline">(এসপিও/কর্পোরেট শাখা) (প্রযোজ্য ক্ষেত্রে)</span>
+                    </div>
+                </div>
+
+                <!-- Empty Column for Middle Part -->
+                <div></div>
+
+                <!-- Deputy GM Operations -->
+                <div class="sig-block">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line w-full"></div>
+                    <div class="font-bold text-[]">উপ-মহাব্যবস্থাপক (পরিচালন)</div>
+                    <div class="text-[] text-gray-700 font-semibold underline">বিভাগীয় কার্যালয়</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Approval Area (Row 4 in 3-column grid alignment) -->
+        <div class="grid grid-cols-3 gap-6 items-start mt-auto mb-6">
+            <div></div>
+            <div class="flex flex-col items-center">
+                <div class="font-bold text-sm underline tracking-widest mb-16 text-center">
+                    অনুমোদিত
+                </div>
+
+                <!-- General Manager Signature Block -->
+                <div class="sig-block w-full">
+                    <div class="h-[0.7in]"></div>
+                    <div class="sig-line w-full"></div>
+                    <div class="font-bold text-[] tracking-wide text-center">মহাব্যবস্থাপক</div>
+                    <div class="text-[] text-gray-700 font-semibold text-center underline leading-normal">
+                        বিভাগীয় কার্যালয়/স্থানীয় মুখ্য কার্যালয়, ঢাকা
+                    </div>
+                </div>
+            </div>
+            <div></div>
+        </div>
+
+        <!-- Page Number -->
+        <div class="text-center font-bold mt-4">-পৃষ্ঠা নং- ০৩-</div>
+    </div>
+    <script>
+        // Calculations for Row 13: Face Value
+        function calculateFaceValueTotal() {
+            const land = parseFloat(document.getElementById('val_13_land').value) || 0;
+            const building = parseFloat(document.getElementById('val_13_building').value) || 0;
+            const machinery = parseFloat(document.getElementById('val_13_machinery').value) || 0;
+
+            const total = land + building + machinery;
+            document.getElementById('val_13_total').value = total > 0 ? total.toFixed(2) : '';
+        }
+
+        // Calculations for Row 14: Mouja Sale Value
+        function calculateMoujaValueTotal() {
+            const land = parseFloat(document.getElementById('val_14_land').value) || 0;
+            const building = parseFloat(document.getElementById('val_14_building').value) || 0;
+            const machinery = parseFloat(document.getElementById('val_14_machinery').value) || 0;
+
+            const total = land + building + machinery;
+            document.getElementById('val_14_total').value = total > 0 ? total.toFixed(2) : '';
+        }
+
+        // Calculations for Row 15: History MCL
+        function calculateHistoryMcl(rowIndex) {
+            const val = parseFloat(document.getElementById(`val_hist_val_${rowIndex}`).value) || 0;
+            const mcl = val * 0.75;
+            document.getElementById(`val_hist_mcl_${rowIndex}`).value = mcl > 0 ? mcl.toFixed(2) : '';
+        }
+
+        // Calculations for Row 16: Forced Sale Value
+        function calculateForcedSaleTotal() {
+            const land = parseFloat(document.getElementById('val_16_land').value) || 0;
+            const building = parseFloat(document.getElementById('val_16_building').value) || 0;
+            const machinery = parseFloat(document.getElementById('val_16_machinery').value) || 0;
+
+            const total = land + building + machinery;
+            document.getElementById('val_16_total').value = total > 0 ? total.toFixed(2) : '';
+        }
+
+        // Calculations for Row 17: Projected & MCL dynamic matrices
+        function calculateProjectedMcl() {
+            // Projected land value inputs
+            const pLand = parseFloat(document.getElementById('val_17_proj_land').value) || 0;
+            const rLand = parseFloat(document.getElementById('val_17_rate_land').value) || 0;
+            const mLand = pLand * (rLand / 100);
+            document.getElementById('val_17_mcl_land').value = mLand > 0 ? mLand.toFixed(2) : '';
+            document.getElementById('lbl_proj_land').innerText = pLand > 0 ? pLand.toFixed(2) : '০.০০';
+
+            // Projected building value inputs
+            const pBuild = parseFloat(document.getElementById('val_17_proj_build').value) || 0;
+            const rBuild = parseFloat(document.getElementById('val_17_rate_build').value) || 0;
+            const mBuild = pBuild * (rBuild / 100);
+            document.getElementById('val_17_mcl_build').value = mBuild > 0 ? mBuild.toFixed(2) : '';
+            document.getElementById('lbl_proj_build').innerText = pBuild > 0 ? pBuild.toFixed(2) : '০.০০';
+
+            // Projected machinery value inputs
+            const pMach = parseFloat(document.getElementById('val_17_proj_mach').value) || 0;
+            const rMach = parseFloat(document.getElementById('val_17_rate_mach').value) || 0;
+            const mMach = pMach * (rMach / 100);
+            document.getElementById('val_17_mcl_mach').value = mMach > 0 ? mMach.toFixed(2) : '';
+            document.getElementById('lbl_proj_mach').innerText = pMach > 0 ? pMach.toFixed(2) : '০.০০';
+
+            // Overall totals
+            const totalProjected = pLand + pBuild + pMach;
+            const totalMcl = mLand + mBuild + mMach;
+
+            document.getElementById('val_17_proj_total').innerText = totalProjected > 0 ? totalProjected.toFixed(2) : '০.০০';
+            document.getElementById('val_17_mcl_total').value = totalMcl > 0 ? totalMcl.toFixed(2) : '';
+        }
+    
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') el.innerText = data[key] || '';
+                        else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                            el.value = data[key] || '';
+                        }
+                    });
+                });
+            }
+        });
+
+    </script>
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>deposite_loan_generator</title>
+    <style>
+        /* Font Definition */
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @page {
+            \n size: A4;
+            \n margin: 0.5in;
+            \n
+        }
+
+        body {
+            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Arial Unicode MS', sans-serif;
+            font-size: 12pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sheet {
+            \n width: 8.27in;
+            \n height: 11.69in;
+            \n box-sizing: border-box;
+            \n position: relative;
+            \n background: #ffffff;
+            \n page-break-after: always;
+            width: 210mm;
+            height: 297mm;
+            padding: 1.27cm 1.27cm 0.5cm 1.27cm;
+            margin: auto;
+            background: white;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Target the first page specifically and set font to 10.5pt */
+        #page-1,
+        #page-1 p,
+        #page-1 td,
+        #page-1 li,
+        #page-1 span,
+        #page-1 .font-16,
+        #page-1 .font-14 {
+            font-size: 10.5pt !important;
+        }
+
+        /* Specific font size for Bank Title on first page */
+        #page-1 .font-16:first-of-type {
+            font-size: 16pt !important;
+        }
+
+        /* Tighten table and force single-line for points 1-11 */
+        #page-1 .compact-table p {
+            font-size: 9.5pt !important;
+            margin: 0 !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+        }
+
+        #page-1 .compact-table td {
+            padding: 0.26mm 0.53mm !important;
+        }
+
+        /* 5mm gap above signature areas on the first page */
+        #page-1 .signature-container {
+            margin-top: 7mm !important;
+            padding-top: 5mm !important;
+        }
+
+        /* Signature area font size and centering on first page */
+        #page-1 .signature-box {
+            font-size: 9pt !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        @media screen {
+            body {
+                background: #f0f0f0;
+                padding: 5.29mm;
+            }
+
+            .sheet {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 5.29mm;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .sheet {
+                margin: 0;
+                box-shadow: none;
+                width: 210mm;
+                height: 297mm;
+                page-break-after: always;
+            }
+
+            .sheet:last-child {
+                page-break-after: auto;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .email-font {
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 10.5pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 0.53mm;
+        }
+
+        td p {
+            margin: 0.26mm 0;
+        }
+
+        p {
+            margin: 1.32mm 0;
+            line-height: 1.4;
+            text-align: justify;
+        }
+
+        .data-field {
+            min-width: 7.94mm;
+            display: inline-block;
+            padding: 0 1.32mm;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .data-field:empty::before {
+            content: "....................";
+            /* Shortened to prevent row overflow */
+            color: #ccc;
+            font-weight: normal;
+        }
+
+        /* Input Modal */
+        #input-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 251.35mm;
+            max-height: 90vh;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 5.29mm;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            box-sizing: border-box;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Arial Unicode MS', 'Kalpurush', sans-serif;
+            font-size: 11pt;
+            display: none;
+            border-radius: 2.12mm;
+        }
+
+        .instruction-alert {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #input-modal h3 {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 2.65mm;
+        }
+
+        #dataForm {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3.97mm;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .span-4 {
+            grid-column: span 4;
+        }
+
+        .span-3 {
+            grid-column: span 3;
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11pt;
+            font-weight: bold;
+            margin-bottom: 0.53mm;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1.32mm;
+            border: 1px solid #ddd;
+            border-radius: 1.06mm;
+            box-sizing: border-box;
+            font-size: 11pt;
+            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Arial Unicode MS', sans-serif;
+        }
+
+        .input-group {
+            display: flex;
+        }
+
+        .input-group-addon {
+            padding: 1.32mm 2.65mm;
+            background: #eee;
+            border: 1px solid #ddd;
+            border-right: 0;
+            border-radius: 1.06mm 0 0 1.06mm;
+            font-family: Arial, sans-serif;
+            min-width: 13.23mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group input {
+            border-radius: 0 1.06mm 1.06mm 0;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 2.65mm;
+            background: #006400;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 2.65mm;
+            border-radius: 1.06mm;
+        }
+
+        .btn:hover {
+            background: #004d00;
+        }
+
+        .btn-print {
+            background: #28a745;
+        }
+
+        .btn-print:hover {
+            background: #218838;
+        }
+
+        .btn-close {
+            background: #6c757d;
+            margin-top: 1.32mm;
+        }
+
+        .btn-close:hover {
+            background: #5a6268;
+        }
+
+        .signature-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5.29mm;
+            margin-bottom: 0;
+        }
+
+        .signature-box {
+            text-align: center;
+            display: inline-block;
+            min-width: 52.92mm;
+        }
+
+        .signature-box p {
+            margin: 0;
+        }
+
+        .sig-title {
+            text-decoration: none;
+            font-weight: bold;
+            border-top: 0.26mm solid #000;
+            margin-top: 7.94mm;
+            padding-top: 1.32mm;
+            display: block;
+        }
+
+        .sig-title.no-border {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .sig-line {
+            border-top: 0.26mm solid #000;
+            display: inline-block;
+            padding-top: 1.32mm;
+        }
+
+        .separator-line {
+            border-bottom: 0.26mm solid #000;
+            margin: 0;
+        }
+
+        .english-font {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10.5pt;
+        }
+
+        .unicode-font {
+            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Arial Unicode MS', 'Kalpurush', sans-serif !important;
+        }
+
+        .header-block {
+            position: relative;
+        }
+
+        .header-left-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .logo-img {
+            height: 1in;
+            width: 1in;
+        }
+
+        .header-right-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+            text-align: right;
+        }
+
+        .warped-box {
+            border: 1px solid #000;
+            padding: 0.26mm;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 0.53mm;
+        }
+
+        .header-block p {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .font-16 {
+            font-size: 16pt;
+        }
+
+        .font-14 {
+            font-size: 14pt;
+        }
+
+        .page-num {
+            position: absolute;
+            bottom: 3.97mm;
+            left: 1.27cm;
+            color: #ccc;
+            font-size: 9pt;
+            font-family: Arial, sans-serif;
+        }
+
+        .compact-table td {
+            padding: 0 0.53mm;
+        }
+
+        .compact-table td p {
+            margin: 0;
+        }
+
+        .developer-info {
+            position: absolute;
+            bottom: 3.97mm;
+            right: 1.27cm;
+            color: #ccc;
+            font-size: 8pt;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Front Page Print Styles */
+        @media print {
+            body.print-front-page>*:not(#front-page-modal) {
+                display: none !important;
+
+                body.print-front-page #front-page-modal {
+                    display: block !important;
+                    position: static !important;
+                    background: none !important;
+                    width: auto !important;
+                    height: auto !important;
+                    overflow: visible !important;
+
+                    body.print-front-page #front-page-modal-controls {
+                        display: none !important;
+
+                        body.print-front-page #front-page-sheet {
+                            border: none !important;
+                            margin: 0 !important;
+                            box-shadow: none !important;
+
+                        }
+
+                        /* Input Focus and Select Fixes */
+                        input,
+                        textarea,
+                        select {
+                            -webkit-user-select: text !important;
+                            user-select: text !important;
+                            pointer-events: auto !important;
+                        }
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body>
+    <div id="input-modal" class="no-print">
+        <h3>Data Input</h3>
+        <form id="dataForm">
+            <div class="form-group span-2"><label>নাম *</label><input type="text" id="input_applicant_name_bn"
+                    list="suggestion_name_bn" required=""></div>
+            <div class="form-group span-2"><label>পিতা/স্বামীর নাম</label><input type="text"
+                    id="input_applicant_father_name_bn" list="suggestion_father_name_bn">
+                    <input type="hidden" id="input_applicant_gender">
+                    <input type="hidden" id="input_applicant_spouse_name_bn">
+            </div>
+            <div class="form-group span-4"><label>ঠিকানা *</label><input type="text"
+                    id="input_applicant_present_address" required=""></div>
+            <div class="form-group"><label>মোবাইল নং *</label><input type="text" id="input_applicant_mobile"
+                    list="suggestion_mobile" required=""></div>
+            <div class="form-group"><label>জাতীয় পরিচয়পত্র (NID)</label><input type="text" id="input_applicant_nid"></div>
+            <div class="form-group"><label>ঋণের উদ্দেশ্য</label><input type="text" id="input_loan_purpose"></div>
+
+            <datalist id="suggestion_name_bn"></datalist>
+            <datalist id="suggestion_father_name_bn"></datalist>
+            <datalist id="suggestion_mobile"></datalist>
+            <div class="form-group"><label>স্থায়ী আমানত রশিদ নং</label><input type="text" id="input_deposit_fdr_no">
+            </div>
+            <div class="form-group">
+                <label>হিসাব খোলার তারিখ</label>
+                <div style="display: flex;">
+                    <input type="text" id="input_deposit_open_date" oninput="formatDateInput(this)" maxlength="10"
+                        style="border-radius: 1.06mm 0 0 1.06mm; border-right: 0; font-family: Arial, sans-serif; font-size: 10.5pt;">
+                    <div style="padding: 1.32mm 2.65mm; background: #eee; border: 1px solid #ddd; border-left: 0; border-radius: 0 1.06mm 1.06mm 0; display: flex; align-items: center; justify-content: center; position: relative; min-width: 10.58mm;"
+                        onclick="try{document.getElementById('input_deposit_open_date_picker').showPicker();}catch(e){}">
+                        <span style="font-size: 12pt;">📅</span>
+                        <input type="date" id="input_deposit_open_date_picker"
+                            onchange="setDateFromPicker(this, 'input_deposit_open_date')"
+                            style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 100;">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group"><label>কেস নং *</label><input type="text" id="input_loan_case_no" required=""></div>
+            <div class="form-group"><label>ঋণের ধরণ (যেমন- MDS) *</label><input type="text" id="input_loan_type"
+                    style="font-family: Arial, sans-serif;" oninput="updatePrefix()" required=""></div>
+            <div class="form-group"><label>Year (e.g., 25-26)</label><input type="text" id="input_fiscal_year"></div>
+            <div class="form-group">
+                <label>DP File No (Account)</label>
+                <div class="input-group">
+                    <span class="input-group-addon" id="acc_prefix"></span>
+                    <input type="text" id="input_deposit_account_no">
+                </div>
+            </div>
+            <div class="form-group"><label>আমানত স্থিতি (Balance)</label><input type="text" id="input_deposit_balance">
+            </div>
+            <div class="form-group"><label>Interest Rate</label><input type="text" id="input_loan_interest_rate"></div>
+            <div class="form-group">
+                <label>Sanc. Date</label>
+                <div style="display: flex;">
+                    <input type="text" id="input_application_date" oninput="formatDateInput(this); calculateDueDate()"
+                        maxlength="10"
+                        style="border-radius: 1.06mm 0 0 1.06mm; border-right: 0; font-family: Arial, sans-serif; font-size: 10.5pt;">
+                    <div style="padding: 1.32mm 2.65mm; background: #eee; border: 1px solid #ddd; border-left: 0; border-radius: 0 1.06mm 1.06mm 0; display: flex; align-items: center; justify-content: center; position: relative; min-width: 10.58mm;"
+                        onclick="try{document.getElementById('input_application_date_picker').showPicker();}catch(e){}">
+                        <span style="font-size: 12pt;">📅</span><input type="date" id="input_application_date_picker"
+                            onchange="setDateFromPicker(this, 'input_application_date')"
+                            style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 100;">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group"><label>মেয়াদ *</label><input type="text" id="input_loan_term"
+                    oninput="calculateDueDate()" required></div>
+            <div class="form-group"><label>Due Date (Auto)</label><input type="text" id="input_loan_expiry_date"
+                    readonly style="background: #ffffff; font-family: Arial, sans-serif;"></div>
+            <div class="form-group"><label>SB A/C no</label><input type="text" id="input_sb_account_no"></div>
+            <div class="form-group"><label>ঋণের পরিমাণ *</label><input type="text" id="input_loan_amount_num"
+                    oninput="generateWords()" required=""></div>
+            <div class="form-group"><label>কথায়</label><input type="text" id="input_loan_amount_words" readonly=""
+                    style="background: #ffffff;"></div>
+            <div class="form-group"><label>CBS Account</label><input type="text" id="input_cbs_account_no"></div>
+            <div class="span-4"
+                style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.97mm; margin-top: 5mm;">
+                <button type="button" class="btn" onclick="saveCustomerToDB()"
+                    style="background-color: #27ae60; color: white;">Save to Customer DB</button>
+                <button type="button" class="btn" onclick="populateData()">Populate Data</button>
+                <button type="button" class="btn btn-close" onclick="closeModal()">Close</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="sheet" id="page-1">
+        <div class="header-block">
+            <div class="header-left-box">
+                <img src="../../assets/images/bkb_logo.png" class="logo-img" alt="Logo">
+            </div>
+            <div class="header-right-box">
+                <div class="warped-box">পরিবেশবান্ধব ব্যাংকিং করুন</div>
+                <div>ফোন: <span class="data-field branch_mobile"></span></div>
+            </div>
+            <p style="text-align: center; margin-bottom: 0.53mm;" class="font-16"><strong> বাংলাদেশ কৃষি ব্যাংক</strong>
+            </p>
+            <p style="text-align: center; margin-top: 0; margin-bottom: 0.53mm;" class="font-16"><strong><span
+                        class="data-field branch_name"></span> শাখা </strong></p>
+            <p style="text-align: center; margin-top: 0; margin-bottom: 0.53mm;" class="font-14"><span
+                    class="data-field branch_address"></span>|</p>
+        </div>
+        <div style="position: relative; margin-bottom: 5.29mm;">
+            <p style="text-align: center; margin: 0;" class="email-font">Email: <span
+                    class="data-field branch_email"></span></p>
+            <div style="position: absolute; right: 0; top: -4mm; text-align: right; white-space: nowrap;">
+                <p style="margin: 0;">ঋণ নথি নং:<span class="data-field loan_case_no"></span></p>
+                <p style="margin: 0;">মোবাইল নম্বর:<span class="data-field applicant_mobile"></span></p>
+            </div>
+        </div>
+        <table class="compact-table" style="margin-top: -1.32mm;">
+            <tbody>
+                <tr>
+                    <td style="width: 22%;">
+                        <p>১। নাম</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field applicant_name_bn"></span></p>
+                    </td>
+                    <td style="width: 22%;">
+                        <p><span class="label_father_husband">২। পিতা/স্বামীর নাম</span></p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field applicant_father_name_bn"></span></p>
+                    </td>
+                </tr>
+                <tr style="margin: 0;">
+                    <td style="width: 22%;">
+                        <p>৩। ঠিকানা</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td colspan="4" style="width: 76%;">
+                        <p><span class="data-field applicant_present_address"></span></p>
+                    </td>
+                </tr>
+                <tr style="margin: 0;">
+                    <td style="width: 22%;">
+                        <p>৪। আবেদনকৃত ঋণের পরিমাণ</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field loan_amount_num"></span></p>
+                    </td>
+                    <td style="width: 22%;">
+                        <p>৫। ঋণের উদ্দেশ্য</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field loan_purpose"></span></p>
+                    </td>
+                </tr>
+                <tr style="margin: 0;">
+                    <td style="width: 22%;">
+                        <p>৬। আমানত হিসাব নং</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field deposit_account_no"></span></p>
+                    </td>
+                    <td style="width: 22%;">
+                        <p>৭। স্থায়ী আমানত রশিদ নং</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field deposit_fdr_no"></span></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 22%;">
+                        <p>৮। আসল টাকার পরিমাণ</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field deposit_balance"></span></p>
+                    </td>
+                    <td style="width: 22%;">
+                        <p>৯। হিসাব খোলার তারিখ</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field deposit_open_date"></span></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 22%;">
+                        <p>১০। মেয়াদ</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field loan_term"></span></p>
+                    </td>
+                    <td style="width: 22%;">
+                        <p>১১। সুদের হার</p>
+                    </td>
+                    <td style="width: 2%; padding-left: 0;">
+                        <p>:</p>
+                    </td>
+                    <td style="width: 26%;">
+                        <p><span class="data-field loan_interest_rate"></span></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="separator-line"></div>
+        <p style="text-align: center;"><strong>২য় কর্মকর্তার প্রত্যয়ন</strong></p>
+        <p>আবেদনকারীর স্থায়ী আমানত রশিদসহ হিসাব সংশ্লিষ্ট তথ্যাদি, নমুনা স্বাক্ষর ও ছবি পরীক্ষা পূর্বক সঠিক হিসাবে
+            প্রত্যয়ন করা হলো এবং হিসাব খোলার আবেদন ফরম, নমুনা স্বাক্ষরকার্ড, স্থায়ী আমানত রশিদ ও <span
+                class="english-font">Statement of Account</span> ঋণ নথি ভুক্ত করা হলো।</p>
+        <div class="signature-container" style="margin-top: 12mm !important;">
+            <div class="signature-box">
+                <p class="sig-line"><strong>তারিখসহ স্বাক্ষর ও সিল</strong></p>
+            </div>
+        </div>
+        <div class="separator-line"></div>
+        <p style="text-align: center;"><strong>মূল্যায়নকারী কর্মকর্তার সুপারিশ</strong></p>
+        <p>ঋণ আবেদন রেজিস্টারে ঋণ কেস নম্বর এন্ট্রি করা হয়েছে এবং আমানত হিসাবের (জমাকৃত আসল<span
+                class="data-field deposit_balance_para"></span>).............% হিসাবে সর্বোচ্চ ঋণ সীমা টাকা=<span
+                class="data-field loan_max_amount_num"></span>(কথায় :<span
+                class="data-field loan_max_amount_words unicode-font"></span>) মাত্র। আবেদন পত্রে উল্লিখিত উদ্দেশ্যে
+            আবেদনকারীকে টাকা=<span class="data-field loan_amount_num"></span>(কথায় :<span
+                class="data-field loan_amount_words unicode-font"></span>) মাত্র ঋণ মঞ্জুরীর সুপারিশ করা হলো।</p>
+        <div class="signature-container" style="margin-top: 12mm !important;">
+            <div class="signature-box">
+                <p class="sig-line"><strong>তারিখসহ স্বাক্ষর ও সিল</strong></p>
+            </div>
+        </div>
+        <div class="separator-line"></div>
+        <p style="text-align: center;"><strong>মঞ্জুরী আদেশ</strong></p>
+        <p>মঞ্জুরীপত্রে বর্ণিত শর্ত সাপেক্ষে টাকা=<span class="data-field loan_amount_num"></span>(কথায় :<span
+                class="data-field loan_amount_words unicode-font"></span>) মাত্র ঋণ মঞ্জুর করা হইল যা <span
+                class="data-field loan_interest_rate"></span> হারে সুদে আগামী<span
+                class="data-field loan_expiry_date"></span> তারিখের মধ্যে সুদাসলে সম্পূর্ণ পরিশোধযোগ্য।</p>
+        <p>লিয়েন মার্ক করার জন্য ২য় কর্মকর্তাকে নির্দেশনা প্রদান করা হলো।</p>
+        <div class="signature-container" style="margin-top: 0.5in;">
+            <div class="signature-box">
+                <p class="sig-title no-border">ব্যবস্থাপক</p>
+                <p class="sig-line"><strong>তারিখসহ স্বাক্ষর ও সিল</strong></p>
+            </div>
+        </div>
+        <div class="separator-line"></div>
+        <p style="text-align: center;"><strong>২য় কর্মকর্তার সুপারিশ :</strong></p>
+        <p>লিয়েন মার্ক করা হলো। মঞ্জুরী মোতাবেক ঋণ বাবদ টাকা=<span class="data-field loan_amount_num"></span>(কথায়
+            :<span class="data-field loan_amount_words unicode-font"></span>) মাত্র নগদ-<span
+                class="data-field loan_amount_num"></span> টাকা <span class="data-field sb_account_no"></span>নং হিসাবের
+            মাধ্যমে প্রদান করা যেতে পারে।</p>
+        <div class="signature-container">
+            <div class="signature-box">
+                <p class="sig-line"><strong>তারিখসহ স্বাক্ষর ও সিল</strong></p>
+            </div>
+        </div>
+        <div class="separator-line"></div>
+        <p style="text-align: center;"><strong>প্রদানাদেশ :</strong></p>
+        <p>নগদ-<span class="data-field loan_amount_num"></span> টাকা <span class="data-field sb_account_no"></span><span
+                class="payment_method_text">নং হিসাবের মাধ্যমে/নগদ</span> প্রদান করুন।</p>
+        <div class="signature-container">
+            <div class="signature-box">
+                <p class="sig-title no-border">ব্যবস্থাপক</p>
+            </div>
+        </div>
+        <div class="page-num no-print">Page 1</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+    <div class="sheet">
+        <p style="margin-top: 1.27cm;">ব্যবস্থাপক,</p>
+        <p>বাংলাদেশ কৃষি ব্যাংক,</p>
+        <p><span class="data-field branch_name"></span> শাখা,</p>
+        <p><span class="data-field branch_address"></span>।</p>
+        <p><strong>বিষয়: বি.কে.বি এমডিএস/লাখপতি/মিলিওনিয়ার/এমএসএস/এফডিআর/মাসিক মুনাফা প্রকল্প/ডাবল বেনিফিট
+                স্কিম/ত্রৈমাসিক মুনাফা প্রকল্প নং<span class="data-field deposit_account_no_only"></span>এর স্থিতির
+                বিপরীতে ঋণ মঞ্জুরীর আবেদন।</strong></p>
+        <p>জনাব,</p>
+        <p>বিনীত নিবেদন এই যে, আপনাদের শাখায় আমার উল্লিখিত হিসাব নং<span class="data-field deposit_account_no"></span>এর
+            বিপরীতে <span class="data-field loan_purpose"></span> করার জন্য টাকা<span
+                class="data-field loan_amount_num"></span>(কথায়<span
+                class="data-field loan_amount_words unicode-font"></span>) ঋণ গ্রহণের আবেদন করছি।</p>
+        <p>এমতাবস্থায়, আমাকে আমানত স্থিতির বিপরীতে ঋণ প্রদানে আপনার সুমর্জি কামনা করছি।</p>
+        <div class="signature-container" style="margin-top: 13.23mm;">
+            <div class="signature-box">
+                <p>বিনীত নিবেদক</p>
+                <p>স্বাক্ষর :</p>
+                <p>নাম : <span class="data-field applicant_name_bn"></span></p>
+                <p>হিসাব নং : <span class="data-field deposit_account_no"></span></p>
+                <p>বি.কে.বি. <span class="data-field branch_name"></span> শাখা</p>
+                <p><span class="data-field branch_address"></span>|</p>
+            </div>
+        </div>
+        <p>আবেদনকারীর স্বাক্ষর সত্যায়ন:</p>
+        <p>১।</p><br>
+        <p>২।</p><br>
+        <p>৩।</p><br>
+        <p><strong>সত্যায়িত</strong></p>
+        <p></p>
+        <div class="page-num no-print">Page 2</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+    <div class="sheet">
+
+        <div class="header-block">
+            <div class="header-left-box">
+                <img src="../../assets/images/bkb_logo.png" class="logo-img" alt="Logo">
+            </div>
+            <div class="header-right-box">
+                <div class="warped-box">পরিবেশবান্ধব ব্যাংকিং করুন</div>
+                <div>ফোন: <span class="data-field branch_mobile"></span></div>
+            </div>
+            <p style="text-align: center;" class="font-16"><strong> বাংলাদেশ কৃষি ব্যাংক</strong></p>
+            <p style="text-align: center;" class="font-16"><strong><span class="data-field branch_name"></span> শাখা
+                </strong></p>
+            <p style="text-align: center;" class="font-14"><span class="data-field branch_address"></span>।</p>
+        </div>
+        <p style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 1.32mm; margin-bottom: 1.32mm;"
+            class="email-font">Email: <span class="data-field branch_email"></span></p>
+        <p>জনাব/জনাবা <span class="data-field applicant_name_bn"></span>,</p>
+        <p><span class="label_father_husband">পিতা/স্বামী</span> <span
+                class="data-field applicant_father_name_bn"></span>,</p>
+        <p>ঠিকানা <span class="data-field applicant_present_address"></span>।</p>
+        <p><strong>বিষয়: <span class="data-field deposit_account_no"></span> হিসাবের বিপরীতে ঋণ মঞ্জুরী পত্র।</strong>
+        </p>
+        <p>প্রিয় মহোদয়,</p>
+        <p>আপনার নামে অত্র শাখায় পরিচালিত <span class="data-field loan_type_en"></span> হিসাব নং <span
+                class="data-field deposit_account_no_only"></span> এর বিপরীতে <span class="data-field app_date"></span>
+            তারিখের আবেদনের পরিপ্রেক্ষিতে নিম্নবর্ণিত শর্তাধীনে মোট <span
+                class="data-field loan_amount_num"></span>(কথায়<span
+                class="data-field loan_amount_words unicode-font"></span>) মাত্র ঋণ মঞ্জুর করা হইল।</p>
+        <ol style="list-style-type: bengali;">
+            <li>এই ঋণের সুদের হার<span class="data-field loan_interest_rate"></span>। ভবিষ্যতে সুদের হার পরিবর্তন
+                সংক্রান্ত ব্যাংক নির্দেশনার বিষয়ে আপত্তি গ্রহণযোগ্য নয়।</li>
+            <li>এই ঋণ আগামী<span class="data-field loan_expiry_date"></span> তারিখের মধ্যে সুদাসলে সম্পূর্ণ পরিশোধ করিতে
+                হইবে।</li>
+            <li>নির্ধারিত সময়ের মধ্যে ঋণ পরিশোধ ব্যর্থ হইলে আসল ও আরোপিত সম্পূর্ণ সুদ<span
+                    class="data-field deposit_account_no"></span>হিসাবটির পরিশোধিত তারিখ অথবা<span
+                    class="data-field deposit_account_no"></span>হিসাবের মাসিক কিস্তি পর পর ০৩ মাস খেলাপ করিলে ১৫ দিনের
+                নোটিশে ইহা ব্যাংক আপনার <span class="data-field deposit_account_no"></span>হিসাব হইতে সমন্বয় করিতে
+                পারিবে।</li>
+            <li>উপরোক্ত কোন শর্তের বিষয়ে দেশের কোন আদালত বা সালিশী সংস্থার নিকট কোন আবেদন বা অভিযোগ করা যাবে না।</li>
+        </ol>
+        <p>বর্ণিত শর্তসমূহ আপনার নিকট গ্রহণযোগ্য হইলে মঞ্জুরীপত্রের ২য় কপির উপরে "মঞ্জুরীপত্রে উল্লিখিত শর্তাবলী
+            সম্পূর্ণ অবগত হইয়াছি এবং সম্পূর্ণ সুস্থ ও সজ্ঞানে বর্ণিত শর্ত সাপেক্ষে ঋণের টাকা গ্রহণে স্বীকৃতি জ্ঞাপন
+            করিলাম" কথাগুলো স্বহস্তে/ইলেকট্রনিকভাবে লিখিত অবস্থায় আপনার স্বাক্ষরসহ আগামী<span
+                class="data-field loan_expiry_date"></span>তারিখের মধ্যে অত্র ব্যাংক শাখায় প্রেরণ করিতে অনুরোধ করা হলো।
+        </p>
+        <p></p>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;"><br><br>
+            <p style="text-align: center; margin: 0;"><strong>ব্যবস্থাপক</strong></p>
+        </div>
+        <p style="margin-top: 8mm;">মঞ্জুরীপত্রে উল্লিখিত শর্তাবলী সম্পূর্ণ অবগত হইয়াছি এবং সুস্থ ও সজ্ঞানে বর্ণিত শর্ত
+            সাপেক্ষে ঋণ গ্রহণে স্বীকৃতি জ্ঞাপন করিলাম।</p>
+        <div style="height: 13.23mm;"></div>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;">
+            <p style="text-align: center; margin: 0;"><strong>(ঋণ গ্রহীতার স্বাক্ষর ও তারিখ) </strong></p>
+        </div>
+        <div class="page-num no-print">Page 3</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+    <div class="sheet">
+        <p style="text-align: center; font-size: 16pt;"><strong>আমানত হিসাব হইতে ঋণ হিসাব টাকা স্থানান্তরের
+                ক্ষমতাপত্র</strong></p>
+        <p style="margin: 0;">ব্যবস্থাপক,</p>
+        <p style="margin: 0;">বাংলাদেশ কৃষি ব্যাংক</p>
+        <p style="margin: 0;"><span class="data-field branch_name"></span> শাখা</p>
+        <p style="margin: 0;"><span class="data-field branch_address"></span>।</p>
+        <p>প্রিয় মহোদয়,</p>
+        <p>আমি নিম্ন স্বাক্ষরকারী আপনার শাখা হইতে আমার <span class="data-field loan_type_en"></span> হিসাব নং <span
+                class="data-field deposit_account_no_only"></span> এর বিপরীতে যে ঋণ গ্রহণ করিতেছি তাহা যথাসময়ে পরিশোধ
+            করিতে ব্যর্থ হইলে উক্ত ঋণের টাকা সুদসহ সংশ্লিষ্ট হিসাব হইতে ঋণ হিসাবে স্থানান্তর করিয়া সমন্বয় করিবার জন্য
+            আপনাকে ক্ষমতা প্রদান করিতেছি।</p>
+        <p>তারিখ:<span class="data-field app_date"></span></p>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;">
+            <p style="text-align: center; margin: 0;"><strong>আপনার বিশ্বস্ত</strong></p>
+            <div style="height: 7.94mm;"></div>
+            <p style="text-align: center; margin: 0;">(আবেদনকারীর স্বাক্ষর)</p>
+        </div>
+        <p style="text-align: center; font-size: 16pt;"><strong>লেটার অফ ডিসবার্সমেন্ট</strong></p>
+        <p style="margin: 0;">ব্যবস্থাপক,</p>
+        <p style="margin: 0;">বাংলাদেশ কৃষি ব্যাংক</p>
+        <p style="margin: 0;"><span class="data-field branch_name"></span> শাখা</p>
+        <p style="margin: 0;"><span class="data-field branch_address"></span>।</p>
+        <p><strong>বিষয়: মঞ্জুরীকৃত ঋণ বিতরণ প্রসঙ্গে।</strong></p>
+        <p>প্রিয় মহোদয়,</p>
+        <p>আমার <span class="data-field loan_type_en"></span> হিসাব নং <span
+                class="data-field deposit_account_no_only"></span> এর বিপরীতে মঞ্জুরীকৃত <span
+                class="data-field loan_amount_num"></span>টাকা ঋণ <span class="data-field app_date"></span> আমাকে
+            প্রদানের জন্য অনুরোধ করা যাইতেছে।</p>
+        <p></p>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;">
+            <p style="text-align: center; margin: 0;"><strong> আপনার বিশ্বস্ত</strong></p>
+            <div style="height: 7.94mm;"></div>
+            <p style="text-align: center; margin: 0;">(ঋণ গ্রহীতা)</p>
+        </div>
+        <p style="text-align: center; font-size: 16pt;"><strong>লেটার অফ কন্টিনিউটি</strong></p>
+        <p style="margin: 0;">ব্যবস্থাপক,</p>
+        <p style="margin: 0;">বাংলাদেশ কৃষি ব্যাংক</p>
+        <p style="margin: 0;"><span class="data-field branch_name"></span> শাখা</p>
+        <p style="margin: 0;"><span class="data-field branch_address"></span>।</p>
+        <p>প্রিয় মহোদয়,</p>
+        <p>টাকা<span class="data-field loan_amount_num"></span>(কথায়<span
+                class="data-field loan_amount_words unicode-font"></span>) মাত্র এর ডিমান্ড প্রমিসরি নোটের প্রতি দৃষ্টি
+            আকর্ষণ করা যাইতেছে যাহা<span class="data-field applicant_name_bn"></span>এর অনুকূলে বাংলাদেশ কৃষি ব্যাংক,
+            <span class="data-field branch_name"></span> শাখা কর্তৃক প্রস্তুত করা হইয়াছে এবং পরবর্তীতে ব্যাংক হইতে
+            পৃষ্ঠাঙ্কন করা হইয়াছে যাহা আপনাকে ঋণের সুদসহ আসল টাকা আদায়ের জন্য চলমান জামানত হিসাবে প্রদান করা হইল।
+        </p>
+        <p>আমি/আমরা স্বীকারোক্তি প্রদান করিতেছি যে, অনাদায়ী ঋণ সম্পূর্ণ পরিশোধ না করা পর্যন্ত আমি/আমরা বর্ণিত প্রমিসরি
+            নোটের জন্য এককভাবেও যৌথভাবে দায়ী থাকিব। এই ঋণ হিসাবের অনাদায়ী টাকা নগদ জমা/চেকের মাধ্যমে আমি/আমরা সময়ে
+            সময়ে একবারে পরিশোধ করিয়া দিব।</p>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;">
+            <p style="text-align: center; margin: 0;"><strong> আপনার বিশ্বস্ত</strong></p>
+            <div style="height: 7.94mm;"></div>
+            <p style="text-align: center; margin: 0;">ঋণ গ্রহীতার স্বাক্ষর</p>
+        </div>
+        <div class="page-num no-print">Page 4</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+    <div class="sheet">
+        <p style="text-align: center;"><strong>লেটার অফ লিয়েন</strong></p>
+        <p>ব্যবস্থাপক</p>
+        <p>বাংলাদেশ কৃষি ব্যাংক</p>
+        <p><span class="data-field branch_name"></span> শাখা</p>
+        <p><span class="data-field branch_address"></span>।</p>
+        <p><strong>বিষয়: লিয়েন আরোপের ক্ষমতা প্রদান।</strong></p>
+        <p>প্রিয় মহোদয়,</p>
+        <p>আমি আপনার শাখা হইতে আমার <span class="data-field loan_type_en"></span> হিসাব নং <span
+                class="data-field deposit_account_no_only"></span> এর বিপরীতে টাকা<span
+                class="data-field loan_amount_num"></span>(কথায়<span
+                class="data-field loan_amount_words unicode-font"></span>) ঋণ গ্রহণ করিয়াছি। গৃহীত ঋণ বিপরীতে লিয়েন
+            অর্থাৎ দায়বদ্ধ চিহ্নিত করার ক্ষমতা প্রদান করিতেছি।</p>
+        <p>তারিখ:<span class="data-field app_date"></span></p>
+        <div style="width: 66.15mm; margin-left: auto; text-align: center;">
+            <p style="text-align: center; margin: 0;"><strong>আপনার বিশ্বস্ত</strong></p>
+            <div style="height: 15.87mm;"></div>
+            <p style="text-align: center; margin: 0;">(ঋণ গ্রহীতার স্বাক্ষর)</p>
+        </div>
+        <p style="text-align: center;"><strong>লেটার অফ এগ্রিমেন্ট</strong></p>
+        <p style="text-align: center;">টাকা<span class="data-field loan_amount_num"></span> (কথায়<span
+                class="data-field loan_amount_words unicode-font"></span>)</p>
+        <p>এই চুক্তি নামা বাংলাদেশ কৃষি ব্যাংক (যাহার প্রধান কার্যালয় ৮৪ মতিঝিল বাণিজ্যিক এলাকা) এবং জনাব/জনাবা<span
+                class="data-field applicant_name_bn"></span> <span class="data-field loan_type_en"></span> হিসাব নং
+            <span class="data-field deposit_account_no_only"></span> এর সহিত সম্পাদিত হইল। এই চুক্তি মোতাবেক গ্রাহক
+            কর্তৃক গৃহীত ঋণটি যথাসময়ে পরিশোধ করিতে বাধ্য থাকিবে। নিয়মানুযায়ী ঋণ পরিশোধ ব্যর্থ হইলে ব্যাংক কর্তৃপক্ষ
+            গৃহীত ঋণটি সুদসহ সংশ্লিষ্ট আমানত হিসাবের সহিত সমন্বয় করিতে পারিবেন অদ্য<span
+                class="data-field app_date"></span> তারিখে এই চুক্তিপত্র সম্পাদন করা হইল।
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="text-align: center; width: 52.92mm;">
+                <div style="height: 15.87mm;"></div>
+                <p style="text-align: center; margin: 0;"><strong>আবেদনকারী</strong></p>
+            </div>
+            <div style="text-align: center; width: 52.92mm;">
+                <div style="height: 15.87mm;"></div>
+                <p style="text-align: center; margin: 0;"><strong>ব্যাংকের পক্ষে ব্যবস্থাপক</strong></p>
+            </div>
+        </div>
+        <div class="page-num no-print">Page 5</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+    <div class="sheet" style="font-size: 14pt; padding: 2.54cm;">
+        <div style="position: relative; width: 100%;">
+            <p style="position: absolute; left: 0; top: 0; margin: 0;">এসিএফ-১৭১(ক)</p>
+            <div style="text-align: center;">
+                <p style="font-size: 22pt; margin: 0; text-align: center;"><strong>বাংলাদেশ কৃষি ব্যাংক</strong></p>
+                <p style="font-size: 16pt; margin: 0; text-align: center;"><strong>(ডিমান্ড প্রমিসরি নোট)</strong></p>
+                <p style="margin: 0; text-align: center;">(অনুচ্ছেদ-২০.১৮)</p>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin: 5.29mm 0;">
+            <p style="margin: 0;">টাকা<span class="data-field loan_amount_num"></span></p>
+            <p style="margin: 0;">তারিখ:<span class="data-field app_date"></span></p>
+        </div>
+        <p>গৃহীত মূল্যের জন্য আমি/আমরা বাংলাদেশ কৃষি ব্যাংক, বা ইহার আদিষ্টকে চাহিবা মাত্র টাকা-<span
+                class="data-field loan_amount_num"></span> (কথায় <span
+                class="data-field loan_amount_words unicode-font"></span>)। এবং ইহার উপর এই তারিখ হইতে বার্ষিক শতকরা
+            <span class="data-field loan_interest_rate"></span> হারে প্রতি ত্রৈমাসিক/ষান্মাসিক/বার্ষিক ভিত্তিতে প্রযোজ্য
+            সুদসহ পরিশোধ করিতে অঙ্গীকার করিতেছি।
+        </p>
+        <div style="margin-top: 92.60mm; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div
+                style="border: 1px solid #000; width: 2.5cm; height: 3.5cm; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <p style="margin: 0; text-align: center;">রাজস্ব</p>
+                <p style="margin: 0; text-align: center;">টিকেট</p>
+            </div>
+            <div style="text-align: left;">
+                <p>স্বাক্ষর <span class="data-field applicant_name_bn"></span></p>
+                <p>পিতা/স্বামীর নাম- <span class="data-field applicant_father_name_bn"></span></p>
+                <p>ঠিকানা-<span class="data-field applicant_present_address"></span></p>
+            </div>
+        </div>
+        <p>বি:দ্র:-প্রস্তুতকারী নোটের তারিখ এবং নোটে প্রদত্ত তাহার স্বাক্ষরের তারিখ অর্থাৎ এইরূপ লিখনের প্রকৃত তারিখসহ
+            তাঁহার নাম অথবা স্বাক্ষর করিয়া প্রয়োজনীয় স্ট্যাম্পের উপর স্বাক্ষর করিয়া বাতিল করিবেন।</p>
+        <div class="page-num no-print">Page 6</div>
+        <div class="developer-info no-print">Developed by- Tanvir Ahmed, T-829, Officer | Idea- Abul Hasan Ratul,
+            Officer Cash</div>
+    </div>
+
+
+    <script src="../../assets/engines/loan-engine.js"></script>
+</body>
+
+</html>

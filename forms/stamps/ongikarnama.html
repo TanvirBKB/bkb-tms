@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অঙ্গীকারনামা</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Physical Legal Stamp Sheet Dimensions (8.5in x 14in) */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      padding-top: 4.3in;
+      /* Emblem clearance */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.8 !important;
+      /* Uniform line height across pages */
+      overflow: hidden;
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print,
+      .page-badge {
+        display: none !important;
+      }
+    }
+
+    /* Document Styles */
+    .page-badge {
+      display: block;
+      text-align: right;
+      font-size: 9pt;
+      font-weight: 600;
+      color: #475569;
+      padding-top: 4px;
+      letter-spacing: 0.5px;
+      position: absolute;
+      top: 10px;
+      right: 0.5in;
+    }
+
+    .doc-main-title {
+      text-align: center;
+      font-size: 16pt;
+      font-weight: 700;
+      margin-top: 5mm;
+      margin-bottom: 8mm;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .bengali-p {
+      font-size: 12pt;
+      text-align: justify;
+      line-height: 1.8 !important;
+      /* Fixed baseline matching stamp page */
+      margin-bottom: 6mm;
+      word-spacing: 1px;
+    }
+
+    /* Input Field Fixes: Keeps baseline tight and avoids line-height expansion */
+    span.dotted-input,
+    span.data-input,
+    span[contenteditable="true"] {
+      display: inline !important;
+      vertical-align: baseline !important;
+      font-weight: bold !important;
+      outline: none;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+      line-height: inherit !important;
+    }
+
+    /* Padding trick ensures empty fields show dots without breaking line height */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span[contenteditable="true"]:empty {
+      padding-left: 0.25in;
+      padding-right: 0.25in;
+    }
+
+    /* Witness Table Styles */
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+
+    .witness-table td {
+      padding: 4px 0;
+      vertical-align: bottom;
+      border: none;
+    }
+
+    .witness-table td:nth-child(1) {
+      width: 30%;
+    }
+
+    .witness-table td:nth-child(2) {
+      width: 5%;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(3) {
+      width: 65%;
+    }
+
+    .borrower-sig {
+      text-align: center;
+      font-size: 11pt;
+      font-weight: 600;
+      border-top: 1px dotted #000000;
+      padding-top: 4px;
+      min-width: 2.0in;
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- PAGE 1 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 1 OF 3</span>
+
+    <div class="doc-main-title">অঙ্গীকারনামা</div>
+
+    <p class="bengali-p">
+      আমি/আমরা এই মর্মে অঙ্গীকার করিতেছি যে, বাংলাদেশ কৃষি ব্যাংক, <span class="dotted-input" contenteditable="true"
+        data-db-field="branch_name"></span> শাখা, <span class="dotted-input" contenteditable="true"></span> এর ঋণ
+      মঞ্জুরী পত্র নং - <span class="dotted-input" contenteditable="true"></span> তারিখ <span class="dotted-input"
+        contenteditable="true"></span>ইং মূলে মঞ্জুরীকৃত ঋণ <span class="dotted-input" contenteditable="true"></span>
+      (কথায়:<span class="dotted-input" contenteditable="true"></span>) টাকা মাত্র <span class="dotted-input"
+        contenteditable="true"></span> ঋণ । উক্ত মঞ্জুরীর বাহিনে ভবিষ্যতে উক্ত প্রকল্প/ চলতি মূলধন/নগদপুঁজি ঋণের জন্য
+      কোন অতিরিক্ত ঋণ মঞ্জুরীর আবেদন করিতে পারিব না বা করিব না। অতিরিক্ত ঋণ আবেদন করিলে তা আইনতঃ অগ্রাহ্য হইবে।
+    </p>
+
+    <p class="bengali-p">
+      ০২। আমি/আমরা নিম্নস্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, আমি বা আমার পরিবারের নামে বাংলাদেশের অন্য কোন ব্যাংক
+      বা আর্থিক প্রতিষ্ঠানে কোন প্রকার দায়-দেনা বা ঋণ নাই।
+    </p>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 2 OF 3</span>
+
+    <p class="bengali-p">
+      ০৩। আমি/আমরা নিম্নস্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, মঞ্জুরী পত্রের শর্তানুসারে আমার নিজ খরচে ব্যাংক এবং
+      যৌথ নামে সাধারণ বীমা/অন্য যেকোন অনুমোদিত (ব্যাংকের) বীমা কোম্পানীর সহিত বীমা করিয়া পলিসি ব্যাংকে জমা দিব।
+      অন্যথায়, পরবর্তী যেকোন দুর্ঘটনা/পরিস্থিতির জন্য আমি/আমরা ব্যক্তিগতভাবে দায়ী থাকিব।
+    </p>
+
+    <p class="bengali-p">
+      ০৪। আমি/আমরা নিম্নস্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, বাংলাদেশ কৃষি ব্যাংক, <span class="dotted-input"
+        contenteditable="true" data-db-field="branch_name"></span> শাখা, <span class="dotted-input"
+        contenteditable="true"></span> এর ঋণ মঞ্জুরী পত্র নং - <span class="dotted-input" contenteditable="true"></span>
+      তারিখ <span class="dotted-input" contenteditable="true"></span>ইং মূলে মঞ্জুরীকৃত ঋণ <span class="dotted-input"
+        contenteditable="true"></span> (কথায়:<span class="dotted-input" contenteditable="true"></span>) টাকা মাত্র
+      <span class="dotted-input" contenteditable="true"></span> ঋণ -এর বিপরীতে প্রস্তাবিত বন্ধকী সম্পত্তি অন্য কোথাও
+      হস্তান্তর/ দায় বন্ধক প্রদান করি নাই এবং ঋণ সম্পূর্ণ পরিশোধ করা না পর্যন্ত কোথাও হস্তান্তর/ দায় বন্ধক করিব না।
+    </p>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 3 OF 3</span>
+
+    <p class="bengali-p">
+      ০৫। আমি/আমরা নিম্নস্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, বাংলাদেশ কৃষি ব্যাংক, <span class="dotted-input"
+        contenteditable="true" data-db-field="branch_name"></span> শাখা, <span class="dotted-input"
+        contenteditable="true"></span> এর ঋণ মঞ্জুরী পত্র নং - <span class="dotted-input" contenteditable="true"></span>
+      তারিখ <span class="dotted-input" contenteditable="true"></span>ইং মূলে মঞ্জুরীকৃত ঋণ <span class="dotted-input"
+        contenteditable="true"></span> (কথায়:<span class="dotted-input" contenteditable="true"></span>) টাকা মাত্র
+      <span class="dotted-input" contenteditable="true"></span> ঋণ হিসাবে ব্যাংকের নিয়ম অনুযায়ী নিয়মিত লেনদেন করিব।
+      উক্ত সিসি/ঋণ হিসাব ব্যতিত অন্য কোন হিসাবে লেনদেন করিব না।
+    </p>
+
+    <p class="bengali-p">
+      ০৬। আমি/আমরা নিম্নস্বাক্ষরকারী এই মর্মে অঙ্গীকার করিতেছি যে, আমার দোকান/গুদাম/প্রকল্পের মালামাল ক্রয়-বিক্রয় ও
+      সরবরাহ কালে পরিবহনে এবং আমার দোকান/গুদাম/প্রকল্পে/ ফ্যাক্টরীতে রক্ষিত অবস্থায় চুরি, ডাকাতি, অগ্নিসংযোগ অথবা অন্য
+      কোন ক্ষয়-ক্ষতি হয় তবে তার জন্য আমি/আমরা নিজেরাই দায়ী থাকিব। এই ব্যাপারে ব্যাংক কর্তৃপক্ষের নিকট পূর্ণ বা আংশিক
+      ক্ষতিপূরণের দাবী উত্থাপন করিতে পারিব না বা করিব না।
+    </p>
+
+    <!-- Borrower Signature -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 30px; margin-bottom: 25px;">
+      <div class="borrower-sig">
+        ঋণ গ্রহীতার স্বাক্ষর
+      </div>
+    </div>
+
+    <!-- Witness Section -->
+    <div style="margin-top: 15px;">
+      <strong style="font-size: 11pt; display: block; margin-bottom: 12px;">সাক্ষীগণের বিবরণঃ-</strong>
+      <div style="display: flex; justify-content: space-between; width: 100%; font-size: 11pt;">
+        <!-- Witness 1 -->
+        <div style="flex: 1; padding-right: 4mm;">
+          <div style="font-weight: normal; margin-bottom: 3mm;">১) স্বাক্ষর: ...........................................
+          </div>
+          <table class="witness-table">
+            <tr>
+              <td>নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td>পিতার নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td>ঠিকানা</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+          </table>
+        </div>
+        <!-- Witness 2 -->
+        <div style="flex: 1; padding-left: 4mm;">
+          <div style="font-weight: normal; margin-bottom: 3mm;">২) স্বাক্ষর: ...........................................
+          </div>
+          <table class="witness-table">
+            <tr>
+              <td>নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td>পিতার নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td>ঠিকানা</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

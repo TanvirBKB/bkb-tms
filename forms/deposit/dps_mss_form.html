@@ -1,0 +1,3687 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPS/MSS Form</title>
+    <style>
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --primary: #000000;
+            --bank-green: #228B22;
+            /* Forest Green */
+            --light-grey: #D3D3D3;
+            --font-main: 'SolaimanLipi', 'Noto Serif Bengali', serif;
+            --box-height-p3: 6mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            background-color: #525659;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* A4 Page Setup */
+        .page {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12.7mm;
+            /* 12.7mm border as requested */
+            margin: 10mm 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 0;
+            isolation: isolate;
+            font-family: var(--font-main);
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 auto;
+            page-break-after: always;
+            break-inside: auto;
+            overflow: hidden;
+            /* Added to contain floats */
+            -webkit-column-break-inside: avoid;
+            page-break-inside: auto;
+        }
+
+        /* Page Number styling */
+        .page-number {
+            position: absolute;
+            bottom: 12.7mm;
+            right: 12.7mm;
+            font-size: 11pt;
+            z-index: 2;
+        }
+
+        /* Common Styles from sb_ac_form.html */
+        .section-title-solid {
+            background-color: var(--bank-green);
+            color: white;
+            padding: 4px 15px;
+            font-weight: bold;
+            font-size: 10.5pt;
+            margin: 0;
+            border-radius: 2px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+            width: 100%;
+        }
+
+        .row-label-container {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            font-size: 10.5pt;
+            width: 1.8in;
+        }
+
+        .row-number {
+            width: 25px;
+            flex-shrink: 0;
+        }
+
+        .row-label-text {
+            flex-grow: 1;
+        }
+
+        .colon-separator {
+            font-family: Arial, sans-serif;
+            margin-right: 4px;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+
+        .person-input-line {
+            flex-grow: 1;
+            height: var(--box-height-p3);
+            line-height: var(--box-height-p3);
+            border: 1px solid var(--bank-green);
+            padding: 0 8px;
+            font-size: 9pt;
+            margin-bottom: 2px;
+            text-align: left;
+            outline: none;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .dotted-line {
+            flex-grow: 1;
+            border-bottom: 1px dotted var(--bank-green);
+            margin-left: 5px;
+            height: 18px;
+            outline: none;
+            min-width: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: left;
+            font-size: 10.5pt;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10.5pt;
+            white-space: nowrap;
+        }
+
+        .tick-box {
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--bank-green);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 10.5pt;
+            font-weight: bold;
+        }
+
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 10pt;
+        }
+
+        .signature-table th,
+        .signature-table td {
+            border: 1px solid black;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .signature-table th,
+        .signature-table td {
+            font-size: 10.5pt;
+            height: 0.20in;
+        }
+
+        .tight-rows tbody td {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            vertical-align: top;
+        }
+
+        .split-row {
+            display: flex;
+            width: 100%;
+            align-items: center;
+        }
+
+        .split-col-left {
+            flex: 0 0 45%;
+            display: flex;
+            align-items: center;
+            padding-right: 15px;
+        }
+
+        .split-col-right {
+            flex: 0 0 55%;
+            display: flex;
+            align-items: center;
+        }
+
+        .person-grid {
+            display: flex;
+            width: 100%;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .person-inputs {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-side-box {
+            width: 3.3cm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .bank-use-info-text {
+            font-size: 10pt;
+            text-align: center;
+            margin-bottom: 2px;
+            font-weight: bold;
+            line-height: 1.1;
+            width: 100%;
+        }
+
+        .bank-use-info-text small {
+            font-weight: normal;
+            font-size: 8pt;
+            display: block;
+        }
+
+        .actual-photo-frame {
+            width: 3.3cm;
+            height: 3.8cm;
+            border: 1px solid var(--bank-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9pt;
+            text-anchor: middle;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .indented-note {
+            margin-left: 25px;
+            font-size: 9pt;
+            color: #000;
+            margin-top: 2px;
+        }
+
+        .input-box {
+            width: 100%;
+            height: 0.4in;
+            background-color: white;
+            border: 1px solid var(--primary);
+            color: black;
+            font-size: 14pt;
+            padding: 0 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body {
+                background: none;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .box-input-p3 {
+                border: 1px solid var(--bank-green) !important;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                width: 210mm;
+                min-height: 297mm;
+                page-break-after: always;
+            }
+
+            .page:not(:first-child) {
+                page-break-before: always;
+            }
+        }
+
+        .dps-header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .dps-logo-placeholder {
+            width: 25mm;
+            height: 25mm;
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-right: 5mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dps-header-text {
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .dps-bank-name {
+            font-size: 11mm;
+            font-weight: bold;
+            color: var(--bank-green);
+            line-height: 1.1;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .dps-header-line {
+            height: 1mm;
+            width: 100%;
+            background: linear-gradient(to right, white, var(--bank-green), white);
+            margin: 1mm 0;
+        }
+
+        .dps-bank-slogan {
+            font-size: 6mm;
+            color: black;
+            text-align: center;
+            width: 100%;
+        }
+
+        .title-oval-container {
+            margin-top: 0.7in;
+            background-color: var(--bank-green);
+            border-radius: 50%;
+            padding: 15px 60px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-text {
+            font-size: 30pt;
+            font-weight: bold;
+            line-height: 1.2;
+            text-align: justify;
+            text-align-last: justify;
+            width: 100%;
+            color: white;
+        }
+
+        .scheme-title-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 0.2in;
+        }
+
+        .scheme-title {
+            font-size: 22pt;
+            font-weight: bold;
+            border-bottom: 2.5px solid black;
+            padding-bottom: 2px;
+        }
+
+        .green-ribbon-container {
+            width: calc(100% + 25.4mm);
+            margin-left: -12.7mm;
+            margin-right: -12.7mm;
+            background-color: var(--bank-green);
+            padding: 10px 30mm 10px 15mm;
+            margin-top: 1in;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            clip-path: polygon(45mm 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .ribbon-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .ribbon-label {
+            font-size: 14pt;
+            font-weight: bold;
+            width: 2.0in;
+            text-align: right;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .ribbon-colon {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .ribbon-input {
+            flex-grow: 1;
+            height: 10mm;
+            border: none;
+            padding: 0 8px;
+            font-size: 14pt;
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .dps-footer-container {
+            position: absolute;
+            bottom: 0.8in;
+            left: -12.7mm;
+            right: -12.7mm;
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dps-footer-oval {
+            background-color: var(--bank-green);
+            color: white;
+            padding: 15px 40px 25px 40px;
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            font-weight: bold;
+            text-align: center;
+            min-width: auto;
+            margin-bottom: -20px;
+            position: relative;
+            z-index: 0;
+        }
+
+        .dps-footer-ribbon {
+            width: 100%;
+            height: 0.3in;
+            background-color: var(--bank-green);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Page 2 Header Styles (from sb_ac_form Page 3) */
+        .header-grid-p2 {
+            display: grid;
+            grid-template-columns: auto min-content;
+            grid-template-rows: auto auto;
+            justify-content: center;
+            align-items: center;
+            column-gap: 15px;
+            row-gap: 5px;
+            width: 100%;
+            padding: 0 0.4in;
+            margin-bottom: 0;
+        }
+
+        .bank-branch-group {
+            grid-row: 1;
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .inline-logo-p3 {
+            grid-row: 1;
+            grid-column: 1;
+            width: 17mm;
+            height: 17mm;
+            filter: invert(33%) sepia(98%) saturate(382%) hue-rotate(74deg) brightness(91%) contrast(88%) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .bank-name-main-p3 {
+            font-size: 25pt;
+            font-weight: bold;
+            color: var(--bank-green);
+            margin: 0;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .branch-display-box-p3 {
+            margin-top: 5px;
+            width: 100%;
+            border: 1px solid var(--bank-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px 8px;
+            font-size: 11pt;
+            color: var(--primary);
+            align-self: center;
+            outline: none;
+            min-height: 7mm;
+            white-space: nowrap;
+        }
+
+        .green-title-box-p2 {
+            grid-row: 2;
+            grid-column: 2;
+            background-color: var(--bank-green);
+            color: white;
+            font-weight: bold;
+            font-size: 10pt;
+            padding: 2px 5px;
+            margin-top: 0;
+            border-radius: 4px;
+            line-height: 1.2;
+            width: 100%;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .manager-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .bank-name-box {
+            width: 64mm;
+            border: 1px solid var(--bank-green);
+            padding: 0 2px;
+            margin-top: 2px;
+            font-size: 10pt;
+            text-align: left;
+            line-height: 1;
+        }
+
+        .manager-banner-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* Banner Styles from sb_ac_form.html */
+        .bkb-banner-p3 {
+            background-color: var(--bank-green);
+            padding: 5px 8px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .banner-row-p3 {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .banner-label-p3 {
+            font-size: 10pt;
+            font-weight: bold;
+            margin-right: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .box-group-p3 {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .box-input-p3 {
+            width: 0.22in;
+            height: 0.28in;
+            background: white;
+            border: 1px solid var(--bank-green);
+            margin-left: -1px;
+            text-align: center;
+            font-family: var(--font-main);
+            font-size: 11.5pt;
+            font-weight: bold;
+            outline: none;
+            padding: 0;
+            color: #333;
+        }
+
+        .first-box-p3 {
+            margin-left: 0;
+        }
+
+        .application-intro {
+            margin-top: 15px;
+            font-size: 11pt;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .section-header-plain {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 10px;
+            margin-bottom: 2px;
+        }
+
+        #page-4 .person-input-line {
+            height: 5mm;
+        }
+
+        /* Styles for Page 4 (Signature Card) copied from sb_ac_form */
+        .header-text-container-p3 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logo-title-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo-title-wrapper .inline-logo-p3 {
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-right: 8px;
+            width: 0.4in;
+            height: 0.4in;
+            object-fit: contain;
+            filter: invert(33%) sepia(98%) saturate(382%) hue-rotate(74deg) brightness(91%) contrast(88%) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+            /* Reset grid properties from dps_mss_form */
+            grid-row: auto;
+            grid-column: auto;
+        }
+
+        .content-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dps-logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: invert(33%) sepia(98%) saturate(382%) hue-rotate(74deg) brightness(91%) contrast(88%) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .locked-digit {
+            background-color: white !important;
+            color: black !important;
+            cursor: default;
+        }
+
+        /* Data Entry Modal Styles (Unified with Suite) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 30px auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 8px;
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            border-bottom: 2px solid var(--bank-green);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--bank-green);
+            font-size: 18pt;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .section-label-modal {
+            grid-column: span 2;
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+            background: var(--bank-green);
+            padding: 5px 10px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+
+        .section-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fbtn-data {
+            background-color: #0f766e;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fbtn-data:hover {
+            background-color: #0d9488;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(15, 118, 110, 0.3);
+        }
+
+        .fbtn-remove {
+            background-color: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fbtn-remove:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+        }
+
+        .entry-section {
+            grid-column: 1 / -1;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        .others-input {
+            margin-top: 5px;
+            display: none;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .btn-populate {
+            background-color: var(--bank-green);
+        }
+
+        .btn-save {
+            background-color: #337ab7;
+        }
+
+        .btn-clear {
+            background-color: #d9534f;
+        }
+
+        .score-input {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #warning-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+        }
+
+        /* Input Focus and Select Fixes */
+        input,
+        textarea,
+        select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+        /* --- FDR SLIP SPECIFIC CSS --- */
+        .a4-half-page {
+            font-family: var(--font-main);
+            width: 210mm;
+            height: 148.5mm;
+            padding: calc(0.5in - 5mm) 0.5in 0.5in 0.5in;
+            margin: 5mm auto;
+            background: #ffffff;
+            position: relative;
+            box-sizing: border-box;
+            box-shadow: 0 1mm 4mm rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+
+        .half-page-slip {
+            height: 138mm;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+
+
+        .fdr-cheque-print-area {
+            position: absolute;
+            top: 148.5mm;
+            left: 0;
+            width: 210mm;
+            height: 148.5mm;
+        }
+
+        .cheque-data-field {
+            position: absolute;
+            font-family: var(--font-main);
+            font-weight: bold;
+            font-size: 11pt;
+            color: black;
+            white-space: nowrap;
+        }
+
+        .cheque-date-field {
+            position: absolute;
+            display: flex;
+            font-family: Arial, sans-serif;
+            /* Best for uniform date characters */
+        }
+
+        .cheque-date-char {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+
+
+        .form-code {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 11pt;
+            font-weight: 600;
+        }
+
+        .header-center {
+            text-align: center;
+            margin-bottom: 2pt;
+        }
+
+        .bkb-logo {
+            width: 42pt;
+            height: 42pt;
+            object-fit: contain;
+        }
+
+        .bank-name {
+            font-size: 20pt;
+            font-weight: 700;
+            letter-spacing: 0.5pt;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        .branch-name {
+            font-size: 13pt;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 2pt;
+            padding-bottom: 1pt;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2pt;
+            margin-bottom: 2pt;
+            font-size: 11pt;
+            font-weight: 600;
+        }
+
+        .scroll-no {
+            flex: 1;
+            text-align: left;
+        }
+
+        .slip-title {
+            flex: 1;
+            font-size: 13pt;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .date-block {
+            flex: 1;
+            text-align: right;
+        }
+
+        .account-type-line {
+            text-align: left;
+            font-size: 11pt;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .fdr-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 10pt;
+            margin-bottom: 6pt;
+        }
+
+        .fdr-table th,
+        .fdr-table td {
+            border: 1pt solid #000000;
+            padding: 3pt 4pt;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        .fdr-table th {
+            font-weight: 700;
+            text-align: center;
+            background-color: #ffffff;
+        }
+
+        .col-desc {
+            width: 28%;
+        }
+
+        .col-taka {
+            width: 14%;
+            text-align: center;
+        }
+
+        .col-paisa {
+            width: 6%;
+            text-align: center;
+        }
+
+        .col-depositor {
+            width: 28%;
+        }
+
+        .col-tenure {
+            width: 12%;
+            text-align: center;
+        }
+
+        .col-rate {
+            width: 12%;
+            text-align: center;
+        }
+
+        .applicant-sign-title {
+            text-align: right;
+            font-size: 11pt;
+            font-weight: 700;
+            margin-top: 4pt;
+            margin-bottom: 12pt;
+        }
+
+        .middle-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20pt;
+            font-size: 10.5pt;
+            line-height: 1.5;
+        }
+
+        .fdr-meta-left {
+            width: 45%;
+            font-weight: 600;
+        }
+
+        .applicant-dotted-box {
+            width: 50%;
+            text-align: center;
+            font-size: 10pt;
+            line-height: 1.5;
+            border-top: 1pt dotted #000000;
+            border-bottom: 1pt dotted #000000;
+            padding: 4pt 0;
+        }
+
+        .bottom-officers {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 11pt;
+            font-weight: 700;
+            margin-top: 30pt;
+        }
+
+        .data-field {
+            display: inline-block;
+        }
+
+        @media print {
+            .a4-half-page {
+                margin: 0;
+                box-shadow: none;
+                height: 297mm !important;
+                /* Forces A4 height in print so the browser doesn't auto-scale it up 2x */
+                width: 210mm !important;
+                display: block !important;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body>
+
+    <!-- PAGE 1 -->
+    <div class="page" id="page-1">
+        <div class="dps-header-container">
+            <div class="dps-header-text">
+                <div class="dps-logo-placeholder">
+                    <img src="../../assets/images/bkb_logo.png" alt="BKB Logo">
+                </div>
+                <div class="dps-bank-name">বাংলাদেশ কৃষি ব্যাংক</div>
+                <div class="dps-header-line"></div>
+                <div class="dps-bank-slogan">গণমানুষের ব্যাংক</div>
+            </div>
+        </div>
+
+        <div class="title-oval-container">
+            <div class="title-wrapper">
+                <div class="title-text">হিসাব খোলার ফরম</div>
+                <div class="title-text" style="font-size: 20pt;">Account Opening Form</div>
+            </div>
+        </div>
+        <div class="scheme-title-container">
+            <div class="scheme-title" style="font-size: 18pt;">স্থায়ী আমানত/সঞ্চয়ী আমানত/বিশেষ স্কিম হিসাব</div>
+        </div>
+
+        <div class="green-ribbon-container">
+            <div class="ribbon-row">
+                <div class="ribbon-label">শাখা</div>
+                <div class="ribbon-colon">:</div>
+                <input type="text" class="ribbon-input" id="branch_name" readonly="true">
+            </div>
+            <div class="ribbon-row">
+                <div class="ribbon-label">হিসাবের নাম</div>
+                <div class="ribbon-colon">:</div>
+                <input type="text" class="ribbon-input" id="account_title">
+            </div>
+            <div class="ribbon-row">
+                <div class="ribbon-label">হিসাব নম্বর</div>
+                <div class="ribbon-colon">:</div>
+                <input type="text" class="ribbon-input" id="account_no_p1">
+            </div>
+            <div class="ribbon-row">
+                <div class="ribbon-label">ইউনিক গ্রাহক আইডি কোড</div>
+                <div class="ribbon-colon">:</div>
+                <input type="text" class="ribbon-input" id="unique_customer_id_p1">
+            </div>
+        </div>
+
+        <div class="dps-footer-container">
+            <div class="dps-footer-oval">www.krishibank.gov.bd</div>
+            <div class="dps-footer-ribbon"></div>
+        </div>
+        <div class="page-number">পাতা ১ / ৬</div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="page-2">
+        <div class="header-grid-p2">
+            <img src="../../assets/images/bkb_logo.png" alt="BKB Logo" class="inline-logo-p3">
+            <div class="bank-branch-group">
+                <h2 class="bank-name-main-p3">বাংলাদেশ কৃষি ব্যাংক</h2>
+
+                <div class="branch-display-box-p3">
+                    <span class="branch-name-input" contenteditable="true"
+                        style="min-width: 1.2in; outline: none; text-align: right;"></span>
+                    <span>&nbsp;শাখা,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+            </div>
+            <div class="green-title-box-p2">স্থায়ী আমানত/সঞ্চয়ী আমানত/বিশেষ স্কিম হিসাব</div>
+        </div>
+        <div class="manager-banner-container">
+            <div class="manager-section" style="margin-top: 0; width: auto;">
+                <div style="font-size: 12pt; font-weight: bold;">ব্যবস্থাপক</div>
+                <div class="bank-name-box">বাংলাদেশ কৃষি ব্যাংক</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="font-size: 10pt; font-weight: bold; margin-bottom: 2px;">(ব্যাংকের ব্যবহারের জন্য)</div>
+                <div class="bkb-banner-p3">
+                    <div class="banner-row-p3" id="account_no_banner_p2">
+                        <div class="banner-label-p3">হিসাব নম্বর</div>
+                        <div class="box-group-p3">
+                            <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                                id="account_no_banner_digit_0_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_1_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_2_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_3_p2">
+                            <div style="width: 3px;"></div>
+                            <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                                id="account_no_banner_digit_4_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_5_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_6_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_7_p2">
+                            <div style="width: 3px;"></div>
+                            <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                                id="account_no_banner_digit_8_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_9_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_10_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_11_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_12_p2">
+                            <input type="text" class="box-input-p3" maxlength="1" id="account_no_banner_digit_13_p2">
+                        </div>
+                    </div>
+                    <div class="banner-row-p3" id="customer_id_banner_p2">
+                        <div class="banner-label-p3">ইউনিক কাস্টমার আইডি কোড</div>
+                        <div class="box-group-p3">
+                            <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                                id="customer_id_banner_digit_0_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_1_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_2_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_3_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_4_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_5_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_6_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_7_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_8_p2"><input type="text" class="box-input-p3" maxlength="1"
+                                id="customer_id_banner_digit_9_p2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bank-name-box"><span class="branch-name-input" contenteditable="true"
+                style="outline: none;"></span>&nbsp;শাখা</div>
+
+        <div class="application-intro">
+            <div>প্রিয় মহোদয়,</div>
+            <div>আমি/আমরা আপনার শাখায় একটি হিসাব খোলার জন্য আবেদন করছি। আমার/আমাদের হিসাব সংক্রান্ত ও ব্যক্তিগত
+                বিস্তারিত তথ্য নিম্নে প্রদান করছি।</div>
+        </div>
+        <div class="section-header-plain">[প্রথম অংশ : হিসাব সংক্রান্ত তথ্যাদি]</div>
+        <div style="border-bottom: 1px solid black; width: 100%;"></div>
+        <div class="form-row" style="margin-top: 10px;">
+            <div class="row-label-container">
+                <span class="row-number">১।</span>
+                <span class="row-label-text">হিসাবের শিরোনাম (বাংলায়)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="account_title_bn" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container">
+                <span class="row-number"></span>
+                <span class="row-label-text" style="font-family: Arial, sans-serif; font-size: 10pt;">In English (Block
+                    Letter)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="account_title_en" contenteditable="true"></div>
+        </div>
+        <div class="form-row" style="margin-top: 10px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">২।</span>
+                <span class="row-label-text" style="font-weight: bold;">ক) স্থায়ী আমানতের ক্ষেত্রে প্রযোজ্য</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="dps_fd_scheme_name" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="display: flex; align-items: center; width: 100%; font-size: 10.5pt;">
+                <span style="white-space: nowrap;">পরিমাণ (অংকে)</span>
+                <span class="colon-separator">:</span>
+                <div class="person-input-line" id="dps_fd_amount" contenteditable="true"
+                    style="width: 1.2in; flex-grow: 0;"></div>
+
+                <span style="white-space: nowrap; margin-left: 10px;">(কথায়)</span>
+                <span class="colon-separator">:</span>
+                <div class="person-input-line" id="dps_fd_amount_bn_words" contenteditable="true"></div>
+
+                <span style="white-space: nowrap; margin-left: 10px;">সুদ মুনাফার হার</span>
+                <span class="colon-separator">:</span>
+                <div class="person-input-line" id="dps_fd_rate" contenteditable="true"
+                    style="width: 0.6in; flex-grow: 0;"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="display: flex; align-items: center; width: 100%; font-size: 10.5pt;">
+                <span style="white-space: nowrap;">মেয়াদ কাল:</span>
+                <div class="person-input-line" id="dps_fd_tenor_year" contenteditable="true"
+                    style="width: 0.4in; flex-grow: 0; margin-left: 5px;"></div>
+                <span style="margin-left: 5px;">বছর</span>
+                <div class="person-input-line" id="dps_fd_tenor_month" contenteditable="true"
+                    style="width: 0.4in; flex-grow: 0; margin-left: 5px;"></div>
+                <span style="margin-left: 5px;">মাস</span>
+                <div class="person-input-line" id="dps_fd_tenor_day" contenteditable="true"
+                    style="width: 0.4in; flex-grow: 0; margin-left: 5px;"></div>
+                <span style="margin-left: 5px;">দিন।</span>
+                <span style="white-space: nowrap; margin-left: 10px;">মেয়াদ পূর্তির তারিখ</span>
+                <div class="person-input-line" id="dps_fd_maturity_date" contenteditable="true"
+                    style="margin-left: 5px;"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="width: 1.2in; flex-shrink: 0; font-size: 10.5pt;">নবায়নের ক্ষেত্রে</div>
+            <span class="colon-separator">:</span>
+            <div class="check-item">
+                <div class="tick-box" id="fd_renew_all_tick" onclick="toggleTick(this)"></div> আসল এবং সুদ নবায়ন করুন
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="width: 1.2in; flex-shrink: 0;"></div>
+            <span class="colon-separator" style="visibility: hidden;">:</span>
+            <div style="display: flex; align-items: center;">
+                <div class="check-item">
+                    <div class="tick-box" id="fd_renew_principal_tick" onclick="toggleTick(this)"></div> শুধুমাত্র আসল
+                    নবায়ন করুন, সুদ
+                </div>
+                <div class="person-input-line" id="fd_renew_interest_acc" contenteditable="true"
+                    style="width: 1.5in; margin: 0 5px; flex-grow: 0;"></div>
+                <span style="font-size: 10.5pt;">নম্বর হিসাবে জমা করুন</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="width: 1.2in; flex-shrink: 0;"></div>
+            <span class="colon-separator" style="visibility: hidden;">:</span>
+            <div class="check-item">
+                <div class="tick-box" id="fd_renew_none_tick" onclick="toggleTick(this)"></div> প্রযোজ্য নয়
+            </div>
+        </div>
+        <div class="form-row" style="margin-top: 10px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number"></span>
+                <span class="row-label-text" style="font-weight: bold;">খ) সঞ্চয়ী স্কিম/বিশেষ স্কিম এর ক্ষেত্রে
+                    প্রযোজ্য</span>
+            </div>
+            <span class="colon-separator">:</span>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">স্কিমের নাম</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_scheme_name" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">স্কিমের মেয়াদ</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_scheme_tenor" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">গ্রাহক কর্তৃক প্রদেয় কিস্তির ফ্রিকোয়েন্সি</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_installment_frequency" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">কিস্তির সংখ্যা</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_installment_count" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">কিস্তির পরিমাণ (অংকে)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_installment_amount" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">(কথায়)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_installment_amount_bn_words" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">মেয়াদান্তে ব্যাংক কর্তৃক প্রদেয় (অংকে)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_maturity_payout_amount" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">(কথায়)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_maturity_payout_amount_bn_words" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">এককালীন জমা (অংকে)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_lump_sum_deposit" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">(কথায়)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_lump_sum_deposit_bn_words" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="display: flex; align-items: center; width: 100%; font-size: 10.5pt;">
+                <span style="white-space: nowrap;">পরিশোধের ফ্রিকোয়েন্সি</span>
+                <span class="colon-separator">:</span>
+                <div class="dotted-line" id="dps_payout_frequency" contenteditable="true"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div class="split-row" style="font-size: 10.5pt;">
+                <div class="split-col-left">
+                    <span style="white-space: nowrap;">ব্যাংক কর্তৃক প্রতি কিস্তিতে প্রদেয় (অংকে)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_payout_installment" contenteditable="true"></div>
+                </div>
+                <div class="split-col-right">
+                    <span style="white-space: nowrap;">(কথায়)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="dotted-line" id="dps_payout_installment_bn_words" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-top: 10px; align-items: flex-start;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৩।</span>
+                <span class="row-label-text">হিসাব পরিচালনা পদ্ধতিতে (টিক চিহ্ন <span
+                        style="border: 1px solid black; width: 13px; height: 13px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">✓</span>
+                    দিন)</span>
+            </div>
+            <span class="colon-separator" style="margin-top: 2px;">:</span>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div class="checkbox-container">
+                    <div class="check-item">
+                        <div class="tick-box" id="account_operation_single" onclick="toggleTick(this)"></div> এককভাবে
+                    </div>
+                    <div class="check-item">
+                        <div class="tick-box" id="account_operation_joint" onclick="toggleTick(this)"></div> যৌথভাবে
+                    </div>
+                    <div class="check-item">
+                        <div class="tick-box" id="account_operation_anyone" onclick="toggleTick(this)"></div> যেকোনো
+                        একজন
+                    </div>
+                </div>
+                <div class="checkbox-container">
+                    <div class="check-item">
+                        <div class="tick-box" id="account_operation_anyone_or_survivor" onclick="toggleTick(this)">
+                        </div> যে কোনো একজন অথবা জীবিতজন
+                    </div>
+                    <div class="check-item">
+                        <div class="tick-box" id="account_operation_others" onclick="toggleTick(this)"></div> অন্যান্য
+                    </div>
+                    <div class="dotted-line" id="account_operation_others_input" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        <div class="section-header-plain" style="margin-top: 5px;">[দ্বিতীয় অংশ : প্রতিষ্ঠান সংক্রান্ত তথ্যাদি]</div>
+        <div style="border-bottom: 1px solid black; width: 100%;"></div>
+        <div class="form-row" style="margin-top: 5px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">১।</span>
+                <span class="row-label-text">প্রতিষ্ঠানের নাম</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_name_bn" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number"></span>
+                <span class="row-label-text" style="font-family: Arial, sans-serif; font-size: 10pt;">In English (Block
+                    Letter)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_name_en" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div style="display: flex; align-items: center; width: 2.8in; flex-shrink: 0;">
+                <div class="row-label-container" style="width: auto;">
+                    <span class="row-number">২।</span>
+                    <span class="row-label-text">ট্রেড লাইসেন্স নম্বর</span>
+                </div>
+                <span class="colon-separator">:</span>
+                <div class="dotted-line" id="org_trade_license" contenteditable="true"></div>
+            </div>
+            <div style="display: flex; align-items: center; width: 1.4in; margin-left: 5px;">
+                <span style="white-space: nowrap; font-size: 10.5pt;">তারিখ</span>
+                <span class="colon-separator" style="margin-left: 2px;">:</span>
+                <div class="dotted-line" id="org_trade_date" contenteditable="true" style="width: 0.6in;"></div>
+            </div>
+            <span style="white-space: nowrap; font-size: 10.5pt;">ইস্যুকারী কর্তৃপক্ষ</span>
+            <span class="colon-separator" style="margin-left: 2px;">:</span>
+            <div class="dotted-line" id="org_trade_authority" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div style="display: flex; align-items: center; width: 2.8in; flex-shrink: 0;">
+                <div class="row-label-container" style="width: auto;">
+                    <span class="row-number">৩।</span>
+                    <span class="row-label-text">নিবন্ধন নম্বর</span>
+                </div>
+                <span class="colon-separator">:</span>
+                <div class="dotted-line" id="org_reg_no" contenteditable="true"></div>
+            </div>
+            <div style="display: flex; align-items: center; width: 1.4in; margin-left: 5px;">
+                <span style="white-space: nowrap; font-size: 10.5pt;">তারিখ</span>
+                <span class="colon-separator" style="margin-left: 2px;">:</span>
+                <div class="dotted-line" id="org_reg_date" contenteditable="true" style="width: 0.6in;"></div>
+            </div>
+            <span style="white-space: nowrap; font-size: 10.5pt;">নিবন্ধনকারী কর্তৃপক্ষ ও দেশ</span>
+            <span class="colon-separator" style="margin-left: 2px;">:</span>
+            <div class="dotted-line" id="org_reg_authority" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number"></span>
+                <span class="row-label-text">নিবন্ধনকৃত ঠিকানা</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_registered_addr" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৪।</span>
+                <span class="row-label-text">ভ্যাট রেজিস্ট্রেশন নম্বর/BIN</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_bin" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div style="display: flex; align-items: center; white-space: nowrap; font-size: 9pt;">
+                <span class="row-number">৫।</span>
+                <span>ট্যাক্স আইডি নম্বর/(TIN)(যদি থাকে)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_tin" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৬।</span>
+                <span class="row-label-text">ব্যবসাস্থল/অফিসের ঠিকানা</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="dotted-line" id="org_office_addr" contenteditable="true"></div>
+        </div>
+        <div class="page-number">পাতা ২ / ৬</div>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="page" id="page-3">
+        <div class="form-row" style="align-items: flex-start;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৭।</span>
+                <span class="row-label-text">প্রতিষ্ঠানের ধরণ [টিক চিহ্ন (<span
+                        style="border: 1px solid black; width: 13px; height: 13px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">✓</span>)
+                    দিন]</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div style="display: flex; flex-direction: column; gap: 5px; flex-grow: 1;">
+                <div class="checkbox-container">
+                    <div class="check-item" style="width: 1.2in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_sole" onclick="toggleTick(this)"></div> একক মালিকানা
+                    </div>
+                    <div class="check-item" style="width: 0.9in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_partnership" onclick="toggleTick(this)"></div> অংশীদারী
+                    </div>
+                    <div class="check-item" style="width: 1.0in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_joint" onclick="toggleTick(this)"></div> যৌথ উদ্যোগ
+                    </div>
+                    <div class="check-item" style="font-size: 9pt;">
+                        <div class="tick-box" id="org_type_pvt" onclick="toggleTick(this)"></div> প্রাইভেট লি: কোম্পানী
+                    </div>
+                </div>
+                <div class="checkbox-container">
+                    <div class="check-item" style="width: 1.2in; font-size: 9pt;">
+                        <div class="tick-box" id="org_type_pub" onclick="toggleTick(this)"></div> পাবলিক লি: কোম্পানী
+                    </div>
+                    <div class="check-item" style="width: 0.9in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_trust" onclick="toggleTick(this)"></div> ট্রাস্ট
+                    </div>
+                    <div class="check-item" style="width: 1.0in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_ngo" onclick="toggleTick(this)"></div> এনজিও/এনপিও
+                    </div>
+                    <div class="check-item" style="font-size: 10pt;">
+                        <div class="tick-box" id="org_type_club" onclick="toggleTick(this)"></div> ক্লাব /সোসাইটি
+                    </div>
+                </div>
+                <div class="checkbox-container">
+                    <div class="check-item" style="width: 1.2in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_edu" onclick="toggleTick(this)"></div> শিক্ষা প্রতিষ্ঠান
+                    </div>
+                    <div class="check-item" style="width: 0.9in; font-size: 10pt;">
+                        <div class="tick-box" id="org_type_religious" onclick="toggleTick(this)"></div> ধর্মীয়
+                        প্রতিষ্ঠান
+                    </div>
+                    <div class="check-item" style="font-size: 10pt; flex-grow: 1;">
+                        <div class="tick-box" id="org_type_others" onclick="toggleTick(this)"></div> অন্যান্য (নির্দিষ্ট
+                        ভাবে উল্লেখ করুন)<div class="dotted-line" id="org_type_others_input" contenteditable="true"
+                            style="margin-left: 2px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="align-items: flex-start; margin-top: 5px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৮।</span>
+                <span class="row-label-text">ব্যবসার ধরণ</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="checkbox-container" style="flex-grow: 1; margin-left: 1.24in;">
+                <div class="check-item" style="width: 0.6in; font-size: 10pt;">
+                    <div class="tick-box" id="biz_type_trading" onclick="toggleTick(this)"></div> ট্রেডিং
+                </div>
+                <div class="check-item" style="width: 0.5in; font-size: 10pt;">
+                    <div class="tick-box" id="biz_type_service" onclick="toggleTick(this)"></div> সেবা
+                </div>
+                <div class="check-item" style="width: 0.9in; font-size: 10pt;">
+                    <div class="tick-box" id="biz_type_manufacturing" onclick="toggleTick(this)"></div> উৎপাদন
+                </div>
+                <div class="check-item" style="font-size: 10pt; flex-grow: 1;">
+                    <div class="tick-box" id="biz_type_others" onclick="toggleTick(this)"></div> অন্যান্য (নির্দিষ্ট
+                    ভাবে উল্লেখ করুন)<div class="dotted-line" id="biz_type_others_input" contenteditable="true"
+                        style="margin-left: 2px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.3in;">
+                <span class="row-number">৯।</span>
+                <span class="row-label-text">ব্যবসায়ের প্রকৃতি (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="org_biz_nature" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.3in;">
+                <span class="row-number">১০।</span>
+                <span class="row-label-text">বার্ষিক টার্নওভার</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="org_turnover" contenteditable="true"></div>
+        </div>
+        <div class="section-title-solid"
+            style="margin-top: 15px; width: auto; display: table; margin-left: auto; margin-right: auto;">[তৃতীয় অংশ:
+            ব্যক্তি সংক্রান্ত তথ্যাদি<sup style="font-size: 8pt;">৩)</sup>]</div>
+
+        <div class="person-grid">
+            <div class="person-inputs">
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number">১।</span>
+                        <span class="row-label-text">নাম (বাংলায়)</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_name_bn" style="width: 20px;" contenteditable="true">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number"></span>
+                        <span class="row-label-text" style="font-family: Arial, sans-serif; font-size: 10pt;">In English
+                            (Block Letter)</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_name_en" style="width: 20px;" contenteditable="true">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number">২।</span>
+                        <span class="row-label-text">জন্ম তারিখ (DOB)</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_dob" style="width: 20px;" contenteditable="true"></div>
+                </div>
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number">৩।</span>
+                        <span class="row-label-text">পিতার নাম</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_father_name_bn" style="width: 20px;"
+                        contenteditable="true"></div>
+                </div>
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number">৪।</span>
+                        <span class="row-label-text">মাতার নাম</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_mother_name_bn" style="width: 20px;"
+                        contenteditable="true"></div>
+                </div>
+                <div class="form-row">
+                    <div class="row-label-container">
+                        <span class="row-number">৫।</span>
+                        <span class="row-label-text">স্বামী/স্ত্রীর নাম</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_spouse_name_bn" style="width: 20px;"
+                        contenteditable="true"></div>
+                </div>
+
+                <div class="form-row" style="gap: 5px;">
+                    <div style="display: flex; align-items: center; white-space: nowrap; font-size: 10.5pt;">
+                        <span class="row-number">৬।</span>
+                        <span class="row-label-text">জাতীয়তা</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="applicant_nationality"
+                        style="flex-grow: 0; width: 1.2in; flex-shrink: 0;" contenteditable="true"></div>
+
+                    <div
+                        style="display: flex; align-items: center; white-space: nowrap; font-size: 10pt; margin-left: 15px;">
+                        <span style="margin-right: 5px;">৭। লিঙ্গ (টিক দিন):</span>
+                        <div class="checkbox-container" style="gap: 6px;">
+                            <div class="check-item">
+                                <div class="tick-box" id="applicant_gender_male" onclick="toggleTick(this)"></div> পুরুষ
+                            </div>
+                            <div class="check-item">
+                                <div class="tick-box" id="applicant_gender_female" onclick="toggleTick(this)"></div>
+                                মহিলা
+                            </div>
+                            <div class="check-item">
+                                <div class="tick-box" id="applicant_gender_third" onclick="toggleTick(this)"></div>
+                                তৃতীয় লিঙ্গ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="indented-note">(হিসাবধারী বিদেশী নাগরিক হলে ভিসাসহ পাসপোর্টের কপি আবশ্যিকভাবে গ্রহণ করতে
+                    হবে।)</div>
+
+                <div class="form-row">
+                    <div style="display: flex; align-items: center; flex-shrink: 0;">
+                        <span class="row-number">৮।</span>
+                        <span class="row-label-text">রেসিডেন্ট স্ট্যাটাস (টিক দিন)</span>
+                    </div>
+                    <span class="colon-separator">:</span>
+                    <div class="checkbox-container" style="gap: 15px;">
+                        <div class="check-item">
+                            <div class="tick-box" id="applicant_resident_status_resident" onclick="toggleTick(this)">
+                            </div> রেসিডেন্ট
+                        </div>
+                        <div class="check-item">
+                            <div class="tick-box" id="applicant_resident_status_nonresident" onclick="toggleTick(this)">
+                            </div> নন রেসিডেন্ট
+                        </div>
+                    </div>
+                </div>
+
+                <div class="indented-note">(প্রয়োজনীয় ক্ষেত্রে ব্যাংক কর্তৃক গাইডলাইন্স ফর ফরেন এক্সচেঞ্জ ট্রানজেকশনস
+                    এর নির্দেশনা অনুসরণ করতে হবে)</div>
+
+            </div>
+
+            <div class="photo-side-box">
+                <div class="bank-use-info-text">
+                    হিসাব নম্বর: <span id="photo_acc_num_display">............</span>
+                    <small>(ব্যাংকের ব্যবহারের জন্য)</small>
+                </div>
+                <div class="actual-photo-frame" id="applicant_photo_frame"
+                    onclick="document.getElementById('applicant_photo_upload').click()" style="cursor: pointer;">
+                    <img id="applicant_photo" src=""
+                        style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <span id="applicant_photo_text">হিসাবধারীর ছবি</span>
+                </div>
+                <input type="file" id="applicant_photo_upload" accept="image/*" style="display: none;"
+                    onchange="handleFormPhotoUpload(event)">
+            </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 10px;">
+            <div class="row-label-container">
+                <span class="row-number">৯।</span>
+                <span class="row-label-text">পেশা (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="applicant_profession" style="width: 20px;" contenteditable="true"></div>
+        </div>
+
+        <div class="form-row">
+            <div class="row-label-container">
+                <span class="row-number">১০।</span>
+                <span class="row-label-text">মাসিক আয়</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="applicant_monthly_income" style="width: 20px;"
+                contenteditable="true"></div>
+        </div>
+
+        <div class="form-row">
+            <div class="row-label-container">
+                <span class="row-number">১১।</span>
+                <span class="row-label-text">অর্থের উৎস (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="applicant_fund_source" style="width: 20px;" contenteditable="true"></div>
+        </div>
+
+        <div class="form-row">
+            <div style="display: flex; align-items: center; white-space: nowrap; font-size: 10.5pt;">
+                <span class="row-number">১২।</span>
+                <span class="row-label-text">ট্যাক্স আইডি নম্বর (TIN) (যদি থাকে)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="applicant_tin" style="flex-grow: 1; width: 20px;"
+                contenteditable="true"></div>
+        </div>
+
+        <div class="form-row" style="align-items: flex-start; gap: 5px;">
+            <span class="row-number" style="margin-top: 6px;">১৩।</span>
+            <div style="flex-grow: 1; margin-left: 5mm; display: flex; flex-direction: column; gap: 8px;">
+
+                <!-- (K) Current Address -->
+                <div style="display: flex; width: 100%;">
+                    <!-- Left Column -->
+                    <div style="width: 3.7in; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">(ক) বর্তমান ঠিকানা: সড়ক/গ্রাম:</span>
+                            <div class="person-input-line" id="applicant_curr_addr_village"
+                                style="width: 1.44in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">জেলা:</span>
+                            <div class="person-input-line" id="applicant_curr_addr_district"
+                                style="width: 0.4in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">ফোন/মোবাইল:</span>
+                            <div class="person-input-line number-only" id="applicant_mobile"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; padding-left: 10px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span
+                                style="font-size: 10.5pt; flex-shrink: 0; width: 0.5in; text-align: right;">পোস্ট:</span>
+                            <div class="person-input-line" id="applicant_curr_addr_post"
+                                style="width: 0.47in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">থানা:</span>
+                            <div class="person-input-line" id="applicant_curr_addr_thana"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span
+                                style="font-size: 10.5pt; flex-shrink: 0; width: 0.5in; text-align: right;">ইমেইল:</span>
+                            <div class="person-input-line" id="applicant_email"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (Kh) Permanent Address -->
+                <div style="display: flex; width: 100%;">
+                    <!-- Left Column -->
+                    <div style="width: 3.7in; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">(খ) স্থায়ী ঠিকানা: সড়ক/গ্রাম:</span>
+                            <div class="person-input-line" id="applicant_perm_addr_village"
+                                style="width: 1.44in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">জেলা:</span>
+                            <div class="person-input-line" id="applicant_perm_addr_district"
+                                style="width: 0.4in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">ফোন/মোবাইল:</span>
+                            <div class="person-input-line number-only" id="applicant_perm_phone"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; padding-left: 10px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span
+                                style="font-size: 10.5pt; flex-shrink: 0; width: 0.5in; text-align: right;">পোস্ট:</span>
+                            <div class="person-input-line" id="applicant_perm_addr_post"
+                                style="width: 0.47in; height: 5mm; flex-shrink: 0;" contenteditable="true"></div>
+                            <span style="font-size: 10.5pt; flex-shrink: 0;">থানা:</span>
+                            <div class="person-input-line" id="applicant_perm_thana"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span
+                                style="font-size: 10.5pt; flex-shrink: 0; width: 0.5in; text-align: right;">ইমেইল:</span>
+                            <div class="person-input-line" id="applicant_perm_email"
+                                style="flex-grow: 1; width: 20px; min-width: 0; height: 5mm;" contenteditable="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 5px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">১৪।</span>
+                <span class="row-label-text">পরিচিতি পত্র : জাতীয় পরিচয়পত্র নম্বর/পাসপোর্ট নম্বর/জন্ম নিবন্ধন
+                    নম্বর</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="applicant_nid" contenteditable="true"></div>
+        </div>
+
+        <div class="form-row" style="margin-top: 5px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">১৫।</span>
+                <span class="row-label-text">পরিচয়দানকারীর তথ্য (জাতীয় পরিচয়পত্র ব্যতীত অন্যান্য পরিচিতিপত্র প্রদানের
+                    ক্ষেত্রে) :</span>
+            </div>
+            <div class="person-input-line" id="introducer_other_info" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <span style="font-size: 10.5pt; white-space: nowrap;">নাম:</span>
+            <div class="person-input-line" id="introducer_name" contenteditable="true"
+                style="width: 1.5in; flex-grow: 0; margin-left: 5px; margin-right: 5px;"></div>
+            <span style="font-size: 10.5pt; white-space: nowrap;">হিসাব/জাতীয় পরিচয়পত্র নম্বর (জন্ম তারিখসহ):</span>
+            <div class="person-input-line" id="introducer_acc_details" contenteditable="true"
+                style="flex-grow: 1; width: 20px; margin-left: 5px;"></div>
+        </div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <span style="margin: 0 10px; white-space: nowrap; font-size: 10.5pt;">স্বাক্ষর (তারিখ সহ):</span>
+            <div class="person-input-line" contenteditable="true" style="flex-grow: 1;"></div>
+        </div>
+
+        <div class="form-row" style="margin-top: 10px;">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">১৬।</span>
+                <span class="row-label-text" style="font-weight: bold; font-size: 11pt;">হিসাবধারী নাবালক হলে:</span>
+            </div>
+        </div>
+        <div style="margin-left: 25px; text-align: justify; font-size: 11pt; line-height: 1.3;">আমি নিম্নবর্ণিত
+            হিসাবধারীর বৈধ অভিভাবক হিসেবে এই মর্মে ঘোষণা করছি যে, হিসাবধারী নাবালক। তার প্রয়োজনীয় তথ্য সংযুক্ত ফরমে
+            প্রদান করা হলো। হিসাবধারী সাবালক না হওয়া পর্যন্ত কিংবা আমার পরবর্তী ঘোষণা না দেয়া পর্যন্ত অভিভাবক হিসাবটি
+            আমার স্বাক্ষরে পরিচালিত হবে। (অভিভাবক বলতে বাবা অথবা উভয়ের অবর্তমানে অন্য কোনো আইনগত অভিভাবককে বুঝাবে)</div>
+        <div class="form-row">
+            <div style="width: 25px; flex-shrink: 0;"></div>
+            <div style="display: flex; align-items: center; flex-grow: 1; font-size: 10pt;">
+                <span style="white-space: nowrap;">(ক) অভিভাবকের নাম:</span>
+                <div class="dotted-line" id="applicant_minor_guardian_name" contenteditable="true"
+                    style="margin: 0 5px; flex-grow: 1;"></div>
+                <span style="white-space: nowrap; margin-left: 1in;">(খ) নাবালকের সাথে সম্পর্ক:</span>
+                <div class="dotted-line" id="applicant_minor_guardian_relationship" contenteditable="true"
+                    style="margin-left: 5px; flex-grow: 1;"></div>
+            </div>
+        </div>
+        <div style="position: absolute; bottom: 12.7mm; left: 12.7mm; right: 1.5in; font-size: 9pt;">
+            <sup style="font-size: 7pt;">১।</sup> হিসাবধারী একাধিক হলে প্রত্যেকের এবং হিসাবধারীর অভিভাবক (বাবা, মা অথবা
+            অন্য কোনো আইনগত অভিভাবক) এর ব্যক্তি সংক্রান্ত তথ্যাদি পৃথকভাবে তৃতীয় অংশের সংলগ্নী হিসেবে যুক্ত করতে হবে।
+        </div>
+
+        <div class="page-number">পাতা ৩ / ৬</div>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="page" id="page-4" style="padding-top: 7.7mm;">
+        <div class="internal-header">
+            <div style="position: absolute; right: 0.4in; top: 10mm;">
+                <div style="text-align: center; font-size: 10pt; margin-bottom: 2px;">এ.সি.এফ-৫</div>
+                <div style="border: 1px solid var(--bank-green); display: flex; flex-direction: column;">
+                    <div
+                        style="text-align: center; font-size: 10pt; font-weight: bold; border-bottom: 1px solid var(--bank-green);">
+                        হিসাব নম্বর</div>
+                    <div class="box-group-p3" id="account_no_header_p4">
+                        <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                            id="account_no_header_digit_0_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_1_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_2_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_3_p4">
+                        <div style="width: 3px;"></div>
+                        <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                            id="account_no_header_digit_4_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_5_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_6_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_7_p4">
+                        <div style="width: 3px;"></div>
+                        <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                            id="account_no_header_digit_8_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_9_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_10_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_11_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_12_p4">
+                        <input type="text" class="box-input-p3" maxlength="1" id="account_no_header_digit_13_p4">
+                    </div>
+                </div>
+            </div>
+            <div class="header-text-container-p3" style="padding-right: 2.5in;">
+                <div class="logo-title-wrapper">
+                    <img src="../../assets/images/bkb_logo.png" alt="BKB Logo" class="inline-logo-p3"
+                        style="margin-right: 10px; top: 50%; transform: translateY(-50%); width: 18mm; height: 18mm;">
+                    <h2 class="bank-name-main-p3">বাংলাদেশ কৃষি ব্যাংক</h2>
+                    <div
+                        style="display: flex; justify-content: flex-end; align-items: center; font-size: 11pt; margin-top: 5px;">
+                        <div class="dotted-line branch-name-input" contenteditable="true"
+                            style="border-bottom: 1px dotted black; flex-grow: 1; margin-left: 0;"></div>
+                        <span>&nbsp;শাখা</span>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 11pt;">
+                        <span>হিসাবের নাম&nbsp;</span>
+                        <div class="dotted-line" id="signature_account_title" contenteditable="true"
+                            style="border-bottom: 1px dotted black; flex-grow: 1;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area" style="margin-top: 0;">
+            <table class="signature-table" style="margin-top: 5px;">
+                <thead>
+                    <tr>
+                        <th style="width: 0.6in;">ক্র নং</th>
+                        <th style="width: 2.6in;">পূর্ণ নাম</th>
+                        <th>স্বাক্ষর</th>
+                        <th style="width: 1.8in;">সনাক্তকারীর স্বাক্ষর</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>১</td>
+                        <td id="applicant_signature_name_1" contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>২</td>
+                        <td id="applicant_signature_name_2" contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>৩</td>
+                        <td id="applicant_signature_name_3" contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>৪</td>
+                        <td id="applicant_signature_name_4" contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>৫</td>
+                        <td id="applicant_signature_name_5" contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: left;">বিশেষ নির্দেশ (১) <span id="special_instruction_1"
+                                contenteditable="true"></span></td>
+                        <td rowspan="2" contenteditable="true" style="vertical-align: middle;">ব্যবস্থাপক</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: left; padding-left: 5.5em;">(২) <span
+                                id="special_instruction_2" contenteditable="true"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: left;">
+                            <div style="display: flex; justify-content: space-between; width: 100%;">
+                                <span contenteditable="true">স্বাক্ষর</span>
+                                <span contenteditable="true">ইনডেক্স নং</span>
+                            </div>
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="position: relative; margin-top: 5px; margin-bottom: 5px;">
+                <div class="section-title-solid"
+                    style="width: auto; display: table; margin-left: auto; margin-right: auto;">[চতুর্থ অংশ: নমিনি
+                    সংক্রান্ত তথ্যাদি]</div>
+                <div style="position: absolute; right: 0; top: 0; text-align: center;">
+                    <div style="font-size: 10pt; font-weight: bold;">হিসাব নম্বর: <span
+                            id="nominee_acc_num_display">............</span></div>
+                    <div style="font-size: 8pt;">(ব্যাংকের ব্যবহারের জন্য)</div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: flex-start; margin-top: 2px;">
+                <div style="font-size: 10.5pt; font-weight: bold; margin-right: 5px; margin-top: 5px;">১।</div>
+                <div
+                    style="font-size: 10.5pt; text-align: justify; border: 1px solid var(--bank-green); padding: 5px; flex-grow: 1; border-radius: 10px; background-color: var(--bank-green); color: white;">
+                    <span style="font-weight: bold;">নমিনি সংক্রান্ত তথ্যাবলী:</span> আমি/আমরা এ হিসাবের অর্থ
+                    আমার/আমাদের মৃত্যুর পর নিম্নে বর্ণিত ব্যক্তি/ব্যক্তিগণকে প্রদানের জন্য মনোনীত করলাম। আমি/আমরা
+                    উল্লিখিত মনোনয়ন যেকোনো সময় বাতিল বা পরিবর্তনের অধিকার সংরক্ষণ করি। আমি/আমরা এই মর্মে আরো সম্মতি
+                    জ্ঞাপন করছি যে, আমার/আমাদের এ নির্দেশনা মোতাবেক ব্যাংক অর্থ প্রদান করবে এবং অর্থ পরিশোধ না করা হলে
+                    সংশ্লিষ্ট আমানত সম্পর্কিত যাবতীয় দায় পরিশোধ হয়েছে বলে গণ্য হবে।
+                </div>
+            </div>
+
+            <div style="margin-top: 10px; display: flex; gap: 15px;">
+                <div
+                    style="flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px;">
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; width: 1.65in; flex-shrink: 0;">ক) নমিনির নাম</span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line" id="nominee_1_name" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; width: 1.65in; flex-shrink: 0; padding-left: 0.3in;">জন্ম
+                            তারিখ</span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line" id="nominee_1_dob" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; width: 1.65in; flex-shrink: 0;">খ) ঠিকানা</span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line" id="nominee_1_addr" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; width: 1.65in; flex-shrink: 0;">গ) শতকরা হার</span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line number-only" id="nominee_1_pct" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; width: 1.65in; flex-shrink: 0;">ঘ) হিসাবধারীর সাথে
+                            সম্পর্ক</span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line" id="nominee_1_rel" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="font-size: 10.5pt; white-space: nowrap; flex-shrink: 0;">ঙ) জাতীয়
+                            পরিচয়পত্র/পাসপোর্ট নম্বর/জন্ম নিবন্ধন নম্বর অন্যান্য </span>
+                        <span class="colon-separator">:</span>
+                        <div class="person-input-line" id="nominee_1_id" contenteditable="true"
+                            style="flex-grow: 1; width: 20px;"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center; width: 25mm;">
+                    <div class="actual-photo-frame"
+                        style="font-size: 9pt; flex-direction: column; line-height: 1.1; flex-shrink: 0; height: 100%; width: 25mm;">
+                        <div>হিসাবধারী কর্তৃক</div>
+                        <div>সত্যায়িত</div>
+                        <div>নমিনির</div>
+                        <div>ছবি</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; margin-top: 5px;">
+                <span style="font-size: 10.5pt; white-space: nowrap; flex-shrink: 0; margin-left: 0.2in;">(নির্দিষ্টভাবে
+                    উল্লেখ করতে হবে)</span>
+                <span class="colon-separator">:</span>
+                <div class="person-input-line" contenteditable="true" style="flex-grow: 1; width: 20px;"></div>
+            </div>
+
+            <div
+                style="display: flex; align-items: flex-start; margin-top: 10px; font-size: 10.5pt; text-align: justify;">
+                <span style="white-space: nowrap; width: 25px; flex-shrink: 0; margin-top: 3px;">২।</span>
+                <div style="background-color: var(--bank-green); color: white; padding: 3px 5px;">
+                    নমিনি নাবালক হলে তার /তাদের নাবালক থাকা অবস্থায় হিসাবধারী/হিসাবধারীগণের মৃত্যুর ক্ষেত্রে ব্যাংক
+                    কোম্পানী আইন ১৯৯১ এর ১০৩(২) ধারা অনুযায়ী নমিনির পক্ষে আমানতের অর্থ গ্রহণকারীর তথ্য:
+                </div>
+            </div>
+
+            <div style="margin-left: 25px;">
+                <div class="form-row">
+                    <span style="font-size: 10.5pt; white-space: nowrap;">ক) নাম</span>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="nominee_1_guardian_name" contenteditable="true"
+                        style="flex-grow: 1; width: 20px;"></div>
+                </div>
+                <div class="form-row">
+                    <span style="font-size: 10.5pt; white-space: nowrap;">খ) স্থায়ী ঠিকানা</span>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="nominee_1_guardian_addr" contenteditable="true"
+                        style="flex-grow: 1; width: 20px;"></div>
+                </div>
+                <div class="form-row">
+                    <span style="font-size: 10.5pt; white-space: nowrap;">গ) পাসপোর্ট নম্বর/জন্ম নিবন্ধন নম্বর/অন্যান্য
+                        (নির্দিষ্টভাবে উল্লেখ করতে হবে)</span>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="nominee_1_guardian_id" contenteditable="true"
+                        style="flex-grow: 1; width: 20px;"></div>
+                </div>
+                <div class="form-row">
+                    <span style="font-size: 10.5pt; white-space: nowrap;">ঘ) নমিনির সাথে সম্পর্ক</span>
+                    <span class="colon-separator">:</span>
+                    <div class="person-input-line" id="nominee_1_guardian_rel" contenteditable="true"
+                        style="flex-grow: 1; width: 20px;"></div>
+                </div>
+            </div>
+
+            <div class="section-title-solid"
+                style="margin-top: 0px; width: auto; display: table; margin-left: auto; margin-right: auto;">[ঘোষণা ও
+                স্বাক্ষর]</div>
+
+            <div style="font-size: 9.5pt; text-align: justify; margin-top: 5px;">
+                আমি/আমরা সজ্ঞানে ঘোষণা করছি যে, উল্লিখিত তথ্যাদি সত্য। আমি/আমরা ব্যাংকের চাহিদা মোতাবেক প্রয়োজনীয়
+                তথ্য/দলিলাদি সরবরাহ করবো।
+            </div>
+
+            <div
+                style="font-size: 10.5pt; font-weight: bold; margin-top: 1.5mm; background-color: var(--bank-green); color: white; padding: 1mm 2.5mm; border-radius: 1mm; display: table;">
+                আবেদনকারী(গণ)<sup style="font-size: 8pt;">৪</sup> এর নাম, স্বাক্ষর ও তারিখ:
+            </div>
+
+            <div style="margin-top: 5mm; display: flex; justify-content: space-between; font-size: 10.5pt;">
+                <span>১। ..............................</span>
+                <span>২। ..............................</span>
+                <span>৩। ..............................</span>
+                <span>৪। ..............................</span>
+            </div>
+
+            <div
+                style="font-weight: bold; font-size: 10.5pt; margin-top: 1mm; background-color: var(--bank-green); color: white; padding: 1mm 2.5mm; border-radius: 1mm; display: table; margin-left: auto; margin-right: auto;">
+                [ব্যাংকের ব্যবহারের জন্য]</div>
+            <div class="form-row" style="align-items: center; margin-top: 1.5mm;">
+                <span style="font-size: 10.5pt; white-space: nowrap;">মন্তব্য</span>
+                <span class="colon-separator">:</span>
+                <div class="person-input-line" contenteditable="true" style="flex-grow: 1; min-width: 0.2in;"></div>
+            </div>
+
+            <div
+                style="position: absolute; bottom: 15mm; left: 0; right: 0; display: flex; justify-content: center; gap: 1.5in; padding: 0 2.5mm;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="border-bottom: 1px dotted black; width: 100%; margin-bottom: 1px;"></div>
+                    <div style="text-align: center; font-size: 10pt;">
+                        <div>হিসাব খোলার সাথে সংশ্লিষ্ট কর্মকর্তার</div>
+                        <div>নামযুক্ত সীলসহ স্বাক্ষর ও তারিখ</div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="border-bottom: 1px dotted black; width: 100%; margin-bottom: 1px;"></div>
+                    <div style="text-align: center; font-size: 10pt;">
+                        <div>অনুমোদনকারী কর্মকর্তার</div>
+                        <div>নামযুক্ত সীলসহ স্বাক্ষর ও তারিখ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="position: absolute; bottom: 5.7mm; left: 12.7mm; right: 1.5in; border-top: 1px solid black; padding-top: 1.5mm; font-size: 8pt;">
+                <div>৩ নমিনি একাধিক হলে প্রত্যেকের নমিনি সংক্রান্ত তথ্যাদি পৃথকভাবে চতুর্থ অংশের সংলগ্নী হিসেবে যুক্ত
+                    করতে হবে।</div>
+                <div>৪ হিসাবধারী নাবালক হলে আবেদনকারীর স্বাক্ষরের স্থলে হিসাবধারীর অভিভাবক স্বাক্ষর করবেন।</div>
+            </div>
+        </div>
+        <div class="page-number">পাতা ৪ / ৬</div>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="page" id="page-5">
+        <div style="position: absolute; left: 0.4in; top: 0.4in; font-size: 11pt; font-weight: bold;">পরিশিষ্ট-ক</div>
+        <div style="position: absolute; right: 0.4in; top: 0.4in; font-size: 11pt; font-weight: bold;">(গোপনীয় ও ব্যাংক
+            কর্তৃক পূরণীয়)</div>
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                <div
+                    style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 0.5in;">
+                    <img src="../../assets/images/bkb_logo.png" alt="BKB Logo" class="inline-logo-p3"
+                        style="position: static; transform: none; margin: 0;">
+                </div>
+                <h2 class="bank-name-main-p3">বাংলাদেশ কৃষি ব্যাংক</h2>
+                <div class="branch-display-box-p3" style="width: auto; padding: 2px 15px; min-width: 3in;">
+                    <span class="branch-name-input" contenteditable="true"
+                        style="min-width: 1.2in; outline: none; text-align: right;"></span>
+                    <span>&nbsp;শাখা,
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+            </div>
+            <div style="margin-top: 5px; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <div class="green-title-box-p2"
+                    style="width: auto; padding: 2px 15px; font-size: 12pt; white-space: nowrap;">গ্রাহক পরিচিতি
+                    সম্পর্কিত ফরম (KYC Profile Form)</div>
+                <div class="green-title-box-p2"
+                    style="width: auto; padding: 2px 15px; font-size: 10.5pt; white-space: nowrap;">(বিশেষ স্কিম/স্থায়ী
+                    আমানত হিসাবের ক্ষেত্রে ব্যবহার্য্য)</div>
+            </div>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 5px;">
+            <div class="bkb-banner-p3" style="position: static;">
+                <div class="banner-row-p3" id="account_no_banner_p5">
+                    <div class="banner-label-p3">হিসাব নম্বর</div>
+                    <div class="box-group-p3">
+                        <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                            id="account_no_banner_digit_0_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="account_no_banner_digit_1_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="account_no_banner_digit_2_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="account_no_banner_digit_3_p5">
+                        <div style="width: 3px;"></div><input type="text" class="box-input-p3 first-box-p3"
+                            maxlength="1" id="account_no_banner_digit_4_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_5_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_6_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_7_p5">
+                        <div style="width: 3px;"></div><input type="text" class="box-input-p3 first-box-p3"
+                            maxlength="1" id="account_no_banner_digit_8_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_9_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_10_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_11_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_12_p5"><input type="text" class="box-input-p3"
+                            maxlength="1" id="account_no_banner_digit_13_p5">
+                    </div>
+                </div>
+                <div class="banner-row-p3" id="customer_id_banner_p5">
+                    <div class="banner-label-p3">ইউনিক কাস্টমার আইডি কোড</div>
+                    <div class="box-group-p3">
+                        <input type="text" class="box-input-p3 first-box-p3" maxlength="1"
+                            id="customer_id_banner_digit_0_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_1_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_2_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_3_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_4_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_5_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_6_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_7_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_8_p5"><input type="text" class="box-input-p3" maxlength="1"
+                            id="customer_id_banner_digit_9_p5">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="margin-top: 15px;">
+            <div class="row-label-container" style="width: 2.2in;">
+                <span class="row-number">১।</span>
+                <span class="row-label-text">হিসাবের নাম</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_account_name" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.2in;">
+                <span class="row-number">২।</span>
+                <span class="row-label-text">হিসাবের প্রকৃতি</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_account_nature" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.2in;">
+                <span class="row-number">৩।</span>
+                <span class="row-label-text">প্রতিষ্ঠানের প্রকৃতি (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_biz_nature" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.2in;">
+                <span class="row-number">৪।</span>
+                <span class="row-label-text">প্রতিষ্ঠানের নিট সম্পদ (Net Worth)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_net_worth" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: 2.2in;">
+                <span class="row-number">৫।</span>
+                <span class="row-label-text">অর্থের উৎস/উৎসসমূহ (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="kyc_fund_source" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto;">
+                <span class="row-number">৬।</span>
+                <span class="row-label-text" style="white-space: nowrap;">অর্থের উৎস নিশ্চিত করার ক্ষেত্রে যেসব দলিলাদি
+                    সংগ্রহ করা হয়েছে</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_source_verification" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+            <div class="row-label-container" style="width: auto; visibility: hidden;">
+                <span class="row-number">৬।</span>
+                <span class="row-label-text" style="white-space: nowrap;">অর্থের উৎস নিশ্চিত করার ক্ষেত্রে যেসব দলিলাদি
+                    সংগ্রহ করা হয়েছে</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_source_verification_2" contenteditable="true"></div>
+        </div>
+        <div class="form-row" style="margin-top: 5px;">
+            <div style="font-size: 10.5pt; margin-left: 25px;">সংগৃহীত দলিলাদি যাচাই করা হয়েছে কিনা:</div>
+            <div class="checkbox-container" style="margin-left: 10px; gap: 20px;">
+                <div class="check-item">
+                    <div class="tick-box" id="kyc_source_docs_verified_yes" onclick="toggleTick(this)"></div> হ্যাঁ
+                </div>
+                <div class="check-item">
+                    <div class="tick-box" id="kyc_source_docs_verified_no" onclick="toggleTick(this)"></div> না
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="display: flex; align-items: center; font-size: 10.5pt;">
+                <span class="row-number">৭।</span>
+                <span>হিসাবধারীর ঠিকানা/ঠিকানাসমূহ কিভাবে যাচাই করা হয়েছে (বিস্তারিত)</span>
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_address_verification" contenteditable="true" style="flex-grow: 1;">
+            </div>
+        </div>
+        <div class="form-row" style="margin-top: 10px; align-items: flex-start; font-size: 10.5pt;">
+            <span class="row-number">৮।</span>
+            <div style="display: flex; flex-direction: column;">
+                <span>হিসাবধারী প্রকৃত সুবিধাভোগী (Beneficial Owner) আছে কি না (টিক দিন):</span>
+                <div class="checkbox-container" style="margin-top: 5px; gap: 30px;">
+                    <div class="check-item">
+                        <div class="tick-box" id="kyc_beneficial_owner_yes" onclick="toggleTick(this)"></div> হ্যাঁ
+                    </div>
+                    <div class="check-item">
+                        <div class="tick-box" id="kyc_beneficial_owner_no" onclick="toggleTick(this)"></div> না
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-left: 25px; font-size: 10pt; margin-top: 0;">
+            (উত্তর হ্যা হলে প্রত্যেক সুবিধাভোগী সম্পর্কিত তথ্যাদি সংযুক্তি-০১ মোতাবেক কেওয়াইসি সম্পাদন করতে হবে।)
+        </div>
+        <div class="form-row" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; font-size: 10.5pt; width: calc(2.7in + 10px + 1.8in);">
+                <span class="row-number">৯।</span>
+                <span>পরিচিতিপত্র: (যেকোনো একটি)</span>
+            </div>
+            <div style="width: 0.8in; text-align: right; padding-right: 15px; font-size: 9pt;">কপি গৃহীত</div>
+            <div style="width: 0.8in; text-align: center; font-size: 9pt;">যাচাইকৃত</div>
+            <div style="flex-grow: 1; text-align: center; font-size: 9pt;">(টিক দিন)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(ক) পাসপোর্ট নম্বর</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_id_passport_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_passport_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_passport_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(খ) জাতীয় পরিচয়পত্র নম্বর</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="kyc_id_nid_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_nid_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_nid_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(গ) জন্ম নিবন্ধন সনদপত্র নম্বর</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="kyc_id_birth_reg_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_birth_reg_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_birth_reg_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(ঘ) ইলেক্ট্রনিক-ট্যাক্স আইডি (E-TIN) নম্বর
+            </div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="kyc_id_tin_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_tin_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_tin_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(ঙ) ভ্যাট রেজি. নম্বর</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line number-only" id="kyc_id_vat_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_vat_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_vat_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(চ) প্রতিষ্ঠানের নিবন্ধন নম্বর</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_id_reg_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_reg_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_reg_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row">
+            <div style="width: 2.7in; padding-left: 25px; font-size: 10.5pt;">(ছ) অন্যান্য</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_id_other_value" contenteditable="true"
+                style="width: 1.8in; flex-grow: 0;"></div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_other_copy_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="width: 0.8in; display: flex; justify-content: center;">
+                <div class="tick-box" id="kyc_id_other_verify_checked" onclick="toggleTick(this)"></div>
+            </div>
+            <div style="flex-grow: 1; text-align: center; font-size: 10pt;">(প্রযোজ্য ক্ষেত্রে)</div>
+        </div>
+        <div class="form-row" style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; font-size: 10.5pt; width: 100%;">
+                <span class="row-number">১০।</span>
+                <span style="white-space: nowrap;">অনিবাসী (Non-resident) এবং বিদেশীদের ক্ষেত্রে হিসাব খোলার
+                    উদ্দেশ্য:</span>
+                <div class="person-input-line" id="kyc_opening_purpose" contenteditable="true"
+                    style="flex-grow: 1; margin-left: 5px;"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div style="padding-left: 25px; font-size: 10.5pt; white-space: nowrap;">(ক) ভিসার প্রকৃতি</div>
+            <span class="colon-separator">:</span>
+            <div class="person-input-line" id="kyc_visa_type" contenteditable="true" style="flex-grow: 1;"></div>
+            <div style="font-size: 10.5pt; white-space: nowrap; margin-left: 10px;">মেয়াদ উত্তীর্ণের তারিখ <span
+                    class="colon-separator">:</span></div>
+            <div class="person-input-line" id="kyc_visa_expiry_date" contenteditable="true" style="flex-grow: 1;"></div>
+        </div>
+        <div class="form-row" style="align-items: flex-start; margin-top: 5px;">
+            <div style="padding-left: 25px; font-size: 10.5pt; text-align: justify; line-height: 1.4; display: flex;">
+                <div style="white-space: nowrap; margin-right: 5px;">(খ) কর্মানুমতি (Work Permit) পত্র প্রাপ্তদের হিসাব
+                    খোলার ক্ষেত্রে কর্মানুমতি (Work Permit) পত্র সংগ্রহ ও ব্যাংক হিসাব খোলার জন্য<br> যথাযথ কর্তৃপক্ষের
+                    অনুমোদন গ্রহণ করা হয়েছে কি না :হ্যাঁ/না (প্রযোজ্য ক্ষেত্রে)
+                </div>
+            </div>
+        </div>
+        <div class="form-row" style="padding-left: 40px;">
+            <div class="check-item">
+                <div class="tick-box" id="kyc_work_permit_yes" onclick="toggleTick(this)"></div> হ্যাঁ
+            </div>
+            <div class="check-item" style="margin-left: 20px;">
+                <div class="tick-box" id="kyc_work_permit_no" onclick="toggleTick(this)"></div> না
+            </div>
+        </div>
+        <div style="padding-left: 50px; font-size: 10pt; margin-top: 5px;">
+            (অনিবাসী বাংলাদেশীদের ক্ষেত্রে পাসপোর্টের কপি এবং বিদেশীদের ক্ষেত্রে ভিসাসহ পাসপোর্টের কপি আবশ্যিকভাবে গ্রহণ
+            করতে হবে।)
+        </div>
+        <div class="page-number">পাতা ৫ / ৬</div>
+    </div>
+
+
+    <!-- PAGE 6 -->
+    <div class="page" id="page-6" style="padding-top: 0.5in;">
+        <div style="position: absolute; left: 0.4in; top: 0.4in; font-size: 11pt; font-weight: bold;">পরিশিষ্ট-ক</div>
+        <div style="position: absolute; right: 0.4in; top: 0.4in; font-size: 11pt; font-weight: bold;">(গোপনীয় ও ব্যাংক
+            কর্তৃক পূরণীয়)</div>
+        <div class="content-area" style="margin-top: 11pt;">
+            <div class="form-row" style="margin-top: 10px; align-items: flex-start; font-size: 12pt;">
+                <span class="row-number">১১।</span>
+                <div style="display: flex; flex-direction: column; width: 100%;">
+                    <div style="position: relative; text-align: justify; line-height: 1.4;">
+                        গ্রাহক Politically Exposed Person (PEP)/প্রভাবশালী ব্যক্তি (IP)/ আন্তর্জাতিক সংস্থাপ প্রধান বা
+                        উচ্চ পর্যায়ের কর্মকর্তা এবং তাদের পরিবারের সদস্য বা Close associates কিনা (টিক দিন)<span
+                            style="display: inline-block; width: 2.3in; height: 1em; vertical-align: bottom;"></span>
+                        <div class="checkbox-container"
+                            style="position: absolute; right: 0; bottom: 0; width: 1.5in; display: flex; justify-content: flex-end; margin-right: 0.8in; font-size: 10.5pt;">
+                            <div class="check-item" style="width: 60px;">
+                                <div class="tick-box" id="kyc_pep_status_yes" onclick="toggleTick(this)"></div> হ্যাঁ
+                            </div>
+                            <div class="check-item" style="width: 50px;">
+                                <div class="tick-box" id="kyc_pep_status_no" onclick="toggleTick(this)"></div> না
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 5px;">উত্তর হ্যাঁ হলে:</div>
+                    <div style="margin-top: 5px; display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="padding-left: 20px; white-space: nowrap;">ক) উর্ধ্বতন কর্তৃপক্ষ হতে অনুমোদন নেয়া
+                                হয়েছে কি না (টিক দিন):</div>
+                            <div class="checkbox-container"
+                                style="display: flex; flex-shrink: 0; width: 1.5in; justify-content: flex-end; margin-right: 0.8in; font-size: 10.5pt;">
+                                <div class="check-item" style="width: 60px;">
+                                    <div class="tick-box" id="kyc_pep_approval_yes" onclick="toggleTick(this)"></div>
+                                    হ্যাঁ
+                                </div>
+                                <div class="check-item" style="width: 50px;">
+                                    <div class="tick-box" id="kyc_pep_approval_no" onclick="toggleTick(this)"></div> না
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="padding-left: 20px; white-space: nowrap;">খ) গ্রাহকের মুখোমুখি সাক্ষাৎকার নেয়া
+                                হয়েছে কি না (টিক দিন):
+                            </div>
+                            <div class="checkbox-container"
+                                style="display: flex; flex-shrink: 0; width: 1.5in; justify-content: flex-end; margin-right: 0.8in; font-size: 10.5pt;">
+                                <div class="check-item" style="width: 60px;">
+                                    <div class="tick-box" id="kyc_pep_interview_yes" onclick="toggleTick(this)"></div>
+                                    হ্যাঁ
+                                </div>
+                                <div class="check-item" style="width: 50px;">
+                                    <div class="tick-box" id="kyc_pep_interview_no" onclick="toggleTick(this)"></div> না
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-top: 10px; align-items: flex-start; font-size: 12pt;">
+                <span class="row-number">১২।</span>
+                <div style="display: flex; flex-direction: column; width: 100%;">
+                    <div style="position: relative; text-align: justify; line-height: 1.4;">
+                        সংশ্লিষ্ট আইন, বিধিমালা ও সার্কুলারের আলোকে গ্রাহকের নাম জাতিসংঘের নিরাপত্তা পরিষেদের বিভিন্ন
+                        রেজ্যুলেশনের আওতায় সন্ত্রাসী কার্য, সন্ত্রাসী কার্যে অর্থায়ন ও ব্যাপক ধ্বংসাত্মক অস্ত্র
+                        বিস্তারের অর্থায়নে জড়িত সন্দেহে তালিকাভুক্ত কোনো ব্যক্তি নিষিদ্ধ ঘোষিত সত্তার নামের তালিকার সাথে
+                        যাচাইপূর্বক কোনোরূপ মিল পাওয়া গিয়েছে কি না:<span
+                            style="display: inline-block; width: 2.3in; height: 1em; vertical-align: bottom;"></span>
+                        <div class="checkbox-container"
+                            style="position: absolute; right: 0; bottom: 0; width: 1.5in; display: flex; justify-content: flex-end; margin-right: 0.8in; font-size: 10.5pt;">
+                            <div class="check-item" style="width: 60px;">
+                                <div class="tick-box" id="kyc_sanction_list_yes" onclick="toggleTick(this)"></div> হ্যাঁ
+                            </div>
+                            <div class="check-item" style="width: 50px;">
+                                <div class="tick-box" id="kyc_sanction_list_no" onclick="toggleTick(this)"></div> না
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 5px;">
+                        <div>ক) উত্তর হ্যাঁ হলে এ বিষয়ে গৃহীত ব্যবস্থার বিবরণ:</div>
+                        <div class="person-input-line" id="kyc_sanction_action_details" contenteditable="true"
+                            style="width: 100%; height: 0.5in; margin-top: 5px; white-space: normal; align-items: flex-start;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-top: 10px; align-items: flex-start; font-size: 12pt;">
+                <span class="row-number">১৩।</span>
+                <div style="display: flex; flex-direction: column; width: 100%;">
+                    <div style="font-weight: bold;">রিস্ক রেটিং- (মোট স্কোর: <span id="risk_score_total"
+                            style="border-bottom: 1px dotted black; min-width: 30px; display: inline-block; text-align: center;"></span>)
+                    </div>
+                    <table class="signature-table" style="width: 100%; margin-top: 5px;">
+                        <tr>
+                            <td style="font-weight: bold;">রিস্ক স্কোরের যোগফল</td>
+                            <td style="font-weight: bold;">সামগ্রিক রিস্ক রেটিং</td>
+                        </tr>
+                        <tr>
+                            <td>&gt;=১৫</td>
+                            <td id="risk_rating_high">উচ্চ</td>
+                        </tr>
+                        <tr>
+                            <td>&lt;১৫</td>
+                            <td id="risk_rating_low">নিম্ন</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 10.5pt; padding-left: 25px;">
+                <div>মন্তব্য:</div>
+                <div class="person-input-line" id="kyc_officer_comments" contenteditable="true"
+                    style="width: 100%; height: 0.7in; margin-top: 5px; white-space: normal; align-items: flex-start;">
+                </div>
+            </div>
+            <div style="font-size: 10pt; margin-top: 5px; text-align: justify; padding-left: 25px;">
+                (* রিস্ক রেটিং কম হলেও Beneficial Owner-সহ অন্যান্য ঝুঁকি বিবেচনায় নিয়ে কারণ উল্লেখপূর্বক Subjective
+                বিবেচনায় গ্রাহককে উচ্চ ঝুঁকি সম্পন্ন হিসেবে নিরূপণ করা যেতে পারে)
+            </div>
+            <div style="margin-top: 10px; display: flex; justify-content: space-between; padding: 0;">
+                <div style="display: flex; flex-direction: column; width: 3.5in;">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; align-self: flex-start; font-size: 10pt; margin-bottom: 5px;">
+                        <div>প্রস্তুতকারী:</div>
+                        <div>(হিসাব খোলার কর্মকর্তা/রিলেশনশীপ ম্যানেজার)</div>
+                    </div>
+                    <div style="font-size: 10pt; padding-left: 25px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <div style="width: 0.9in;">স্বাক্ষর (সিলসহ)</div>
+                            <div>:</div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <div style="width: 0.9in;">নাম</div>
+                            <div>:</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 0.9in;">তারিখ</div>
+                            <div>:</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; width: 3.5in;">
+                    <div style="text-align: center; font-size: 10pt; margin-bottom: 5px;">
+                        <div>পর্যালোচনাকারী ও নিশ্চিতকারী কর্মকর্তা:</div>
+                        <div>(ব্রাঞ্চ ম্যানেজার/ব্রাঞ্চ মানিলন্ডারিং প্রতিরোধ পরিপালন কর্মকর্তা)</div>
+                    </div>
+                    <div style="font-size: 10pt; padding-left: 0.7in;">
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <div style="width: 0.9in;">স্বাক্ষর (সিলসহ)</div>
+                            <div>:</div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <div style="width: 0.9in;">নাম</div>
+                            <div>:</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 0.9in;">তারিখ</div>
+                            <div>:</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 30px; display: flex; flex-direction: column; align-items: center;">
+                <div style="border-bottom: 1px dotted black; width: 4.5in; margin-bottom: 5px;"></div>
+                <div style="text-align: center; font-size: 10pt;">
+                    <div>(PEP/IP/আন্তর্জাতিক সংস্থার উর্ধ্বতন কর্মকর্তা এর ক্ষেত্রে অনুমোদনকারী উর্ধ্বতন কর্মকর্তা)
+                    </div>
+                    <div>নামযুক্ত সীলসহ স্বাক্ষর</div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-top: 20px; align-items: center; font-size: 10.5pt;">
+                <span class="row-number">১৪।</span>
+                <span style="white-space: nowrap;">হিসাব ও গ্রাহক সংক্রান্ত তথ্যাদি সর্বশেষ পর্যালোচনা এবং হালনাগাদ
+                    (Review & Update) করার তারিখ:</span>
+                <div class="dotted-line" contenteditable="true" style="border-bottom: 1px dotted black;"></div>
+            </div>
+            <div style="margin-top: 20px; font-size: 10.5pt; padding-left: 25px;">
+                পর্যালোচনাকারী এবং হালনাগাদকারী কর্মকর্তা:
+            </div>
+            <div style="margin-top: 20px; font-size: 10pt; padding-left: 25px;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="width: 0.9in;">স্বাক্ষর (সিলসহ)</div>
+                    <div>:</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="width: 0.9in;">নাম</div>
+                    <div>:</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 0.9in;">তারিখ</div>
+                    <div>:</div>
+                </div>
+            </div>
+        </div>
+        <div class="page-number">পাতা ৬ / ৬</div>
+    </div>
+    <!-- CONDITIONAL FDR DEPOSIT SLIP PAGE -->
+    <div id="fdr_deposit_slip_page_container" style="display: none;">
+        <div class="a4-half-page">
+            <div class="half-page-slip">
+                <div>
+                    <div class="form-code">এসএফ-১৪(গ)</div>
+                    <div class="header-center">
+                        <div style="display: inline-block; position: relative; text-align: center;">
+                            <img src="../../assets/images/bkb_logo.png" alt="Logo" class="bkb-logo"
+                                style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 5mm; filter: grayscale(100%) brightness(0%);">
+                            <h1 class="bank-name">বাংলাদেশ কৃষি ব্যাংক</h1>
+                            <div>
+                                <span class="branch-name">
+                                    <span class="data-field" id="branch_name" data-db-field="branch_name"></span> শাখা
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="title-row">
+                        <div class="scroll-no">স্ক্রল নং<span class="data-field" id="scroll_no"></span></div>
+                        <div class="slip-title">(জমার স্লিপ)</div>
+                        <div class="date-block">তারিখঃ <span class="data-field" id="date"></span>ইং</div>
+                    </div>
+                    <div class="account-type-line">মেয়াদি আমানত হিসাবঃ <span class="data-field"
+                            id="account_type"></span></div>
+                </div>
+                <table class="fdr-table">
+                    <thead>
+                        <tr>
+                            <th class="col-desc">বিবরণ</th>
+                            <th class="col-taka">টাকা</th>
+                            <th class="col-paisa">পয়সা</th>
+                            <th class="col-depositor">আমানতকারী/আমানতকারীদের নাম</th>
+                            <th class="col-tenure">মেয়াদ কাল</th>
+                            <th class="col-rate">সুদের হার</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="height: 60pt;">নগদ টাকা<br>চেক/ডিডি/পিও<br>নম্বর<br>ব্যাংকের নাম</td>
+                            <td style="text-align: center; vertical-align: top;"><span class="data-field"
+                                    id="amount_taka"></span>/-</td>
+                            <td style="text-align: center; vertical-align: top;"><span class="data-field"
+                                    id="paisa"></span></td>
+                            <td rowspan="3" style="vertical-align: top;"><span class="data-field"
+                                    id="depositor_info"></span></td>
+                            <td rowspan="3" style="text-align: center; vertical-align: top;"><span class="data-field"
+                                    id="tenure"></span></td>
+                            <td rowspan="3" style="text-align: center; vertical-align: top;"><span class="data-field"
+                                    id="interest_rate"></span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 700;">মোট টাকাঃ</td>
+                            <td style="text-align: center; font-weight: 700;"><span class="data-field"
+                                    id="total_taka"></span>/-</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="font-weight: 600;"><span style="font-weight: 700;">কথায়ঃ</span> <span
+                                    class="data-field" id="amount_in_words"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="middle-section">
+                    <div class="fdr-meta-left">
+                        <div>মেয়াদি আমানত রসিদ নং-<span class="data-field" id="fdr_receipt_no"></span></div>
+                        <div>হিসাব নং- <span class="data-field" id="account_no"></span></div>
+                        <div>ফলিও নং- <span class="data-field" id="folio_no"></span></div>
+                    </div>
+                    <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
+                        <div class="applicant-sign-title" style="text-align: center; margin-bottom: 35pt; width: 100%;">
+                            আবেদনকারী/আমানতকারীদের স্বাক্ষর ও ঠিকানা</div>
+                        <div class="applicant-dotted-box" style="width: 100%;"><span class="data-field"
+                                id="applicant_details"></span></div>
+                    </div>
+                </div>
+                <div class="bottom-officers">
+                    <div style="text-align: center; border-top: 1pt dashed #000; padding-top: 4pt; width: 120pt;">
+                        দ্বিতীয় কর্মকর্তা</div>
+                    <div style="text-align: center; border-top: 1pt dashed #000; padding-top: 4pt; width: 120pt;">
+                        ব্যবস্থাপক</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONDITIONAL FDR CHEQUE PAGE -->
+    <div id="fdr_cheque_page_container"
+        style="display: none; position: relative; min-height: 100vh; background: #525659; padding: 20px;">
+        <div class="no-print"
+            style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; gap: 10px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <button onclick="window.print()"
+                style="background: #28a745; color: white; border: none; padding: 8px 16px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 14px;">🖨️
+                Print Cheque</button>
+            <button onclick="closeFDRChequePreview()"
+                style="background: #dc3545; color: white; border: none; padding: 8px 16px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 14px;">✖
+                Return to Form</button>
+        </div>
+        <div class="fdr-cheque-print-area" id="fdr-cheque-container"
+            style="position: relative; margin: 50px auto 0 auto; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        </div>
+    </div>
+
+    <div id="warning-toast">only numbers are accepted</div>
+
+    <!-- DATA ENTRY MODAL -->
+    <div id="dataEntryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>DPS/MSS/FD Data Entry</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+
+            <div class="form-grid">
+                <!-- SECTION 1: BASIC INFO -->
+                <div class="section-label-modal">Basic Info</div>
+                <div class="form-group">
+                    <label>হিসাবের নাম (বাংলায়)</label>
+                    <input type="text" id="modal_account_title_bn">
+                </div>
+                <div class="form-group">
+                    <label>Account Title (English)</label>
+                    <input type="text" id="modal_account_title_en" oninput="this.value = this.value.toUpperCase()">
+                </div>
+                <div class="full-width" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Account Number (14 Digits)</label>
+                        <input type="text" id="modal_account_no" maxlength="15" placeholder="XXXX-XXXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Unique Customer ID (CID)</label>
+                        <input type="text" id="modal_unique_customer_id" maxlength="10"
+                            oninput="this.value = this.value.replace(/\D/g, '')">
+                    </div>
+                    <div class="form-group">
+                        <label>হিসাব খোলার তারিখ</label>
+                        <input type="date" id="modal_app_date">
+                    </div>
+                </div>
+
+                <!-- DPS SPECIFIC INFO -->
+                <div class="section-label-modal">হিসাব সংক্রান্ত তথ্য (Account Related Info)</div>
+                <div class="full-width" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                    <div class="form-group" style="grid-column: span 4;">
+                        <label>আমানতের ধরণ</label>
+                        <select id="modal_deposit_type" onchange="updateDepositTypeFields()">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="fd">১. স্থায়ী আমানত</option>
+                            <option value="scheme">২. সঞ্চয়ী/বিশেষ স্কিম</option>
+                        </select>
+                    </div>
+
+                    <!-- Fixed Deposit Section Items -->
+                    <div id="modal_fd_section"
+                        style="display: none; grid-column: span 4; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                        <div class="form-group">
+                            <label>স্কিমের নাম (Scheme Name)</label>
+                            <input type="text" id="modal_dps_scheme_name">
+                        </div>
+                        <div class="form-group">
+                            <label>আমানত রশিদ নং (FDR No.)</label>
+                            <input type="text" id="modal_fdr_account_no">
+                        </div>
+                        <div class="form-group">
+                            <label>মুনাফার হার (%)</label>
+                            <input type="text" id="modal_dps_fd_rate"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                        </div>
+                        <div class="form-group">
+                            <label>পরিমাণ (অংকে)</label>
+                            <input type="text" id="modal_amount_num"
+                                oninput="updateModalWords(this, 'modal_amount_words')">
+                        </div>
+                        <div class="form-group">
+                            <label>পরিমাণ (কথায়)</label>
+                            <input type="text" id="modal_amount_words" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>মেয়াদকাল (বছর, মাস, দিন)</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="number" id="modal_tenor_y" placeholder="বছর"
+                                    oninput="calculateMaturityDate()">
+                                <input type="number" id="modal_tenor_m" placeholder="মাস"
+                                    oninput="calculateMaturityDate()">
+                                <input type="number" id="modal_tenor_d" placeholder="দিন"
+                                    oninput="calculateMaturityDate()">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>মেয়াদ পূর্তির তারিখ</label>
+                            <input type="date" id="modal_maturity_date" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>নবায়নের পদ্ধতি</label>
+                            <select id="modal_renewal_method" onchange="handleRenewalChange()">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="renew_all">আসল এবং সুদসহ নবায়ন</option>
+                                <option value="renew_principal">শুধুমাত্র আসল নবায়ন</option>
+                                <option value="none">প্রযোজ্য নয়</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="modal_renewal_acc_container" style="display: none;">
+                            <label>সঞ্চয়ী হিসাব নম্বর (Savings A/C)</label>
+                            <input type="text" id="modal_renewal_savings_acc"
+                                placeholder="Customer Savings Account No.">
+                        </div>
+                        <div class="form-group">
+                            <label>হিসাব পরিচালনা পদ্ধতি</label>
+                            <select id="modal_account_operation_fd">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="single">এককভাবে</option>
+                                <option value="joint">যৌথভাবে</option>
+                                <option value="anyone">যেকোনো একজন</option>
+                                <option value="anyone_or_survivor">যে কোনো একজন অথবা জীবিতজন</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Special Scheme Section Items -->
+                    <div id="modal_scheme_section"
+                        style="display: none; grid-column: span 4; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                        <div class="form-group">
+                            <label>স্কিমের নাম (Scheme Name)</label>
+                            <input type="text" id="modal_scheme_name">
+                        </div>
+                        <div class="form-group">
+                            <label>স্কিমের মেয়াদ (মাস)</label>
+                            <input type="number" id="modal_scheme_tenor" oninput="calculateInstallmentCount()">
+                        </div>
+                        <div class="form-group">
+                            <label>কিস্তির ফ্রিকোয়েন্সি</label>
+                            <select id="modal_inst_freq" onchange="calculateInstallmentCount()">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="monthly">মাসিক</option>
+                                <option value="quarterly">ত্রৈমাসিক</option>
+                                <option value="half_yearly">ষাণ্মাসিক</option>
+                                <option value="yearly">বার্ষিক</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>কিস্তির সংখ্যা</label>
+                            <input type="text" id="modal_inst_count" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>কিস্তির পরিমাণ (অংকে)</label>
+                            <input type="text" id="modal_inst_amount_num"
+                                oninput="updateModalWords(this, 'modal_inst_amount_words')">
+                        </div>
+                        <div class="form-group" style="grid-column: span 3;"> <!-- Spans 3 to make it 1+3=4 columns -->
+                            <label>(কথায়)</label>
+                            <input type="text" id="modal_inst_amount_words" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>মেয়াদান্তে প্রদেয় (অংকে)</label>
+                            <input type="text" id="modal_maturity_amount_num"
+                                oninput="updateModalWords(this, 'modal_maturity_amount_words')">
+                        </div>
+                        <div class="form-group" style="grid-column: span 3;"> <!-- Spans 3 to make it 1+3=4 columns -->
+                            <label>(কথায়)</label>
+                            <input type="text" id="modal_maturity_amount_words" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>এককালীন জমা (অংকে)</label>
+                            <input type="text" id="modal_one_time_dep_num"
+                                oninput="updateModalWords(this, 'modal_one_time_dep_words')">
+                        </div>
+                        <div class="form-group">
+                            <label>(কথায়)</label>
+                            <input type="text" id="modal_one_time_dep_words" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>পরিশোধের ফ্রিকোয়েন্সি</label>
+                            <select id="modal_payout_freq">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="মাসিক">মাসিক</option>
+                                <option value="ত্রৈমাসিক">ত্রৈমাসিক</option>
+                                <option value="বাৎসরিক">বাৎসরিক</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>কিস্তিতে প্রদেয় (অংকে)</label>
+                            <input type="text" id="modal_payout_amount_num"
+                                oninput="updateModalWords(this, 'modal_payout_amount_words')">
+                        </div>
+                        <div class="form-group" style="grid-column: span 3;">
+                            <label>(কথায়)</label>
+                            <input type="text" id="modal_payout_amount_words" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>হিসাব পরিচালনা পদ্ধতি</label>
+                            <select id="modal_account_operation_scheme">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="single">এককভাবে</option>
+                                <option value="joint">যৌথভাবে</option>
+                                <option value="anyone">যেকোনো একজন</option>
+                                <option value="anyone_or_survivor">যে কোনো একজন অথবা জীবিতজন</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1.5: INSTITUTION INFO -->
+                <div class="section-label-modal">প্রতিষ্ঠান সংক্রান্ত তথ্যাদি (Institution Info)</div>
+                <div class="full-width" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                    <div class="form-group">
+                        <label>প্রতিষ্ঠানের নাম (বাংলায়)</label>
+                        <input type="text" id="modal_org_name_bn">
+                    </div>
+                    <div class="form-group">
+                        <label>প্রতিষ্ঠানের নাম (English - Block Letter)</label>
+                        <input type="text" id="modal_org_name_en" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <div class="form-group">
+                        <label>ট্রেড লাইসেন্স নম্বর</label>
+                        <input type="text" id="modal_org_trade_license">
+                    </div>
+                    <div class="form-group">
+                        <label>ট্রেড লাইসেন্স তারিখ</label>
+                        <input type="date" id="modal_org_trade_date">
+                    </div>
+
+                    <div class="form-group">
+                        <label>ইস্যুকারী কর্তৃপক্ষ</label>
+                        <input type="text" id="modal_org_trade_authority">
+                    </div>
+                    <div class="form-group">
+                        <label>নিবন্ধন নম্বর</label>
+                        <input type="text" id="modal_org_reg_no">
+                    </div>
+                    <div class="form-group">
+                        <label>নিবন্ধন তারিখ</label>
+                        <input type="date" id="modal_org_reg_date">
+                    </div>
+                    <div class="form-group">
+                        <label>নিবন্ধনকারী কর্তৃপক্ষ ও দেশ</label>
+                        <input type="text" id="modal_org_reg_authority">
+                    </div>
+
+                    <div class="form-group">
+                        <label>নিবন্ধনকৃত ঠিকানা</label>
+                        <input type="text" id="modal_org_registered_addr">
+                    </div>
+                    <div class="form-group">
+                        <label>ভ্যাট রেজিস্ট্রেশন নম্বর/BIN</label>
+                        <input type="text" id="modal_org_bin">
+                    </div>
+                    <div class="form-group">
+                        <label>ট্যাক্স আইডি নম্বর/(TIN)</label>
+                        <input type="text" id="modal_org_tin" oninput="this.value = this.value.replace(/\D/g, '')">
+                    </div>
+                    <div class="form-group">
+                        <label>ব্যবসাস্থল/অফিসের ঠিকানা</label>
+                        <input type="text" id="modal_org_office_addr">
+                    </div>
+
+                    <div class="form-group">
+                        <label>প্রতিষ্ঠানের ধরণ</label>
+                        <select id="modal_org_type"
+                            onchange="if(this.value==='others'){document.getElementById('modal_org_type_others_group').style.display='block';}else{document.getElementById('modal_org_type_others_group').style.display='none';}">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="sole">একক মালিকানা</option>
+                            <option value="partnership">অংশীদারী</option>
+                            <option value="joint">যৌথ উদ্যোগ</option>
+                            <option value="pvt">প্রাইভেট লি: কোম্পানী</option>
+                            <option value="pub">পাবলিক লি: কোম্পানী</option>
+                            <option value="trust">ট্রাস্ট</option>
+                            <option value="ngo">এনজিও/এনপিও</option>
+                            <option value="club">ক্লাব /সোসাইটি</option>
+                            <option value="edu">শিক্ষা প্রতিষ্ঠান</option>
+                            <option value="religious">ধর্মীয় প্রতিষ্ঠান</option>
+                            <option value="others">অন্যান্য (নির্দিষ্ট ভাবে উল্লেখ করুন)</option>
+                        </select>
+                        <div id="modal_org_type_others_group" style="display: none; margin-top: 5px;">
+                            <input type="text" id="modal_org_type_others" placeholder="প্রতিষ্ঠানের ধরণ উল্লেখ করুন">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ব্যবসার ধরণ</label>
+                        <select id="modal_biz_type"
+                            onchange="if(this.value==='others'){document.getElementById('modal_biz_type_others_group').style.display='block';}else{document.getElementById('modal_biz_type_others_group').style.display='none';}">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="trading">ট্রেডিং</option>
+                            <option value="service">সেবা</option>
+                            <option value="manufacturing">উৎপাদন</option>
+                            <option value="others">অন্যান্য (নির্দিষ্ট ভাবে উল্লেখ করুন)</option>
+                        </select>
+                        <div id="modal_biz_type_others_group" style="display: none; margin-top: 5px;">
+                            <input type="text" id="modal_biz_type_others" placeholder="ব্যবসার ধরণ উল্লেখ করুন">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ব্যবসায়ের প্রকৃতি (বিস্তারিত)</label>
+                        <input type="text" id="modal_org_biz_nature">
+                    </div>
+                    <div class="form-group">
+                        <label>বার্ষিক টার্নওভার</label>
+                        <input type="text" id="modal_org_turnover">
+                    </div>
+                </div>
+
+                <!-- SECTION 2: APPLICANT INFO (Dynamic Segment) -->
+                <div class="section-label-modal section-label-row">
+                    <span>ব্যক্তিগত তথ্য (Applicant Info)</span>
+                    <button type="button" id="btn_add_applicant" class="fbtn-data" onclick="addPerson()">+ Add
+                        Another</button>
+                </div>
+                <div id="person_container" class="full-width"></div>
+
+                <div class="section-label-modal">পরিচয়দানকারীর তথ্য (Introducer Info)</div>
+                <div class="form-group">
+                    <label>Introducer Name</label>
+                    <input type="text" id="modal_introducer_name" oninput="this.value = this.value.toUpperCase()">
+                </div>
+                <div class="form-group">
+                    <label>Account No</label>
+                    <input type="text" id="modal_introducer_acc_details"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+                <div class="full-width" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>NID No</label>
+                        <input type="text" id="modal_intro_nid"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                    <div class="form-group">
+                        <label>Other ID</label>
+                        <input type="text" id="modal_introducer_other_id">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" id="modal_intro_dob">
+                    </div>
+                </div>
+
+                <div class="section-label-modal">আবেদনকারী নাবালক হলে (Main Applicant Minor Info)</div>
+                <div class="form-group">
+                    <label>অভিভাবকের নাম (Guardian's Name)</label>
+                    <input type="text" id="modal_minor_guardian_name">
+                </div>
+                <div class="form-group">
+                    <label>নাবালকের সাথে সম্পর্ক (Relationship with Minor)</label>
+                    <input type="text" id="modal_minor_guardian_rel">
+                </div>
+
+                <div class="section-label-modal">বিশেষ নির্দেশাবলী (Special Instructions)</div>
+                <div class="form-group">
+                    <label>Special Instruction (1)</label>
+                    <input type="text" id="modal_special_instruction_1_input">
+                </div>
+                <div class="form-group">
+                    <label>Special Instruction (2)</label>
+                    <input type="text" id="modal_special_instruction_2_input">
+                </div>
+                <div class="form-group">
+                    <label>Special Instruction (3)</label>
+                    <input type="text" id="modal_special_instruction_3_input">
+                </div>
+
+                <div class="section-label-modal">KYC Profile</div>
+                <div class="full-width" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <!-- Row 1 -->
+                    <div class="form-group">
+                        <label>অর্থের উৎস নিশ্চিতকরণের দলিলাদি</label>
+                        <input type="text" id="modal_kyc_source_docs">
+                    </div>
+                    <div class="form-group">
+                        <label>ঠিকানা যাচাই পদ্ধতি</label>
+                        <input type="text" id="modal_kyc_addr_verify">
+                    </div>
+                    <div class="form-group">
+                        <label>প্রকৃত সুবিধাভোগী (Beneficial Owner) আছে?</label>
+                        <select id="modal_kyc_beneficial_owner">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="yes">হ্যাঁ</option>
+                            <option value="no" selected>না</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="form-group">
+                        <label>অনিবাসী/বিদেশীদের ক্ষেত্রে হিসাব খোলার উদ্দেশ্য</label>
+                        <input type="text" id="modal_kyc_purpose">
+                    </div>
+                    <div class="form-group">
+                        <label>ভিসার প্রকৃতি (Visa Type)</label>
+                        <input type="text" id="modal_kyc_visa_type">
+                    </div>
+                    <div class="form-group">
+                        <label>ভিসার মেয়াদ (Expiry Date)</label>
+                        <input type="date" id="modal_kyc_visa_expiry">
+                    </div>
+                    <div class="form-group">
+                        <label>কর্মানুমতি (Work Permit)?</label>
+                        <select id="modal_kyc_work_permit_approval">
+                            <option value="">নির্বাচন করুন</option>
+                            <option value="yes">হ্যাঁ</option>
+                            <option value="no">না</option>
+                        </select>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div>
+                        <div class="form-group">
+                            <label>গ্রাহক কি PEP/IP?</label>
+                            <select id="modal_kyc_pep"
+                                onchange="const fs = document.getElementById('modal_kyc_pep_fields'); fs.style.display = (this.value === 'yes') ? 'block' : 'none';">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="yes">হ্যাঁ</option>
+                                <option value="no">না</option>
+                            </select>
+                        </div>
+                        <div id="modal_kyc_pep_fields"
+                            style="display:none; background: #f9f9f9; padding: 10px; border: 1px solid #eee;">
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem;">ক) উর্ধ্বতন কর্তৃপক্ষের অনুমোদন?</label>
+                                <select id="modal_kyc_pep_approval">
+                                    <option value="">নির্বাচন করুন</option>
+                                    <option value="yes">হ্যাঁ</option>
+                                    <option value="no">না</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.8rem;">খ) মুখোমুখি সাক্ষাৎকার?</label>
+                                <select id="modal_kyc_pep_interview">
+                                    <option value="">নির্বাচন করুন</option>
+                                    <option value="yes">হ্যাঁ</option>
+                                    <option value="no">না</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>সন্ত্রাসী কার্যে তালিকাভুক্ত?</label>
+                            <select id="modal_kyc_sanction"
+                                onchange="const fs = document.getElementById('modal_kyc_sanction_fields'); fs.style.display = (this.value === 'yes') ? 'block' : 'none';">
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="yes">হ্যাঁ</option>
+                                <option value="no">না</option>
+                            </select>
+                        </div>
+                        <div id="modal_kyc_sanction_fields"
+                            style="display:none; background: #f9f9f9; padding: 10px; border: 1px solid #eee;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.8rem;">গৃহীত ব্যবস্থার বিবরণ</label>
+                                <input type="text" id="modal_kyc_sanction_details">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-label-modal section-label-row">
+                    <span>নমিনি সংক্রান্ত তথ্যাদি (Nominee Info)</span>
+                    <div>
+                        <button type="button" class="fbtn-data" id="btn-add-nominee" onclick="toggleNomineeSection()"
+                            style="margin-right: 10px;">+ Add Nominee</button>
+                        <button type="button" class="fbtn-data" id="btn-nominee-minor"
+                            onclick="toggleNomineeMinor()">Nominee is Minor</button>
+                    </div>
+                </div>
+                <div id="nominee_section"
+                    style="display: none; grid-column: span 2; width: 100%; background: #fff; padding: 0px; margin-top: 10px; border-radius: 4px;">
+                    <div
+                        style="display: flex; align-items: center; margin-bottom: 15px; padding: 15px; padding-bottom: 0;">
+                        <div style="font-weight: bold; color: var(--bank-green); font-size: 13px;">নমিনি সংক্রান্ত
+                            তথ্যাদি (Nominee Details)</div>
+                        <button type="button" class="fbtn-data" onclick="addNominee()" style="margin-left: auto;">+ Add
+                            Nominee</button>
+                    </div>
+                    <div id="nominee_container" class="full-width" style="width: 100%; padding: 0 15px 15px 15px;">
+                    </div>
+                </div>
+                <div id="guardian_section"
+                    style="display: none; grid-column: span 2; width: 100%; background: #f5f5f5; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                    <div id="guardian_container" class="full-width"></div>
+                </div>
+
+                <!-- SECTION 3: RISK ASSESSMENT -->
+                <div class="section-label-modal">ঝুঁকি নিরূপন (Risk Assessment)</div>
+                <div
+                    style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 4px; border: 1px solid #eee;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;" id="risk_assessment_inputs">
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>পণ্য/সেবার ধরণ</label>
+                                <select id="modal_risk_prod" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="1">সঞ্চয়ী হিসাব</option>
+                                    <option value="2">চলতি হিসাব</option>
+                                    <option value="3">এফডিআর</option>
+                                    <option value="4">ডিপোজিট স্কিম (১২ লক্ষ পর্যন্ত)</option>
+                                    <option value="5">ডিপোজিট স্কিম (১২ লক্ষ এর উর্ধ্বে)</option>
+                                    <option value="6">এফসি হিসাব</option>
+                                    <option value="7">এস.এন.ডি</option>
+                                    <option value="8">আর এফ.সি.ডি</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_prod_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_prod', 'পণ্য/সেবার ধরণ')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>অনবোর্ডিং এর ধরণ</label>
+                                <select id="modal_risk_onboard" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="9">ব্রাঞ্চ ম্যানেজার/রীলেশনশীপ এর মাধ্যমে</option>
+                                    <option value="10">বিক্রয় প্রতিনিধির মাধ্যমে</option>
+                                    <option value="11">ইন্টারনেট/নন ফেস টু ফেস</option>
+                                    <option value="12">ওয়াক-ইন</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_onboard_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_onboard', 'অনবোর্ডিং এর ধরণ')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>ভৌগোলিক ঝুঁকি</label>
+                                <select id="modal_risk_geo" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="1">নিবাসী বাংলাদেশি</option>
+                                    <option value="2">অনিবাসী বাংলাদেশি</option>
+                                    <option value="3">বিদেশী নাগরিক</option>
+                                    <option value="4_yes">High Risk Jurisdiction/Sanctioned - Yes</option>
+                                    <option value="4_no">High Risk Jurisdiction/Sanctioned - No</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_geo_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_geo', 'ভৌগোলিক ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>ব্যবসা ও পেশা সংক্রান্ত ঝুঁকি</label>
+                                <select id="modal_risk_biz_prof_gen" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="low">Low Risk</option>
+                                    <option value="high">High Risk</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_biz_prof_gen_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_biz_prof_gen', 'ব্যবসা ও পেশা সংক্রান্ত ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>সম্পর্কগত ঝুঁকি</label>
+                                <select id="modal_risk_rel" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="pep_yes">PEP/IP - Yes</option>
+                                    <option value="pep_no">PEP/IP - No</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_rel_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_rel', 'সম্পর্কগত ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>লেনদেন সংক্রান্ত ঝুঁকি</label>
+                                <select id="modal_risk_txn" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="1">অনুর্ধ্ব ১০ লক্ষ (১)</option>
+                                    <option value="2">১০ লক্ষ হতে ৫০ লক্ষ (২)</option>
+                                    <option value="3">৫০ লক্ষ হতে ৫ কোটি</option>
+                                    <option value="4">৫ কোটি এর বেশী</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_txn_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_txn', 'লেনদেন সংক্রান্ত ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>সচ্ছতা সংক্রান্ত ঝুঁকি</label>
+                                <select id="modal_risk_trans" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="yes">বিশ্বাসযোগ্য তথ্য দিয়েছে - হ্যাঁ</option>
+                                    <option value="no">বিশ্বাসযোগ্য তথ্য দিয়েছে - না</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_trans_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_trans', 'সচ্ছতা সংক্রান্ত ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>গ্রাহকের ব্যবসার সংক্রান্ত ঝুঁকি</label>
+                                <select id="modal_risk_cust_biz" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="biz_1">১. জুয়েলারী/স্বর্ণ/মুল্যবান ধাতুর ব্যবসা (৫)</option>
+                                    <option value="biz_2">২. মানি চেঞ্জার/কুরিয়ার সার্ভিস/মোবাইল ব্যাংকিং এজেন্ট (৫)
+                                    </option>
+                                    <option value="biz_3">৩. রিয়েল এস্টেট ডেভেলপার/এজেন্ট (৫)</option>
+                                    <option value="biz_4">৪. নির্মাণ প্রকল্প প্রোমোটার/ঠিকাদার (৫)</option>
+                                    <option value="biz_5">৫. শিল্প ও পুরাতত্বের ডিলার (৫)</option>
+                                    <option value="biz_6">৬. রেস্তোরা/বার/নাইটক্লাব/পার্লার/ আবাসিক হোটেল ব্যবসা (৫)
+                                    </option>
+                                    <option value="biz_7">৭. আমদানি/রপ্তানী ও আমদানি/রপ্তানি এজেন্ট (৫)</option>
+                                    <option value="biz_8">৮. জনশক্তি রপ্তানি ব্যবসা (৫)</option>
+                                    <option value="biz_9">৯. আগ্নেয়াস্ত্রের ব্যবসা (৫)</option>
+                                    <option value="biz_10">১০. গার্মেন্টস ব্যবসা/গার্মেন্টস এক্সেসরিজ/প্যাকেজিং/বায়িং
+                                        হাউজ (৫)</option>
+                                    <option value="biz_11">১১. শেয়ার/স্টক ডিলার, ব্রোকার,পোর্টফোলিও ম্যানেজার, মার্চেন্ট
+                                        ব্যাংকার (৫)</option>
+                                    <option value="biz_12">১২. সফটওয়্যার/তথ্য ও প্রযুক্তি ব্যবসা (৫)</option>
+                                    <option value="biz_13">১৩. অফশোর/নন রেসিডেন্ট কর্পোরেশন (৫)</option>
+                                    <option value="biz_14">১৪. এনজিও/এনপিও (৫)</option>
+                                    <option value="biz_15">১৫. চলচ্চিত্র প্রযোজনা/পরিবেশনা সংস্থা (৫)</option>
+                                    <option value="biz_16">১৬. মোবাইল ফোন অপারেটর/ইন্টারনেট অথবা ক্যাবল টিভি অপারেটর (৫)
+                                    </option>
+                                    <option value="biz_17">১৭. জমি/বাড়ি কেনাবেচার মধ্যস্থতাকারী (৫)</option>
+                                    <option value="biz_18">১৮. ইন্স্যুরেন্স/ব্রোকারেজ এজেন্সী (৫)</option>
+                                    <option value="biz_19">১৯. ধর্মীয় প্রতিষ্ঠান/সংস্থা ও শিক্ষা প্রতিষ্ঠান (৫)</option>
+                                    <option value="biz_20">২০. ট্রাস্ট (৫)</option>
+                                    <option value="biz_21">২১. ব্যবসা (পেট্রোল পাম্প/সিএনজি স্টেশন) (৫)</option>
+                                    <option value="biz_22">২২. সফটওয়্যার ব্যবসা (৫)</option>
+                                    <option value="biz_23">২৩. শিপ ব্রেকিং ব্যবসা (৫)</option>
+                                    <option value="biz_24">২৪. ব্যাংক/লিজিং/ফাইন্যান্স কোম্পানী (৪)</option>
+                                    <option value="biz_25">২৫. ব্যবসা (ইনডেন্টিং) (৪)</option>
+                                    <option value="biz_26">২৬. ব্যবসা (আউটসোর্সিং) (৪)</option>
+                                    <option value="biz_27">২৭. ল’ ফার্ম/ইন্জিনিয়ারিং ফার্ম/কনসালটেন্সি ফার্ম (৪)
+                                    </option>
+                                    <option value="biz_28">২৮. জ্বালানী ও বিদ্যুৎ উৎপাদন কোম্পানী (৪)</option>
+                                    <option value="biz_29">২৯. প্রিন্ট ও ইলেকট্রনিক মিডিয়া (৪)</option>
+                                    <option value="biz_30">৩০. ট্রাভেল এজেন্ট/ত্ট্যুরিজম কোম্পানী (৪)</option>
+                                    <option value="biz_31">৩১. টাকা ১০ মিলিয়ন এর বেশি বিনিয়োগকারী মার্চেন্ট (৪)</option>
+                                    <option value="biz_32">৩২. চেইন স্টোর/শপিং মল (৪)</option>
+                                    <option value="biz_33">৩৩. ফ্রেইট/শিপিং/কার্গো এজেন্ট/সিএন্ডএফ এজেন্ট (৪)</option>
+                                    <option value="biz_34">৩৪. মোটরকারের ব্যবসা (নতুন/রিকন্ডিশন) (৪)</option>
+                                    <option value="biz_35">৩৫. চামড়া/চামড়াজাত পণ্যের ব্যবসা (৪)</option>
+                                    <option value="biz_36">৩৬. নির্মাণ সামগ্রীর ব্যবসা (৪)</option>
+                                    <option value="biz_37">৩৭. ব্যবসায় এজেন্ট (৩)</option>
+                                    <option value="biz_38">৩৮. সুতা/ঝুট ব্যবসায়ী (৩)</option>
+                                    <option value="biz_39">৩৯. পরিবহণ অপারেটর (৩)</option>
+                                    <option value="biz_40">৪০. ব্যবসা (ঔষধ প্রস্তুত ও বাজারজাতকরণ) (৩)</option>
+                                    <option value="biz_41">৪১. হিমায়িতকরণ ব্যবসা (কোল্ড স্টোরেজ) (৩)</option>
+                                    <option value="biz_42">৪২. ব্যবসা (বিজ্ঞাপন) (৩)</option>
+                                    <option value="biz_43">৪৩. সার্ভিস প্রোভাইডার (৩)</option>
+                                    <option value="biz_44">৪৪. তামাক এবং সিাগারেরটর ব্যবসা (৩)</option>
+                                    <option value="biz_45">৪৫. এমিউজমেন্ট পার্ক/বিনোদন (৩)</option>
+                                    <option value="biz_46">৪৬. মোটর পার্টস ট্রেডার্স/ওয়ার্কশপ (৩)</option>
+                                    <option value="biz_47">৪৭. পোল্ট্রি/ডেইরি/ফিশিং ফার্ম (২)</option>
+                                    <option value="biz_48">৪৮. এগ্রো বিজনেস/রাইস মিল/বেভারেজ (২)</option>
+                                    <option value="biz_49">৪৯. ছোট ব্যবসা (বিনিয়োগ টাকা ৫০ লক্ষ এর কম) (২)</option>
+                                    <option value="biz_50">৫০. কম্পিউটার/মোাইল ফোন ডিলার (২)</option>
+                                    <option value="biz_51">৫১. উৎপাদক (অস্ত্র ব্যতীত) (২)</option>
+                                    <option value="biz_52">৫২. অন্যান্য (সুনির্দিষ্টভাবে) (১)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_cust_biz_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_cust_biz', 'গ্রাহকের ব্যবসার সংক্রান্ত ঝুঁকি')">Add</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 60px 60px; gap: 5px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>গ্রাহকের পেশা সম্পর্কিত ঝুঁকি</label>
+                                <select id="modal_risk_cust_prof" onchange="updateRiskScore(this)">
+                                    <option value="">Select</option>
+                                    <option value="prof_1">১. পাইলট/ফ্লাইট এটেনডেন্ট (৫)</option>
+                                    <option value="prof_2">২. ট্রাস্টি (৫)</option>
+                                    <option value="prof_3">৩. পেশাজীবি (সাংবাদিক, আইনজীবি,ডাক্তার, ইঞ্জিনিয়ার, চার্টার্ড
+                                        একাউন্টেন্ট ইত্যাদি) (৪)</option>
+                                    <option value="prof_4">৪. পরিচালক (প্রাইভেট/পাবলিক লিমিটেড কোম্পানী) (৪)</option>
+                                    <option value="prof_5">৫. বহুজাতিক প্রতিষ্ঠানের উচ্চপদস্থ কর্মকর্তা (এমএনসি) (৪)
+                                    </option>
+                                    <option value="prof_6">৬. গৃহিনী (৪)</option>
+                                    <option value="prof_7">৭. তথ্য প্রযুক্তি (৪)</option>
+                                    <option value="prof_8">৮. ক্রীড়াবিদ/মিডিয়া/ সেলিব্রেটি/প্রযোজক/পরিচালক (৪)</option>
+                                    <option value="prof_9">৯. ফ্রিল্যান্স সফটওয়্যার ডেভেলপার (৪)</option>
+                                    <option value="prof_10">১০. সরকারী চাকুরীজীবি (৩)</option>
+                                    <option value="prof_11">১১. জমিদার/বাড়িওয়ালা (৩)</option>
+                                    <option value="prof_12">১২. বেসরকারী চাকুরিজীবি: ব্যবস্থাপনা সম্পর্কিত (৩)</option>
+                                    <option value="prof_13">১৩. শিক্ষক (সরকারি/বেসরকারী/স্বায়ত্বশাসিত শিক্ষা প্রতিষ্ঠান)
+                                        (২)</option>
+                                    <option value="prof_14">১৪. বেসরকারী চুকুরীজীবি (২)</option>
+                                    <option value="prof_15">১৫. স্বনির্ভর পেশাজীবি (২)</option>
+                                    <option value="prof_16">১৬. ছাত্র (২)</option>
+                                    <option value="prof_17">১৭. অবসরপ্রাপ্ত (১)</option>
+                                    <option value="prof_18">১৮. কৃষিজীবী/মৎসজীবী/শ্রমজীবী (১)</option>
+                                    <option value="prof_19">১৯. অন্যান্য (সুনির্দিষ্টভাবে) (১)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;"><label>স্কোর</label><input type="text"
+                                    id="modal_risk_cust_prof_score" class="score-input"></div>
+                            <button type="button" class="fbtn-data" style="height: 35px;"
+                                onclick="addRiskItem('modal_risk_cust_prof', 'গ্রাহকের পেশা সম্পর্কিত ঝুঁকি')">Add</button>
+                        </div>
+                    </div>
+                    <div style="height: auto;">
+                        <table id="modal_risk_summary_table"
+                            style="width:100%; border-collapse: collapse; font-size: 18px; border:1px solid #eee; background: white;">
+                            <thead>
+                                <tr style="background:#f0f0f0;">
+                                    <th style="padding: 10px;">Factor</th>
+                                    <th style="padding: 10px;">Score</th>
+                                    <th style="padding: 10px;">Act</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr style="background:#e0e0e0; font-weight:bold;">
+                                    <td style="text-align:right; padding: 10px;">Total:</td>
+                                    <td id="modal_risk_total_score_display" style="padding: 10px;">0</td>
+                                    <td style="padding: 10px;"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="modal-btn btn-save" onclick="saveCustomerToDB()"
+                    style="background-color: var(--primary);">Save to Customer DB</button>
+                <button class="modal-btn btn-clear" onclick="clearModal()">Clear</button>
+                <button class="modal-btn btn-save" onclick="saveModalData()">Save</button>
+                <button class="modal-btn btn-populate" onclick="applyData()">Populate Form</button>
+                <button class="modal-btn btn-populate" id="btn_populate_fdr" onclick="applyData(); printFDRCheque();" style="display: none; background-color: #28a745;">Populate FDR Block</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../../assets/engines/deposit-engine.js"></script>
+</body>
+
+</html>

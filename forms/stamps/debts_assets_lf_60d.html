@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debts & Assets LF-60(d)</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Debts Assets LF 60d Specific Styles */
+    .dotted-input,
+    [contenteditable="true"],
+    .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: center;
+      min-width: 1px;
+      font-weight: bold;
+    }
+
+    .dotted-input:empty,
+    [contenteditable="true"]:empty,
+    .data-input:empty {
+      min-width: 0.5in;
+    }
+
+    .stamp-name {
+      text-align: right;
+      font-size: 10pt;
+    }
+
+    .manager-address {
+      text-align: left;
+    }
+
+    .page1-body,
+    .page2-body,
+    .page3-body {
+      text-align: justify;
+      line-height: 1.8;
+      font-size: 11pt;
+    }
+
+    h1,
+    .doc-title {
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 2mm;
+    }
+
+    h2,
+    .doc-subtitle {
+      font-size: 14pt;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 2mm;
+    }
+
+    p,
+    .clause-body {
+      font-size: 11pt;
+      text-align: justify;
+      line-height: 1.45;
+      margin-bottom: 3mm;
+    }
+
+    .signature-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
+    .sig-block {
+      width: 45%;
+      text-align: center;
+    }
+
+    .sig-line {
+      letter-spacing: 2px;
+      margin-bottom: 2px;
+      font-weight: bold;
+    }
+
+    .bank-execution-block {
+      text-align: center;
+      margin-top: 1in;
+    }
+
+    .bank-name {
+      font-size: 14pt;
+      font-weight: bold;
+      margin: 1px 0;
+    }
+
+    .nb-footer-note {
+      border-top: 1px solid #000000;
+      padding-top: 3px;
+      margin-top: 4px;
+      font-size: 9.5pt;
+      text-align: justify;
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">\n
+
+  <div class="stamp-page">
+
+    <div>
+      <div style="text-align: right; font-weight: normal; margin-bottom: 2mm; font-size: 10pt;">LF-60(d)</div>
+
+      <h1 style="font-size: 14pt; font-weight: bold; text-align: center; margin-bottom: 2mm;">AGREEMENT FOR CASH
+        CREDIT</h1>
+
+      <h2 style="font-size: 11pt; font-weight: bold; text-align: center; margin-bottom: 1mm;">Hypothecation of Goods.
+      </h2>
+
+      <div style="font-size: 9.5pt; text-align: center; margin-bottom: 4mm;">
+        (To be stamped as an Agreement in accordance with the Stamp duty in force at the time of execution. Not to be
+        attested)
+      </div>
+
+      <div style="text-align: right; margin-bottom: 4mm; font-size: 10pt;">
+        Dated-<span class="dotted-input" contenteditable="true" ></span>
+      </div>
+
+      <p class="clause-body">
+        <strong>BANGLADESH KRISHI BANK</strong> (hereinafter called the Bank”) having at the request of -<span
+          class="dotted-input" contenteditable="true" ></span>, (hereafter called the
+        Borrower”) and of-<span class="dotted-input" contenteditable="true"
+          ></span>,<strong>S/O-</strong> The Managing Agents of the said company, agreed to
+        grant accommodation to the borrower by way of Cash Credit Account to be secured by the borrowers Demand
+        Promissory Note in favour of the said Managing Agents and endorsed to the Bank or order and to be further
+        secured as herein provided, it is agreed as follows:
+      </p>
+
+      <p class="clause-body">
+        <strong>(1)</strong> That all the borrower's present and future book debts, outstanding moneys receivable
+        claims, bills, contracts, engagements, securities, investments, rights and assets (except property
+        effectively, otherwise hypothecated, charged or mortgaged to the Bank) shall be hypothecated to the Bank and
+        its assigns by way of first charge as security for the payments to the Bank on demand of all moneys at any
+        time payable by the borrower to the Bank in respect of the said Cash credit Accounts and also as security for
+        the payment and discharge of all indebtedness or liability of the borrower to the Bank in respect of any bills
+        of exchange, promissory notes or instruments at any time drawn, made, accepted or endorsed by the borrower
+        solely or jointly with others which the Bank may discount or become interested in together with all interest,
+        discount, commission, charges, costs (between Attorney and Client) and expenses payable to or incurred by the
+        Bank in relation thereto:
+      </p>
+
+      <p class="clause-body">
+        <strong>(2)</strong> That interest at the rate of <span class="dotted-input" contenteditable="true"
+          ></span>% Percent per annum (changeable depending on bank's circular) shall be
+        calculated on the daily balance payable by the borrower to the Bank and charged on the last working day of
+        each month in accordance with the practice of the Bank:
+      </p>
+    </div>
+  </div>
+  </div>
+
+  <div class="stamp-page">
+
+    <div>
+      <p class="clause-body">
+        <strong>(3)</strong> That the Bank shall not require to make or continue advances on the said Cash Credit
+        Account otherwise than at the Bank’s discretion and in no circumstances to an amount at any one time exceeding
+        with interest thereon the sum of Tk=<span class="dotted-input" contenteditable="true"
+          ></span>/- (in words:<span class="dotted-input" contenteditable="true"
+          ></span>) or the sum stated in any separate deed of hypothecation of goods in
+        connection with the said account whichever sum may be the less:
+      </p>
+
+      <p class="clause-body">
+        <strong>(4)</strong> That on any default of the borrower in payment of any money hereby secured or the
+        performance of any obligation to the Bank or the occurrence of any circumstances in the opinion of Bank
+        endangering this security, the Bank shall be entitled at the borrower’s risk and expense as attorney for and
+        in the name of the borrower or otherwise to take possession and/or appoint receivers of any debts or assets
+        under this security, give notices of demand to debtors and third parties liable therefor, sue for recovery,
+        receive and give receipts for the same and sell or realize by Public auction or private contract or otherwise
+        dispose of all or any part of such debts or assets and endorse, settle, compromise (submit to arbitration) or
+        deal in any manner with any debts or claims under this security and to complete and engage and carry on the
+        business of borrowers through agents, managers or otherwise without being bound to exercise any of these
+        powers or being liable for any loss in the exercise thereof and without prejudice to the Bank’s rights and
+        remedies of suit or otherwise and notwithstanding that there may be any pending suit or other proceedings, the
+        borrower undertaking to give notice to debtors as and when required by the Bank and to transfer and deliver to
+        the Bank all relative documents and papers and agreeing to accept the Bank's accounts of receipts from
+        realizations as sufficient realized and relative expenses and to pay any shortfall or deficiency thereby shown
+        provided that the Bank shall be entitled at all times to apply any other money or moneys in its hand standing
+        to the credit of or belonging to the borrowers in or towards payments of any amount for the time being payable
+        to the Bank on the said Cash Credit Account or otherwise notwithstanding that all or any of the securities may
+        not have been realized provided also that subject to these powers of the Bank, the borrower may with the
+        approval of the Bank deal with the said debts and assets in due course of
+      </p>
+    </div>
+  </div>
+  </div>
+
+  <div class="stamp-page">
+
+    <div>
+      <div>
+        <p class="clause-body">
+          business on the expressed understanding that the same and all proceeds thereof and documents therefor are
+          always kept distinguishable and held as the Bank’s exclusive property specifically appropriated to this
+          security to be dealt with only under the directions of the Bank and the borrower shall not create any
+          mortgage, charge, lien or encumbrance upon or over the same or any part thereof except to the Bank nor
+          suffer any such mortgage, charge, lien or encumbrance to affect the same or any part thereof nor do or allow
+          anything that may prejudice this security:
+        </p>
+
+        <p class="clause-body">
+          <strong>(5)</strong> That the borrower will carry on business efficiently and will furnish and verify all
+          statements, reports, accounts, documents, and information and will also execute all documents and all acts
+          and things which the Bank may require to give effect Attorney for and in the name of the borrower to do
+          whatever the borrower may be required to do hereunder:
+        </p>
+
+        <p class="clause-body">
+          <strong>(6)</strong> That this Agreement shall operate as a continuing security for all moneys indebtedness
+          and liabilities aforesaid notwithstanding the existence of a credit balance in the said account at any time
+          or any payments or fluctuations of accounts:
+        </p>
+
+        <p class="clause-body">
+          <strong>(7)</strong> That nothing herein shall prejudice any rights or remedies of the Bank in respect of
+          any present or future security, guarantee, obligation or decree for any indebtedness or liability of the
+          borrower to the Bank:
+        </p>
+
+        <p class="clause-body">
+          <strong>(8)</strong> That it is declared that all present debts and assets aforesaid are the absolute
+          property of the borrower, at the sole disposal of the borrower and free from any prior charge or encumbrance
+          and that all future debts and assets hereunder shall be likewise unencumbered, absolute and disposable
+          property of the borrower.
+        </p>
+      </div>
+
+      <div style="text-align: right; margin-top: 0.5in; font-size: 10pt; padding-right: 0.25in;">
+        <div style="font-weight: bold; text-decoration: underline;">Borrower’s Signature</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

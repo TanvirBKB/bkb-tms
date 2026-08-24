@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>এল.এফ.- ৯ হলফনামা</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Halafnama Specific Styles */
+    .form-code-header {
+      text-align: right;
+      font-weight: bold;
+      font-size: 11pt;
+      margin-bottom: 6mm;
+    }
+
+    .doc-title-main { font-size: 16pt;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2mm;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .doc-title-sub { font-size: 14pt;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8mm;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .bengali-body-p { font-size: 12.5pt;
+      text-align: justify;
+      line-height: 2.1;
+      margin-bottom: 5mm;
+      word-spacing: 1px;
+    }
+
+    .table-title {
+      font-size: 12.5pt;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 4mm;
+      margin-bottom: 2.5mm;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .custom-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-bottom: 4mm;
+      font-size: 10.5pt;
+    }
+
+    .custom-table th,
+    .custom-table td {
+      border: 1px solid #000000;
+      padding: 5px 6px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .custom-table td[contenteditable="true"] {
+      outline: none;
+      font-weight: bold;
+    }
+
+    span[contenteditable="true"]:empty {
+      min-width: 0.5in;
+    }
+
+    .dotted-input,
+    span[contenteditable="true"],
+    .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: left;
+      min-width: 1px;
+      font-weight: bold;
+    }
+
+    .dotted-input:empty,
+    span[contenteditable="true"]:empty,
+    .data-input:empty {
+      min-width: 0.5in;
+    }
+
+    /* Signatures & Witness Layout */
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+
+    .witness-table td {
+      padding: 4px 0;
+      vertical-align: bottom;
+      border: none;
+      line-height: 2.1;
+    }
+
+    .witness-table td:nth-child(1) {
+      width: 5%;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(2) {
+      width: 25%;
+    }
+
+    .witness-table td:nth-child(3) {
+      width: 4%;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(4) {
+      width: 66%;
+    }
+
+    .witness-table .dotted-input {
+      width: 100%;
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- Page 1 -->
+  <div class="stamp-page">
+
+
+    <div class="form-code-header">এল.এফ.- ৯</div>
+
+    <h1 class="doc-title-main">বাংলাদেশ কৃষি ব্যাংক</h1>
+    <h2 class="doc-title-sub">হলফনামা</h2>
+
+    <p class="bengali-body-p">
+      আমি/আমরা প্রতিজ্ঞা পূর্বক জানাইতেছি যে, আমার/আমাদের বাংলাদেশ কৃষি ব্যাংকের মঞ্জুরীকৃত ঋণের <span
+        class="dotted-input" contenteditable="true" ></span>ইং তারিখের দরখাস্তে অত্র ব্যাংকের
+      নিকট নিম্নবর্ণিত স্থাবর সম্পত্তি/চেক দায়বদ্ধ রাখিলাম। উক্ত সম্পত্তি কোন প্রকারে হস্তান্তর/দায়বদ্ধ করিলে আমি/আমরা
+      গণপ্রজাতন্ত্রী বাংলাদেশের মহামান্য রাষ্ট্রপতির বাংলাদেশ কৃষি ব্যাংক আদেশের ২৭ নং ধারা মতে আইনতঃ দণ্ডনীয় হইব।
+    </p>
+
+
+  </div>
+
+  <!-- Page 2 -->
+  <div class="stamp-page">
+
+
+    <p class="bengali-body-p" style="margin-bottom: 3mm;">
+      এতদর্থে স্বেচ্ছায়, সজ্ঞানে এবং সুস্থ মস্তিষ্কে আমি/আমরা এই হলফনামায় স্বাক্ষর/টিপসহি দিলাম।
+    </p>
+
+    <!-- Table 1: Mortgaged Property / Instrument Details -->
+    <div class="table-title">বন্ধকী সম্পত্তি/ ইন্সট্রুমেন্টের বিবরণ</div>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th style="width: 20%;">ধরণ</th>
+          <th style="width: 25%;">ব্যাংকের নাম</th>
+          <th style="width: 20%;">নম্বর</th>
+          <th style="width: 15%;">সংখ্যা</th>
+          <th style="width: 20%;">পরিমাণ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Table 2: Mortgaged Land/Property Details -->
+    <div class="table-title">বন্ধকী সম্পত্তির বিবরণ</div>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width: 20%;">উপজেলা</th>
+          <th rowspan="2" style="width: 20%;">মৌজা</th>
+          <th style="width: 20%;">খতিয়ান নং</th>
+          <th style="width: 20%;">দাগ নং</th>
+          <th rowspan="2" style="width: 20%;">জমির পরিমাণ (একরে)</th>
+        </tr>
+        <tr>
+          <th>এসএ/আরএস</th>
+          <th>এসএ/আরএস</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td colspan="4" style="text-align: right; font-weight: bold; padding-right: 12px;">মোট জমি</td>
+          <td contenteditable="true" style="font-weight: bold;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Signature Section -->
+    <div style="margin-top: 6mm; text-align: right; font-size: 11pt; font-weight: 600;">
+      হলফকারীর স্বাক্ষর ........................................
+    </div>
+
+    <!-- Witness Signatures & Details Section -->
+    <div style="margin-top: 6mm; font-size: 10.5pt;">
+      <div style="font-weight: 700; margin-bottom: 3mm;">স্বাক্ষীগণের বিবরণ ও স্বাক্ষর:</div>
+      <div style="display: flex; justify-content: space-between; gap: 30px;">
+        <!-- Witness 1 -->
+        <div style="flex: 1;">
+          <table class="witness-table">
+            <tr>
+              <td>১।</td>
+              <td>স্বাক্ষর</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>পিতার নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>ঠিকানা</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+          </table>
+        </div>
+        <!-- Witness 2 -->
+        <div style="flex: 1;">
+          <table class="witness-table">
+            <tr>
+              <td>২।</td>
+              <td>স্বাক্ষর</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>পিতার নাম</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>ঠিকানা</td>
+              <td>:</td>
+              <td><span class="dotted-input" contenteditable="true"></span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

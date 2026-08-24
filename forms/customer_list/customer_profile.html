@@ -1,0 +1,3397 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>গ্রাহক তালিকা (বিস্তারিত)</title>
+    <link rel="stylesheet" href="../../assets/style.css">
+    <style>
+        /* ── SOLAIMANLIPI FONT — loaded directly so iframes don't rely on CSS path resolution ── */
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('../../assets/fonts/SolaimanLipi.ttf') format('truetype'), local('SolaimanLipi');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* ── RESET & BASE ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .required-star {
+            color: #e53935;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+
+        .custom-dropdown-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            font-family: 'SolaimanLipi', 'Arial', sans-serif;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .custom-dropdown-item:hover {
+            background-color: #e8f5e9;
+        }
+
+        body {
+            background: #eef1f5;
+            font-family: 'SolaimanLipi', 'Arial', sans-serif;
+            font-size: 13px;
+            padding: 5mm;
+            min-height: 100vh;
+        }
+
+        input,
+        select,
+        textarea,
+        button,
+        datalist,
+        option {
+            font-family: inherit;
+        }
+
+        /* ── HEADER BAR ── */
+        .profile-header {
+            background: linear-gradient(135deg, #062e16 0%, #0a5228 60%, #1a7a47 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .profile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-header-logo {
+            height: 42px;
+            filter: brightness(0) invert(1);
+        }
+
+        .profile-header h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            line-height: 1.4;
+        }
+
+        .profile-header .sub-title {
+            font-size: 0.72rem;
+            opacity: 0.75;
+        }
+
+        .nid-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 20px;
+            padding: 5px 16px;
+            font-size: 0.82rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── PHOTO + QUICK STRIP ── */
+        .top-strip {
+            background: white;
+            border: 1px solid #d0d8e0;
+            border-top: none;
+            padding: 14px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 8px;
+        }
+
+        .photo-block {
+            flex-shrink: 0;
+            text-align: center;
+            width: 3.5cm;
+        }
+
+        .photo-block img {
+            width: 3.5cm;
+            height: 4.5cm;
+            object-fit: cover;
+            border: 2px solid #28a745;
+            border-radius: 5px;
+            display: block;
+            background: #f0f0f0;
+        }
+
+        .photo-caption {
+            font-size: 0.65rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .photo-upload-btn {
+            width: 100%;
+            margin-top: 5px;
+            padding: 4px 6px;
+            font-size: 0.72rem;
+            background: #f5f7f5;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .photo-upload-btn:hover {
+            background: #e8f5e9;
+        }
+
+        .top-strip-fields {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 24px;
+            align-content: start;
+        }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: white;
+            border: 1px solid #d0d8e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, #062e16, #1a6b3a);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        .section-header.aml-header {
+            background: linear-gradient(90deg, #5a0000, #a93226);
+        }
+
+        /* ── BILINGUAL TWO-COLUMN BODY ── */
+        .bilingual-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .lang-col {
+            padding: 12px 16px;
+        }
+
+        .lang-col-bn {
+            background: #f7fff8;
+            border-right: 2px solid #b2dfdb;
+        }
+
+        .lang-col-en {
+            background: #f7f9ff;
+        }
+
+        .lang-col-header {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 7px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #c8e6c9;
+            color: #1b5e20;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-col-en .lang-col-header {
+            color: #0d47a1;
+            border-bottom-color: #bbdefb;
+        }
+
+        /* ── FIELD ROWS ── */
+        .field-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            gap: 8px;
+        }
+
+        .field-row label {
+            width: 140px;
+            flex-shrink: 0;
+            font-size: 0.77rem;
+            color: #3a3a4a;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .field-row input,
+        .field-row select,
+        .field-row textarea {
+            flex: 1;
+            padding: 5px 8px;
+            border: 1px solid #c8d0dc;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            min-width: 0;
+        }
+
+        .lang-col-bn .field-row input:focus,
+        .lang-col-bn .field-row select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.14);
+        }
+
+        .lang-col-en .field-row input:focus,
+        .lang-col-en .field-row select:focus {
+            outline: none;
+            border-color: #1565c0;
+            box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.14);
+        }
+
+        .top-strip-fields .field-row input:focus,
+        .top-strip-fields .field-row select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.14);
+        }
+
+        /* ── SUB-SECTION DIVIDER ── */
+        .sub-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #777;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 4px;
+            margin: 12px 0 8px;
+        }
+
+        /* ── TABLE SECTIONS ── */
+        .table-section-body {
+            padding: 12px 16px;
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .btn-add-row {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .btn-add-row:hover {
+            background: #1b5e20;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+
+        .detail-table th {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 7px 8px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid #a5d6a7;
+            white-space: nowrap;
+        }
+
+        .detail-table td {
+            padding: 3px 5px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .detail-table tr:hover td {
+            background: #f9fff9;
+        }
+
+        .detail-table input,
+        .detail-table select {
+            width: 100%;
+            padding: 4px 5px;
+            border: 1px solid #d0d8d0;
+            border-radius: 3px;
+            font-size: 0.77rem;
+            font-family: inherit;
+        }
+
+        .detail-table input:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .btn-remove-row {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 3px 9px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.72rem;
+        }
+
+        .btn-remove-row:hover {
+            background: #b71c1c;
+        }
+
+        /* ── AML SECTION ── */
+        .aml-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 14px 16px;
+        }
+
+        .aml-block {
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid #f5c6cb;
+            background: linear-gradient(135deg, #fff5f5, #fff0f0);
+        }
+
+        .aml-block.str-block {
+            border-color: #ffd54f;
+            background: linear-gradient(135deg, #fffde7, #fff8e1);
+        }
+
+        .aml-block h4 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #b71c1c;
+        }
+
+        .aml-block.str-block h4 {
+            color: #e65100;
+        }
+
+        .aml-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .aml-check input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .aml-check label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .aml-block label.detail-label {
+            font-size: 0.75rem;
+            color: #555;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .aml-block textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 0.77rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 55px;
+        }
+
+        .aml-block textarea:focus {
+            outline: none;
+            border-color: #b71c1c;
+        }
+
+        /* ── STICKY ACTION BAR ── */
+        .action-bar {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-top: 2px solid #a5d6a7;
+            padding: 9px 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            z-index: 100;
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #062e16, #2e7d32);
+            color: white;
+            border: none;
+            padding: 9px 26px;
+            border-radius: 5px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.18s, transform 0.1s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.88;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #444;
+            border: 1px solid #bbb;
+            padding: 9px 20px;
+            border-radius: 5px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        /* ── PHOTO ADJUST MODAL ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 500px;
+            max-width: 95vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #1b5e20;
+        }
+
+        .modal-box-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #a5d6a7;
+            border-radius: 3px;
+        }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+                background: white;
+                zoom: 0.85;
+            }
+
+            .action-bar,
+            .table-toolbar,
+            .btn-remove-row,
+            .photo-upload-btn,
+            #customAlertModal {
+                display: none !important;
+            }
+
+            .detail-table th:last-child,
+            .detail-table td:last-child {
+                display: none !important;
+            }
+
+            .section-card {
+                page-break-inside: auto;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .field-row,
+            .detail-table tr,
+            .aml-block {
+                page-break-inside: avoid;
+            }
+
+            .profile-header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section-header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            input,
+            select,
+            textarea {
+                border: 1px solid #eee !important;
+                background: transparent !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+        }
+
+        /* ── CUSTOMER LIST VIEW STYLES ── */
+        .list-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .customer-table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .customer-table th,
+        .customer-table td {
+            border: 1px solid #eee;
+            text-align: center;
+            padding: 6px;
+        }
+
+        .customer-table td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+            height: 1.05in;
+        }
+
+        .customer-photo-small {
+            width: 96px;
+            height: 96px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #eee;
+            display: block;
+            margin: 0 auto;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .action-link {
+            color: #1b3a5b;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 10px;
+            font-size: 1.3rem;
+            user-select: none;
+            display: inline-block;
+            transition: transform 0.1s ease;
+        }
+
+        .action-link:hover {
+            transform: scale(1.2);
+        }
+
+        .action-link.delete {
+            color: #d9534f;
+        }
+
+        .add-customer-btn {
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+            font-size: 15px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+
+<body>
+    <!-- ── CUSTOMER LIST VIEW (DEFAULT) ── -->
+    <div id="customer-list-view" class="list-container" style="display: block;">
+        <div class="header-actions">
+            <h2 class="bengali-font" style="margin: 0; color: #062e16;">গ্রাহক তথ্যভাণ্ডার<h2>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="dbSearch" class="search-box" placeholder="নাম বা এনআইডি দিয়ে খুঁজুন..."
+                            oninput="renderCustomerTable()">
+                        <button type="button" class="add-customer-btn" onclick="requestNewCustomer()"
+                            style="background: #2e7d32; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: inherit;">+
+                            নতুন গ্রাহক</button>
+                    </div>
+        </div>
+
+        <table class="customer-table">
+            <thead>
+                <tr>
+                    <th style="width: 0.8in;">ছবি</th>
+                    <th style="width: 1.6in;">নাম (বাংলা)</th>
+                    <th style="width: 1.4in;">এনআইডি (NID)</th>
+                    <th style="width: 1.0in;">মোবাইল</th>
+                    <th class="bengali-font" style="width: 0.7in;">জন্ম তারিখ</th>
+                    <th class="bengali-font" style="width: 0.7in;">জেলা</th>
+                    <th class="bengali-font" style="width: 0.8in;">মন্তব্য</th>
+                    <th style="width: 1.2in;">অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody id="customer-list-body">
+                <!-- Rows will be injected here -->
+            </tbody>
+        </table>
+        <div id="empty-msg" class="empty-state"
+            style="display: none; text-align: center; padding: 30px; color: #777; font-size: 1.1rem;">কোনো গ্রাহক তথ্য
+            পাওয়া যায়নি।</div>
+    </div>
+
+    <!-- ── PROFILE EDIT VIEW ── -->
+    <div id="profile-edit-view" style="display: none;">
+
+        <!-- ══ HEADER ══ -->
+        <div class="profile-header">
+            <div class="profile-header-left">
+                <img src="../../assets/images/bkb_logo.png" class="profile-header-logo" alt="BKB"
+                    onerror="this.style.display='none'">
+                <div>
+                    <div class="sub-title">Bangladesh Krishi Bank — Customer Master Record</div>
+                    <h2>গ্রাহক তথ্যভাণ্ডার (বিস্তারিত) &nbsp;|&nbsp; Customer Profile</h2>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="nid-badge" id="display_nid_badge">NID: —</span>
+                <button type="button" id="btn-back-to-list" onclick="showListView()"
+                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: bold; transition: background 0.2s;">⬅️
+                    তালিকায় ফিরুন</button>
+            </div>
+        </div>
+
+        <!-- ══ PHOTO + QUICK STRIP ══ -->
+        <div class="top-strip">
+            <div class="photo-block">
+                <img id="modalCustomerPhoto" src="../../assets/images/user_placeholder.png" alt="Photo"
+                    onerror="this.onerror=null; this.src='../../assets/images/bkb_logo.png';">
+                <div class="photo-caption">3.5cm × 4.5cm &nbsp;|&nbsp; Passport Size</div>
+                <input type="file" id="modalCustomerPhotoInput" accept="image/*" style="display:none;">
+                <button class="photo-upload-btn" onclick="document.getElementById('modalCustomerPhotoInput').click()">📷
+                    Upload Photo</button>
+            </div>
+            <div class="top-strip-fields">
+                <div class="field-row"><label>নাম (বাংলা):<span class="required-star">★</span></label><input type="text"
+                        id="modal_applicant_name_bn" class="bangla-input" placeholder="সম্পূর্ণ নাম বাংলায়"></div>
+                <div class="field-row"><label>Name (English):<span class="required-star">★</span></label><input
+                        type="text" id="modal_applicant_name_en" placeholder="Full Name in English"
+                        oninput="this.value = this.value.toUpperCase()"></div>
+                <div class="field-row"><label>NID (১০ ডিজিট):</label><input type="text" id="modal_applicant_nid_10"
+                        maxlength="10" placeholder="Smart Card NID"></div>
+                <div class="field-row"><label>NID (১৭ ডিজিট):</label><input type="text" id="modal_applicant_nid_17"
+                        maxlength="17" placeholder="Old / PIN NID"></div>
+                <div class="field-row"><label>Passport No:</label><input type="text" id="modal_applicant_passport_no"
+                        placeholder="Passport Number"></div>
+                <div class="field-row"><label>Passport Validity:</label><input type="date"
+                        id="modal_applicant_passport_validity" style="width:100%"></div>
+                <div class="field-row"><label>Birth Reg No:</label><input type="text" id="modal_applicant_birth_reg_no"
+                        placeholder="Birth Registration"></div>
+                <div class="field-row"><label>জন্ম তারিখ:</label><input type="date" id="modal_applicant_dob"
+                        style="width:100%" oninput="calculateAge()"></div>
+                <div class="field-row"><label>মোবাইল / Mobile:<span class="required-star">★</span></label><input
+                        type="text" id="modal_applicant_mobile" placeholder="01XXXXXXXXX"></div>
+                <div class="field-row"><label>Email:</label><input type="email" id="modal_applicant_email"
+                        placeholder="Email Address"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 1 — PERSONAL INFO                 -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/personal_info.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> ব্যক্তিগত
+                তথ্য &nbsp;|&nbsp; Personal Information</div>
+            <div class="bilingual-body">
+                <!-- BANGLA COLUMN -->
+                <div class="lang-col lang-col-bn">
+                    <div class="lang-col-header">🇧🇩 &nbsp; বাংলা তথ্য</div>
+                    <div class="field-row"><label>পিতার নাম:</label><input type="text"
+                            id="modal_applicant_father_name_bn" class="bangla-input" placeholder="পিতার পূর্ণ নাম">
+                    </div>
+                    <div class="field-row"><label>মাতার নাম:</label><input type="text"
+                            id="modal_applicant_mother_name_bn" class="bangla-input" placeholder="মাতার পূর্ণ নাম">
+                    </div>
+                    <div class="field-row"><label>স্বামী/স্ত্রীর নাম:</label><input type="text"
+                            id="modal_applicant_spouse_name_bn" class="bangla-input"
+                            placeholder="স্বামী বা স্ত্রীর নাম"></div>
+                    <div class="field-row"><label>লিঙ্গ:</label>
+                        <select id="modal_applicant_gender">
+                            <option value="">— নির্বাচন করুন —</option>
+                            <option value="Male">পুরুষ (Male)</option>
+                            <option value="Female">মহিলা (Female)</option>
+                            <option value="Third Gender">তৃতীয় লিঙ্গ</option>
+                        </select>
+                    </div>
+                    <div class="field-row">
+                        <label>বয়স:</label>
+                        <div id="display_age_bn"
+                            style="flex:1; padding:5px 8px; background:#f0fff4; border:1px solid #a5d6a7; border-radius:4px; font-size:0.85rem; font-weight:700; color:#1b5e20; min-height:28px; display:flex; align-items:center;">
+                            —</div>
+                    </div>
+                    <div class="field-row"><label>ধর্ম:</label>
+                        <select id="modal_applicant_religion">
+                            <option value="">— নির্বাচন করুন —</option>
+                            <option value="Islam">ইসলাম</option>
+                            <option value="Hinduism">হিন্দু</option>
+                            <option value="Christianity">খ্রিস্টান</option>
+                            <option value="Buddhism">বৌদ্ধ</option>
+                            <option value="Other">অন্যান্য</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>বৈবাহিক অবস্থা:</label>
+                        <select id="modal_applicant_marital_status">
+                            <option value="">— নির্বাচন করুন —</option>
+                            <option value="Married">বিবাহিত</option>
+                            <option value="Unmarried">অবিবাহিত</option>
+                            <option value="Divorced">তালাকপ্রাপ্ত</option>
+                            <option value="Widowed">বিধবা/বিপত্নীক</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>রক্তের গ্রুপ:</label>
+                        <select id="modal_applicant_blood_group">
+                            <option value="">—</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>জাতীয়তা:</label><input type="text" id="modal_applicant_nationality"
+                            value="Bangladeshi"></div>
+                    <div class="field-row"><label>আবাসিক মর্যাদা:</label>
+                        <select id="modal_applicant_resident_status">
+                            <option value="Resident">আবাসিক (Resident)</option>
+                            <option value="Non-Resident">অনাবাসিক (NRB)</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>বিকল্প মোবাইল:</label><input type="text"
+                            id="modal_applicant_alt_mobile" placeholder="বিকল্প মোবাইল নম্বর"></div>
+                    <div class="field-row"><label>TIN নম্বর:</label><input type="text" id="modal_applicant_tin"
+                            placeholder="করদাতা শনাক্তকরণ নং"></div>
+                </div>
+
+                <!-- ENGLISH COLUMN -->
+                <div class="lang-col lang-col-en">
+                    <div class="lang-col-header" style="color:#0d47a1; border-bottom-color:#bbdefb;">🇬🇧 &nbsp; English
+                        Information</div>
+                    <div class="field-row"><label>Father's Name:</label><input type="text"
+                            id="modal_applicant_father_name_en" placeholder="Father's Full Name"
+                            oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="field-row"><label>Mother's Name:</label><input type="text"
+                            id="modal_applicant_mother_name_en" placeholder="Mother's Full Name"
+                            oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="field-row"><label>Spouse Name:</label><input type="text"
+                            id="modal_applicant_spouse_name_en" placeholder="Husband / Wife Full Name"
+                            oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="field-row"><label>Gender:</label>
+                        <select id="modal_applicant_gender_en">
+                            <option value="">— Select —</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Third Gender">Third Gender</option>
+                        </select>
+                    </div>
+                    <div class="field-row">
+                        <label>Age:</label>
+                        <div id="display_age_en"
+                            style="flex:1; padding:5px 8px; background:#f0f4ff; border:1px solid #90caf9; border-radius:4px; font-size:0.85rem; font-weight:700; color:#0d47a1; min-height:28px; display:flex; align-items:center;">
+                            —</div>
+                    </div>
+                    <div class="field-row"><label>Religion:</label>
+                        <select id="modal_applicant_religion_en">
+                            <option value="">— Select —</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Hinduism">Hinduism</option>
+                            <option value="Christianity">Christianity</option>
+                            <option value="Buddhism">Buddhism</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Marital Status:</label>
+                        <select id="modal_applicant_marital_status_en">
+                            <option value="">— Select —</option>
+                            <option value="Married">Married</option>
+                            <option value="Unmarried">Unmarried</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Blood Group:</label>
+                        <select id="modal_applicant_blood_group_en">
+                            <option value="">—</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Nationality:</label><input type="text"
+                            id="modal_applicant_nationality_en" value="Bangladeshi"></div>
+                    <div class="field-row"><label>Resident Status:</label>
+                        <select id="modal_applicant_resident_status_en">
+                            <option value="Resident">Resident</option>
+                            <option value="Non-Resident">Non-Resident (NRB)</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Alt. Mobile:</label><input type="text"
+                            id="modal_applicant_alt_mobile_en" placeholder="Alternative Mobile Number"></div>
+                    <div class="field-row"><label>TIN Number:</label><input type="text" id="modal_applicant_tin_en"
+                            placeholder="Taxpayer Identification No."></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 2 — ADDRESS                       -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/address.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> ঠিকানা
+                &nbsp;|&nbsp; Address</div>
+            <div class="bilingual-body">
+                <!-- ═══ BANGLA ADDRESS COLUMN ═══ -->
+                <div class="lang-col lang-col-bn">
+                    <div class="lang-col-header">🇧🇩 &nbsp; বাংলা ঠিকানা</div>
+
+                    <div class="sub-label">বর্তমান ঠিকানা (Present Address)</div>
+                    <div class="field-row"><label>বাড়ি/হোল্ডিং:</label><input type="text"
+                            id="modal_applicant_curr_addr_house" class="bangla-input"
+                            placeholder="বাড়ি বা হোল্ডিং নম্বর"></div>
+                    <div class="field-row"><label>গ্রাম/মহল্লা:</label>
+                        <div style="position: relative; flex: 1;">
+                            <input type="text"
+                                id="modal_applicant_curr_addr_village" class="bangla-input" style="width: 100%"
+                                placeholder="গ্রাম বা মহল্লার নাম" autocomplete="off"
+                                oninput="filterLocationDropdown('curr')"
+                                onfocus="document.getElementById('loc_list_curr_custom').style.display='block'"
+                                onblur="setTimeout(()=>document.getElementById('loc_list_curr_custom').style.display='none',200)">
+                            <div id="loc_list_curr_custom"
+                                style="display:none; position:absolute; top:100%; left:0; right:0; max-height:180px; overflow-y:auto; background:white; border:1px solid #ccc; border-radius:4px; z-index:1000; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-row"><label>ডাকঘর:</label><input type="text" id="modal_applicant_curr_addr_post"
+                            class="bangla-input" placeholder="ডাকঘর"></div>
+                    <div class="field-row"><label>পোস্ট কোড:</label><input type="text"
+                            id="modal_applicant_curr_addr_post_code" class="bangla-input" placeholder="যেমন: ১২৩৪"
+                            oninput="this.value = this.value.replace(/[0-9]/g, m => '০১২৩৪৫৬৭৮৯'[m])"></div>
+                    <div class="field-row"><label>ইউনিয়ন:</label><input type="text"
+                            id="modal_applicant_curr_addr_union" class="bangla-input" placeholder="ইউনিয়ন"></div>
+                    <div class="field-row"><label>সিটি কর্পোরেশন:</label><input type="text"
+                            id="modal_applicant_curr_city_corp" class="bangla-input"
+                            placeholder="সিটি কর্পোরেশন (প্রযোজ্য হলে)"></div>
+                    <div class="field-row"><label>উপজেলা/থানা:</label><input type="text"
+                            id="modal_applicant_present_upozila" class="bangla-input" placeholder="উপজেলা বা থানা">
+                    </div>
+                    <div class="field-row"><label>জেলা:</label><input type="text" id="modal_applicant_present_district"
+                            class="bangla-input" placeholder="জেলা"></div>
+                    <div class="field-row"><label>বিভাগ:</label><input type="text" id="modal_applicant_present_division"
+                            class="bangla-input" placeholder="বিভাগ"></div>
+
+                    <!-- ✅ Same Address Tick -->
+                    <div
+                        style="margin:10px 0 6px; padding:7px 10px; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:5px; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="sameAddrBn" style="width:16px;height:16px;cursor:pointer;"
+                            onchange="applySameAddressBn(this.checked)">
+                        <label for="sameAddrBn"
+                            style="font-size:0.78rem; font-weight:700; color:#1b5e20; cursor:pointer;">✅ স্থায়ী ঠিকানা
+                            একই (Same as Present Address)</label>
+                    </div>
+
+                    <div class="sub-label">স্থায়ী ঠিকানা (Permanent Address)</div>
+                    <div class="field-row"><label>বাড়ি/হোল্ডিং:</label><input type="text"
+                            id="modal_applicant_perm_addr_house" class="bangla-input"
+                            placeholder="বাড়ি বা হোল্ডিং নম্বর"></div>
+                    <div class="field-row"><label>গ্রাম/মহল্লা:</label>
+                        <div style="position: relative; flex: 1;">
+                            <input type="text"
+                                id="modal_applicant_perm_addr_village" class="bangla-input" style="width: 100%"
+                                placeholder="গ্রাম বা মহল্লার নাম" autocomplete="off"
+                                oninput="filterLocationDropdown('perm')"
+                                onfocus="document.getElementById('loc_list_perm_custom').style.display='block'"
+                                onblur="setTimeout(()=>document.getElementById('loc_list_perm_custom').style.display='none',200)">
+                            <div id="loc_list_perm_custom"
+                                style="display:none; position:absolute; top:100%; left:0; right:0; max-height:180px; overflow-y:auto; background:white; border:1px solid #ccc; border-radius:4px; z-index:1000; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-row"><label>ডাকঘর:</label><input type="text" id="modal_applicant_perm_addr_post"
+                            class="bangla-input" placeholder="ডাকঘর"></div>
+                    <div class="field-row"><label>পোস্ট কোড:</label><input type="text"
+                            id="modal_applicant_perm_addr_post_code" class="bangla-input" placeholder="যেমন: ১২৩৪"
+                            oninput="this.value = this.value.replace(/[0-9]/g, m => '০১২৩৪৫৬৭৮৯'[m])"></div>
+                    <div class="field-row"><label>ইউনিয়ন:</label><input type="text"
+                            id="modal_applicant_perm_addr_union" class="bangla-input" placeholder="ইউনিয়ন"></div>
+                    <div class="field-row"><label>সিটি কর্পোরেশন:</label><input type="text"
+                            id="modal_applicant_perm_city_corp" class="bangla-input"
+                            placeholder="সিটি কর্পোরেশন (প্রযোজ্য হলে)"></div>
+                    <div class="field-row"><label>উপজেলা/থানা:</label><input type="text"
+                            id="modal_applicant_permanent_upozila" class="bangla-input" placeholder="উপজেলা বা থানা">
+                    </div>
+                    <div class="field-row"><label>জেলা:</label><input type="text"
+                            id="modal_applicant_permanent_district" class="bangla-input" placeholder="জেলা"></div>
+                    <div class="field-row"><label>বিভাগ:</label><input type="text"
+                            id="modal_applicant_permanent_division" class="bangla-input" placeholder="বিভাগ"></div>
+                    <div class="field-row"><label>স্থায়ী ফোন:</label><input type="text" id="modal_applicant_perm_phone"
+                            placeholder="স্থায়ী ফোন নম্বর"></div>
+                </div>
+
+                <!-- ═══ ENGLISH ADDRESS COLUMN ═══ -->
+                <div class="lang-col lang-col-en">
+                    <div class="lang-col-header" style="color:#0d47a1; border-bottom-color:#bbdefb;">🇬🇧 &nbsp; English
+                        Address</div>
+
+                    <div class="sub-label">Present Address</div>
+                    <div class="field-row"><label>House/Holding:</label><input type="text" id="modal_curr_addr_house_en"
+                            placeholder="House or Holding Number"></div>
+                    <div class="field-row"><label>Village/Road:</label><input type="text"
+                            id="modal_curr_addr_village_en" placeholder="Village or Road Name"></div>
+                    <div class="field-row"><label>Post Office:</label><input type="text" id="modal_curr_addr_post_en"
+                            placeholder="Post Office"></div>
+                    <div class="field-row"><label>Post Code:</label><input type="text" id="modal_curr_addr_post_code_en"
+                            class="english-input" placeholder="e.g. 1234"></div>
+                    <div class="field-row"><label>Union:</label><input type="text" id="modal_curr_addr_union_en"
+                            placeholder="Union"></div>
+                    <div class="field-row"><label>City Corporation:</label><input type="text"
+                            id="modal_curr_city_corp_en" placeholder="City Corporation (if applicable)"></div>
+                    <div class="field-row"><label>Upazila/Thana:</label><input type="text" id="modal_present_upozila_en"
+                            placeholder="Upazila or Thana"></div>
+                    <div class="field-row"><label>District:</label><input type="text" id="modal_present_district_en"
+                            placeholder="District"></div>
+                    <div class="field-row"><label>Division:</label><input type="text" id="modal_present_division_en"
+                            placeholder="Division"></div>
+
+                    <!-- ✅ Same Address Tick (English) -->
+                    <div
+                        style="margin:10px 0 6px; padding:7px 10px; background:#e3f2fd; border:1px solid #90caf9; border-radius:5px; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="sameAddrEn" style="width:16px;height:16px;cursor:pointer;"
+                            onchange="applySameAddressEn(this.checked)">
+                        <label for="sameAddrEn"
+                            style="font-size:0.78rem; font-weight:700; color:#0d47a1; cursor:pointer;">✅ Same as Present
+                            Address (Permanent)</label>
+                    </div>
+
+                    <div class="sub-label">Permanent Address</div>
+                    <div class="field-row"><label>House/Holding:</label><input type="text" id="modal_perm_addr_house_en"
+                            placeholder="House or Holding Number"></div>
+                    <div class="field-row"><label>Village/Road:</label><input type="text"
+                            id="modal_perm_addr_village_en" placeholder="Village or Road Name"></div>
+                    <div class="field-row"><label>Post Office:</label><input type="text" id="modal_perm_addr_post_en"
+                            placeholder="Post Office"></div>
+                    <div class="field-row"><label>Post Code:</label><input type="text" id="modal_perm_addr_post_code_en"
+                            class="english-input" placeholder="e.g. 1234"></div>
+                    <div class="field-row"><label>Union:</label><input type="text" id="modal_perm_addr_union_en"
+                            placeholder="Union"></div>
+                    <div class="field-row"><label>City Corporation:</label><input type="text"
+                            id="modal_perm_city_corp_en" placeholder="City Corporation (if applicable)"></div>
+                    <div class="field-row"><label>Upazila/Thana:</label><input type="text"
+                            id="modal_permanent_upozila_en" placeholder="Upazila or Thana"></div>
+                    <div class="field-row"><label>District:</label><input type="text" id="modal_permanent_district_en"
+                            placeholder="District"></div>
+                    <div class="field-row"><label>Division:</label><input type="text" id="modal_permanent_division_en"
+                            placeholder="Division"></div>
+                    <div class="field-row"><label>Permanent Phone:</label><input type="text" id="modal_perm_phone_en"
+                            placeholder="Permanent Phone Number"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION RELATIVES & ASSOCIATED CUSTOMERS   -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/relatives.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> আত্মীয় ও
+                সংশ্লিষ্ট গ্রাহকগণ &nbsp;|&nbsp; Relatives & Associated Customers</div>
+            <div class="table-section-body">
+                <div class="table-toolbar" style="gap: 10px; align-items: center; display: flex; position: relative;">
+                    <div style="position: relative; display: inline-block;">
+                        <input type="text" id="rel_search_nid" autocomplete="off"
+                            placeholder="এনআইডি বা নাম দিয়ে খুঁজুন..."
+                            style="width: 200px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8rem;">
+                        <div id="rel_search_suggestions"
+                            style="display: none; position: absolute; top: 100%; left: 0; width: 320px; max-height: 200px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; font-size: 0.85rem; text-align: left;">
+                        </div>
+                    </div>
+                    <select id="rel_type_select"
+                        style="width: 150px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8rem; height: auto; margin-left: 5px;">
+                        <option value="Co-applicant">সহ-আবেদনকারী (Co-applicant)</option>
+                        <option value="Guarantor">জামিনদার (Guarantor)</option>
+                        <option value="Proprietor">মালিক (Proprietor)</option>
+                        <option value="Partner">অংশীদার (Partner)</option>
+                        <option value="Director">পরিচালক (Director)</option>
+                        <option value="Spouse">স্বামী/স্ত্রী (Spouse)</option>
+                        <option value="Brother">ভাই (Brother)</option>
+                        <option value="Sister">বোন (Sister)</option>
+                        <option value="Father">পিতা (Father)</option>
+                        <option value="Mother">মাতা (Mother)</option>
+                    </select>
+                    <input type="text" id="rel_comments" placeholder="মন্তব্য (যেমন: ২য় জামিনদার, অংশীদার)..."
+                        style="width: 180px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.8rem; margin-left: 5px;">
+                    <button type="button" class="btn-add-row" onclick="addCustomerRelationship()">সংযুক্ত করুন
+                        (+)</button>
+                </div>
+                <table class="detail-table" style="margin-top: 10px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 1.5in;">এনআইডি (NID)</th>
+                            <th style="width: 2.0in;">নাম (Name)</th>
+                            <th style="width: 1.2in;">মোবাইল (Mobile)</th>
+                            <th style="width: 1.5in;">সম্পর্ক (Relationship)</th>
+                            <th style="width: 2.0in;">মন্তব্য (Comments)</th>
+                            <th style="width: 0.8in;">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relationship-list-body">
+                        <!-- Linked relations will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 3 — EDUCATION                     -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/education.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> শিক্ষা
+                &nbsp;|&nbsp; Education</div>
+            <div class="bilingual-body">
+                <div class="lang-col lang-col-bn">
+                    <div class="lang-col-header">🇧🇩 &nbsp; শিক্ষাগত তথ্য (বাংলা)</div>
+                    <div class="field-row"><label>শিক্ষাগত যোগ্যতা:</label><input type="text"
+                            id="modal_applicant_education_bn" class="bangla-input" placeholder="যেমন: এসএসসি, স্নাতক">
+                    </div>
+                    <div class="field-row"><label>প্রতিষ্ঠানের নাম:</label><input type="text"
+                            id="modal_applicant_institution_bn" class="bangla-input"
+                            placeholder="বিদ্যালয়/কলেজ/বিশ্ববিদ্যালয়"></div>
+                    <div class="field-row"><label>পাশের সাল:</label><input type="text" id="modal_applicant_pass_year"
+                            placeholder="পাশের বছর"></div>
+                </div>
+                <div class="lang-col lang-col-en">
+                    <div class="lang-col-header" style="color:#0d47a1; border-bottom-color:#bbdefb;">🇬🇧 &nbsp;
+                        Educational Info (English)</div>
+                    <div class="field-row"><label>Education Level:</label><input type="text"
+                            id="modal_applicant_education_en" placeholder="e.g. SSC, HSC, Graduation"></div>
+                    <div class="field-row"><label>Institution:</label><input type="text"
+                            id="modal_applicant_institution_en" placeholder="School / College / University"></div>
+                    <div class="field-row"><label>Passing Year:</label><input type="text"
+                            id="modal_applicant_pass_year_en" placeholder="Year of Passing"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 4 — OCCUPATION                    -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/occupation.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> পেশা
+                &nbsp;|&nbsp; Occupation</div>
+            <div class="bilingual-body">
+                <div class="lang-col lang-col-bn">
+                    <div class="lang-col-header">🇧🇩 &nbsp; পেশাগত তথ্য (বাংলা)</div>
+                    <div class="field-row"><label>পেশার ধরন:</label>
+                        <div style="position: relative; flex: 1;">
+                            <input type="text" id="modal_occupation_type" class="bangla-input" style="width: 100%"
+                                placeholder="লিখুন অথবা সিলেক্ট করুন" oninput="toggleBusinessTable()" autocomplete="off"
+                                onfocus="document.getElementById('occ_list_bn_custom').style.display='block'"
+                                onblur="setTimeout(()=>document.getElementById('occ_list_bn_custom').style.display='none',200)">
+                            <div id="occ_list_bn_custom"
+                                style="display:none; position:absolute; top:100%; left:0; right:0; max-height:180px; overflow-y:auto; background:white; border:1px solid #ccc; border-radius:4px; z-index:1000; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    সরকারী চাকুরী</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    বেসরকারী চাকুরী</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    ব্যবসা</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    কৃষি কাজ</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    ডাক্তার</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    গৃহিনী</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    সাংবাদিক</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    শিক্ষক</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    ফার্মাসিস্ট</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type').value=this.innerText; toggleBusinessTable()">
+                                    লেখক</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-row" id="row_farmer_card" style="display:none;"><label>কৃষক কার্ড
+                            নং:</label><input type="text" id="modal_applicant_farmer_card_no"
+                            placeholder="কৃষক কার্ড নম্বর"></div>
+                    <div class="field-row"><label>পেশার বিবরণ:</label><input type="text" id="modal_occupation_bn"
+                            class="bangla-input" placeholder="পেশার বিস্তারিত"></div>
+                    <div class="field-row"><label>পদবী:</label><input type="text" id="modal_designation_bn"
+                            class="bangla-input" placeholder="কর্মস্থলের পদবী"></div>
+                    <div class="field-row"><label>নিয়োগকর্তার নাম:</label><input type="text" id="modal_employer_name"
+                            class="bangla-input" placeholder="প্রতিষ্ঠান বা নিয়োগকর্তার নাম"></div>
+                    <div class="field-row"><label>মাসিক আয়:</label><input type="text" id="modal_monthly_income"
+                            placeholder="টাকায় মাসিক আয়"></div>
+                    <div class="field-row"><label>আয়ের উৎস:</label><input type="text" id="modal_applicant_fund_source"
+                            class="bangla-input" placeholder="আয়ের মূল উৎস"></div>
+                    <div class="field-row"><label>কর্মস্থলের ঠিকানা:</label><input type="text"
+                            id="modal_occupation_address_bn" class="bangla-input" placeholder="অফিস/কর্মস্থলের ঠিকানা">
+                    </div>
+                </div>
+                <div class="lang-col lang-col-en">
+                    <div class="lang-col-header" style="color:#0d47a1; border-bottom-color:#bbdefb;">🇬🇧 &nbsp;
+                        Occupation (English)</div>
+                    <div class="field-row"><label>Occupation Type:</label>
+                        <div style="position: relative; flex: 1;">
+                            <input type="text" id="modal_occupation_type_en" style="width: 100%"
+                                placeholder="Type or Select" oninput="toggleBusinessTable()" autocomplete="off"
+                                onfocus="document.getElementById('occ_list_en_custom').style.display='block'"
+                                onblur="setTimeout(()=>document.getElementById('occ_list_en_custom').style.display='none',200)">
+                            <div id="occ_list_en_custom"
+                                style="display:none; position:absolute; top:100%; left:0; right:0; max-height:180px; overflow-y:auto; background:white; border:1px solid #ccc; border-radius:4px; z-index:1000; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Government Job</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Private Job</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Business</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Agriculture</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Doctor</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Housewife</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Journalist</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Pharmacist</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Teacher</div>
+                                <div class="custom-dropdown-item"
+                                    onclick="document.getElementById('modal_occupation_type_en').value=this.innerText; toggleBusinessTable()">
+                                    Writer</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-row"><label>Occupation:</label><input type="text" id="modal_occupation_en"
+                            placeholder="Detailed occupation"></div>
+                    <div class="field-row"><label>Designation:</label><input type="text" id="modal_designation_en"
+                            placeholder="Job title or designation"></div>
+                    <div class="field-row"><label>Employer:</label><input type="text" id="modal_employer_name_en"
+                            placeholder="Employer or Organization"></div>
+                    <div class="field-row" id="row_produced_goods_en" style="display:none;"><label>Produced
+                            Goods:</label><input type="text" id="modal_applicant_produced_goods_en"
+                            placeholder="Produced Goods"></div>
+                    <div class="field-row"><label>Monthly Income:</label><input type="text" id="modal_monthly_income_en"
+                            placeholder="Monthly income in BDT"></div>
+                    <div class="field-row"><label>Income Source:</label><input type="text"
+                            id="modal_applicant_fund_source_en" placeholder="Primary income source"></div>
+                    <div class="field-row"><label>Work Address:</label><input type="text"
+                            id="modal_occupation_address_en" placeholder="Office / Work place address"></div>
+                </div>
+            </div>
+
+            <!-- Business Licenses Table (Hidden by default) -->
+            <div id="business_licenses_container"
+                style="display:none; padding:15px; border-top: 1px solid #d0d8e0; background: #f9fbf9;">
+                <div style="font-weight: bold; color: #1a6b3a; margin-bottom: 10px;">📋 ট্রেড লাইসেন্স / Business
+                    Licenses</div>
+                <div class="table-toolbar">
+                    <button class="btn-add-row" onclick="addBusinessLicenseRow()">+ লাইসেন্স যোগ করুন &nbsp;|&nbsp; Add
+                        License</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="businessLicensesTable" class="detail-table">
+                        <thead>
+                            <tr>
+                                <th>লাইসেন্সের নাম / License Name</th>
+                                <th>লাইসেন্স নম্বর / License No</th>
+                                <th>ইস্যু তারিখ / Issue Date</th>
+                                <th>মেয়াদ / Validity</th>
+                                <th>ইস্যুকারী কর্তৃপক্ষ / Issuing Authority</th>
+                                <th style="width:50px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Agriculture Land Details (Hidden by default, shown when কৃষি কাজ selected) -->
+            <div id="agri_land_container"
+                style="display:none; padding:15px; border-top: 1px solid #c8e6c9; background: #f1f8e9;">
+                <div style="font-weight:bold; color:#2e7d32; margin-bottom:8px; font-size:1rem;">🌾 আবেদনকৃত ঋণের
+                    সংশ্লিষ্ট চাষাধীন জমি ও উৎপাদিত ফসলের বিস্তারিত বিবরণ:</div>
+                <div style="font-size:0.82rem; color:#558b2f; margin-bottom:10px;">(জমির পরিমাণ একরে)</div>
+
+                <!-- জমির বিবরণ — Exact popup UI from Agri Loan form -->
+                <div
+                    style="background:#e8f5e9; border:1px solid #a5d6a7; border-radius:6px; padding:12px; margin-bottom:12px;">
+                    <div style="font-weight:600; color:#1b5e20; margin-bottom:10px; font-size:0.9rem;">➕ জমির বিবরণ —
+                        নতুন এন্ট্রি যোগ করুন</div>
+
+                    <!-- Main land row (mirrors agri loan popup জমির বিবরণ section exactly) -->
+                    <div
+                        style="display:flex; gap:8px; flex-wrap:nowrap; align-items:flex-end; overflow-x:auto; padding-bottom:4px;">
+
+                        <!-- মালিকানা -->
+                        <div style="display:flex; flex-direction:column; flex:none; width:70px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center; white-space:nowrap;">মালিকানা</label>
+                            <select id="cp_land_ownership_type"
+                                style="width:100%; padding:4px; font-family:inherit; border:1px solid #a5d6a7; border-radius:3px;">
+                                <option value="own">নিজ</option>
+                                <option value="share">বর্গা</option>
+                                <option value="lease">লিজ</option>
+                            </select>
+                        </div>
+
+                        <!-- মৌজা -->
+                        <div style="display:flex; flex-direction:column; flex:1.5; min-width:130px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center;">মৌজা</label>
+                            <input id="cp_land_mouza" type="text"
+                                style="padding:4px; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit; width:100%;">
+                        </div>
+
+                        <!-- খতিয়ান ধরণ -->
+                        <div style="display:flex; flex-direction:column; flex:2; min-width:140px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center;">খতিয়ান
+                                ধরণ</label>
+                            <div style="display:flex; align-items:center; gap:2px; width:100%;">
+                                <div style="width:48%;">
+                                    <select id="cp_khatian_type_1_sel"
+                                        style="width:100%; padding:4px; font-family:inherit; border:1px solid #a5d6a7; border-radius:3px;"
+                                        onchange="cpHandleKhatianSelect(1)">
+                                        <option value="">সিলেক্ট</option>
+                                        <option value="দিয়ারা">দিয়ারা</option>
+                                        <option value="সিএস">সিএস</option>
+                                        <option value="এসএ">এসএ</option>
+                                        <option value="আরএস">আরএস</option>
+                                        <option value="বিএস">বিএস</option>
+                                        <option value="write">লিখুন</option>
+                                    </select>
+                                    <input id="cp_khatian_type_1_txt" type="text"
+                                        style="display:none; padding:4px; width:100%; text-align:center; font-family:inherit; border:1px solid #a5d6a7; border-radius:3px;"
+                                        placeholder="লিখুন" title="Double click to reset"
+                                        ondblclick="cpResetKhatianSelect(1)" oninput="cpSyncKhatianToDag(1)">
+                                </div>
+                                <span>/</span>
+                                <div style="width:48%;">
+                                    <select id="cp_khatian_type_2_sel"
+                                        style="width:100%; padding:4px; font-family:inherit; border:1px solid #a5d6a7; border-radius:3px;"
+                                        onchange="cpHandleKhatianSelect(2)">
+                                        <option value="">সিলেক্ট</option>
+                                        <option value="দিয়ারা">দিয়ারা</option>
+                                        <option value="সিএস">সিএস</option>
+                                        <option value="এসএ">এসএ</option>
+                                        <option value="আরএস">আরএস</option>
+                                        <option value="বিএস">বিএস</option>
+                                        <option value="write">লিখুন</option>
+                                    </select>
+                                    <input id="cp_khatian_type_2_txt" type="text"
+                                        style="display:none; padding:4px; width:100%; text-align:center; font-family:inherit; border:1px solid #a5d6a7; border-radius:3px;"
+                                        placeholder="লিখুন" title="Double click to reset"
+                                        ondblclick="cpResetKhatianSelect(2)" oninput="cpSyncKhatianToDag(2)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- খতিয়ান নং -->
+                        <div style="display:flex; flex-direction:column; flex:1.4; min-width:130px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center;">খতিয়ান
+                                নং</label>
+                            <div style="display:flex; align-items:center; gap:2px;">
+                                <input id="cp_khatian_no_1" type="text"
+                                    style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;">
+                                <span>/</span>
+                                <input id="cp_khatian_no_2" type="text"
+                                    style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;">
+                            </div>
+                        </div>
+
+                        <!-- দাগের ধরণ (auto-synced) -->
+                        <div style="display:flex; flex-direction:column; flex:1.2; min-width:110px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center;">দাগের
+                                ধরণ</label>
+                            <div style="display:flex; align-items:center; gap:2px;">
+                                <input id="cp_dag_type_1" type="text"
+                                    style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;"
+                                    readonly placeholder="auto">
+                                <span>/</span>
+                                <input id="cp_dag_type_2" type="text"
+                                    style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;"
+                                    readonly placeholder="auto">
+                            </div>
+                        </div>
+
+                        <!-- দাগ নং + একাধিক/বাটা দাগ -->
+                        <div style="display:flex; align-items:flex-end; flex:3.5; min-width:220px; gap:5px;">
+                            <div style="display:flex; flex-direction:column; flex-grow:1; text-align:center;">
+                                <label
+                                    style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center;">দাগ
+                                    নং</label>
+                                <div style="width:100%;">
+                                    <div id="cp_dag_normal_container"
+                                        style="display:flex; align-items:center; gap:2px;">
+                                        <input id="cp_dag_no_1" type="text"
+                                            style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;">
+                                        <span>/</span>
+                                        <input id="cp_dag_no_2" type="text"
+                                            style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;">
+                                    </div>
+                                    <div id="cp_dag_bata_container" style="display:none; align-items:center; gap:2px;">
+                                        <div
+                                            style="display:flex; flex-direction:column; width:48%; border:1px solid #ccc; border-radius:3px;">
+                                            <input id="cp_dag_batta_1_num" type="text"
+                                                style="width:100%; border:none; border-bottom:1px solid #ccc; padding:2px; text-align:center; font-size:12px; font-family:inherit;">
+                                            <input id="cp_dag_batta_1_den" type="text"
+                                                style="width:100%; border:none; padding:2px; text-align:center; font-size:12px; font-family:inherit;">
+                                        </div>
+                                        <span>/</span>
+                                        <div
+                                            style="display:flex; flex-direction:column; width:48%; border:1px solid #ccc; border-radius:3px;">
+                                            <input id="cp_dag_batta_2_num" type="text"
+                                                style="width:100%; border:none; border-bottom:1px solid #ccc; padding:2px; text-align:center; font-size:12px; font-family:inherit;">
+                                            <input id="cp_dag_batta_2_den" type="text"
+                                                style="width:100%; border:none; padding:2px; text-align:center; font-size:12px; font-family:inherit;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:row; gap:4px; margin-bottom:2px; flex:none;">
+                                <button type="button" id="cp_add_more_dag_btn"
+                                    style="font-size:10px; padding:2px 6px; cursor:pointer; border:1px solid #a5d6a7; background:#e8f5e9; border-radius:3px; white-space:nowrap; font-family:inherit;">একাধিক</button>
+                                <button type="button" id="cp_bata_dag_btn"
+                                    style="font-size:10px; padding:2px 6px; cursor:pointer; border:1px solid #a5d6a7; background:#e8f5e9; border-radius:3px; white-space:nowrap; font-family:inherit;">বাটা
+                                    দাগ</button>
+                            </div>
+                        </div>
+
+                        <!-- পরিমাণ (একর) -->
+                        <div style="display:flex; flex-direction:column; flex:none; width:95px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center; white-space:nowrap;">পরিমাণ
+                                (একর)</label>
+                            <input id="cp_land_area" type="text"
+                                style="padding:4px; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit; width:100%;">
+                        </div>
+
+                        <!-- উৎপাদিতব্য ফসল -->
+                        <div style="display:flex; flex-direction:column; flex:1.5; min-width:120px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center; white-space:nowrap;">উৎপাদিতব্য
+                                ফসল</label>
+                            <input id="cp_land_crop" type="text" class="bangla-input" placeholder="ফসলের নাম"
+                                style="padding:4px; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit; width:100%;">
+                        </div>
+
+                        <!-- প্রার্থীত ঋণ (টাকা) -->
+                        <div style="display:flex; flex-direction:column; flex:1; min-width:100px; text-align:center;">
+                            <label
+                                style="font-size:11px; padding:0 4px; border:1px solid #ccc; background:#e8f5e9; border-radius:3px; margin-bottom:2px; display:inline-block; align-self:center; white-space:nowrap;">প্রার্থীত
+                                ঋণ (টাকা)</label>
+                            <input id="cp_land_loan" type="text" placeholder="ঋণের পরিমাণ"
+                                style="padding:4px; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit; width:100%;">
+                        </div>
+
+                        <!-- + যুক্ত করুন button -->
+                        <div style="padding-bottom:1px; flex:none;">
+                            <button type="button" onclick="cpAddLand()"
+                                style="padding:5px 12px; background:#2e7d32; color:white; border:none; border-radius:4px; cursor:pointer; font-family:inherit; font-size:0.85rem; white-space:nowrap;">+
+                                যুক্ত করুন</button>
+                        </div>
+
+                    </div>
+
+                    <!-- Dynamic extra dag rows container -->
+                    <div id="cp_dynamic_dag_container" style="margin-top:4px;"></div>
+                </div>
+
+                <!-- Land Details Table (matching Section 7 of Agri Loan form) -->
+                <div style="overflow-x:auto;">
+                    <table id="agriLandTable" class="detail-table"
+                        style="border-collapse:collapse; width:100%; text-align:center; font-size:0.82rem;">
+                        <thead>
+                            <tr style="background:#2e7d32; color:white;">
+                                <th style="text-align:left; padding:6px 8px; border:1px solid #a5d6a7;">জমির ধরন</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">মৌজার নাম</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">খতিয়ান নং</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">দাগ নং</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">জমির পরিমাণ<br><span
+                                        style="font-weight:normal; font-size:0.75rem;">(একর)</span></th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">উৎপাদিতব্য<br>ফসলের নাম</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7;">প্রার্থীত ঋণ/বিনিয়োগের<br>পরিমাণ
+                                    (টাকা)</th>
+                                <th style="padding:6px 8px; border:1px solid #a5d6a7; width:50px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agriLandTableBody"></tbody>
+                        <tfoot>
+                            <tr style="background:#f1f8e9; font-weight:bold;">
+                                <td colspan="4" style="text-align:right; padding:5px 8px; border:1px solid #a5d6a7;">মোট
+                                    জমির পরিমাণ:</td>
+                                <td id="agri_total_land_area"
+                                    style="padding:5px 8px; border:1px solid #a5d6a7; color:#1b5e20;">০</td>
+                                <td colspan="3" style="border:1px solid #a5d6a7;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 5 — BANK PORTFOLIO                -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/statement.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> ব্যাংক
+                পোর্টফোলিও &nbsp;|&nbsp; Bank Portfolio (Accounts)</div>
+            <div class="table-section-body">
+                <div class="table-toolbar">
+                    <button class="btn-add-row" onclick="addAccountRow()">+ অ্যাকাউন্ট যোগ করুন &nbsp;|&nbsp; Add
+                        Account</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="customerAccountsTable" class="detail-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">Sl</th>
+                                <th>Customer Code</th>
+                                <th>Account Number</th>
+                                <th>Account Type</th>
+                                <th>A/C Title</th>
+                                <th>A/C Opened Date</th>
+                                <th style="width:50px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 6 — LOAN DETAILS                  -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/loan.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> ঋণ বিবরণ
+                &nbsp;|&nbsp; Loan Details</div>
+            <div class="table-section-body">
+                <div class="table-toolbar">
+                    <button class="btn-add-row" onclick="addLoanRow()">+ ঋণ যোগ করুন &nbsp;|&nbsp; Add Loan</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="customerLoansTable" class="detail-table">
+                        <thead>
+                            <tr>
+                                <th>Loan Product</th>
+                                <th>Account No</th>
+                                <th>Sanctioned (Tk)</th>
+                                <th>Outstanding (Tk)</th>
+                                <th>Interest Rate (%)</th>
+                                <th>Sanction Date</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                                <th style="width:50px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 7 — TRANSACTION HISTORY           -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/transactions.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> লেনদেন
+                ইতিহাস &nbsp;|&nbsp; Transaction History (RTGS / EFTN)</div>
+            <div class="table-section-body">
+                <div class="table-toolbar">
+                    <button class="btn-add-row" onclick="addTransactionRow()">+ লেনদেন যোগ করুন &nbsp;|&nbsp; Add
+                        Transaction</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="customerTransactionsTable" class="detail-table">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">SL</th>
+                                <th style="width:40px;">Type</th>
+                                <th>Frm A/C</th>
+                                <th>To Bank</th>
+                                <th>To Branch</th>
+                                <th>Beneficiary Name</th>
+                                <th>Beneficiary A/C</th>
+                                <th>Amount (Tk)</th>
+                                <th>TR Date</th>
+                                <th style="width:70px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 7.5 — TRANSACTION PROFILE         -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header"><img src="../../assets/icons/tp.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> লেনদেন
+                প্রোফাইল &nbsp;|&nbsp; Transaction Profile (TP)</div>
+            <div class="table-section-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Deposit TP -->
+                <div>
+                    <div
+                        style="font-weight: bold; color: var(--bank-green); margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+                        Deposit Information (জমা)
+                        <button class="btn-add-row" onclick="addTPRow('deposit')"
+                            style="padding: 2px 8px; font-size: 0.8rem;">+ Add Deposit TP</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table id="customerTpDepositTable" class="detail-table" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th>Type (Category)</th>
+                                    <th>No. of Tx</th>
+                                    <th>Max Amount</th>
+                                    <th>Total Amount</th>
+                                    <th style="width:40px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Withdrawal TP -->
+                <div>
+                    <div
+                        style="font-weight: bold; color: var(--bank-green); margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+                        Withdrawal Information (উত্তোলন)
+                        <button class="btn-add-row" onclick="addTPRow('withdraw')"
+                            style="padding: 2px 8px; font-size: 0.8rem;">+ Add Withdrawal TP</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table id="customerTpWithdrawTable" class="detail-table" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th>Type (Category)</th>
+                                    <th>No. of Tx</th>
+                                    <th>Max Amount</th>
+                                    <th>Total Amount</th>
+                                    <th style="width:40px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 8 — AML HISTORY                   -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section-card">
+            <div class="section-header aml-header"><img src="../../assets/icons/aml.svg"
+                    style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" alt="icon"> AML ইতিহাস
+                &nbsp;|&nbsp; AML / Compliance History</div>
+            <div class="aml-grid">
+                <div class="aml-block">
+                    <h4>🔴 CTR — সন্দেহজনক নগদ লেনদেন (Cash Transaction Report)</h4>
+                    <div class="aml-check">
+                        <input type="checkbox" id="modal_named_in_ctr">
+                        <label for="modal_named_in_ctr">CTR-এ নাম উল্লেখ আছে (Named in CTR)</label>
+                    </div>
+                    <div class="field-row" style="margin-bottom:6px;">
+                        <label style="width:80px; font-size:0.75rem;">তারিখ / Date:</label>
+                        <input type="date" id="modal_ctr_date">
+                    </div>
+                    <label class="detail-label">বিস্তারিত / Details:</label>
+                    <textarea id="modal_ctr_details" placeholder="CTR সম্পর্কে বিস্তারিত তথ্য লিখুন..."></textarea>
+                </div>
+                <div class="aml-block str-block">
+                    <h4>🟡 STR — সন্দেহজনক লেনদেন প্রতিবেদন (Suspicious Transaction Report)</h4>
+                    <div class="aml-check">
+                        <input type="checkbox" id="modal_named_in_str">
+                        <label for="modal_named_in_str">STR-এ নাম উল্লেখ আছে (Named in STR)</label>
+                    </div>
+                    <div class="field-row" style="margin-bottom:6px;">
+                        <label style="width:80px; font-size:0.75rem;">তারিখ / Date:</label>
+                        <input type="date" id="modal_str_date">
+                    </div>
+                    <label class="detail-label">বিস্তারিত / Details:</label>
+                    <textarea id="modal_str_details" placeholder="STR সম্পর্কে বিস্তারিত তথ্য লিখুন..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ ACTION BAR ══ -->
+        <div class="action-bar">
+            <button class="btn-secondary" id="btn-close-customer-profile">✕ বন্ধ করুন / Close</button>
+            <button class="btn-primary" style="background-color: #d9534f; color: white; border-color: #d43f3a;"
+                onclick="deleteCustomerProfile()">🗑 মুছে ফেলুন / Delete</button>
+            <button class="btn-primary" id="btn-save-customer">💾 সংরক্ষণ করুন / Save Profile</button>
+        </div>
+
+        <!-- ══ PHOTO ADJUST MODAL ══ -->
+        <div id="photoAdjustModal" class="modal-overlay">
+            <div class="modal-box">
+                <h3>ছবি সমন্বয় করুন &nbsp;|&nbsp; Adjust Photo</h3>
+                <div id="cropperContainer"
+                    style="width:100%; height:380px; background:#222; position:relative; overflow:hidden; cursor:move; border-radius:6px;">
+                    <img id="cropPreviewImage" src=""
+                        style="position:absolute; top:0; left:0; transform-origin:top left; pointer-events:none;">
+                    <div id="cropFrame"
+                        style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:132px; height:170px; border:2px solid #4caf50; box-shadow:0 0 0 2000px rgba(0,0,0,0.65); z-index:10; pointer-events:none;">
+                    </div>
+                </div>
+                <div style="margin-top:12px; display:flex; align-items:center; gap:10px;">
+                    <label style="font-size:0.85rem; white-space:nowrap;">Zoom:</label>
+                    <input type="range" id="cropZoomSlider" min="0.1" max="3" step="0.01" value="1" style="flex:1;">
+                </div>
+                <div style="font-size:0.75rem; color:#888; margin-top:4px;">মাউস দিয়ে ড্রাগ করে ছবি পজিশন করুন</div>
+                <div class="modal-box-footer">
+                    <button id="btn-apply-crop" class="btn-primary">✔ Apply Crop</button>
+                    <button id="btn-cancel-crop" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // ══ UTILITIES ══
+            function toEnglishDigits(str) {
+                if (!str) return "";
+                const bd = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+                return str.toString().replace(/[০-৯]/g, d => bd.indexOf(d)).replace(/[\s-]/g, '');
+            }
+            function parseJsonArray(v) {
+                if (!v) return [];
+                if (Array.isArray(v)) return v;
+                try { return JSON.parse(v); } catch { return []; }
+            }
+            const getVal = id => document.getElementById(id)?.value || '';
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+            const getChecked = id => document.getElementById(id)?.checked ? 1 : 0;
+            const setChecked = (id, v) => { const el = document.getElementById(id); if (el) el.checked = !!v; };
+
+            // ══ TABLE ROW BUILDERS ══
+            window.removeCustomerRow = btn => btn.closest('tr').remove();
+
+            function makeRow(values, removeFunc) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = values.map(v =>
+                    v === '__btn__'
+                        ? `<td style="text-align:center"><button class="btn-remove-row" onclick="${removeFunc}(this)">✕</button></td>`
+                        : `<td><input type="text" value="${String(v || '').replace(/"/g, '&quot;')}"></td>`
+                ).join('');
+                return tr;
+            }
+
+            window.addAccountRow = (a = {}) => {
+                const tbody = document.querySelector('#customerAccountsTable tbody');
+                const sl = tbody.children.length + 1;
+                tbody.appendChild(makeRow(
+                    [a.sl || sl, a.customer_code || '', a.account_no || '', a.account_type || '', a.account_title || a.account_title_en || a.account_title_bn || '', a.opened_at || '', '__btn__'],
+                    'removeCustomerRow'));
+            };
+            window.addLoanRow = (l = {}) => {
+                document.querySelector('#customerLoansTable tbody').appendChild(makeRow(
+                    [l.product || '', l.account_no || '', l.sanctioned_amount || '', l.outstanding_amount || '',
+                    l.interest_rate || '', l.sanction_date || '', l.expiry_date || '', l.status || '', '__btn__'],
+                    'removeCustomerRow'));
+            };
+            window.addTransactionRow = (t = {}, rowIndex) => {
+                const formatDateToDMY = (dateStr) => {
+                    if (!dateStr) return '';
+                    const clean = String(dateStr).trim();
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
+                        const [y, m, d] = clean.split('-');
+                        return `${d}/${m}/${y}`;
+                    }
+                    return clean;
+                };
+                const tbody = document.querySelector('#customerTransactionsTable tbody');
+                const sl = (rowIndex !== undefined ? rowIndex : tbody.children.length) + 1;
+                const row = document.createElement('tr');
+                const fields = [
+                    { val: sl, readOnly: true },
+                    { val: t.type || '' },
+                    { val: t.sender_account || t.account_no || '' },
+                    { val: t.to_bank || '' },
+                    { val: t.to_branch || '' },
+                    { val: t.receiver_name || '' },
+                    { val: t.account_no || '' },
+                    { val: t.amount || '' },
+                    { val: t.date ? formatDateToDMY(t.date) : '' }
+                ];
+                fields.forEach(f => {
+                    const td = document.createElement('td');
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.className = 'cell-input english-input';
+                    inp.value = f.val;
+                    if (f.readOnly) { inp.readOnly = true; inp.style.background = '#f5f5f5'; inp.style.textAlign = 'center'; }
+                    td.appendChild(inp);
+                    row.appendChild(td);
+                });
+                if (t.id) row.dataset.txId = t.id;
+                if (t.type) row.dataset.txType = t.type;
+
+                // Action cell
+                const actionTd = document.createElement('td');
+                actionTd.style.textAlign = 'center';
+                actionTd.innerHTML = '<button type="button" class="btn-remove-row" style="cursor:pointer; font-size: 14px;" onclick="deleteTransactionRow(this)" title="Delete Transaction">❌</button>';
+                row.appendChild(actionTd);
+                tbody.appendChild(row);
+            };
+            window.renumberTxRows = function () {
+                try {
+                    document.querySelectorAll('#customerTransactionsTable tbody tr').forEach((row, i) => {
+                        const inp = row.querySelector('input');
+                        if (inp) inp.value = i + 1;
+                    });
+                } catch (e) { console.error("Error in renumberTxRows:", e); }
+            };
+
+            window.deleteTransactionRow = async function (btn) {
+                if (!(await window.parent.appConfirm("Are you sure you want to delete this transaction? This cannot be undone."))) return;
+                const row = btn.closest('tr');
+                const txId = row.dataset.txId;
+                const txType = row.dataset.txType;
+
+                if (txId && txType) {
+                    try {
+                        const res = await window.parent.ipcRenderer.invoke('db-delete-transaction', txType, txId);
+                        if (!res.success) {
+                            alert("Failed to delete transaction from database: " + res.error);
+                            return;
+                        }
+                    } catch (e) {
+                        console.error("IPC Error deleting transaction:", e);
+                        alert("Error deleting transaction: " + e.message);
+                        return;
+                    }
+                }
+
+                row.remove();
+                if (window.renumberTxRows) window.renumberTxRows();
+            };
+
+            window.addTPRow = (t = {}) => {
+                const isDep = (typeof t === 'string' ? t === 'deposit' : t.type === 'deposit');
+                const tableId = isDep ? 'customerTpDepositTable' : 'customerTpWithdrawTable';
+                const tbody = document.querySelector(`#${tableId} tbody`);
+                const row = document.createElement('tr');
+                const dataObj = typeof t === 'string' ? {} : t;
+
+                // Hidden type input
+                const typeInp = document.createElement('input');
+                typeInp.type = 'hidden';
+                typeInp.value = isDep ? 'deposit' : 'withdraw';
+                row.appendChild(typeInp);
+
+                // Category Dropdown
+                const catTd = document.createElement('td');
+                const select = document.createElement('select');
+                select.className = 'cell-input english-input';
+                select.innerHTML = `
+                <option value="cash">নগদ (অনলাইন ও এটিএম সহ)</option>
+                <option value="transfer">ট্রান্সফার/ইন্সট্রুমেন্ট এর মাধ্যমে</option>
+                <option value="remittance">ফরেন রেমিট্যান্স</option>
+                <option value="export_import">আমদানী/রপ্তানী বাবদ পরিশোধ</option>
+                <option value="bo">BO (পুঁজি বাজার) হিসাব হতে জমা স্থানাস্তর</option>
+                <option value="others">অন্যান্য (নির্দিষ্টভাবে)</option>
+            `;
+                select.value = dataObj.cat || 'cash';
+                catTd.appendChild(select);
+                row.appendChild(catTd);
+
+                const fields = [
+                    { val: dataObj.no || '' },
+                    { val: dataObj.max || '' },
+                    { val: dataObj.total || '' }
+                ];
+                fields.forEach(f => {
+                    const td = document.createElement('td');
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.className = 'cell-input english-input';
+                    inp.value = f.val;
+                    td.appendChild(inp);
+                    row.appendChild(td);
+                });
+                // Action cell
+                const actionTd = document.createElement('td');
+                actionTd.style.textAlign = 'center';
+                actionTd.innerHTML = '<button class="btn-remove-row" onclick="this.closest(\'tr\').remove()" title="Remove">×</button>';
+                row.appendChild(actionTd);
+                tbody.appendChild(row);
+            };
+
+            function getTableRows(tableId, keys) {
+                return Array.from(document.querySelectorAll(`#${tableId} tbody tr`))
+                    .map(row => {
+                        const inputs = Array.from(row.querySelectorAll('input, select'));
+                        const obj = {};
+                        keys.forEach((k, i) => { obj[k] = inputs[i]?.value.trim() || ''; });
+                        return obj;
+                    }).filter(obj => Object.values(obj).some(v => v));
+            }
+
+            // ══ PHOTO CROP TOOL ══
+            let cropState = { img: null, x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+            const adjustModal = document.getElementById('photoAdjustModal');
+            const cropImg = document.getElementById('cropPreviewImage');
+            const zoomSlider = document.getElementById('cropZoomSlider');
+            const cropperCont = document.getElementById('cropperContainer');
+
+            function updateCropPreview() {
+                if (cropImg) cropImg.style.transform = `translate(${cropState.x}px,${cropState.y}px) scale(${cropState.scale})`;
+            }
+            document.getElementById('modalCustomerPhotoInput')?.addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = new Image();
+                    img.onload = () => {
+                        cropState.img = img; cropImg.src = img.src;
+                        const r = cropperCont.getBoundingClientRect();
+                        cropState.scale = Math.max(132 / img.width, 170 / img.height);
+                        cropState.x = (r.width - img.width * cropState.scale) / 2;
+                        cropState.y = (r.height - img.height * cropState.scale) / 2;
+                        if (zoomSlider) { zoomSlider.value = cropState.scale; zoomSlider.min = cropState.scale * 0.5; zoomSlider.max = cropState.scale * 5; }
+                        updateCropPreview();
+                        adjustModal.classList.add('visible');
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+            cropperCont?.addEventListener('mousedown', e => { cropState.isDragging = true; cropState.startX = e.clientX - cropState.x; cropState.startY = e.clientY - cropState.y; });
+            window.addEventListener('mousemove', e => { if (!cropState.isDragging) return; cropState.x = e.clientX - cropState.startX; cropState.y = e.clientY - cropState.startY; updateCropPreview(); });
+            window.addEventListener('mouseup', () => { cropState.isDragging = false; });
+            zoomSlider?.addEventListener('input', e => {
+                const ns = parseFloat(e.target.value), r = cropperCont.getBoundingClientRect();
+                cropState.x = r.width / 2 - (r.width / 2 - cropState.x) * (ns / cropState.scale);
+                cropState.y = r.height / 2 - (r.height / 2 - cropState.y) * (ns / cropState.scale);
+                cropState.scale = ns; updateCropPreview();
+            });
+            document.getElementById('btn-apply-crop')?.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 132; canvas.height = 170;
+                const ctx = canvas.getContext('2d');
+                const cr = cropperCont.getBoundingClientRect(), fr = document.getElementById('cropFrame').getBoundingClientRect();
+                ctx.drawImage(cropState.img, (fr.left - cr.left - cropState.x) / cropState.scale, (fr.top - cr.top - cropState.y) / cropState.scale, 132 / cropState.scale, 170 / cropState.scale, 0, 0, 132, 170);
+                document.getElementById('modalCustomerPhoto').src = canvas.toDataURL('image/jpeg', 0.9);
+                adjustModal.classList.remove('visible');
+            });
+            document.getElementById('btn-cancel-crop')?.addEventListener('click', () => adjustModal.classList.remove('visible'));
+
+            // ══ POPULATE FORM ══
+            function populateForm(c = {}) {
+                window.currentLoadedNid = c.applicant_nid || null;
+                const photoEl = document.getElementById('modalCustomerPhoto');
+                photoEl.src = (c.photo && c.photo.startsWith('data:image')) ? c.photo : '../../assets/images/user_placeholder.png';
+                const badge = document.getElementById('display_nid_badge');
+                if (badge) badge.textContent = `NID: ${c.applicant_nid || '—'}`;
+
+                // Quick strip
+                setVal('modal_applicant_name_bn', c.applicant_name_bn);
+                setVal('modal_applicant_name_en', c.applicant_name_en ? c.applicant_name_en.toUpperCase() : '');
+                setVal('modal_applicant_nid_10', c.applicant_nid_10);
+                setVal('modal_applicant_nid_17', c.applicant_nid_17);
+                setVal('modal_applicant_passport_no', c.applicant_passport_no);
+                setVal('modal_applicant_passport_validity', c.applicant_passport_validity);
+                setVal('modal_applicant_birth_reg_no', c.applicant_birth_reg_no);
+                setVal('modal_applicant_dob', c.applicant_dob);
+                setVal('modal_applicant_mobile', c.applicant_mobile);
+
+                // Personal BN
+                setVal('modal_applicant_father_name_bn', c.applicant_father_name_bn);
+                setVal('modal_applicant_mother_name_bn', c.applicant_mother_name_bn);
+                setVal('modal_applicant_spouse_name_bn', c.applicant_spouse_name_bn);
+                setVal('modal_applicant_gender', c.applicant_gender);
+                setVal('modal_applicant_religion', c.applicant_religion);
+                setVal('modal_applicant_marital_status', c.applicant_marital_status);
+                setVal('modal_applicant_blood_group', c.applicant_blood_group);
+                let nationalityBn = c.applicant_nationality || 'বাংলাদেশী';
+                let nationalityEn = 'BANGLADESHI';
+                if (c.applicant_nationality) {
+                    if (c.applicant_nationality === 'বাংলাদেশী' || c.applicant_nationality.toLowerCase() === 'bangladeshi') {
+                        nationalityBn = 'বাংলাদেশী';
+                        nationalityEn = 'BANGLADESHI';
+                    } else {
+                        nationalityBn = c.applicant_nationality;
+                        nationalityEn = c.applicant_nationality.toUpperCase();
+                    }
+                }
+                setVal('modal_applicant_nationality', nationalityBn);
+                setVal('modal_applicant_resident_status', c.applicant_resident_status || 'Resident');
+                setVal('modal_applicant_alt_mobile', c.applicant_alt_mobile);
+                setVal('modal_applicant_email', c.applicant_email);
+                setVal('modal_applicant_tin', c.applicant_tin);
+                setVal('modal_applicant_farmer_card_no', c.applicant_farmer_card_no);
+                // Personal EN (mirrors)
+                setVal('modal_applicant_father_name_en', c.applicant_father_name_en ? c.applicant_father_name_en.toUpperCase() : '');
+                setVal('modal_applicant_mother_name_en', c.applicant_mother_name_en ? c.applicant_mother_name_en.toUpperCase() : '');
+                setVal('modal_applicant_spouse_name_en', c.applicant_spouse_name_en ? c.applicant_spouse_name_en.toUpperCase() : '');
+                setVal('modal_applicant_gender_en', c.applicant_gender);
+                setVal('modal_applicant_religion_en', c.applicant_religion);
+                setVal('modal_applicant_marital_status_en', c.applicant_marital_status);
+                setVal('modal_applicant_blood_group_en', c.applicant_blood_group);
+                setVal('modal_applicant_nationality_en', nationalityEn);
+                setVal('modal_applicant_resident_status_en', c.applicant_resident_status || 'Resident');
+                setVal('modal_applicant_alt_mobile_en', c.applicant_alt_mobile);
+                setVal('modal_applicant_tin_en', c.applicant_tin);
+
+                // Address BN
+                setVal('modal_applicant_curr_addr_house', c.applicant_curr_addr_house);
+                setVal('modal_applicant_curr_addr_village', c.applicant_curr_addr_village);
+                setVal('modal_applicant_curr_addr_post', c.applicant_curr_addr_post);
+                setVal('modal_applicant_curr_addr_post_code', c.applicant_curr_addr_post_code);
+                setVal('modal_applicant_curr_addr_union', c.applicant_curr_addr_union);
+                setVal('modal_applicant_curr_city_corp', c.applicant_curr_city_corp);
+                setVal('modal_applicant_present_upozila', c.applicant_present_upozila);
+                setVal('modal_applicant_present_district', c.applicant_present_district);
+                setVal('modal_applicant_present_division', c.applicant_present_division);
+                setVal('modal_applicant_perm_addr_village', c.applicant_perm_addr_village);
+                setVal('modal_applicant_perm_addr_post', c.applicant_perm_addr_post);
+                setVal('modal_applicant_perm_addr_post_code', c.applicant_perm_addr_post_code);
+                setVal('modal_applicant_perm_addr_union', c.applicant_perm_addr_union);
+                setVal('modal_applicant_perm_city_corp', c.applicant_perm_city_corp);
+                setVal('modal_applicant_permanent_upozila', c.applicant_permanent_upozila);
+                setVal('modal_applicant_permanent_district', c.applicant_permanent_district);
+                setVal('modal_applicant_permanent_division', c.applicant_permanent_division);
+                setVal('modal_applicant_perm_addr_house', c.applicant_perm_addr_house);
+                setVal('modal_applicant_perm_phone', c.applicant_perm_phone);
+                setVal('modal_applicant_perm_email', c.applicant_perm_email);
+                // Address EN
+                setVal('modal_curr_addr_house_en', c.curr_addr_house_en);
+                setVal('modal_curr_addr_village_en', c.curr_addr_village_en);
+                setVal('modal_curr_addr_post_en', c.curr_addr_post_en);
+                setVal('modal_curr_addr_post_code_en', c.curr_addr_post_code_en);
+                setVal('modal_curr_addr_union_en', c.curr_addr_union_en);
+                setVal('modal_curr_city_corp_en', c.curr_city_corp_en);
+                setVal('modal_present_upozila_en', c.present_upozila_en);
+                setVal('modal_present_district_en', c.present_district_en);
+                setVal('modal_present_division_en', c.present_division_en);
+                setVal('modal_perm_addr_house_en', c.perm_addr_house_en);
+                setVal('modal_perm_addr_village_en', c.perm_addr_village_en);
+                setVal('modal_perm_addr_post_en', c.perm_addr_post_en);
+                setVal('modal_perm_addr_post_code_en', c.perm_addr_post_code_en);
+                setVal('modal_perm_addr_union_en', c.perm_addr_union_en);
+                setVal('modal_perm_city_corp_en', c.perm_city_corp_en);
+                setVal('modal_permanent_upozila_en', c.permanent_upozila_en);
+                setVal('modal_permanent_district_en', c.permanent_district_en);
+                setVal('modal_permanent_division_en', c.permanent_division_en);
+                setVal('modal_perm_phone_en', c.applicant_perm_phone);
+
+                // Education
+                setVal('modal_applicant_education_bn', c.applicant_education_bn);
+                setVal('modal_applicant_institution_bn', c.applicant_institution_bn);
+                setVal('modal_applicant_pass_year', c.applicant_pass_year);
+                setVal('modal_applicant_education_en', c.applicant_education_en);
+                setVal('modal_applicant_institution_en', c.applicant_institution_en);
+                setVal('modal_applicant_pass_year_en', c.applicant_pass_year);
+
+                // Occupation
+                setVal('modal_occupation_type', c.occupation_type);
+                setVal('modal_occupation_bn', c.occupation_bn);
+                setVal('modal_employer_name', c.employer_name);
+                setVal('modal_applicant_produced_goods', c.applicant_produced_goods);
+                setVal('modal_monthly_income', c.monthly_income);
+                setVal('modal_applicant_fund_source', c.applicant_fund_source);
+                setVal('modal_occupation_address_bn', c.occupation_address);
+                setVal('modal_occupation_type_en', c.occupation_type);
+                setVal('modal_occupation_en', c.occupation_en);
+                setVal('modal_designation_bn', c.designation);
+                setVal('modal_designation_en', c.designation_en);
+                setVal('modal_employer_name_en', c.employer_name_en);
+                setVal('modal_applicant_produced_goods_en', c.applicant_produced_goods_en);
+                setVal('modal_monthly_income_en', c.monthly_income);
+                setVal('modal_applicant_fund_source_en', c.applicant_fund_source_en);
+                setVal('modal_occupation_address_en', c.occupation_address_en);
+
+                // Tables
+                ['customerAccountsTable', 'customerLoansTable', 'customerTransactionsTable']
+                    .forEach(id => { const tb = document.querySelector(`#${id} tbody`); if (tb) tb.innerHTML = ''; });
+                parseJsonArray(c.accounts).forEach(addAccountRow);
+                parseJsonArray(c.loans).forEach(addLoanRow);
+
+                // Fetch and merge transactions from SQLite database
+                const ipc = window.ipcRenderer || (window.parent && window.parent.ipcRenderer);
+                if (ipc && typeof ipc.invoke === 'function') {
+                    ipc.invoke('db-get-transactions', c.applicant_nid, c.applicant_mobile).then(txList => {
+                        const localTx = parseJsonArray(c.transactions).filter(t => t && Object.values(t).some(v => v && String(v).trim() !== ''));
+                        const merged = [...localTx];
+
+                        if (txList && Array.isArray(txList)) {
+                            txList.forEach(dbTx => {
+                                // Avoid duplicates by checking if date, type, amount, and receiver account match
+                                const isDup = merged.some(t => {
+                                    const tAcc = String(t.account_no || t.receiver_account || '').replace(/[^0-9]/g, '');
+                                    const dbAcc = String(dbTx.account_no || dbTx.receiver_account || '').replace(/[^0-9]/g, '');
+                                    const tAmt = String(t.amount || '').replace(/[^0-9.]/g, '');
+                                    const dbAmt = String(dbTx.amount || '').replace(/[^0-9.]/g, '');
+                                    return t.date === dbTx.date &&
+                                        String(t.type).toUpperCase() === String(dbTx.type).toUpperCase() &&
+                                        tAmt === dbAmt &&
+                                        tAcc === dbAcc;
+                                });
+
+                                if (!isDup) {
+                                    merged.push({
+                                        date: dbTx.date,
+                                        type: dbTx.type, // 'RTGS' or 'EFTN'
+                                        amount: dbTx.amount,
+                                        to_bank: dbTx.receiving_bank,
+                                        to_branch: dbTx.receiving_branch,
+                                        account_no: dbTx.receiver_account,
+                                        receiver_name: dbTx.receiver_name,
+                                        sender_account: dbTx.sender_account,
+                                        reference: dbTx.id
+                                    });
+                                }
+                            });
+                        }
+
+                        const tbTx = document.querySelector('#customerTransactionsTable tbody');
+                        if (tbTx) tbTx.innerHTML = '';
+                        merged.forEach(addTransactionRow);
+                    }).catch(err => {
+                        console.error('Error fetching transactions:', err);
+                        parseJsonArray(c.transactions).filter(t => t && Object.values(t).some(v => v && String(v).trim() !== '')).forEach(addTransactionRow);
+                    });
+                } else {
+                    parseJsonArray(c.transactions).filter(t => t && Object.values(t).some(v => v && String(v).trim() !== '')).forEach(addTransactionRow);
+                }
+
+                // Business Licenses from additional_data
+                const tbBus = document.querySelector('#businessLicensesTable tbody');
+                if (tbBus) tbBus.innerHTML = '';
+                let additionalData = {};
+                try { additionalData = JSON.parse(c.additional_data || '{}'); } catch (e) { }
+                if (additionalData.business_licenses) {
+                    parseJsonArray(additionalData.business_licenses).forEach(addBusinessLicenseRow);
+                }
+
+                // Agri Land Rows (stored in additional_data overflow by DB handler)
+                const tbAgri = document.getElementById('agriLandTableBody');
+                if (tbAgri) tbAgri.innerHTML = '';
+                const agriLands = c.agri_lands || additionalData.agri_lands;
+                parseJsonArray(agriLands).forEach(addAgriLandRow);
+                calcAgriLandTotal();
+
+                // Transaction Profile
+                const tbDepTp = document.querySelector('#customerTpDepositTable tbody');
+                const tbWithTp = document.querySelector('#customerTpWithdrawTable tbody');
+                if (tbDepTp) tbDepTp.innerHTML = '';
+                if (tbWithTp) tbWithTp.innerHTML = '';
+                let tpData = c.transaction_profile || additionalData.transaction_profile;
+                if (tpData) {
+                    parseJsonArray(tpData).forEach(t => {
+                        window.addTPRow(t);
+                    });
+                }
+                toggleBusinessTable();
+
+                // AML
+                setChecked('modal_named_in_ctr', c.named_in_ctr);
+                setChecked('modal_named_in_str', c.named_in_str);
+                setVal('modal_ctr_date', c.ctr_date);
+                setVal('modal_str_date', c.str_date);
+                setVal('modal_ctr_details', c.ctr_details);
+                setVal('modal_str_details', c.str_details);
+
+                // Recalculate age after all fields are set
+                calculateAge();
+
+                // Load Relationships
+                loadRelationships(window.currentLoadedNid);
+            }
+
+            async function loadRelationships(nid) {
+                const tbody = document.getElementById('relationship-list-body');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (!nid) return;
+
+                try {
+                    const relations = await window.parent.ipcRenderer.invoke('db-get-relationships', nid);
+                    if (relations && relations.length > 0) {
+                        relations.forEach(r => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                            <td class="english-font">${r.applicant_nid}</td>
+                            <td><strong>${r.applicant_name_bn || 'N/A'}</strong></td>
+                            <td class="english-font">${r.applicant_mobile || ''}</td>
+                            <td>${r.relation_type}</td>
+                            <td>${r.comments || ''}</td>
+                            <td>
+                                <button type="button" class="btn-remove-row" onclick="deleteCustomerRelationship('${r.applicant_nid}', '${r.relation_type}')">&times; মুছুন</button>
+                            </td>
+                        `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error loading relationships:', e);
+                }
+            }
+
+            async function addCustomerRelationship() {
+                if (!window.currentLoadedNid) {
+                    alert("দয়া করে প্রথমে মূল গ্রাহকের প্রোফাইল সংরক্ষণ করুন।");
+                    return;
+                }
+                const relNid = document.getElementById('rel_search_nid').value.trim();
+                const relType = document.getElementById('rel_type_select').value;
+                const comments = document.getElementById('rel_comments').value.trim();
+                if (!relNid) {
+                    alert("দয়া করে সংশ্লিষ্ট গ্রাহকের এনআইডি প্রদান করুন।");
+                    return;
+                }
+                if (relNid === window.currentLoadedNid) {
+                    alert("গ্রাহক নিজের সাথে নিজে সম্পর্কিত হতে পারবেন না।");
+                    return;
+                }
+
+                try {
+                    // Verify the related customer exists
+                    const targetCustomer = await window.parent.ipcRenderer.invoke('db-get-customer', relNid);
+                    if (!targetCustomer) {
+                        alert("প্রদত্ত এনআইডি-র কোনো গ্রাহক তথ্যভাণ্ডারে পাওয়া যায়নি। দয়া করে প্রথমে তার প্রোফাইল তৈরি করুন।");
+                        return;
+                    }
+
+                    const res = await window.parent.ipcRenderer.invoke('db-save-relationship', window.currentLoadedNid, relNid, relType, comments);
+                    if (res.success) {
+                        document.getElementById('rel_search_nid').value = '';
+                        document.getElementById('rel_comments').value = '';
+                        loadRelationships(window.currentLoadedNid);
+                    } else {
+                        alert("সম্পর্ক তৈরি করতে ব্যর্থ হয়েছে: " + res.error);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            async function deleteCustomerRelationship(relNid, relType) {
+                if (!window.currentLoadedNid) return;
+                if (await window.parent.appConfirm("আপনি কি নিশ্চিত যে আপনি এই সম্পর্কটি মুছে ফেলতে চান?")) {
+                    try {
+                        const res = await window.parent.ipcRenderer.invoke('db-delete-relationship', window.currentLoadedNid, relNid, relType);
+                        if (res.success) {
+                            loadRelationships(window.currentLoadedNid);
+                        } else {
+                            alert("সম্পর্ক মুছতে ব্যর্থ হয়েছে: " + res.error);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+
+            // Search suggestions for relatives NID input
+            document.getElementById('rel_search_nid')?.addEventListener('input', async (e) => {
+                const query = e.target.value.trim();
+                const suggestionsDiv = document.getElementById('rel_search_suggestions');
+                if (!suggestionsDiv) return;
+
+                if (query.length < 2) {
+                    suggestionsDiv.innerHTML = '';
+                    suggestionsDiv.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    // Convert Bengali numbers to English digits
+                    const normalizedQuery = query.replace(/[০-৯]/g, d => "0123456789"["০১২৩৪৫৬৭৮৯".indexOf(d)]);
+                    const results = await window.parent.ipcRenderer.invoke('db-search-customers', normalizedQuery);
+
+                    if (results && results.length > 0) {
+                        suggestionsDiv.innerHTML = '';
+                        results.forEach(c => {
+                            const item = document.createElement('div');
+                            item.style.padding = '8px 12px';
+                            item.style.cursor = 'pointer';
+                            item.style.borderBottom = '1px solid #eee';
+                            item.style.transition = 'background 0.2s';
+                            item.className = 'suggestion-item';
+                            item.innerHTML = `
+                            <div style="font-weight: bold; color: #333; text-align: left;">${c.applicant_name_bn || c.applicant_name_en}</div>
+                            <div style="font-size: 0.75rem; color: #666; text-align: left;">NID: ${c.applicant_nid} | Mobile: ${c.applicant_mobile || 'N/A'}</div>
+                        `;
+                            item.addEventListener('mouseenter', () => {
+                                item.style.background = '#f3f4f6';
+                            });
+                            item.addEventListener('mouseleave', () => {
+                                item.style.background = 'transparent';
+                            });
+                            item.addEventListener('click', () => {
+                                document.getElementById('rel_search_nid').value = c.applicant_nid;
+                                suggestionsDiv.innerHTML = '';
+                                suggestionsDiv.style.display = 'none';
+                            });
+                            suggestionsDiv.appendChild(item);
+                        });
+                        suggestionsDiv.style.display = 'block';
+                    } else {
+                        suggestionsDiv.innerHTML = '<div style="padding: 8px 12px; color: #999; text-align: left;">কোনো গ্রাহক পাওয়া যায়নি</div>';
+                        suggestionsDiv.style.display = 'block';
+                    }
+                } catch (err) {
+                    console.error('Error fetching search suggestions:', err);
+                }
+            });
+
+            // Hide suggestions on click outside
+            document.addEventListener('click', (e) => {
+                const suggestionsDiv = document.getElementById('rel_search_suggestions');
+                if (suggestionsDiv && e.target.id !== 'rel_search_nid') {
+                    suggestionsDiv.innerHTML = '';
+                    suggestionsDiv.style.display = 'none';
+                }
+            });
+
+            // ══ DELETE PROFILE ══
+            async function deleteCustomerProfile() {
+                if (!window.currentLoadedNid) {
+                    alert("Cannot delete an unsaved customer profile.");
+                    return;
+                }
+
+                const confirmed = typeof window.parent.appConfirm === 'function'
+                    ? await window.parent.appConfirm("আপনি কি নিশ্চিত যে আপনি এই গ্রাহকের তথ্য মুছে ফেলতে চান?\n(Are you sure you want to delete this customer profile?)")
+                    : false;
+
+                if (confirmed) {
+                    try {
+                        const res = await window.parent.ipcRenderer.invoke('db-delete-customer', window.currentLoadedNid);
+                        if (res.success) {
+                            if (typeof window.parent.showAppToast === 'function') {
+                                window.parent.showAppToast('✅ গ্রাহকের তথ্য মুছে ফেলা হয়েছে।', false);
+                            }
+                            showListView();
+                            const frames = window.parent.document.querySelectorAll('iframe');
+                            frames.forEach(f => f.contentWindow?.postMessage({ command: 'REFRESH_CUSTOMER_LIST' }, '*'));
+                            if (typeof window.parent.restoreAppFocus === 'function') {
+                                window.parent.restoreAppFocus(150);
+                            }
+                        } else {
+                            alert("Error deleting customer: " + res.error);
+                            if (typeof window.parent.restoreAppFocus === 'function') window.parent.restoreAppFocus(100);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error deleting customer: " + err.message);
+                        if (typeof window.parent.restoreAppFocus === 'function') window.parent.restoreAppFocus(100);
+                    }
+                } else {
+                    if (typeof window.parent.restoreAppFocus === 'function') window.parent.restoreAppFocus(100);
+                }
+            }
+
+            // ══ SAVE PROFILE ══
+            function saveCustomerProfile() {
+                const n10 = toEnglishDigits(getVal('modal_applicant_nid_10')).replace(/\D/g, '');
+                const n17 = toEnglishDigits(getVal('modal_applicant_nid_17')).replace(/\D/g, '');
+                const passport = getVal('modal_applicant_passport_no').trim();
+                const passportVal = getVal('modal_applicant_passport_validity').trim();
+                const birthReg = getVal('modal_applicant_birth_reg_no').trim();
+
+                let nidVal = n10 || n17;
+                if (!nidVal && (passport || birthReg)) {
+                    nidVal = 'TEMP-ID-' + Date.now();
+                }
+
+                const nameBn = getVal('modal_applicant_name_bn').trim();
+                const nameEn = getVal('modal_applicant_name_en').trim();
+                const mobile = getVal('modal_applicant_mobile').trim();
+
+                // ── Mandatory field validation with red highlighting ──
+                const fatherBn = getVal('modal_applicant_father_name_bn').trim();
+                const fatherEn = getVal('modal_applicant_father_name_en').trim();
+
+                const gender = getVal('modal_applicant_gender') || getVal('modal_applicant_gender_en');
+
+                const mandatoryFields = [
+                    { id: 'modal_applicant_name_bn', val: nameBn, label: 'নাম (বাংলা)' },
+                    { id: 'modal_applicant_name_en', val: nameEn, label: 'Name (English)' },
+                    { id: 'modal_applicant_mobile', val: mobile, label: 'Mobile' },
+                    { id: 'modal_applicant_gender', val: gender, label: 'Gender / লিঙ্গ' },
+                ];
+
+                if (!nidVal) {
+                    mandatoryFields.push({ id: 'modal_applicant_nid_10', val: '', label: 'NID, Passport, or Birth Reg No' });
+                }
+
+                // Clear previous errors
+                ['modal_applicant_name_bn', 'modal_applicant_name_en', 'modal_applicant_father_name_bn', 'modal_applicant_father_name_en', 'modal_applicant_mobile', 'modal_applicant_nid_10', 'modal_applicant_nid_17', 'modal_applicant_gender'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.border = '';
+                });
+
+                const missing = mandatoryFields.filter(f => !f.val);
+                if (missing.length > 0) {
+                    missing.forEach(f => {
+                        const el = document.getElementById(f.id);
+                        if (el) { el.style.border = '2px solid #e53935'; el.style.borderRadius = '4px'; }
+                    });
+                    const missingLabels = missing.map(f => '• ' + f.label).join('\n');
+                    const msg = `অনুগ্রহ করে নিম্নলিখিত বাধ্যতামূলক তথ্যগুলো পূরণ করুন:\n${missingLabels}\n\n(Please fill in the mandatory fields listed above.)`;
+                    const modal = document.getElementById('customAlertModal');
+                    const msgEl = document.getElementById('customAlertMessage');
+                    if (modal && msgEl) {
+                        msgEl.textContent = msg;
+                        modal.style.display = 'flex';
+                        // Save first missing field to focus after closing
+                        modal.dataset.focusId = missing[0].id;
+                    } else {
+                        console.error("Validation failed: ", msg);
+                    }
+                    return;
+                }
+
+                const photoEl = document.getElementById('modalCustomerPhoto');
+                const photoData = (photoEl && photoEl.src.includes('user_placeholder')) ? '' : (photoEl?.src || '');
+
+                const customer = {
+                    // Identity
+                    original_nid: window.currentLoadedNid,
+                    applicant_nid: nidVal, applicant_nid_10: n10, applicant_nid_17: n17,
+                    applicant_passport_no: passport, applicant_passport_validity: passportVal, applicant_birth_reg_no: birthReg,
+                    // Personal
+                    applicant_name_bn: nameBn, applicant_name_en: nameEn,
+                    applicant_father_name_bn: getVal('modal_applicant_father_name_bn'),
+                    applicant_mother_name_bn: getVal('modal_applicant_mother_name_bn'),
+                    applicant_spouse_name_bn: getVal('modal_applicant_spouse_name_bn'),
+                    applicant_father_name_en: getVal('modal_applicant_father_name_en'),
+                    applicant_mother_name_en: getVal('modal_applicant_mother_name_en'),
+                    applicant_spouse_name_en: getVal('modal_applicant_spouse_name_en'),
+                    applicant_dob: getVal('modal_applicant_dob'),
+                    applicant_gender: getVal('modal_applicant_gender') || getVal('modal_applicant_gender_en'),
+                    applicant_religion: getVal('modal_applicant_religion') || getVal('modal_applicant_religion_en'),
+                    applicant_marital_status: getVal('modal_applicant_marital_status') || getVal('modal_applicant_marital_status_en'),
+                    applicant_blood_group: getVal('modal_applicant_blood_group') || getVal('modal_applicant_blood_group_en'),
+                    applicant_nationality: getVal('modal_applicant_nationality') || 'Bangladeshi',
+                    applicant_resident_status: getVal('modal_applicant_resident_status') || 'Resident',
+                    applicant_mobile: mobile,
+                    applicant_alt_mobile: getVal('modal_applicant_alt_mobile'),
+                    applicant_email: getVal('modal_applicant_email'),
+                    applicant_perm_phone: getVal('modal_applicant_perm_phone'),
+                    applicant_perm_email: getVal('modal_applicant_perm_email'),
+                    applicant_tin: getVal('modal_applicant_tin'),
+                    applicant_farmer_card_no: getVal('modal_applicant_farmer_card_no'),
+                    // Address BN
+                    applicant_curr_addr_house: getVal('modal_applicant_curr_addr_house'),
+                    applicant_curr_addr_village: getVal('modal_applicant_curr_addr_village'),
+                    applicant_curr_addr_post: getVal('modal_applicant_curr_addr_post'),
+                    applicant_curr_addr_post_code: getVal('modal_applicant_curr_addr_post_code'),
+                    applicant_curr_addr_union: getVal('modal_applicant_curr_addr_union'),
+                    applicant_present_upozila: getVal('modal_applicant_present_upozila'),
+                    applicant_present_district: getVal('modal_applicant_present_district'),
+                    applicant_present_division: getVal('modal_applicant_present_division'),
+                    applicant_perm_addr_house: getVal('modal_applicant_perm_addr_house'),
+                    applicant_perm_addr_village: getVal('modal_applicant_perm_addr_village'),
+                    applicant_perm_addr_post: getVal('modal_applicant_perm_addr_post'),
+                    applicant_perm_addr_post_code: getVal('modal_applicant_perm_addr_post_code'),
+                    applicant_perm_addr_union: getVal('modal_applicant_perm_addr_union'),
+                    applicant_permanent_upozila: getVal('modal_applicant_permanent_upozila'),
+                    applicant_permanent_district: getVal('modal_applicant_permanent_district'),
+                    applicant_permanent_division: getVal('modal_applicant_permanent_division'),
+                    // Address EN
+                    curr_addr_house_en: getVal('modal_curr_addr_house_en'),
+                    curr_addr_village_en: getVal('modal_curr_addr_village_en'),
+                    curr_addr_post_en: getVal('modal_curr_addr_post_en'),
+                    curr_addr_post_code_en: getVal('modal_curr_addr_post_code_en'),
+                    curr_addr_union_en: getVal('modal_curr_addr_union_en'),
+                    present_upozila_en: getVal('modal_present_upozila_en'),
+                    present_district_en: getVal('modal_present_district_en'),
+                    present_division_en: getVal('modal_present_division_en'),
+                    perm_addr_house_en: getVal('modal_perm_addr_house_en'),
+                    perm_addr_village_en: getVal('modal_perm_addr_village_en'),
+                    perm_addr_post_en: getVal('modal_perm_addr_post_en'),
+                    perm_addr_post_code_en: getVal('modal_perm_addr_post_code_en'),
+                    perm_addr_union_en: getVal('modal_perm_addr_union_en'),
+                    permanent_upozila_en: getVal('modal_permanent_upozila_en'),
+                    permanent_district_en: getVal('modal_permanent_district_en'),
+                    permanent_division_en: getVal('modal_permanent_division_en'),
+                    // Education
+                    applicant_education_bn: getVal('modal_applicant_education_bn'),
+                    applicant_institution_bn: getVal('modal_applicant_institution_bn'),
+                    applicant_pass_year: getVal('modal_applicant_pass_year'),
+                    applicant_education_en: getVal('modal_applicant_education_en'),
+                    applicant_institution_en: getVal('modal_applicant_institution_en'),
+                    // Occupation
+                    occupation_type: getVal('modal_occupation_type') || getVal('modal_occupation_type_en'),
+                    occupation_bn: getVal('modal_occupation_bn'),
+                    occupation_en: getVal('modal_occupation_en'),
+                    designation: getVal('modal_designation_bn'),
+                    designation_en: getVal('modal_designation_en'),
+                    employer_name: getVal('modal_employer_name'),
+                    applicant_produced_goods: getVal('modal_applicant_produced_goods'),
+                    employer_name_en: getVal('modal_employer_name_en'),
+                    applicant_produced_goods_en: getVal('modal_applicant_produced_goods_en'),
+                    monthly_income: getVal('modal_monthly_income') || getVal('modal_monthly_income_en'),
+                    applicant_fund_source: getVal('modal_applicant_fund_source'),
+                    applicant_fund_source_en: getVal('modal_applicant_fund_source_en'),
+                    occupation_address: getVal('modal_occupation_address_bn'),
+                    occupation_address_en: getVal('modal_occupation_address_en'),
+                    // Photo
+                    photo: photoData,
+                    // Tables
+                    accounts: JSON.stringify(getTableRows('customerAccountsTable', ['sl', 'customer_code', 'account_no', 'account_type', 'account_title', 'opened_at'])),
+                    loans: JSON.stringify(getTableRows('customerLoansTable', ['product', 'account_no', 'sanctioned_amount', 'outstanding_amount', 'interest_rate', 'sanction_date', 'expiry_date', 'status'])),
+                    transactions: JSON.stringify(getTableRows('customerTransactionsTable', ['sl', 'type', 'sender_account', 'to_bank', 'to_branch', 'receiver_name', 'account_no', 'amount', 'date'])),
+                    transaction_profile: JSON.stringify([
+                        ...getTableRows('customerTpDepositTable', ['type', 'cat', 'no', 'max', 'total']),
+                        ...getTableRows('customerTpWithdrawTable', ['type', 'cat', 'no', 'max', 'total'])
+                    ]),
+                    business_licenses: JSON.stringify(getTableRows('businessLicensesTable', ['license_name', 'license_no', 'issue_date', 'validity', 'issuing_authority'])),
+                    agri_lands: JSON.stringify(getAgriLandRows()),
+                    // AML
+                    named_in_ctr: getChecked('modal_named_in_ctr'),
+                    named_in_str: getChecked('modal_named_in_str'),
+                    ctr_date: getVal('modal_ctr_date'),
+                    str_date: getVal('modal_str_date'),
+                    ctr_details: getVal('modal_ctr_details'),
+                    str_details: getVal('modal_str_details'),
+                };
+
+                window.parent.postMessage({ command: 'SAVE_CUSTOMER_PROFILE', customer }, '*');
+            }
+
+            // ══ AGE AUTO-CALCULATION ══
+            function calculateAge() {
+                const dob = document.getElementById('modal_applicant_dob')?.value;
+                const bnEl = document.getElementById('display_age_bn');
+                const enEl = document.getElementById('display_age_en');
+                if (!dob || !bnEl || !enEl) {
+                    if (bnEl) bnEl.textContent = '—';
+                    if (enEl) enEl.textContent = '—';
+                    return;
+                }
+                const today = new Date();
+                const birth = new Date(dob);
+                let age = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+                if (age < 0) age = 0;
+                // Bangla digits
+                const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+                const ageInBangla = String(age).replace(/\d/g, d => banglaDigits[d]);
+                bnEl.textContent = `${ageInBangla} বছর`;
+                enEl.textContent = `${age} year${age !== 1 ? 's' : ''}`;
+            }
+
+            // ══ SAME ADDRESS COPY FUNCTIONS ══
+            window.applySameAddressBn = function (checked) {
+                if (!checked) return;
+                setVal('modal_applicant_perm_addr_house', getVal('modal_applicant_curr_addr_house'));
+                setVal('modal_applicant_perm_addr_village', getVal('modal_applicant_curr_addr_village'));
+                setVal('modal_applicant_perm_addr_post', getVal('modal_applicant_curr_addr_post'));
+                setVal('modal_applicant_perm_addr_post_code', getVal('modal_applicant_curr_addr_post_code'));
+                setVal('modal_applicant_perm_addr_union', getVal('modal_applicant_curr_addr_union'));
+                setVal('modal_applicant_perm_city_corp', getVal('modal_applicant_curr_city_corp'));
+                setVal('modal_applicant_permanent_upozila', getVal('modal_applicant_present_upozila'));
+                setVal('modal_applicant_permanent_district', getVal('modal_applicant_present_district'));
+                setVal('modal_applicant_permanent_division', getVal('modal_applicant_present_division'));
+            };
+            window.applySameAddressEn = function (checked) {
+                if (!checked) return;
+                setVal('modal_perm_addr_house_en', getVal('modal_curr_addr_house_en'));
+                setVal('modal_perm_addr_village_en', getVal('modal_curr_addr_village_en'));
+                setVal('modal_perm_addr_post_en', getVal('modal_curr_addr_post_en'));
+                setVal('modal_perm_addr_post_code_en', getVal('modal_curr_addr_post_code_en'));
+                setVal('modal_perm_addr_union_en', getVal('modal_curr_addr_union_en'));
+                setVal('modal_perm_city_corp_en', getVal('modal_curr_city_corp_en'));
+                setVal('modal_permanent_upozila_en', getVal('modal_present_upozila_en'));
+                setVal('modal_permanent_district_en', getVal('modal_present_district_en'));
+                setVal('modal_permanent_division_en', getVal('modal_present_division_en'));
+            };
+
+            // ══ BUSINESS LICENSES & AGRI LAND LOGIC ══
+            window.toggleBusinessTable = function () {
+                const valBn = getVal('modal_occupation_type');
+                const valEn = getVal('modal_occupation_type_en');
+                const bizContainer = document.getElementById('business_licenses_container');
+                const agriContainer = document.getElementById('agri_land_container');
+                const farmerCardRow = document.getElementById('row_farmer_card');
+                const prodGoodsBnRow = document.getElementById('row_produced_goods_bn');
+                const prodGoodsEnRow = document.getElementById('row_produced_goods_en');
+
+                const employerLabelBn = document.getElementById('modal_employer_name')?.previousElementSibling;
+                const occupationLabelBn = document.getElementById('modal_occupation_bn')?.previousElementSibling;
+
+                const employerLabelEn = document.getElementById('modal_employer_name_en')?.previousElementSibling;
+                const occupationLabelEn = document.getElementById('modal_occupation_en')?.previousElementSibling;
+
+                // Business licenses
+                if (valBn === 'ব্যবসা' || valEn === 'Business') {
+                    bizContainer.style.display = 'block';
+                    if (prodGoodsBnRow) prodGoodsBnRow.style.display = 'flex';
+                    if (prodGoodsEnRow) prodGoodsEnRow.style.display = 'flex';
+
+                    if (employerLabelBn) employerLabelBn.innerText = 'প্রতিষ্ঠানের নাম:';
+                    if (occupationLabelBn) occupationLabelBn.innerText = 'ব্যবসার ধরণ:';
+                    if (employerLabelEn) employerLabelEn.innerText = 'Business Name:';
+                    if (occupationLabelEn) occupationLabelEn.innerText = 'Business Type:';
+                } else {
+                    bizContainer.style.display = 'none';
+                    if (prodGoodsBnRow) prodGoodsBnRow.style.display = 'none';
+                    if (prodGoodsEnRow) prodGoodsEnRow.style.display = 'none';
+
+                    if (employerLabelBn) employerLabelBn.innerText = 'নিয়োগকর্তার নাম:';
+                    if (occupationLabelBn) occupationLabelBn.innerText = 'পেশার বিবরণ:';
+                    if (employerLabelEn) employerLabelEn.innerText = 'Employer:';
+                    if (occupationLabelEn) occupationLabelEn.innerText = 'Occupation:';
+                }
+                // Agriculture land details
+                if (valBn === 'কৃষি কাজ' || valEn === 'Agriculture') {
+                    agriContainer.style.display = 'block';
+                    if (farmerCardRow) farmerCardRow.style.display = 'flex';
+                } else {
+                    agriContainer.style.display = 'none';
+                    if (farmerCardRow) farmerCardRow.style.display = 'none';
+                }
+            };
+
+            window.addBusinessLicenseRow = function (data = {}) {
+                const tbody = document.querySelector('#businessLicensesTable tbody');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td><input type="text" class="cell-input bangla-input" value="${data.license_name || ''}"></td>
+                <td><input type="text" class="cell-input english-input" value="${data.license_no || ''}"></td>
+                <td><input type="date" class="cell-input english-input" value="${data.issue_date || ''}"></td>
+                <td><input type="date" class="cell-input english-input" value="${data.validity || ''}"></td>
+                <td><input type="text" class="cell-input bangla-input" value="${data.issuing_authority || ''}"></td>
+                <td style="text-align:center;"><button class="btn-remove-row" onclick="this.closest('tr').remove()">×</button></td>
+            `;
+                tbody.appendChild(tr);
+            };
+
+            // ══ AGRI LAND TABLE LOGIC ══
+            function calcAgriLandTotal() {
+                let total = 0;
+                document.querySelectorAll('#agriLandTableBody tr').forEach(row => {
+                    const areaInput = row.querySelectorAll('td input')[3];
+                    const val = parseFloat(areaInput?.value || '0');
+                    if (!isNaN(val)) total += val;
+                });
+                const el = document.getElementById('agri_total_land_area');
+                if (el) el.textContent = total % 1 === 0 ? total.toString() : total.toFixed(2);
+            }
+
+            window.cpHandleKhatianSelect = function (num) {
+                var sel = document.getElementById('cp_khatian_type_' + num + '_sel');
+                var inp = document.getElementById('cp_khatian_type_' + num + '_txt');
+                if (sel.value === 'write') {
+                    sel.style.display = 'none';
+                    inp.style.display = 'block';
+                    inp.value = '';
+                    window.cpSyncKhatianDropdowns();
+                    inp.focus();
+                } else {
+                    inp.value = sel.value;
+                    window.cpSyncKhatianToDag(num);
+                }
+            };
+
+            window.cpResetKhatianSelect = function (num) {
+                var sel = document.getElementById('cp_khatian_type_' + num + '_sel');
+                var inp = document.getElementById('cp_khatian_type_' + num + '_txt');
+                inp.style.display = 'none';
+                sel.style.display = 'block';
+                sel.value = '';
+                window.cpSyncKhatianDropdowns();
+                window.cpSyncKhatianToDag(num);
+            };
+
+            window.cpSyncKhatianDropdowns = function () {
+                var sel1 = document.getElementById('cp_khatian_type_1_sel');
+                var sel2 = document.getElementById('cp_khatian_type_2_sel');
+                if (!sel1 || !sel2) return;
+                var val1 = sel1.value;
+                var val2 = sel2.value;
+                Array.from(sel1.options).forEach(function (opt) {
+                    if (opt.value && opt.value !== 'write') opt.disabled = (val2 !== '' && val2 !== 'write' && opt.value === val2);
+                });
+                Array.from(sel2.options).forEach(function (opt) {
+                    if (opt.value && opt.value !== 'write') opt.disabled = (val1 !== '' && val1 !== 'write' && opt.value === val1);
+                });
+            };
+
+            window.cpSyncKhatianToDag = function (num) {
+                var val = document.getElementById('cp_khatian_type_' + num + '_txt').value;
+                document.getElementById('cp_dag_type_' + num).value = val;
+            };
+
+
+            /* ── VIEW SWITCHING & LIST LOGIC ── */
+            function showListView() {
+                document.getElementById('profile-edit-view').style.display = 'none';
+                document.getElementById('customer-list-view').style.display = 'block';
+                renderCustomerTable();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function showProfileView() {
+                document.getElementById('customer-list-view').style.display = 'none';
+                document.getElementById('profile-edit-view').style.display = 'block';
+                window.focus();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function toBanglaNumber(str) {
+                if (!str) return '';
+                const banglaDigits = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+                return str.toString().replace(/[0-9]/g, w => banglaDigits[w]);
+            }
+
+            async function fetchCustomers(query) {
+                return await window.parent.ipcRenderer.invoke('db-search-customers', query || '');
+            }
+
+            async function renderCustomerTable() {
+                const searchEl = document.getElementById('dbSearch');
+                const query = searchEl ? searchEl.value.trim() : '';
+                const tbody = document.getElementById('customer-list-body');
+                const emptyMsg = document.getElementById('empty-msg');
+                if (!tbody) return;
+
+                const customers = await fetchCustomers(query);
+                if (!customers || customers.length === 0) {
+                    tbody.innerHTML = '';
+                    if (emptyMsg) emptyMsg.style.display = 'block';
+                    return;
+                }
+
+                if (emptyMsg) emptyMsg.style.display = 'none';
+                const placeholderImage = '../../assets/images/user_placeholder.png';
+
+                const duplicateIndices = new Set();
+                for (let i = 0; i < customers.length; i++) {
+                    for (let j = i + 1; j < customers.length; j++) {
+                        const c1 = customers[i];
+                        const c2 = customers[j];
+                        let isDup = false;
+                        if (c1.applicant_nid && c2.applicant_nid && c1.applicant_nid === c2.applicant_nid) isDup = true;
+                        if (c1.applicant_mobile && c2.applicant_mobile && c1.applicant_mobile === c2.applicant_mobile) isDup = true;
+                        if (c1.applicant_dob && c2.applicant_dob && c1.applicant_dob === c2.applicant_dob) isDup = true;
+
+                        if (isDup) {
+                            duplicateIndices.add(i);
+                            duplicateIndices.add(j);
+                        }
+                    }
+                }
+
+                let rowsHtml = '';
+                customers.forEach((c, index) => {
+                    const isDup = duplicateIndices.has(index);
+                    const photoSrc = (c.photo && c.photo.length > 50) ? c.photo : placeholderImage;
+                    const rawDob = c.applicant_dob || '';
+                    const formattedDob = rawDob.includes('-') ? rawDob.split('-').reverse().join('/') : (rawDob || 'N/A');
+
+                    const bgStyle = isDup ? 'background-color: #ffeeba;' : '';
+                    const dupWarning = isDup ? '<br><span style="color:#d9534f; font-size:12px; font-weight:bold;">(ডুপ্লিকেট)</span>' : '';
+
+                    let remarks = '';
+                    if (!c.applicant_nid_10 && !c.applicant_nid_17 && (!c.applicant_nid || c.applicant_nid.startsWith('TEMP'))) {
+                        remarks = '<span style="color:#d9534f; font-size:12px; font-weight:bold;">NID Missing</span>';
+                    }
+
+                    rowsHtml += `
+                    <tr style="${bgStyle}">
+                        <td><img src="${photoSrc}" width="96" height="96" class="customer-photo-small" onerror="this.src='${placeholderImage}'"></td>
+                        <td><strong>${c.applicant_name_bn || 'N/A'}</strong>${dupWarning}</td>
+                        <td class="english-font">${c.applicant_nid || ''}</td>
+                        <td class="english-font">${c.applicant_mobile || ''}</td>
+                        <td class="bengali-font">${toBanglaNumber(formattedDob)}</td>
+                        <td class="bengali-font">${c.applicant_present_district || ''}</td>
+                        <td>${remarks}</td>
+                        <td style="white-space: nowrap;">
+                            <span class="action-link" style="cursor:pointer; margin-right:10px; font-size:18px; display:inline-block;" onclick="sendEditCustomer('${c.applicant_nid || ''}')" title="সম্পাদনা / বিস্তারিত (Edit/View)"><img src="../../assets/icons/file_view.svg" width="20" height="20" style="vertical-align: middle;" alt="View"></span>
+                            <span class="action-link" style="cursor:pointer; margin-right:10px; font-size:18px; display:inline-block;" onclick="sendImportCustomer('${c.applicant_nid || ''}')" title="গ্রাহক তথ্য ইমপোর্ট (Import Customer Info)">⬇️</span>
+                            <span class="action-link delete" style="cursor:pointer; font-size:18px; display:inline-block;" onclick="deleteCustomer('${c.applicant_nid || ''}')" title="মুছে ফেলুন (Delete)">🗑️</span>
+                        </td>
+                    </tr>`;
+                });
+                tbody.innerHTML = rowsHtml;
+
+                let warnBanner = document.getElementById('duplicate-warning');
+                if (!warnBanner) {
+                    warnBanner = document.createElement('div');
+                    warnBanner.id = 'duplicate-warning';
+                    warnBanner.style.cssText = 'background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #f5c6cb; font-weight: bold; display: none;';
+                    const headerActions = document.querySelector('#customer-list-view .header-actions');
+                    if (headerActions) headerActions.insertAdjacentElement('afterend', warnBanner);
+                }
+                if (duplicateIndices.size > 0) {
+                    warnBanner.textContent = `সতর্কতা: ${duplicateIndices.size} টি ডুপ্লিকেট গ্রাহক তথ্য পাওয়া গেছে (একই মোবাইল, NID বা জন্ম তারিখ)!`;
+                    warnBanner.style.display = 'block';
+                } else {
+                    warnBanner.style.display = 'none';
+                }
+            }
+
+            function requestNewCustomer() {
+                window.currentLoadedNid = null;
+                populateForm({});
+                showProfileView();
+            }
+
+            async function sendEditCustomer(nid) {
+                if (!nid) return;
+                window.currentLoadedNid = nid;
+                try {
+                    const customer = await window.parent.ipcRenderer.invoke('db-get-customer', nid);
+                    if (customer) {
+                        const dbTransactions = await window.parent.ipcRenderer.invoke('db-get-transactions', customer.applicant_nid, customer.applicant_mobile);
+                        let manualTrans = [];
+                        try { manualTrans = JSON.parse(customer.transactions || '[]'); } catch (e) { }
+                        manualTrans = manualTrans.filter(t => t && Object.values(t).some(v => v && String(v).trim() !== ''));
+                        const transMap = new Map();
+                        manualTrans.forEach(t => { if (t.reference) transMap.set(t.reference, t); });
+                        if (dbTransactions && Array.isArray(dbTransactions)) {
+                            dbTransactions.forEach(t => {
+                                const ref = t.id || t.reference || '';
+                                if (ref) {
+                                    transMap.set(ref, {
+                                        id: t.id, type: t.type || '', date: t.date || '', amount: t.amount || '',
+                                        to_bank: t.receiving_bank || '', to_branch: t.receiving_branch || '',
+                                        receiver_name: t.receiver_name || '', account_no: t.receiver_account || '', reference: ref
+                                    });
+                                }
+                            });
+                        }
+                        customer.transactions = JSON.stringify(Array.from(transMap.values()));
+                        populateForm(customer);
+                        showProfileView();
+                    } else {
+                        alert('Customer record not found: ' + nid);
+                    }
+                } catch (err) {
+                    console.error('Error fetching customer:', err);
+                    alert('Error fetching customer: ' + err.message);
+                }
+            }
+
+            function sendImportCustomer(nid) {
+                if (!nid) return;
+                window.parent.postMessage({ command: 'EXECUTE_SHELL_ACTION', actionId: 'populate-customer', nid: nid }, '*');
+            }
+
+            async function deleteCustomer(nid) {
+                if (!nid) return;
+                const confirmed = typeof window.parent.appConfirm === 'function'
+                    ? await window.parent.appConfirm('আপনি কি নিশ্চিত যে এই গ্রাহকের তথ্য মুছে ফেলতে চান?')
+                    : false;
+
+                if (typeof window.parent.restoreAppFocus === 'function') window.parent.restoreAppFocus(100);
+                if (!confirmed) return;
+
+                const res = await window.parent.ipcRenderer.invoke('db-delete-customer', nid);
+                if (res && res.success === false) {
+                    if (typeof window.parent.showAppToast === 'function') {
+                        window.parent.showAppToast('Error deleting customer: ' + res.error, true);
+                    }
+                } else {
+                    if (typeof window.parent.showAppToast === 'function') {
+                        window.parent.showAppToast('✅ গ্রাহকের তথ্য মুছে ফেলা হয়েছে।', false);
+                    }
+                }
+                renderCustomerTable();
+                if (typeof window.parent.restoreAppFocus === 'function') window.parent.restoreAppFocus(100);
+            }
+
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Setup bata dag toggle
+                const bataBtn = document.getElementById('cp_bata_dag_btn');
+                if (bataBtn) {
+                    bataBtn.addEventListener('click', function () {
+                        var normal = document.getElementById('cp_dag_normal_container');
+                        var bata = document.getElementById('cp_dag_bata_container');
+                        if (normal.style.display === 'none') {
+                            normal.style.display = 'flex';
+                            bata.style.display = 'none';
+                        } else {
+                            normal.style.display = 'none';
+                            bata.style.display = 'flex';
+                        }
+                    });
+                }
+
+                // Setup add more dag btn
+                const addMoreBtn = document.getElementById('cp_add_more_dag_btn');
+                if (addMoreBtn) {
+                    addMoreBtn.addEventListener('click', function () {
+                        var container = document.getElementById('cp_dynamic_dag_container');
+                        var div = document.createElement('div');
+                        div.className = 'dynamic-dag-row';
+                        div.style.cssText = 'display: flex; gap: 8px; margin-top: 5px; align-items: flex-end; padding-bottom:4px;';
+                        div.innerHTML = `
+                        <div style="flex:none; width:70px;">&nbsp;</div>
+                        <div style="flex:1.5; min-width:130px;">&nbsp;</div>
+                        <div style="flex:2; min-width:140px;">&nbsp;</div>
+                        <div style="flex:1.4; min-width:130px;">&nbsp;</div>
+                        <div style="flex:1.2; min-width:110px;">&nbsp;</div>
+                        <div style="display:flex; align-items:flex-end; flex:3.5; min-width:220px; gap:5px; margin-left:-3mm;">
+                            <div style="display:flex; flex-direction:column; flex-grow:1; text-align:center;">
+                                <div class="row-dag-normal-container" style="display:flex; align-items:center; gap:2px;">
+                                    <input class="row-input-dag-no-1" type="text" style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;" />
+                                    <span>/</span>
+                                    <input class="row-input-dag-no-2" type="text" style="padding:4px; width:48%; text-align:center; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit;" />
+                                </div>
+                                <div class="row-dag-bata-container" style="display:none; align-items:center; gap:2px;">
+                                    <div style="display:flex; flex-direction:column; width:48%; border:1px solid #ccc; border-radius:3px;">
+                                        <input class="row-input-dag-batta-1-num" type="text" style="width:100%; border:none; border-bottom:1px solid #ccc; padding:2px; text-align:center; font-size:12px; font-family:inherit;" />
+                                        <input class="row-input-dag-batta-1-den" type="text" style="width:100%; border:none; padding:2px; text-align:center; font-size:12px; font-family:inherit;" />
+                                    </div>
+                                    <span>/</span>
+                                    <div style="display:flex; flex-direction:column; width:48%; border:1px solid #ccc; border-radius:3px;">
+                                        <input class="row-input-dag-batta-2-num" type="text" style="width:100%; border:none; border-bottom:1px solid #ccc; padding:2px; text-align:center; font-size:12px; font-family:inherit;" />
+                                        <input class="row-input-dag-batta-2-den" type="text" style="width:100%; border:none; padding:2px; text-align:center; font-size:12px; font-family:inherit;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:row; gap:4px; margin-bottom:2px; flex:none;">
+                                <button type="button" class="row-bata-dag-btn" style="font-size:10px; padding:2px 6px; cursor:pointer; border:1px solid #a5d6a7; background:#e8f5e9; border-radius:3px; white-space:nowrap; font-family:inherit;">বাটা দাগ</button>
+                            </div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; flex:none; width:95px; text-align:center;">
+                            <input class="row-input-land-area" type="text" style="padding:4px; border:1px solid #a5d6a7; border-radius:3px; font-family:inherit; width:100%;" />
+                        </div>
+                        <div style="flex:1.5; min-width:120px;">&nbsp;</div>
+                        <div style="flex:1; min-width:100px;">&nbsp;</div>
+                        <div style="padding-bottom:1px; flex:none;">
+                            <button type="button" onclick="this.parentElement.parentElement.remove()" style="padding:5px 12px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer; font-family:inherit; font-size:0.85rem; white-space:nowrap;">মুছুন</button>
+                        </div>
+                    `;
+                        container.appendChild(div);
+
+                        div.querySelector('.row-bata-dag-btn').onclick = function () {
+                            var normal = div.querySelector('.row-dag-normal-container');
+                            var bata = div.querySelector('.row-dag-bata-container');
+                            if (normal.style.display === 'none') {
+                                normal.style.display = 'flex';
+                                bata.style.display = 'none';
+                            } else {
+                                normal.style.display = 'none';
+                                bata.style.display = 'flex';
+                            }
+                        };
+                    });
+                }
+            });
+
+            window.cpAddLand = function () {
+                var type = document.getElementById('cp_land_ownership_type').value;
+                var typeText = type === 'own' ? 'ক) নিজ মালিকানাধীন' : type === 'share' ? 'খ) বর্গা চাষাধীন' : 'গ) লিজ জমি';
+                var mouza = document.getElementById('cp_land_mouza').value;
+
+                var kt1 = document.getElementById('cp_khatian_type_1_txt').value;
+                var kt2 = document.getElementById('cp_khatian_type_2_txt').value;
+                var kn1 = document.getElementById('cp_khatian_no_1').value;
+                var kn2 = document.getElementById('cp_khatian_no_2').value;
+                var k_type = (kt1 ? kt1 : '') + (kt2 ? '/' + kt2 : '');
+                var k_no = kn1 + (kn2 ? '/' + kn2 : '');
+                var khatian = (k_type + ' ' + k_no).trim();
+
+                var dt1 = document.getElementById('cp_dag_type_1').value;
+                var dt2 = document.getElementById('cp_dag_type_2').value;
+                var d_type = (dt1 ? dt1 : '') + (dt2 ? '/' + dt2 : '');
+
+                var crop = document.getElementById('cp_land_crop').value;
+                var loan = document.getElementById('cp_land_loan').value;
+
+                function getDagNo(context) {
+                    var d_no = '';
+                    var amount = '';
+                    if (context === 'main') {
+                        if (document.getElementById('cp_dag_bata_container').style.display !== 'none') {
+                            var b1n = document.getElementById('cp_dag_batta_1_num').value;
+                            var b1d = document.getElementById('cp_dag_batta_1_den').value;
+                            var b2n = document.getElementById('cp_dag_batta_2_num').value;
+                            var b2d = document.getElementById('cp_dag_batta_2_den').value;
+                            if (b1n || b1d) d_no = b1n + '/' + b1d + ((b2n || b2d) ? ' - ' + b2n + '/' + b2d : '');
+                        } else {
+                            var d1 = document.getElementById('cp_dag_no_1').value;
+                            var d2 = document.getElementById('cp_dag_no_2').value;
+                            if (d1 || d2) d_no = d1 + (d2 ? '/' + d2 : '');
+                        }
+                        amount = document.getElementById('cp_land_area').value;
+                    } else {
+                        if (context.querySelector('.row-dag-bata-container').style.display !== 'none') {
+                            var b1n = context.querySelector('.row-input-dag-batta-1-num').value;
+                            var b1d = context.querySelector('.row-input-dag-batta-1-den').value;
+                            var b2n = context.querySelector('.row-input-dag-batta-2-num').value;
+                            var b2d = context.querySelector('.row-input-dag-batta-2-den').value;
+                            if (b1n || b1d) d_no = b1n + '/' + b1d + ((b2n || b2d) ? ' - ' + b2n + '/' + b2d : '');
+                        } else {
+                            var d1 = context.querySelector('.row-input-dag-no-1').value;
+                            var d2 = context.querySelector('.row-input-dag-no-2').value;
+                            if (d1 || d2) d_no = d1 + (d2 ? '/' + d2 : '');
+                        }
+                        amount = context.querySelector('.row-input-land-area').value;
+                    }
+                    return { no: d_no, amount: amount };
+                }
+
+                var entries = [];
+                var main = getDagNo('main');
+                if (mouza && main.no && main.amount) {
+                    entries.push({
+                        land_type: typeText,
+                        mouza: mouza,
+                        khatian: khatian,
+                        dag: (d_type + ' ' + main.no).trim(),
+                        area: main.amount,
+                        crop: crop,
+                        loan: loan
+                    });
+                }
+
+                document.querySelectorAll('#cp_dynamic_dag_container .dynamic-dag-row').forEach(function (row) {
+                    var res = getDagNo(row);
+                    if (mouza && res.no && res.amount) {
+                        entries.push({
+                            land_type: typeText,
+                            mouza: mouza,
+                            khatian: khatian,
+                            dag: (d_type + ' ' + res.no).trim(),
+                            area: res.amount,
+                            crop: crop,
+                            loan: loan
+                        });
+                    }
+                });
+
+                if (entries.length > 0) {
+                    entries.forEach(addAgriLandRow);
+
+                    // Clear fields
+                    ['cp_land_mouza', 'cp_khatian_type_1_txt', 'cp_khatian_type_2_txt',
+                        'cp_khatian_no_1', 'cp_khatian_no_2', 'cp_dag_type_1', 'cp_dag_type_2', 'cp_dag_no_1', 'cp_dag_no_2',
+                        'cp_dag_batta_1_num', 'cp_dag_batta_1_den', 'cp_dag_batta_2_num', 'cp_dag_batta_2_den', 'cp_land_area',
+                        'cp_land_crop', 'cp_land_loan'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = '';
+                        });
+                    const sel1 = document.getElementById('cp_khatian_type_1_sel');
+                    if (sel1) { sel1.style.display = 'block'; sel1.value = ''; }
+                    const sel2 = document.getElementById('cp_khatian_type_2_sel');
+                    if (sel2) { sel2.style.display = 'block'; sel2.value = ''; }
+
+                    document.getElementById('cp_land_ownership_type').selectedIndex = 0;
+                    document.getElementById('cp_dynamic_dag_container').innerHTML = '';
+                    window.cpSyncKhatianDropdowns();
+                }
+            };
+
+            window.addAgriLandRow = function (data = {}) {
+                if (!data.land_type) return; // Need valid data
+                const tbody = document.getElementById('agriLandTableBody');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td style="text-align:left; padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" value="${(data.land_type || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem; font-weight:600;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" class="bangla-input" value="${(data.mouza || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" value="${(data.khatian || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" value="${(data.dag || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" value="${(data.area || '').replace(/"/g, '&quot;')}" oninput="calcAgriLandTotal()" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem; text-align:center;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" class="bangla-input" value="${(data.crop || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem;">
+                </td>
+                <td style="padding:4px 6px; border:1px solid #c8e6c9;">
+                    <input type="text" value="${(data.loan || '').replace(/"/g, '&quot;')}" style="width:100%; border:none; background:transparent; font-family:inherit; font-size:0.82rem; text-align:center;">
+                </td>
+                <td style="text-align:center; padding:4px; border:1px solid #c8e6c9;">
+                    <button class="btn-remove-row" onclick="this.closest('tr').remove(); calcAgriLandTotal();">×</button>
+                </td>
+            `;
+                tbody.appendChild(tr);
+                calcAgriLandTotal();
+            };
+
+            function getAgriLandRows() {
+                return Array.from(document.querySelectorAll('#agriLandTableBody tr'))
+                    .map(row => {
+                        const inputs = row.querySelectorAll('input');
+                        return {
+                            land_type: inputs[0]?.value.trim() || '',
+                            mouza: inputs[1]?.value.trim() || '',
+                            khatian: inputs[2]?.value.trim() || '',
+                            dag: inputs[3]?.value.trim() || '',
+                            area: inputs[4]?.value.trim() || '',
+                            crop: inputs[5]?.value.trim() || '',
+                            loan: inputs[6]?.value.trim() || '',
+                        };
+                    }).filter(r => Object.values(r).some(v => v));
+            }
+
+            // ══ EXPOSE + WIRE EVENTS ══
+            window.populate = populateForm;
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('btn-save-customer').addEventListener('click', saveCustomerProfile);
+                document.getElementById('btn-close-customer-profile').addEventListener('click', () => {
+                    window.parent.postMessage({ command: 'CLOSE_CURRENT_TAB' }, '*');
+                });
+
+                renderCustomerTable();
+
+                document.getElementById('customer-table-body')?.addEventListener('click', function (e) {
+                    const deleteBtn = e.target.closest('.action-link.delete');
+                    if (deleteBtn) {
+                        const nid = deleteBtn.getAttribute('data-nid');
+                        if (nid) deleteCustomer(nid);
+                    }
+                });
+                window.addEventListener('message', async event => {
+                    if (event.data.command === 'REFRESH_CUSTOMER_LIST') {
+                        renderCustomerTable();
+                    }
+                    if (event.data.command === 'LOAD_CUSTOMER_PROFILE') {
+                        let customer = event.data.customer || null;
+                        const nid = event.data.nid || (customer ? customer.applicant_nid : null);
+
+                        if (nid) {
+                            try {
+                                if (!customer) {
+                                    customer = await window.parent.ipcRenderer.invoke('db-get-customer', nid);
+                                }
+                                if (customer) {
+                                    // Fetch transactions from central DB
+                                    const dbTransactions = await window.parent.ipcRenderer.invoke('db-get-transactions', customer.applicant_nid, customer.applicant_mobile);
+
+                                    // Merge manual transactions (if any) and DB transactions
+                                    let manualTrans = [];
+                                    try { manualTrans = JSON.parse(customer.transactions || '[]'); } catch (e) { }
+
+                                    // Filter out empty manual transactions
+                                    manualTrans = manualTrans.filter(t => t && Object.values(t).some(v => v && String(v).trim() !== ''));
+
+                                    // Create a Map by reference to avoid duplicates
+                                    const transMap = new Map();
+                                    manualTrans.forEach(t => {
+                                        if (t.reference) transMap.set(t.reference, t);
+                                    });
+
+                                    if (dbTransactions && Array.isArray(dbTransactions)) {
+                                        dbTransactions.forEach(t => {
+                                            const ref = t.id || t.reference || '';
+                                            if (ref) {
+                                                transMap.set(ref, {
+                                                    id: t.id,       // preserve DB id for deletion
+                                                    type: t.type || '', // preserve type (RTGS/EFTN) for deletion
+                                                    date: t.date || '',
+                                                    amount: t.amount || '',
+                                                    to_bank: t.receiving_bank || '',
+                                                    to_branch: t.receiving_branch || '',
+                                                    receiver_name: t.receiver_name || '',
+                                                    account_no: t.receiver_account || '',
+                                                    reference: ref
+                                                });
+                                            }
+                                        });
+                                    }
+
+                                    customer.transactions = JSON.stringify(Array.from(transMap.values()));
+                                    populateForm(customer);
+                                    // Auto-convert post codes to Bangla if they loaded as English
+                                    ['modal_applicant_curr_addr_post_code', 'modal_applicant_perm_addr_post_code'].forEach(id => {
+                                        let el = document.getElementById(id);
+                                        if (el && el.value) {
+                                            el.value = el.value.replace(/[0-9]/g, m => '০১২৩৪৫৬৭৮৯'[m]);
+                                        }
+                                    });
+                                } else {
+                                    alert('Customer not found: ' + nid);
+                                    populateForm({});
+                                }
+                            } catch (err) {
+                                console.error('Error loading customer:', err);
+                                populateForm({});
+                            }
+                        } else {
+                            populateForm({});
+                        }
+                    }
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const nidFromUrl = urlParams.get('nid');
+                if (nidFromUrl) window.parent.postMessage({ command: 'REQUEST_CUSTOMER_DATA', nid: nidFromUrl }, '*');
+                else populateForm({});
+            });
+        </script>
+        
+        <!-- Location Custom Dropdown Script -->
+        <script>
+            // OVERRIDE GLOBAL ALERT TO PREVENT IFRAME FREEZE
+            window.alert = function (message) {
+                const modal = document.getElementById('customAlertModal');
+                const msgEl = document.getElementById('customAlertMessage');
+                if (modal && msgEl) {
+                    msgEl.innerText = message;
+                    modal.style.display = 'flex';
+                } else {
+                    console.warn('Alert:', message);
+                }
+            };
+
+            function filterLocationDropdown(type) {
+                const inputId = type === 'curr' ? 'modal_applicant_curr_addr_village' : 'modal_applicant_perm_addr_village';
+                const listId = type === 'curr' ? 'loc_list_curr_custom' : 'loc_list_perm_custom';
+                const val = document.getElementById(inputId).value.toLowerCase();
+                const list = document.getElementById(listId);
+                if (!list) return;
+                const items = list.getElementsByClassName('custom-dropdown-item');
+                for (let item of items) {
+                    if (item.innerText.toLowerCase().includes(val)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            }
+
+            function selectLocation(village, type) {
+                const inputId = type === 'curr' ? 'modal_applicant_curr_addr_village' : 'modal_applicant_perm_addr_village';
+                document.getElementById(inputId).value = village;
+                
+                if (!window.locationList) return;
+                const loc = window.locationList.find(l => l.village === village);
+                if (loc) {
+                    const mapping = type === 'curr' ? {
+                        unionWard: 'modal_applicant_curr_addr_union',
+                        postOffice: 'modal_applicant_curr_addr_post',
+                        postCode: 'modal_applicant_curr_addr_post_code',
+                        cityCorp: 'modal_applicant_curr_city_corp'
+                    } : {
+                        unionWard: 'modal_applicant_perm_addr_union',
+                        postOffice: 'modal_applicant_perm_addr_post',
+                        postCode: 'modal_applicant_perm_addr_post_code',
+                        cityCorp: 'modal_applicant_perm_city_corp'
+                    };
+                    
+                    if (mapping.unionWard) {
+                        const el = document.getElementById(mapping.unionWard);
+                        if (el && !el.value) el.value = loc.union_ward || '';
+                    }
+                    if (mapping.postOffice) {
+                        const el = document.getElementById(mapping.postOffice);
+                        if (el && !el.value) el.value = loc.post_office || '';
+                    }
+                    if (mapping.postCode) {
+                        const el = document.getElementById(mapping.postCode);
+                        if (el && !el.value) el.value = (loc.post_code || '').replace(/[0-9]/g, m => '০১২৩৪৫৬৭৮৯'[m]);
+                    }
+                    if (mapping.cityCorp) {
+                        const el = document.getElementById(mapping.cityCorp);
+                        if (el && !el.value) {
+                            let cityVal = loc.city_corporation || '';
+                            if (cityVal && loc.ward_no) {
+                                cityVal = cityVal + ', ' + loc.ward_no;
+                            } else if (!cityVal && loc.ward_no) {
+                                cityVal = loc.ward_no;
+                            }
+                            el.value = cityVal;
+                        }
+                    }
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    if (window.parent && window.parent.ipcRenderer) {
+                        window.locationList = await window.parent.ipcRenderer.invoke('db-get-locations');
+                        if (window.locationList) {
+                            ['curr', 'perm'].forEach(type => {
+                                const listId = type === 'curr' ? 'loc_list_curr_custom' : 'loc_list_perm_custom';
+                                const listEl = document.getElementById(listId);
+                                if (listEl) {
+                                    window.locationList.forEach(loc => {
+                                        if (loc.village) {
+                                            const div = document.createElement('div');
+                                            div.className = 'custom-dropdown-item';
+                                            div.innerText = loc.village;
+                                            div.onclick = function() { selectLocation(loc.village, type); };
+                                            listEl.appendChild(div);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to load locations", e);
+                }
+            });
+        </script>
+
+        <!-- Custom Alert Modal for Validation (Fixes iframe freeze bug) -->
+        <div id="customAlertModal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+            <div
+                style="background:white; padding:20px; border-radius:8px; max-width:400px; text-align:center; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="color:#e53935; margin-bottom:15px; font-family:'SolaimanLipi', sans-serif;">⚠️ সতর্কতা
+                    (Warning)</h3>
+                <p id="customAlertMessage"
+                    style="margin-bottom:20px; font-family:'SolaimanLipi', sans-serif; white-space:pre-wrap; line-height:1.5; font-size:1.1rem; color:#333;">
+                </p>
+                <button
+                    onclick="document.getElementById('customAlertModal').style.display='none'; const fid = document.getElementById('customAlertModal').dataset.focusId; if(fid) { const fel = document.getElementById(fid); if(fel) { fel.focus(); fel.scrollIntoView({behavior:'smooth', block:'center'}); } }"
+                    style="background:#0d47a1; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-size:1rem; font-weight:bold;">OK</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

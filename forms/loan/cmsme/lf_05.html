@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পূর্বানুমান প্রতিবেদন (LF-05)</title>
+    <!-- Tailwind CSS for modern responsive layout/styling outside of page dimensions -->
+    <link rel="stylesheet" href="tailwind-cmsme.css">
+
+    <style>
+        /* Loading Solaiman Lipi font locally from the app's fonts folder */
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('./fonts/SolaimanLipi.ttf') format('truetype'),
+                url('../fonts/SolaimanLipi.ttf') format('truetype');
+            /* fallback path helper for subdirectories */
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('./fonts/SolaimanLipi.ttf') format('truetype'),
+                url('../fonts/SolaimanLipi.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @page {
+            size: legal;
+            margin: 0.5in;
+        }
+
+        /* Enforce absolute typography sizes as requested */
+        body {
+            font-family: 'SolaimanLipi', sans-serif;
+            font-size: 11pt !important;
+            background-color: #f3f4f6;
+            color: #000;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Body and regular inputs default to 11pt */
+        p,
+        span,
+        td,
+        li,
+        textarea,
+        option,
+        select {
+            font-size: 11pt !important;
+        }
+
+        /* Headings, table headers, and bold labels default to 12pt */
+        h1,
+        h2,
+        h3,
+        th,
+        .bold-header,
+        .font-bold,
+        strong {
+            font-size: 12pt !important;
+            font-weight: bold;
+        }
+
+        /* Specific style rules for Title (22pt) and Numbered Headers (14pt) */
+        .doc-title {
+            font-size: 22pt !important;
+            font-weight: bold !important;
+        }
+
+        .numbered-header {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Specific font size rule for Certification (प्रत्ययन) block as requested */
+        .certification-block,
+        .certification-block p,
+        .certification-block input {
+            font-size: 12.5pt !important;
+        }
+
+        /* Legal Page Container Layout (8.5 inches x 14 inches) */
+        .page {
+            width: 8.5in;
+            height: 14in;
+            padding: 0.5in;
+            margin: 20px auto;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            page-break-after: always;
+        }
+
+        /* Table styling to mimic original official forms precisely */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            line-height: 1.2;
+        }
+
+        th,
+        td {
+            border: 1.5px solid #000000;
+            padding: 4px 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f9fafb;
+        }
+
+        /* Specific space-saving rules for Page 2 to prevent bottom overflow */
+        #page-2 th,
+        #page-2 td {
+            padding: 2px 4px !important;
+        }
+
+        #page-2 .numbered-header {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        /* Seamless Form Inputs */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: 'SolaimanLipi', sans-serif;
+            font-size: 11pt !important;
+            padding: 2px 4px;
+            color: #1e3a8a;
+            /* Deep blue to easily distinguish user-entered text on screen */
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            background-color: #eff6ff;
+        }
+
+        /* Dotted inline input formatting optimized for exact baseline alignment and no shadows */
+        .dotted-input {
+            border-top: none !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            background: transparent !important;
+            padding: 0 2px 0px 2px !important;
+            /* Clean padding to align dotted line directly with baseline */
+            margin: 0 !important;
+            display: inline-block !important;
+            vertical-align: baseline !important;
+            text-align: left;
+            min-width: 1in !important;
+            width: 1in;
+            height: auto !important;
+            line-height: inherit !important;
+            color: #1e3a8a;
+        }
+
+        /* Stretching class for signature blocks to align completely against the right margin */
+        .dotted-fill {
+            width: 100% !important;
+            flex-grow: 1 !important;
+        }
+
+        /* Print Media Target Adjustments */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .page {
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                width: 8.5in !important;
+                height: 14in !important;
+                page-break-after: always;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                color: #000000 !important;
+                /* Force black text for final prints */
+            }
+        }
+
+        /* Ruled notes page style for page 6 */
+        .ruled-line {
+            border-bottom: 1px solid #cbd5e1;
+            height: 32px;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 0px;
+        }
+
+        .ruled-line input {
+            width: 100%;
+            border: none !important;
+            padding-bottom: 4px;
+        }
+
+        /* Input Focus and Select Fixes */
+        input,
+        textarea,
+        select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+
+<body id="cmsme-lf-05" class="bg-gray-100 pb-12">
+
+    <!-- ================= PAGE 1 ================= -->
+    <div class="page" id="page-1">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-১</p>
+                    <p class="font-bold">এল. এফ-০৫</p>
+                </div>
+            </div>
+
+            <!-- Header Titles (Fixed Width Title Area) -->
+            <div class="text-center" style="margin-top: -0.4in;">
+                <h1 class="font-bold tracking-wide flex justify-center items-center whitespace-nowrap doc-title"
+                    style="font-size: 22pt !important;">
+                    পূর্বানুমান প্রতিবেদন (
+                    <input type="text" class="dotted-input text-center font-bold"
+                        style="font-size: 22pt !important; width: 250px; min-width: 250px !important;" id="title-field">
+                    )
+                </h1>
+                <p class="text-sm font-semibold mt-1" style="font-size: 11pt !important;">(প্রতিবেদনকারী কর্মকর্তা
+                    কর্তৃক প্রতিটি পৃষ্ঠা অবশ্যই স্বাক্ষরিত হইতে হইবে)</p>
+            </div>
+
+            <!-- Upper Information Fields -->
+            <div class="grid grid-cols-12 gap-y-1 gap-x-4 mt-3">
+                <div class="col-span-6 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">শাখার নাম<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+                <div class="col-span-6 flex items-center whitespace-nowrap">
+                    <span class="w-24 font-bold flex justify-between flex-shrink-0">ঋণ কেস নং<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">প্রতিষ্ঠানের
+                        নাম<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">প্রোপ্রাইটর<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">পিতা<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">স্থায়ী ঠিকানা<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">ব্যবসায়িক
+                        ঠিকানা<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+
+                <div class="col-span-12 flex items-center whitespace-nowrap">
+                    <span class="w-28 font-bold flex justify-between flex-shrink-0">মোবাইল নং<span>:</span></span>
+                    <input type="text" class="dotted-input flex-grow ml-1">
+                </div>
+            </div>
+
+            <!-- Property Table Section -->
+            <div class="mt-8">
+                <p class="font-bold numbered-header">০২। জামানতের জন্য প্রস্তাবিত সম্পত্তির বিশদ বিবরণ:</p>
+                <div class="flex items-center font-semibold mt-1 whitespace-nowrap">
+                    <span class="flex-shrink-0">গ্রহণযোগ্য জামানতের মোট এলাকা:</span>
+                    <input type="text" class="dotted-input flex-grow max-w-xs ml-1">
+                </div>
+
+                <table class="mt-3 table-fixed">
+                    <thead>
+                        <tr class="h-10">
+                            <th class="w-1/12">উপজেলা</th>
+                            <th class="w-2/12">মৌজা/গ্রাম</th>
+                            <th class="w-2/12">খতিয়ান নং<br><span
+                                    class="text-[9px] font-normal">(............/............)</span></th>
+                            <th class="w-2/12">দাগ নং<br><span
+                                    class="text-[9px] font-normal">(............/............)</span></th>
+                            <th class="w-2/12">আয়তন (একর)</th>
+                            <th class="w-3/12">জামানতের স্বত্ব/মালিকানা বিষয়ে মন্তব্য</th>
+                        </tr>
+                    </thead>
+                    <tbody id="page-1-table-body">
+                        <!-- 13 Rows of Dynamic Input Slots -->
+                        <!-- 13 Rows of Dynamic Input Slots injected by engine -->
+                        <!-- Footer calculation summary row -->
+                        <tr class="h-6 font-bold bg-gray-50">
+                            <td colspan="4" class="text-right pr-2">মোট জমি</td>
+                            <td><input type="text" class="text-center font-bold" placeholder="মোট"></td>
+                            <td><input type="text" class="text-center" placeholder="-"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Certification Paragraph with dynamic flexible inline inputs -->
+            <div class="mt-6 text-justify leading-relaxed certification-block">
+                <p class="font-bold underline mb-1">প্রত‌্যয়ন</p>
+                <p class="inline">
+                    (ক) আমি বিগত
+                    <input type="text" class="dotted-input">
+                    ভূমি অফিস / তহশিল অফিস-
+                    <input type="text" class="dotted-input">
+                    -ইং পরিদর্শন এবং নিবন্ধন বহি-২ সহজনাব
+                    <input type="text" class="dotted-input">
+                    -এর প্রস্তাবিত জামানতের দলিলপত্র পরীক্ষা করিয়াছি। ঋণ কেস নং-
+                    <input type="text" class="dotted-input">
+                    ইং আমি দেখিলাম যে সম্পত্তিটি (১) আবেদনকারীর নিজ নামে একচেটিয়া মালিক দলীলকৃত অথবা (২) বিক্রেতার নামে
+                    (ক্রীত সম্পত্তির ক্ষেত্রে) দলিলকৃত এবং দৃষ্টত: (Prima facia) জামানতের জন্য প্রস্তাবিত সম্পত্তিটি
+                    আবেদনকারীর উত্তরাধিকার সূত্রে পাইবার এবং হস্তান্তরের অধিকার রহিয়াছে।
+                </p>
+                <p class="mt-2 inline">
+                    (খ) আমি
+                    <input type="text" class="dotted-input">
+                    তারিখের মধ্যে উক্ত সম্পত্তিটি সরেজমিনে তদন্ত করিয়াছি এবং দেখিয়াছি যে, উহা প্রকৃতপক্ষে এবং এককভাবে
+                    আবেদনকারীর দখলে রহিয়াছে।
+                </p>
+            </div>
+
+            <!-- Footer Signatures Page 1 - Shifted below Certification with a 3-line gap (~3.5rem) -->
+            <div class="grid grid-cols-12 gap-4 mt-14 border-t pt-2 whitespace-nowrap">
+                <div class="col-span-6 space-y-1 text-left">
+                    <p class="flex items-center">স্থান: <input type="text" class="dotted-input ml-1"
+                            style="min-width: 120px !important;"></p>
+                    <p class="flex items-center">তারিখ: <input type="text" class="dotted-input ml-1"
+                            style="min-width: 100px !important;"> <span class="ml-1">ইং</span></p>
+                </div>
+                <div class="col-span-6 flex justify-end">
+                    <div class="space-y-1 text-left w-80">
+                        <p class="flex items-center">স্বাক্ষর: <input type="text" class="dotted-input dotted-fill ml-1">
+                        </p>
+                        <p class="flex items-center">পূর্ণ নাম: <input type="text"
+                                class="dotted-input dotted-fill ml-1"></p>
+                        <p class="flex items-center">পদবী: <input type="text" class="dotted-input dotted-fill ml-1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 2 ================= -->
+    <div class="page" id="page-2">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-২</p>
+                </div>
+            </div>
+
+            <!-- Section 3 (Squeezed Margin) -->
+            <div class="mt-2">
+                <h2 class="font-bold numbered-header">০৩। জামানতের মূল্যায়ন:-</h2>
+                <p class="font-semibold pl-4">(ক) জমির শ্রেণীবিন্যাস</p>
+                <p class="pl-4">আবেদনকারীর(গণের) মোট জমির পরিমাণ</p>
+
+                <table class="mt-1 table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-3/12">কৃষি জমি</th>
+                            <th class="w-3/12">আয়তন (একরে)</th>
+                            <th class="w-3/12">পৌর জমি</th>
+                            <th class="w-3/12">আয়তন (একরে)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-6">
+                            <td class="text-left">(১) উচ্চ মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="text-left">(১) খালি জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6">
+                            <td class="text-left">(২) মধ্যম মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="text-left">(২) ইমারতসহ</td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6">
+                            <td class="text-left">(৩) নিছু মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="text-left">(৩) অন্যান্য</td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6 font-bold bg-gray-50">
+                            <td class="text-left">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td class="text-left">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 4 (Combined numbered header and union fields inline - Squeezed Margins) -->
+            <div class="mt-3">
+                <div class="flex items-baseline whitespace-nowrap">
+                    <h2 class="font-bold numbered-header m-0 inline-block">০৪। মূল্যায়ন নিরূপণ:-ইউনিয়ন:</h2>
+                    <input type="text" class="dotted-input text-center ml-1"
+                        style="font-size: 14pt !important; font-weight: bold; width: 150px; min-width: 150px !important;">
+                    <span class="font-bold" style="font-size: 14pt !important;">।</span>
+                </div>
+
+                <!-- 4 (ক) কৃষিজমি (Reduced Heights h-7 to h-6) -->
+                <p class="font-semibold pl-4 mt-1">(ক) কৃষিজমি</p>
+                <p class="pl-4 flex items-center whitespace-nowrap">মূল্যায়ন সূচী পৃষ্ঠা নং- <input type="text"
+                        class="dotted-input text-center ml-1"></p>
+
+                <table class="mt-1 table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-2/12" rowspan="2">জমির শ্রেণী</th>
+                            <th class="w-1.5/12" rowspan="2">আয়তন<br>(একরে)</th>
+                            <th class="w-1.5/12" rowspan="2">একরপ্রতিমূল্য<br>(ডিআইআর)</th>
+                            <th class="w-2.5/12" colspan="2">পূর্বানুমান কর্মকর্তা</th>
+                            <th class="w-2.5/12" colspan="2">ব্যবস্থাপক</th>
+                            <th class="w-2.5/12" colspan="2">মুখ্য আঞ্চলিক ব্যবস্থাপক</th>
+                        </tr>
+                        <tr>
+                            <th class="border-t">মূল্য</th>
+                            <th>স্বাক্ষর</th>
+                            <th class="border-t">মূল্য</th>
+                            <th>স্বাক্ষর</th>
+                            <th class="border-t">মূল্য</th>
+                            <th>স্বাক্ষর</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-6">
+                            <td class="text-left">(১) উচ্চ মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6">
+                            <td class="text-left">(২) মধ্যম মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6">
+                            <td class="text-left">(৩) নিছু মূল্যের জমি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6 font-bold bg-gray-50">
+                            <td class="text-left">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 4 (খ) পৌর জমি (Reduced Heights h-7 to h-6) -->
+                <p class="font-semibold pl-4 mt-1">(খ) পৌর জমি : </p>
+                <p class="pl-4 flex items-center whitespace-nowrap">একর প্রতি সর্বোচ্চ মূল্যায়ন সিলিং টাকা <input
+                        type="text" class="dotted-input text-center ml-1"></p>
+
+                <table class="mt-1 table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-2/12">জমির অবস্থান/ফরম</th>
+                            <th class="w-1.5/12">অবস্থান</th>
+                            <th class="w-1.5/12">আয়তন (একর)</th>
+                            <th class="w-1.5/12">একর প্রতি মূল্য</th>
+                            <th class="w-1.5/12">জমির মূল্য</th>
+                            <th class="w-1.5/12">পূর্বানুমান কর্মকর্তা</th>
+                            <th class="w-1.5/12">ব্যবস্থাপক</th>
+                            <th class="w-1/12">মুখ্য আঞ্চলিক ব্যবস্থাপক</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-6">
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td rowspan="3" class="align-bottom pb-1"><input type="text"
+                                    class="text-center border-t text-[9px]" placeholder="স্বাক্ষর"></td>
+                            <td rowspan="3" class="align-bottom pb-1"><input type="text"
+                                    class="text-center border-t text-[9px]" placeholder="স্বাক্ষর"></td>
+                            <td rowspan="3" class="align-bottom pb-1"><input type="text"
+                                    class="text-center border-t text-[9px]" placeholder="স্বাক্ষর"></td>
+                        </tr>
+                        <tr class="h-6">
+                            <td><input type="text"></td>
+                            <td><input type="text"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-6 font-bold bg-gray-50">
+                            <td colspan="2">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 4 (গ) ইমারত (Reduced Heights h-9 to h-7) -->
+                <p class="font-semibold pl-4 mt-1">(গ) ইমারত</p>
+                <div class="flex justify-between pl-4 mb-0.5 whitespace-nowrap">
+                    <span class="flex items-center">অবস্থান: <input type="text" class="dotted-input ml-1"
+                            style="min-width: 150px !important;"></span>
+                    <span class="flex items-center">নির্মাণের বৎসর: <input type="text"
+                            class="dotted-input text-center ml-1" style="min-width: 100px !important;"></span>
+                </div>
+
+                <table class="table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-1.5/12">ইমারতের প্রকার</th>
+                            <th class="w-1.5/12">নির্ধারিত বছর</th>
+                            <th class="w-1.5/12">মোট আওতাধীন জায়গা</th>
+                            <th class="w-1.5/12">দর প্রতি বর্গফুট</th>
+                            <th class="w-1.5/12">ইমারতের স্থুলমূল্য</th>
+                            <th class="w-1/12">অবচয়</th>
+                            <th class="w-1.5/12">ইমারতের নীট মূল্য</th>
+                            <th class="w-2.5/12">যাহার দ্বারা স্বীকৃত</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-7">
+                            <td><input type="text"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="p-1 leading-tight align-middle text-center font-bold">
+                                পূর্বানুমান কর্মকর্তা
+                            </td>
+                        </tr>
+                        <tr class="h-7">
+                            <td><input type="text"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="p-1 leading-tight align-middle text-center font-bold">
+                                ব্যবস্থাপক
+                            </td>
+                        </tr>
+                        <tr class="h-7">
+                            <td><input type="text"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td class="p-1 leading-tight align-middle text-center font-bold">
+                                মুখ্য আঞ্চলিক ব্যবস্থাপক
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 5 (Reduced Spacing mt-6 to mt-3 & Row Heights h-9 to h-7) -->
+            <div class="mt-3">
+                <h2 class="font-bold numbered-header">০৫। সর্বোচ্চ ঋণ সীমা:-</h2>
+                <table class="mt-1 table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-3/12">সীমা</th>
+                            <th class="w-2/12">কৃষি জমি টাকা</th>
+                            <th class="w-2/12">পৌর জমি টাকা</th>
+                            <th class="w-1.5/12">ইমারত</th>
+                            <th class="w-1.5/12">মোট ঋণ সীমা</th>
+                            <th class="w-2/12">মন্তব্য<br><span class="text-[9px] font-normal">০৪ক+০৪খ+০৪গ</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">৫০% হারে (এজমালী)</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">৮০% হারে (একচেটিয়া)</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer Officer Signatures page 2 (Reduced mt-12 to mt-4 to pull up content) -->
+        <div class="flex justify-end mt-4 border-t pt-3 w-full">
+            <div class="flex items-center font-semibold w-96 text-right justify-end">
+                <span class="flex-shrink-0">রিপোর্টিং কর্মকর্তার স্বাক্ষর ও সীল:</span>
+                <input type="text" class="dotted-input dotted-fill ml-1">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 3 ================= -->
+    <div class="page" id="page-3">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-৩</p>
+                </div>
+            </div>
+
+            <!-- Section 6 (With tight text inputs instead of textareas to avoid large gaps) -->
+            <div class="mt-4">
+                <h2 class="font-bold numbered-header">০৬। অন্যান্য তথ্য: (ডিলিট করিয়া উত্তর দিতে হইবে)</h2>
+
+                <table class="mt-2 table-fixed">
+                    <thead>
+                        <tr class="h-8">
+                            <th class="w-1/12 text-center">ক্রঃ নং</th>
+                            <th class="w-7/12 text-left px-2">বিবরণ</th>
+                            <th class="w-4/12">মন্তব্য / উত্তর</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-8">
+                            <td class="text-center font-bold">ক)</td>
+                            <td class="text-left px-2 py-1 leading-normal">
+                                আবেদনকারী(গণ) অথবা তদ্বীয়/তাদের পোষ্যের অত্র ব্যাংক/অন্য কোন ব্যাংক/অর্থ লগ্নি কারী
+                                প্রতিষ্ঠান অথবা বি.আর.ডি.বি সমবায় সমিতির নিকট ঋণ রহিয়াছে কি?
+                            </td>
+                            <td class="p-0 h-full"><input type="text" class="w-full text-left h-full px-2"
+                                    placeholder="উত্তর লিখুন..."></td>
+                        </tr>
+                        <tr class="h-8">
+                            <td class="text-center font-bold">খ)</td>
+                            <td class="text-left px-2 py-1 leading-normal">
+                                পৃষ্ঠা ১ এ বর্ণিত জামানত সম্পত্তির সরকারী দখল জনিত ক্ষয় ক্ষতির সম্ভাবনা আছে কি?
+                            </td>
+                            <td class="p-0 h-full"><input type="text" class="w-full text-left h-full px-2"
+                                    placeholder="উত্তর লিখুন..."></td>
+                        </tr>
+                        <tr class="h-8">
+                            <td class="text-center font-bold">গ)</td>
+                            <td class="text-left px-2 py-1 leading-normal">
+                                আবেদনকারীর (গণের) অপর কোন আয়ের উৎস আছে কি? সংক্ষিপ্ত বর্ণনা দিন।
+                            </td>
+                            <td class="p-0 h-full"><input type="text" class="w-full text-left h-full px-2"
+                                    placeholder="উত্তর লিখুন..."></td>
+                        </tr>
+                        <tr class="h-8">
+                            <td class="text-center font-bold">ঘ)</td>
+                            <td class="text-left px-2 py-1 leading-normal">
+                                আবেদনকারীর চরিত্র এবং ঋণ পরিশোধে বিশ্বস্ততার বিষয়ে মন্তব্য
+                            </td>
+                            <td class="p-0 h-full"><input type="text" class="w-full text-left h-full px-2"
+                                    placeholder="উত্তর লিখুন..."></td>
+                        </tr>
+                        <tr class="h-8">
+                            <td class="text-center font-bold">ঙ)</td>
+                            <td class="text-left px-2 py-1 leading-normal">
+                                আবেদনকারীর মোট মালিকানাধীন জমির পরিমান
+                            </td>
+                            <td class="p-0 h-full"><input type="text" class="w-full text-left h-full px-2"
+                                    placeholder="উত্তর লিখুন..."></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 7 -->
+            <div class="mt-6">
+                <h2 class="font-bold numbered-header">০৭। স্কীম/প্রকল্পের সম্ভাব্যতা বিষয়ে</h2>
+                <p class="font-semibold mb-1">পূর্বানুমান কর্মকর্তার মন্তব্য (প্রয়োজনবোধে পৃথক কাগজ ব্যবহার করুন)</p>
+                <div class="border border-black p-2 rounded-sm">
+                    <textarea class="w-full h-44 leading-relaxed"
+                        placeholder="এখানে বিস্তারিত মন্তব্য টাইপ করুন..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section 8 -->
+            <div class="mt-6">
+                <h2 class="font-bold numbered-header">০৮। ঋণ ব্যবহারের পর প্রত্যাশিত আনুমানিক আয়:</h2>
+                <table class="mt-2 table-fixed text-center">
+                    <thead>
+                        <tr class="h-8">
+                            <th class="w-4/12">বর্তমান আয়</th>
+                            <th class="w-4/12">ঋণ ব্যবহারের পরে প্রত্যাশিত আয়</th>
+                            <th class="w-4/12">বৃদ্ধি</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-10">
+                            <td><input type="text" class="text-center" placeholder="টাকা"></td>
+                            <td><input type="text" class="text-center" placeholder="টাকা"></td>
+                            <td><input type="text" class="text-center font-bold" placeholder="টাকা"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="grid grid-cols-3 gap-4 mt-4 font-semibold whitespace-nowrap">
+                    <div class="space-y-2">
+                        <p class="flex items-center">স্থুল টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                        <p class="flex items-center">নীট টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="flex items-center">স্থুল টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                        <p class="flex items-center">নীট টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="flex items-center">স্থুল টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                        <p class="flex items-center">নীট টাকা: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"></p>
+                    </div>
+                </div>
+
+                <p class="text-[11px] font-semibold text-slate-700 italic mt-4 text-center">
+                    (অনুগ্রহপূর্বক ০৫ পৃষ্ঠায় বিশদ বিবরণ দিন)
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer Signatures page 3 -->
+        <div class="flex justify-end mt-12 border-t pt-3 w-full">
+            <div class="flex items-center font-semibold w-96 text-right justify-end">
+                <span class="flex-shrink-0">রিপোর্টিং কর্মকর্তার স্বাক্ষর ও সীল:</span>
+                <input type="text" class="dotted-input dotted-fill ml-1">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 4 ================= -->
+    <div class="page" id="page-4">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-৪</p>
+                </div>
+            </div>
+
+            <!-- Section 9 -->
+            <div class="mt-2">
+                <h2 class="font-bold numbered-header">০৯। পূর্বানুমান কর্মকর্তার সুপারিশ:</h2>
+                <p class="font-semibold pl-4">স্কীম/প্রকল্পের অর্থনৈতিক দিক (অতিরিক্ত তথ্য)</p>
+
+                <table class="mt-2 table-fixed">
+                    <thead>
+                        <tr>
+                            <th class="w-6/12">কার্যক্রম/উদ্দেশ্য</th>
+                            <th class="w-3/12">ঋণের পরিমান</th>
+                            <th class="w-3/12">পরিশোধের শর্তাবলী</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">১। <input type="text" class="inline-block w-11/12"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">২। <input type="text" class="inline-block w-11/12"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">৩। <input type="text" class="inline-block w-11/12"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr class="h-7">
+                            <td class="text-left font-semibold">৪। <input type="text" class="inline-block w-11/12"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr class="h-7 font-bold bg-gray-50">
+                            <td class="text-center">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center" placeholder="-"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="flex justify-end mt-3 whitespace-nowrap w-full">
+                    <div class="w-80 space-y-1 text-left">
+                        <p class="flex items-center">পূর্বানুমান কর্মকর্তার স্বাক্ষর: <input type="text"
+                                class="dotted-input dotted-fill ml-1"></p>
+                        <p class="flex items-center">পূর্ণ নাম: <input type="text"
+                                class="dotted-input dotted-fill ml-1"></p>
+                        <p class="flex items-center">পদ: <input type="text" class="dotted-input dotted-fill ml-1"></p>
+                        <p class="flex items-center">তারিখ: <input type="text" class="dotted-input dotted-fill ml-1">
+                            <span class="ml-1 flex-shrink-0">ইং</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 10 -->
+            <div class="mt-4 border-t pt-2 border-black">
+                <h2 class="font-bold numbered-header">১০। জামানতের বিষয়ে আইন উপদেষ্টা/ ব্যবস্থাপকের অভিমত :</h2>
+                <p class="font-semibold pl-4">(ক) আমি আবেদনকারীর (গণের) দলিল, স্বত্বাধিকারপত্র পরীক্ষা করিয়া দেখিয়াছি
+                    এবং এই মর্মে প্রত্যয়ন করিতেছি যে -</p>
+
+                <ol class="list-decimal pl-8 space-y-1.5 mt-1 leading-normal text-justify">
+                    <li>আবেদনকারী(গণ) প্রতিবেদনের ১ পৃষ্ঠায় বর্ণিত জামানতের সম্পত্তির একচ্ছত্র মালিক।</li>
+                    <li>জমিতে আবেদনকারীর (গণের) উত্তরাধিকারসূত্রে পাইবার এবং হস্তান্তরের অধিকার রহিয়াছে অর্থাৎ জমিটি
+                        ব্যাংকের নিকট হস্তান্তরের ক্ষমতা রহিয়াছে।</li>
+                    <li>ইহা একচেটিয়া সম্পত্তি এবং বৈধ জামানত হিসাবে গ্রহণ করিবার জন্য প্রয়োজনীয় সকল শর্ত আবেদনকারী(গণ)
+                        পূরণ করিয়াছেন।</li>
+                    <li>বৈধ জামানত রূপে গ্রহণ করিবার জন্য স্বত্বে কোন বিধি নিষেধ/সীমাবদ্ধতা নাই।</li>
+                </ol>
+
+                <div class="flex justify-end mt-3 whitespace-nowrap w-full">
+                    <div class="w-80 space-y-1 text-left">
+                        <p class="flex items-center">স্বাক্ষর: <input type="text" class="dotted-input dotted-fill ml-1">
+                        </p>
+                        <p class="flex items-center">পূর্ণ নাম: <input type="text"
+                                class="dotted-input dotted-fill ml-1"></p>
+                        <p class="flex items-center">তারিখ: <input type="text" class="dotted-input dotted-fill ml-1">
+                            <span class="ml-1 flex-shrink-0">ইং</span></p>
+                    </div>
+                </div>
+
+                <div class="text-[10px] italic pl-4 mt-1 space-y-0.5">
+                    <p>(ক) অপ্রয়োজনীয় অংশগুলি বাদ দিন।</p>
+                    <p>(খ) প্রয়োজনবোধে পৃথক কাগজ ব্যবহার করুন।</p>
+                </div>
+            </div>
+
+            <!-- Section 11 -->
+            <div class="mt-3 border-t pt-2 border-black">
+                <h2 class="font-bold numbered-header">১১। স্থানীয় কারীগরী উপদেষ্টা পরিষদের সুপারিশ:</h2>
+                <div class="mt-1">
+                    <input type="text" class="dotted-input w-full h-6" style="width: 100% !important;">
+                    <input type="text" class="dotted-input w-full h-6 mt-1" style="width: 100% !important;">
+                </div>
+            </div>
+
+            <!-- Section 12 (Updated layout with requested Bengali elements and correct dotted margins) -->
+            <div class="mt-3 border-t pt-2 border-black">
+                <h2 class="font-bold numbered-header">১২। মঞ্জুরকারী কর্তৃপক্ষের সুপারিশ/আদেশ:</h2>
+                <div class="leading-relaxed mt-1 text-justify">
+                    মাঠ কর্মকর্তার সুপারিশ মোতাবেক ঋণ আবেদনকারী-
+                    <input type="text" class="dotted-input ml-1">
+                    এর অনুকূলে
+                    <input type="text" class="dotted-input ml-1">
+                    খাতে
+                    <input type="text" class="dotted-input ml-1">
+                    করার জন্য
+                    <input type="text" class="dotted-input ml-1">
+                    সুদে মং
+                    <input type="text" class="dotted-input ml-1">
+                    =
+                    <input type="text" class="dotted-input ml-1">
+                    টাকা মাত্র ঋণ
+                    <input type="text" class="dotted-input ml-1">
+                    করা হলো।
+                </div>
+
+                <!-- Footer Signatures Page 4 -->
+                <div class="grid grid-cols-12 gap-4 mt-6 border-t pt-2 whitespace-nowrap">
+                    <div class="col-span-6 space-y-1 text-left">
+                        <p class="flex items-center">স্থান: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 120px !important;"></p>
+                        <p class="flex items-center">তারিখ: <input type="text" class="dotted-input ml-1"
+                                style="min-width: 100px !important;"> <span class="ml-1">ইং</span></p>
+                    </div>
+                    <div class="col-span-6 flex justify-end">
+                        <div class="space-y-1 text-left w-80">
+                            <p class="flex items-center">স্বাক্ষর: <input type="text"
+                                    class="dotted-input dotted-fill ml-1"></p>
+                            <p class="flex items-center">পদ: <input type="text" class="dotted-input dotted-fill ml-1">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Signatures page 4 padding -->
+        <div class="flex justify-between text-[10px] mt-4 pt-1">
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 5 ================= -->
+    <div class="page" id="page-5">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-৫</p>
+                </div>
+            </div>
+
+            <!-- Headers -->
+            <div class="text-center mt-2">
+                <h1 class="text-lg font-bold">স্কীমের অর্থনৈতিক দিক</h1>
+                <p class="font-semibold">(আয় সৃষ্টি হইবে)</p>
+            </div>
+
+            <!-- Main Complex Income Table -->
+            <div class="mt-4">
+                <table class="table-fixed text-center">
+                    <thead>
+                        <tr>
+                            <th class="w-2.5/12" rowspan="2">ফসল ইত্যাদি</th>
+                            <th class="w-2.5/12" colspan="2">আবাদী জমির পরিমাণ</th>
+                            <th class="w-1.5/12" rowspan="2">একর প্রতি উৎপাদন</th>
+                            <th class="w-1.5/12" rowspan="2">মোট উৎপাদন (মন হিসাবে)</th>
+                            <th class="w-1.5/12" rowspan="2">ফাপ্রতি মূল্য</th>
+                            <th class="w-2.5/12" rowspan="2">মোট আয়</th>
+                        </tr>
+                        <tr>
+                            <th class="border-t">সেচ যুক্ত</th>
+                            <th>সেচ বিহীন</th>
+                        </tr>
+                        <tr class="bg-gray-100 text-[10px]">
+                            <td>১</td>
+                            <td>২</td>
+                            <td>৩</td>
+                            <td>৪</td>
+                            <td>৫</td>
+                            <td>৬</td>
+                            <td>৭</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- (ক) বর্তমান আয় -->
+                        <tr class="h-10">
+                            <td class="text-left font-semibold">ক) বর্তমান আয় <br><span
+                                    class="text-[10px] font-normal">(ঋণ ব্যবহারের পূর্বে)</span></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-10">
+                            <td><input type="text" placeholder="অন্যান্য খাত..."></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-7 font-bold bg-gray-50">
+                            <td class="text-center">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                        </tr>
+
+                        <!-- (খ) ঋণ ব্যবহারের পর আয় -->
+                        <tr class="h-10 border-t-2 border-black">
+                            <td class="text-left font-semibold">খ) ঋণ ব্যবহারের পর আয়</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-10">
+                            <td><input type="text" placeholder="অন্যান্য খাত..."></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-7 font-bold bg-gray-50">
+                            <td class="text-center">মোট</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                        </tr>
+
+                        <!-- (গ) বৃদ্ধি -->
+                        <tr class="h-10 border-t-2 border-black">
+                            <td class="text-left font-semibold">গ) বৃদ্ধি</td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                            <td><input type="text" class="text-center"></td>
+                        </tr>
+                        <tr class="h-10 font-bold bg-gray-50">
+                            <td class="text-left font-bold">স্থুল আয়ের ৫০% উৎপাদন ব্যয় করিয়া নীট বৃদ্ধি</td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                            <td><input type="text" class="text-center font-bold"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Application Progress Tracking with dynamic inline dates -->
+            <div class="mt-8 border-t pt-4 border-dashed border-black">
+                <h2 class="font-bold underline">৫। আবেদনপত্রের গতিবিধি:</h2>
+                <div class="grid grid-cols-1 gap-3 mt-4 font-semibold pl-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">১। আবেদনের তারিখ</span>
+                        <span class="flex items-center flex-grow">: <input type="text"
+                                class="dotted-input flex-grow text-center ml-1" style="min-width: 150px !important;">
+                            <span class="ml-1">ইং</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">২। কর্মকর্তা কর্তৃক প্রাপ্তির তারিখ</span>
+                        <span class="flex items-center flex-grow">: <input type="text"
+                                class="dotted-input flex-grow text-center ml-1" style="min-width: 150px !important;">
+                            <span class="ml-1">ইং</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">৩। পূর্বানুমানের তারিখ</span>
+                        <span class="flex items-center flex-grow">: <input type="text"
+                                class="dotted-input flex-grow text-center ml-1" style="min-width: 150px !important;">
+                            <span class="ml-1">ইং</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">৪। প্রতিবেদন দাখিলের তারিখ</span>
+                        <span class="flex items-center flex-grow">: <input type="text"
+                                class="dotted-input flex-grow text-center ml-1" style="min-width: 150px !important;">
+                            <span class="ml-1">ইং</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">৫। প্রতিবেদনকারী কর্মকর্তার স্বাক্ষর</span>
+                        <span class="flex-shrink-0">:</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-56 flex-shrink-0">তারিখ</span>
+                        <span class="flex items-center flex-grow">: <input type="text"
+                                class="dotted-input flex-grow text-center ml-1" style="min-width: 150px !important;">
+                            <span class="ml-1">ইং</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Signatures page 5 -->
+        <div class="flex justify-between mt-8 border-t pt-2">
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
+        </div>
+    </div>
+
+    <!-- ================= PAGE 6 ================= -->
+    <div class="page" id="page-6">
+        <div>
+            <!-- Top Metadata -->
+            <div class="flex justify-between items-start text-xs font-semibold">
+                <div>&nbsp;</div>
+                <div class="text-right">
+                    <p>পৃষ্ঠা নং-৬</p>
+                </div>
+            </div>
+
+            <!-- Header Labels -->
+            <div class="text-center mt-6 space-y-2">
+                <h2 class="font-bold tracking-wider">সূত্র: ০৪ ও পৃষ্ঠা ০৭নং দফা</h2>
+                <h1 class="text-base font-bold">স্কীম / প্রকল্পের অর্থনৈতিক দিক (অতিরিক্ত তথ্য)</h1>
+            </div>
+
+            <!-- Ruled Lines Note Input Section -->
+            <div id="lf05-ruled-lines" class="mt-12 space-y-1 pl-4 pr-4">
+                <!-- Ruled lines injected by engine -->
+            </div>
+        </div>
+
+        <!-- Final Sign-off block -->
+        <div class="grid grid-cols-12 gap-4 mt-12 border-t pt-4 whitespace-nowrap">
+            <div class="col-span-6">
+                <p class="italic text-slate-500">বিশেষ মন্তব্য বা ব্যাখ্যা সংযুক্তি পাতা।</p>
+            </div>
+            <div class="col-span-6 flex justify-end">
+                <div class="space-y-1 text-left w-80">
+                    <p class="flex items-center">কর্মকর্তার স্বাক্ষর: <input type="text"
+                            class="dotted-input dotted-fill ml-1"></p>
+                    <p class="flex items-center">সীল: <input type="text" class="dotted-input dotted-fill ml-1"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+
+</html>

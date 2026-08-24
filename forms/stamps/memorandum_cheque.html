@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangladesh Krishi Bank - Memorandum of Deposit of Cheques</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @page {
+      size: 8.5in 14in portrait;
+      margin: 0;
+    }
+
+    html, body {
+      background-color: #374151;
+      font-family: Arial, sans-serif;
+      color: #000000;
+      font-size: 11pt;
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body.stamp-body-wrapper {
+      padding: 10mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in / 215.9mm x 355.6mm)
+     Prevents multi-page spills during printing using 355.5mm
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 215.9mm;
+      height: 355.5mm; /* 355.5mm prevents Chromium sub-pixel overflow */
+      padding-top: 109.22mm; /* 4.3 inch top emblem clearance */
+      padding-bottom: 38.1mm; /* 1.5 inch bottom blank margin */
+      padding-left: 12.7mm; /* 0.5 inch side margins */
+      padding-right: 12.7mm;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    span[contenteditable="true"] {
+      min-width: 1px;
+    }
+
+    .dotted-input:empty:before {
+      content: attr(placeholder);
+      color: #888;
+      font-weight: normal;
+    }
+
+    .doc-title {
+      text-align: center;
+      font-size: 16pt;
+      font-weight: bold;
+      text-decoration: underline;
+      margin-bottom: 6mm;
+      text-transform: uppercase;
+    }
+
+    .address-block {
+      text-align: left;
+      font-size: 11pt;
+      line-height: 1.6;
+      margin-bottom: 5mm;
+    }
+
+    .clause-body {
+      text-align: justify;
+      line-height: 1.65;
+      font-size: 11pt;
+    }
+
+    .clause-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 4mm;
+      text-align: justify;
+    }
+
+    .clause-num {
+      min-width: 24px;
+      font-weight: normal;
+    }
+
+    .clause-text {
+      flex: 1;
+    }
+
+    /* =========================================================
+     PRINT RULES FOR ELECTRON APP & PDF EXPORT
+     ========================================================= */
+    @media print {
+      @page {
+        size: 8.5in 14in portrait;
+        margin: 0;
+      }
+
+      html,
+      body,
+      body.stamp-body-wrapper {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 215.9mm !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+      }
+
+      .stamp-page {
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+        width: 215.9mm !important;
+        height: 355.5mm !important;
+        max-height: 355.5mm !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        padding-top: 109.22mm !important;
+        padding-bottom: 38.1mm !important;
+        padding-left: 12.7mm !important;
+        padding-right: 12.7mm !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        page-break-before: auto !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .stamp-page:last-of-type {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
+  
+    .dotted-input, span[contenteditable="true"], .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: left;
+      min-width: 1px;
+      font-weight: bold;
+    }
+    .dotted-input:empty, span[contenteditable="true"]:empty, .data-input:empty {
+      min-width: 0.5in;
+    }
+
+    /* Witness Layout */
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+    .witness-table td {
+      padding: 4px 0;
+      vertical-align: bottom;
+      border: none;
+    }
+    .witness-table td:nth-child(1) { width: 30%; }
+    .witness-table td:nth-child(2) { width: 5%; text-align: center; font-weight: bold; }
+    .witness-table td:nth-child(3) { width: 65%; }
+    .witness-table .dotted-input { width: 100%; display: block; }
+  </style>
+
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- PAGE 1 CONTAINER -->
+  <div class="stamp-page">
+
+    <div class="doc-title">MEMORANDUM OF DEPOSIT OF CHEQUES</div>
+
+    <div style="text-align: right; font-size: 11pt; margin-bottom: 4mm;">
+      Date:<span class="dotted-input" contenteditable="true" placeholder="DD/MM/YYYY" ></span>
+    </div>
+
+    <div class="address-block">
+      The Manager<br>
+      Bangladesh Krishi Bank<br>
+      <div style="display: flex; align-items: baseline; margin-top: 2px;">
+        <span class="dotted-input" contenteditable="true" placeholder="Branch Name" data-db-field="branch_name_en" style="flex: 1;"></span>
+        <span style="margin: 0 4px;">Branch,</span>
+        <span class="dotted-input" contenteditable="true" placeholder="Location" style="flex: 1;"></span>
+      </div>
+    </div>
+
+    <div class="clause-body">
+
+      <div class="clause-item">
+        <div class="clause-num">1.</div>
+        <div class="clause-text">
+          In consideration of the Bank Sanctioning Loan or continuing credit facility in any amount as long as the Bank may think fit to me-<span class="dotted-input" contenteditable="true" placeholder="Borrower Name" ></span>, <strong>S/O-</strong><span class="dotted-input" contenteditable="true" placeholder="Father's Name" ></span><strong>Address:</strong><span class="dotted-input" contenteditable="true" placeholder="Address" ></span> hereby declare that I/we have deposited cheques described in <u>the Schedule</u> below including interest accrued thereon (hereinafter referred to as the “cheques”) and acknowledge that the cheques are drawn by me/us and are to be held by the Bank as continuing security for repayment of any advances the Bank may make from time to time with interest and charges thereon from time to time applicable or agreed upon.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">2.</div>
+        <div class="clause-text">
+          I/we hereby declare and acknowledge that <u>the cheques</u> will be a continuing security, notwithstanding the fact that by payments made on the account of the credit facilities or advances from time to time reduced or extinguished or even that the balance of the said account may be in credit.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">3.</div>
+        <div class="clause-text">
+          I/we hereby agree that the Bank may at any time or times hereinafter without notice to me/us present all or any of the cheques and set off, transfer or apply or any of the money from the cheques from time to time in or towards the discharge and satisfaction of all sums of money which now are or at any time or times hereinafter may become due or owing to the Bank by me/us either alone or jointly with any other person or persons, company or companies, on any account or in respect of any liability whatsoever whether actual or contingent and whether in the character of borrower, principal debtor or guarantor or surety or otherwise.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align: right; font-style: italic; font-size: 11pt; position: absolute; bottom: 38.1mm; right: 12.7mm;">
+      Running page-02-
+    </div>
+
+  </div>
+
+  <!-- PAGE 2 CONTAINER -->
+  <div class="stamp-page">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6mm;">
+      <div style="flex: 1;"></div>
+      <div style="flex: 1; text-align: center; font-weight: bold; font-size: 11pt;"><u>(Page-2)</u></div>
+      <div style="flex: 1; text-align: right; font-weight: bold; font-size: 11pt;">Contd...<u>P/2</u></div>
+    </div>
+
+    <div class="clause-body">
+
+      <div class="clause-item">
+        <div class="clause-num">4.</div>
+        <div class="clause-text">
+          I/we hereby also agree until all liabilities whether weather actual <u>actual</u> or contingent, primary or collateral, joint or several shall have been fully discharged and satisfied the <u>bank may</u> retain the cheques as the bank in its absolute discretion may consider necessary to meet such liabilities on maturity or otherwise.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">5.</div>
+        <div class="clause-text">
+          I/we further hereby declare and acknowledge that I/<u>we have</u> nor shall have any claim whatsoever to the amounts of the cheques and undertake that the cheques will be honored on presentment and will retain sufficient sums for payment of the cheques, until I/we have received from the bank notice in writing to the effect that the Bank no longer requires the cheques or the amounts of the cheques as security.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">6.</div>
+        <div class="clause-text">
+          The Bank shall be entitled to require from me/us other cheques from time to time at its sole discretion without reference to me/us until such time as all liabilities and obligations which are outstanding against me/us are fully satisfied and discharged, and the other cheques shall continue to be held by the Bank as security in the same way as the cheques.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">7.</div>
+        <div class="clause-text">
+          If the cheques are undated, I/we hereby authorize the Bank to insert any date in all or any of the cheques from time to time.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">8.</div>
+        <div class="clause-text">
+          I/we hereby further declare that <u>this letter</u> shall be binding on my heirs, representatives and successors, and shall be valid notwithstanding any change in the amalgamation, or acquisition of the Bank with any other corporate body.
+        </div>
+      </div>
+
+      <div class="clause-item">
+        <div class="clause-num">9.</div>
+        <div class="clause-text">
+          I/we hereby further declare that I/we <u>hereby authorize</u> the Bank to disclose information with regard to the cheques and lor this to any regulatory authority, any office of the Bank, any assignee of the Bank, agent of the Bank or to any subsidiary company of the bank.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align: right; font-style: italic; font-size: 11pt; position: absolute; bottom: 38.1mm; right: 12.7mm;">
+      Running page-03-
+    </div>
+  </div>
+
+  <!-- PAGE 3 CONTAINER -->
+  <div class="stamp-page">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4mm;">
+      <div style="flex: 1;"></div>
+      <div style="flex: 1; text-align: center; font-weight: bold; font-size: 11pt;"><u>(Page-3)</u></div>
+      <div style="flex: 1; text-align: right; font-weight: bold; font-size: 11pt;">Contd...<u>P/3</u></div>
+    </div>
+
+    <!-- Section Title -->
+    <div style="text-align: center; margin-bottom: 5mm;">
+      <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">SCHEDULE</div>
+      <div style="font-size: 11pt; font-weight: bold; margin-top: 1mm;">Description of Cheques</div>
+    </div>
+
+    <!-- Cheques Schedule Table -->
+    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-bottom: 8mm; border: 1px solid #000; font-size: 10.5pt;">
+      <thead>
+        <tr style="background-color: #fcfcfc;">
+          <th style="border: 1px solid #000; padding: 2mm 1mm; text-align: center; font-weight: bold; width: 28%;">Drawee Bank and Branch</th>
+          <th style="border: 1px solid #000; padding: 2mm 1mm; text-align: center; font-weight: bold; width: 18%;">Account No.</th>
+          <th style="border: 1px solid #000; padding: 2mm 1mm; text-align: center; font-weight: bold; width: 18%;">Cheque No.<br>(From)</th>
+          <th style="border: 1px solid #000; padding: 2mm 1mm; text-align: center; font-weight: bold; width: 18%;">Cheque No.<br>(To)</th>
+          <th style="border: 1px solid #000; padding: 2mm 1mm; text-align: center; font-weight: bold; width: 18%;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm; font-size: 9.5pt; text-align: center;" contenteditable="true">Sanctioned loan Principal+up to date interest.</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+          <td style="border: 1px solid #000; height: 7mm; padding: 1mm;" contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Borrower's Signature (Right Aligned) -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 8mm;">
+      <div style="text-align: right; font-size: 11pt;">
+        <u>Borrower’s Signature</u>
+      </div>
+    </div>
+
+    <!-- Witness Heading -->
+    <div style="font-size: 11pt; margin-bottom: 4mm;">
+      In the presence of witness:-
+    </div>
+
+    <!-- Side-by-Side Witness Blocks with Vertically Aligned Dotted Lines -->
+    <div style="display: flex; justify-content: space-between; width: 100%; font-size: 11pt;">
+      <!-- Witness 1 -->
+      <div style="flex: 1; padding-right: 4mm;">
+        <div style="font-weight: normal; margin-bottom: 3mm;">Witness-1</div>
+        <table class="witness-table">
+          <tr>
+            <td>Signature</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Father</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Post</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Mobile</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Witness 2 -->
+      <div style="flex: 1; padding-left: 4mm;">
+        <div style="font-weight: normal; margin-bottom: 3mm;">Witness-2</div>
+        <table class="witness-table">
+          <tr>
+            <td>Signature</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Father</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Post</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+          <tr>
+            <td>Mobile</td>
+            <td>:</td>
+            <td><span class="dotted-input" contenteditable="true"></span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agreement for Cash Credit</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Agreement CC Specific Styles */
+    h1,
+    .doc-title {
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 2mm;
+    }
+
+    h2,
+    .doc-subtitle {
+      font-size: 14pt;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 2mm;
+    }
+
+    p,
+    .clause-body {
+      font-size: 10.5pt;
+      text-align: justify;
+      line-height: 1.45;
+      margin-bottom: 2pt;
+    }
+
+    /* Editable Field Dotted Line */
+    .dotted-input,
+    [contenteditable="true"],
+    .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: center;
+      min-width: 1px;
+    }
+
+    .dotted-input:empty,
+    [contenteditable="true"]:empty,
+    .data-input:empty {
+      min-width: 0.5in;
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">\n
+
+  <!-- PAGE 1 -->
+  <div class="stamp-page">
+
+
+    <div>
+      <div style="text-align: right; font-weight: normal; margin-bottom: 2mm;">LF-60(c)</div>
+
+      <h1 style="font-size: 13pt; font-weight: bold; text-align: center; margin-bottom: 2mm;">AGREEMENT FOR CASH CREDIT
+      </h1>
+
+      <h2 style="font-size: 11pt; font-weight: bold; text-align: center; margin-bottom: 1mm;">Hypothecation of Goods.
+      </h2>
+
+      <div style="font-size: 9pt; text-align: center; margin-bottom: 4mm;">
+        (To be stamped as an Agreement in accordance with the Stamp duty in force at the time of execution. Not to be
+        attested)
+      </div>
+
+      <div style="text-align: right; margin-bottom: 4mm;">
+        Dated-<span class="dotted-input" contenteditable="true"></span>
+      </div>
+
+      <p class="clause-body">
+        <strong>BANGLADESH KRISHI BANK</strong> (hereinafter called the Bank”) having at the request of -<span
+          class="dotted-input" contenteditable="true"></span>, (hereafter called the Borrower”)
+        and of-<span class="dotted-input" contenteditable="true"></span>,<strong>S/O-</strong>
+        The Managing Agents of the said company, agreed to grant accommodation to the borrower by way of Cash Credit
+        Account to be secured by the borrowers Demand Promissory Note in favour of the said Managing Agents and endorsed
+        to the Bank or order and to be further secured as herein provided, it is agreed as follows:
+      </p>
+
+      <p class="clause-body">
+        <strong>1.</strong> That the whole of the Borrower’s stoke=<span class="dotted-input"
+          contenteditable="true"></span>/- (<strong>In words:</strong><span class="dotted-input"
+          contenteditable="true"></span>) Whether raw or in process of manufacture and all
+        articles manufactured therefrom which now or hereafter from time to time during this security shall be brought
+        into, stored or be in or about the Borrower’s godowns or premises at-<span class="dotted-input"
+          contenteditable="true"></span> or wherever else the same may be (including any such
+        goods in course of transit or delivery) with the benefit of all rights relating thereto shall stand hypothecated
+        to the Bank and its assigns by way of first charge as security for the payment by the Borrower to the Bank on
+        demand of all moneys at any time payable by the Borrower to the Bank in respect of the said Cash Credit Account
+        and also as security for the payment and discharge of all indebtedness or liability of the Borrower to the Bank
+        in respect of any bills of exchange, promissory notes or instruments at any time drawn, made, accepted or
+        endorsed by the Borrower solely or jointly with others which the Bank may discount or become interested in
+        together with all discount, commission charges, costs (between Attorney and Client) and expenses payable to or
+        incurred by the Bank in relation thereto.
+      </p>
+
+      <p class="clause-body">
+        <strong>2.</strong> That interest at the rate of <span class="dotted-input" contenteditable="true"></span>%
+        Percent per annum (changeable depending on banks circular) shall be
+        calculated on daily balance payable by the Borrower to the Bank and charged in account on the last working day
+        of each month in accordance with the practice of the Bank.
+      </p>
+
+      <p class="clause-body">
+        <strong>3.</strong> That the Bank shall not be required to make or continue advances on the said Cash Credit
+        Account otherwise than at the Bank’s discretion and in no circumstances to an amount at any one time exceeding
+        with interest thereon the sum to Tk=<span class="dotted-input" contenteditable="true"></span>/- (<strong>In
+          <span style="text-decoration: underline;">words:</span></strong><span class="dotted-input"
+          contenteditable="true"></span>) Or a sum equal to <strong>100%</strong> percent of the normal current
+        market value of the said goods whichever sum may be the less.
+      </p>
+
+      <p class="clause-body">
+        <strong>4.</strong> That the Borrower shall at all times maintain a sufficient quantity and market value of
+        goods aforesaid to provide the margin of security required by the Bank and will forthwith whenever necessarily
+        provide further goods (approved by the Bank) to restore such margin of pay the Bank equivalent in cash.
+      </p>
+    </div>
+
+
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="stamp-page">
+
+
+    <div>
+
+      <p class="clause-body">
+        <strong>5.</strong> That the said goods shall be kept at the Borrower’s risk and expense in good condition and
+        fully insured against loss or damage as may be required by the Bank.
+      </p>
+
+      <p class="clause-body">
+        <strong>6.</strong> That the Bank, its Managers and Nominees shall be entitled at all times without notice to
+        the Borrower but at Borrower’s risk and expense and if so necessary as Attorney for and in the name of the
+        Borrower to enter any place where the said goods may be and inspect, value, insure, superintend disposal and/or
+        take particulars and charge of all or any part of the said goods and check any statement, accounts, reports and
+        information and also on any default of the Borrower in payment of any money hereby secured or the performance of
+        any obligation of the Borrower to the Bank or the occurrence of any circumstances in the opinion of the Bank
+        endangering this security to take possession of, recover, receive, appoint receivers or remove and/or sell by
+        public auction or private contract despatch for realisation or otherwise dispose of or deal with all or any part
+        of the said goods and to enforce, realize, settle, compromise and deal with any rights or claims relating
+        thereto without being bound to exercise any of these powers or being liable for any loss in the exercise thereof
+        and without prejudice to the Bank’s rights and remedies of suit or otherwise and notwithstanding there may be
+        any pending suit or other proceeding the Borrower undertaking to give immediate possession to the Bank on demand
+        of the said goods and to transfer and deliver to the Bank all relative bills, contract, securities and documents
+        and agreeing to accept the Bank’s accounts of sales and realizations as conclusive proof of amounts realised and
+        relative expenses and to pay any shortfall or deficiency thereby shown provided that the Bank shall be entitled
+        at all times to apply any other money or moneys in its hands standing to the credit of or belonging to the
+        Borrower in or towards payment of any amount for the time being payable to the Bank on the said Cash Credit
+        Account or otherwise as aforesaid and to recover at any time from the Borrower by suit or otherwise the balance
+        remaining payable to the Bank on the said Cash Credit Account or otherwise notwithstanding that all or any of
+        the securities may not have been realized provided also that subject to these powers of the Bank the Borrower
+        may with the approval of the Bank sell the said goods from time to time in due course of business provided the
+        margin of security required by the Bank is fully maintained and on the terms of payment or delivery to the Bank
+        of the proceeds thereof or documents therefor immediately on receipt thereof.
+      </p>
+
+      <p class="clause-body">
+        <strong>7.</strong> That all the said goods and all sale, realization and insurance proceeds thereof and all
+        documents under this security shall always be kept distinguishable and held as the Bank’s exclusive property
+        specifically appropriated to this security to be dealt with only under the directions of the Bank and the
+        Borrower shall not create any mortgage, charge, lien or encumbrance upon or over the same or any part thereof
+        except to the Bank nor suffer any such mortgage, charge, lien or encumbrance to affect the same or any part
+        thereof nor do or allow anything that may prejudice this security.
+      </p>
+
+      <p class="clause-body">
+        <strong>8.</strong> That the Borrower shall submit to the Bank monthly or oftener as may be required stock
+        statements with list of current insurance policies and amounts attached verified by certificates of its Managing
+        Director or a Director of the Manager for the time being that the quantities and amounts stated are correct and
+        that all
+      </p>
+    </div>
+
+
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="stamp-page">
+
+
+    <div>
+      <p class="clause-body">
+        stocks are fully covered by insurance and shall also furnish and verify all statements, reports,
+        returns, certificates and information and shall also execute documents and do all acts and things which the Bank
+        may require to give effect hereto and the Borrower authorizes the Bank and each of its Managers and Nominees as
+        Attorney for and in the name of the Borrower to do whatever the Borrower may be required to do hereunder.
+      <p class="clause-body">
+        <strong>9.</strong> That this agreement shall operate as a continuing security for all moneys, indebtedness and
+        liabilities aforesaid notwithstanding the existence of a credit balance on the said account at any time or any
+        partial payments or fluctuations of accounts.
+      </p>
+
+      <p class="clause-body">
+        <strong>10.</strong> That nothing herein shall prejudice any rights or remedies of the Bank in respect of any
+        present or future security, guarantee, obligation or decree for any indebtedness or liability of the Borrower to
+        the Bank.
+      </p>
+
+      <p class="clause-body">
+        <strong>12.</strong> That in consideration of the Bank agreeing at the request of the said Guarantor to grant
+        accommodation to the Borrower and as part of the security therefor the said Guarantor/s personally guarantee to
+        the Bank the repayment by the borrower to the Bank on demand of all moneys at any time payable by him to the
+        Bank in respect of this instrument as well as the said Cash Credit Account and also the sufficiency from time to
+        time of the quantity and value of the goods hereby hypothecated on the terms hereof and agree that the Bank
+        shall be free without reference or notice to the said Guarantor/s to grant times to and make any arrangement
+        with the Borrower or any party liable and to vary, renew, release, realise and deal with all or any of the said
+        goods and any securities, obligations or decrees aforesaid as the Bank may think fit without impairing the
+        obligation of the said Guarantor/s to the Bank in respect of this guarantee or otherwise, and also that if the
+        guarantor/s be more than one individual all shall be bound hereby jointly and severally and if a Firm or members
+        of a Firm such Firm and all members from time to time thereof shall be bound hereby jointly and severally
+        notwithstanding any changes in the constitution or style thereof and whether such firm consist of or be reduced
+        to one individual at any time.
+      </p>
+
+      <!-- Signature & Execution Section -->
+      <div style="margin-top: 6mm;">
+        <!-- Guarantor and Borrower Signatures Side by Side -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0;">
+          <!-- Left: Guarantor lines -->
+          <div style="width: 40%; text-align: center;">
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="font-size: 10pt; margin-top: 1mm;">(Guarantor/s)</div>
+          </div>
+
+          <!-- Right: Borrower lines -->
+          <div style="width: 40%; text-align: center;">
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="border-bottom: 1px dashed #000; height: 1.1em; margin-bottom: 2mm;"></div>
+            <div style="font-size: 10pt; margin-top: 1mm;">(Borrower)</div>
+          </div>
+        </div>
+
+        <!-- Bank Execution Section -->
+        <div style="text-align: center; margin-top: calc(1in - 5mm); margin-bottom: 1mm; font-size: 10pt; line-height: 1.15;">
+          <div>For and in behalf of</div>
+          <div style="font-size: 13pt; font-weight: bold; margin: 0;">Bangladesh Krishi Bank</div>
+          <div>Manager</div>
+          <div style="margin-top: 0;">
+            <span class="dotted-input" contenteditable="true" data-db-field="branch_name_en"></span> Branch
+          </div>
+        </div>
+
+        <!-- Divider & N.B. Note -->
+        <div
+          style="border-top: 1px solid #000; padding-top: 1mm; margin-top: 1mm; font-size: 9.5pt; text-align: justify; line-height: 1.35;">
+          <strong>N.B.-</strong> <u>This</u> Agreement requires to be signed under seal by both the Borrowing Company
+          and Guarantor/s . It must invariably <u>accompanied</u> by Letter of Undertaking not to create any further
+          charge.
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <style>
+    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+    .stamp-page,
+    .page,
+    .a4-page {
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Fix excessive line gap - ONLY IN STAMPS */
+    .stamp-page {
+      line-height: 1.6 !important;
+    }
+
+    .stamp-page .content-body,
+    .stamp-page .paragraph,
+    .stamp-page p {
+      line-height: 1.6 !important;
+    }
+
+    /* Fix dotted line alignment and wrapping behavior */
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"] {
+      font-weight: bold !important;
+      display: inline !important;
+      /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+      vertical-align: baseline !important;
+      /* Align exactly with text */
+      line-height: inherit !important;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+    }
+
+    /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      display: inline-block !important;
+      min-width: 0.5in !important;
+      text-decoration: none !important;
+      border-bottom: 1.5px dotted #000000 !important;
+    }
+  </style>
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          // Seamless caret position restoration
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            // Automatically convert digits to Bangla if the class is present
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

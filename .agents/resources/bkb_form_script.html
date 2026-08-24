@@ -1,0 +1,95 @@
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>

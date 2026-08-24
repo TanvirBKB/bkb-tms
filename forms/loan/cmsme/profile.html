@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial Credit Appraisal Report</title>
+    <style>
+        /* A4 Layout Standard Definition with 0.5in margins */
+        @page {
+            size: A4;
+            margin: 0.5in;
+        }
+        
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Arial', sans-serif;
+            font-size: 11.5pt;
+            line-height: 1.5;
+            color: #000;
+            background-color: transparent;
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 0.5in;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            position: relative;
+            page-break-after: always;
+        }
+
+        .a4-page:last-child {
+            page-break-after: auto;
+        }
+
+        /* Cover Page Styling */
+        .cover-page {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        .cover-header {
+            font-size: 26pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #111;
+        }
+
+        .identity-block {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            width: 85%;
+            margin-bottom: 30px;
+        }
+
+        .identity-row {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 12px;
+            font-size: 16pt;
+        }
+
+        .identity-label {
+            font-weight: bold;
+            text-align: left;
+            width: 35%;
+        }
+
+        .identity-value {
+            text-align: left;
+            width: 65%;
+            font-weight: normal;
+            color: #222;
+        }
+
+        /* Table Standard Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+        
+        th, td {
+            border: 1px solid #333;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* Borderless Table variant */
+        .borderless-table th, .borderless-table td {
+            border: none !important;
+            text-align: left;
+            padding: 8px 4px;
+        }
+        .borderless-table th {
+            background-color: transparent;
+        }
+        .borderless-table tr {
+            border-bottom: 1px dashed #ccc;
+        }
+        .borderless-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .text-left { text-align: left !important; }
+        .text-right { text-align: right !important; }
+        .bold { font-weight: bold; }
+
+        .section-title {
+            background-color: #e2e8f0;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 12.5pt;
+            border-left: 5px solid #10b981;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .alert-box {
+            border: 2px solid #ef4444;
+            background-color: #fef2f2;
+            color: #b91c1c;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .success-box {
+            border: 2px solid #10b981;
+            background-color: #ecfdf5;
+            color: #047857;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin: 15px 0;
+            text-align: center;
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+<body id="cmsme-profile">
+
+    <!-- PAGE 1: COVER PAGE -->
+    <div class="a4-page cover-page">
+        <div class="identity-block">
+            <div class="cover-header">
+                মেসার্স <span data-field="businessInfo.nameBn"></span><br>
+                <span style="font-size: 20pt; font-weight: normal; color: #444;">এর ব্যবসায়িক প্রোফাইল</span>
+            </div>
+            
+            <div style="height: 30px;"></div>
+
+            <div class="identity-row">
+                <div class="identity-label">প্রোপ্রাইটর:</div>
+                <div class="identity-value" data-field="primaryName"></div>
+            </div>
+            <div class="identity-row">
+                <div class="identity-label">পিতা:</div>
+                <div class="identity-value" data-field="fatherName"></div>
+            </div>
+            <div class="identity-row">
+                <div class="identity-label">ঠিকানা:</div>
+                <div class="identity-value" data-field="businessInfo.address"></div>
+            </div>
+            <div class="identity-row">
+                <div class="identity-label">মোবাইল:</div>
+                <div class="identity-value" data-field="mobile"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: BUSINESS DETAILS & FINANCIALS -->
+    <div class="a4-page">
+        <div class="section-title">১. ব্যবসা সংক্রান্ত তথ্য ও বিনিয়োগ অনুপাত বিশ্লেষণ</div>
+        <p>ব্যবসায়িক কাঠামো এবং প্রস্তাবিত ব্যাংক ঋণের বিপরীতে নিজস্ব মূলধন বিনিয়োগের অনুপাত নিম্নে ছকে প্রদান করা হলো:</p>
+        
+        <table class="borderless-table" style="margin-bottom: 25px;">
+            <tbody>
+                <tr>
+                    <td class="bold" style="width: 35%;">ব্যবসার নাম</td>
+                    <td style="width: 65%;">: <span data-field="businessInfo.nameBn"></span></td>
+                </tr>
+                <tr>
+                    <td class="bold">ব্যবসার ধরন/পণ্য</td>
+                    <td>: <span data-field="businessInfo.nature"></span></td>
+                </tr>
+                <tr>
+                    <td class="bold">ব্যবসার অভিজ্ঞতা</td>
+                    <td>: <span data-field="businessInfo.experience"></span></td>
+                </tr>
+                <tr>
+                    <td class="bold">ব্যবসার ঠিকানা</td>
+                    <td>: <span data-field="businessInfo.address"></span></td>
+                </tr>
+                <tr>
+                    <td class="bold">শোরুম ও গোডাউন আয়তন</td>
+                    <td>: <span id="total_area_val"></span> বর্গফুট</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="borderless-table">
+            <tbody>
+                <tr>
+                    <td class="bold" style="width: 50%;">মোট প্রকল্প ব্যয় (Total Project Cost)</td>
+                    <td id="pc_val" class="bold text-right" style="width: 30%;"></td>
+                    <td class="text-right" style="width: 20%;">১০০%</td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">প্রস্তাবিত ব্যাংক ঋণ (Bank Finance)</td>
+                    <td id="debt_val" class="text-right"></td>
+                    <td id="debt_contrib_val" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">নিজস্ব মূলধন/ইকুইটি (Proprietor Equity)</td>
+                    <td id="equity_val" class="text-right"></td>
+                    <td id="equity_contrib_val" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td class="bold">ঋণ-মূলধন অনুপাত (Debt to Equity Ratio)</td>
+                    <td colspan="2" id="de_ratio_val" class="bold text-right"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">২. নগদ প্রবাহ চক্র (Cash Cycle)</div>
+        <p>ব্যবসায়িক খাতের ধরন অনুযায়ী ব্যাংকের নির্ধারিত মানদণ্ড বিবেচনায় নগদ প্রবাহ চক্র (Cash Cycle) ও আবর্তন বেগ (Turnover Velocity) নিম্নরূপ:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>বিবরণ</th>
+                    <th>পরিমাপ / সময়কাল</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-left">পরিচালন চক্র (Operational Cycle)</td>
+                    <td class="text-center bold">৬০ দিন (স্ট্যান্ডার্ড)</td>
+                </tr>
+                <tr>
+                    <td class="text-left">আবর্তন বেগ (Turnover Velocity)</td>
+                    <td class="text-center bold">৫.০০ বার (বাৎসরিক)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">৩. মজুদ মাল বিশ্লেষণ (Stock Analysis)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>পণ্যের বিবরণ</th>
+                    <th>বর্তমান মজুদ</th>
+                    <th>একক মূল্য (৳)</th>
+                    <th>মোট মূল্য (৳)</th>
+                </tr>
+            </thead>
+            <tbody id="stock_tbody">
+                <!-- Dynamically populated -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right bold">মোট মজুদ মূল্য:</td>
+                    <td id="total_val_val" class="bold"></td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <!-- Capacity Alert specifically added if volume limit is crossed, based on Godown JSON -->
+        <div id="capacity_alert_container"></div>
+
+    </div>
+
+    <!-- PAGE 3: PROFITABILITY & CASH FLOW -->
+    <div class="a4-page">
+        <div class="section-title">৪. মাসিক পরিচালন ব্যয় বিবরণী (OPEX Breakdown)</div>
+        <table class="borderless-table">
+            <tbody>
+                <tr>
+                    <td style="width: 70%; padding-left: 20px;">শোরুম ভাড়া (Showroom Rent)</td>
+                    <td id="opex_showroom" class="text-right" style="width: 30%;"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">গোডাউন ভাড়া (Godown Rent)</td>
+                    <td id="opex_godown" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">কর্মচারীর বেতন (Employee Salary)</td>
+                    <td id="opex_salary" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">পরিবহণ খরচ (Transport)</td>
+                    <td id="opex_transport" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px;">বিদ্যুৎ ও পানির বিল (Utilities)</td>
+                    <td id="opex_utility" class="text-right"></td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 20px; border-bottom: 1px solid #333 !important;">লাইসেন্স নবায়ন ও বিবিধ (Miscellaneous)</td>
+                    <td id="opex_misc" class="text-right" style="border-bottom: 1px solid #333 !important;"></td>
+                </tr>
+                <tr>
+                    <td class="bold text-right">মোট মাসিক পরিচালন ব্যয় (Total OPEX)</td>
+                    <td id="opex_total" class="bold text-right"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">৫. মাসিক নগদ প্রবাহ বিশ্লেষণ (Monthly Cash Flow)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="text-left">নগদ প্রবাহের বিবরণ</th>
+                    <th class="text-right">পরিমাণ (টাকা)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-left">মাসিক বিক্রয় (Gross Monthly Revenue)</td>
+                    <td class="text-right bold" id="cf_revenue"></td>
+                </tr>
+                <tr>
+                    <td class="text-left">বিক্রিত পণ্যের ব্যয় (Cost of Goods Sold - COGS)</td>
+                    <td class="text-right" id="cf_cogs"></td>
+                </tr>
+                <tr>
+                    <td class="text-left">পরিচালন ব্যয় (Operating Expenses - OPEX)</td>
+                    <td class="text-right" id="cf_opex"></td>
+                </tr>
+                <tr>
+                    <td class="text-left">ব্যাংক ঋণ পরিশোধ (Monthly Debt Servicing)</td>
+                    <td class="text-right" id="cf_emi"></td>
+                </tr>
+                <tr style="background-color: #f9f9f9;">
+                    <td class="text-left bold">নীট নগদ প্রবাহ (Net Cash Flow)</td>
+                    <td class="text-right bold" id="cf_ncf"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">৬. বার্ষিক আয়-ব্যয় প্রক্ষেপণ (Annual Profit Loss Projection)</div>
+        <table>
+            <tbody>
+                <tr>
+                    <td class="text-left">প্রক্ষেপিত বার্ষিক বিক্রয় (Projected Annual Sales)</td>
+                    <td class="text-right bold" id="ap_sales"></td>
+                </tr>
+                <tr>
+                    <td class="text-left">মোট মুনাফা (Gross Profit)</td>
+                    <td class="text-right" id="ap_gross"></td>
+                </tr>
+                <tr>
+                    <td class="text-left">করপূর্ব নীট মুনাফা (Net Profit Before Tax)</td>
+                    <td class="text-right bold" id="ap_npbt"></td>
+                </tr>
+                <tr>
+                    <td class="text-left bold">ঋণ পরিশোধ সক্ষমতা অনুপাত (DSCR)</td>
+                    <td class="text-right bold" id="ap_dscr"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div id="dscr_alert_container"></div>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT ENGINE ================= -->
+    <script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+</html>

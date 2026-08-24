@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Settings</title>
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+        }
+        .settings-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+            color: #2d3748;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #3182ce;
+            color: white;
+        }
+        .btn-primary:hover { background-color: #2b6cb0; }
+        .btn-secondary {
+            background-color: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        .btn-secondary:hover { background-color: #e2e8f0; }
+        
+        .section-title {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3182ce;
+            padding-left: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #edf2f7;
+            color: #2d3748;
+            font-weight: bold;
+        }
+        td[contenteditable="true"] {
+            background-color: #fffff0;
+            cursor: text;
+        }
+        td[contenteditable="true"]:focus {
+            outline: 2px solid #3182ce;
+            background-color: #fff;
+        }
+        
+        .upload-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <div class="header">
+            <h2>App Settings & Master Data</h2>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="btn-open-branch-info">Manage Branch Profile</button>
+                <button class="btn btn-secondary" id="btn-open-user-info">Manage User Profile</button>
+            </div>
+        </div>
+
+        <!-- Machine ID Section -->
+        <div class="location-section" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #dee2e6;">
+            <h3 class="section-title">Hardware Fingerprint</h3>
+            <div style="background:#f8f9fa; border:1.5px solid #dee2e6; border-radius:8px; padding:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:15px;">
+                <div style="flex-grow:1;">
+                    <div style="font-size:11px; font-weight:600; color:#6c757d; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:5px;">Machine ID</div>
+                    <div id="settings-machine-id-display" style="font-family:'Courier New',monospace; font-size:15px; color:#212529; font-weight:600; letter-spacing:0.05em; word-break:break-all;">
+                        <span style="color:#adb5bd; font-style:italic;">Reading...</span>
+                    </div>
+                </div>
+                <button id="btn-settings-copy-machine-id" style="padding:10px 15px; background:#343a40; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; font-family:inherit; transition:background 0.2s; white-space:nowrap; height: 40px;">
+                    📋 Copy ID
+                </button>
+            </div>
+            <div style="font-size:13px; color:#6c757d; line-height:1.5;">
+                <strong>Note:</strong> Copy this Machine ID and send it to the developer to receive your Offline Activation Key.
+            </div>
+        </div>
+
+        <div class="location-section">
+            <h3 class="section-title">Location Database</h3>
+            <div class="upload-controls">
+                <button class="btn btn-secondary" id="btn-download-template">Download Excel Template</button>
+                <button class="btn btn-primary" onclick="document.getElementById('file-upload').click()">Upload Filled Excel</button>
+                <input type="file" id="file-upload" accept=".xlsx, .xls">
+                <span id="upload-status" style="color: #48bb78; font-weight: bold; margin-left: 10px;"></span>
+            </div>
+            
+            <div style="background: #ebf8fa; border-left: 4px solid #319795; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.95rem; color: #2c7a7b;">
+                <strong>How to add locations:</strong><br>
+                1. Click <b>Download Excel Template</b>.<br>
+                2. Fill the Excel file with your location data (do not change the column headers).<br>
+                3. Click <b>Upload Filled Excel</b> to import the data into the system.<br>
+                <i>Note: You can also edit locations directly by clicking on any cell in the table below.</i>
+            </div>
+
+            <div style="overflow-x: auto; max-height: 400px;">
+                <table id="location-table">
+                    <thead>
+                        <tr>
+                            <th>গ্রাম/মহল্লা</th>
+                            <th>ইউনিয়ন/ওয়ার্ড</th>
+                            <th>ডাকঘর</th>
+                            <th>পোস্ট কোড</th>
+                            <th>সিটি কর্পোরেশন</th>
+                            <th>ওয়ার্ড নং</th>
+                            <th>গ্রাম কোড</th>
+                        </tr>
+                    </thead>
+                    <tbody id="location-tbody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="engines/app_settings_engine.js"></script>
+    
+    <script>
+        // Fetch Machine ID on load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const display = document.getElementById('settings-machine-id-display');
+            const btnCopy = document.getElementById('btn-settings-copy-machine-id');
+            const ipcRenderer = window.ipcRenderer || window.parent.ipcRenderer;
+            
+            if (ipcRenderer) {
+                try {
+                    const res = await ipcRenderer.invoke('get-machine-id');
+                    if (res && res.success) {
+                        display.innerText = res.id;
+                        btnCopy.onclick = () => {
+                            navigator.clipboard.writeText(res.id);
+                            const originalText = btnCopy.innerHTML;
+                            btnCopy.innerHTML = '✅ Copied!';
+                            setTimeout(() => btnCopy.innerHTML = originalText, 2000);
+                        };
+                    } else {
+                        display.innerHTML = `<span style="color:#dc3545;">Error: ${res ? res.error : 'Unknown'}</span>`;
+                    }
+                } catch (e) {
+                    display.innerHTML = `<span style="color:#dc3545;">Error: ${e.message}</span>`;
+                }
+            } else {
+                display.innerHTML = `<span style="color:#dc3545;">Error: IPC Not Available</span>`;
+            }
+        });
+    </script>
+</body>
+</html>

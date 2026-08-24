@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>BKB Office Automation Suite</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <script>
+        // Expose ipcRenderer early so iframes can access it via window.parent.ipcRenderer
+        const { ipcRenderer, webFrame } = require('electron');
+        window.ipcRenderer = ipcRenderer;
+
+        // Manual UI Scaling Logic
+        window.applyManualZoom = function (zoomLevel) {
+            const zoom = parseFloat(zoomLevel) || 1.0;
+            webFrame.setZoomFactor(zoom);
+            localStorage.setItem('bkb_ui_scale', zoomLevel);
+        };
+
+        // Initialize UI Scale on load
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedZoom = localStorage.getItem('bkb_ui_scale');
+            if (!savedZoom) {
+                // Initial Default based on screen size if not set
+                const screenWidth = window.screen.width;
+                if (screenWidth <= 1366) savedZoom = '0.90';
+                else savedZoom = '1.0';
+            }
+            applyManualZoom(savedZoom);
+            const selector = document.getElementById('ui-scale-selector');
+            if (selector) selector.value = savedZoom;
+        });
+    </script>
+    <style>
+        /* Global UI Sizing & Scrolling Constraints */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            /* Prevent the window itself from scrolling */
+            background-color: #525659;
+            background-image: url('assets/images/ui_bg.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #app-shell {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Override task alerts to fit in header */
+        #canvas-header .task-alerts-section {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 20px !important;
+            flex: 1;
+            height: auto !important;
+            justify-content: center;
+        }
+
+        #canvas-header .task-item {
+            color: #000 !important;
+        }
+
+        #canvas-header .task-date-badge {
+            border: 1px solid #000 !important;
+            color: #000 !important;
+        }
+
+        /* Tabs Bar Wrapper */
+        #tabs-bar-wrapper {
+            display: flex;
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+            align-items: center;
+            padding-right: 10px;
+            flex-shrink: 0;
+        }
+
+        #tabs-bar {
+            flex: 1;
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        #left-panel {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        #right-panel {
+            height: 100%;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .panel-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .nav-container {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .panel-footer {
+            flex-shrink: 0;
+        }
+
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        #canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            font-family: sans-serif;
+            font-size: 0.9em;
+            color: #333;
+            flex-shrink: 0;
+        }
+
+        #network-monitor {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-light.on {
+            background-color: #28a745;
+            box-shadow: 0 0 5px #28a745;
+        }
+
+        .status-light.off {
+            background-color: #dc3545;
+            box-shadow: 0 0 5px #dc3545;
+        }
+
+        .status-text {
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* Browser Bar Styles */
+        #browser-bar {
+            display: none;
+            /* Hidden by default, toggled via app-logic.js */
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #ffffff;
+            border-bottom: 1px solid #ddd;
+            z-index: 5;
+        }
+
+        #browser-url-input {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #browser-url-input:focus {
+            border-color: #4a698c;
+            box-shadow: 0 0 5px rgba(74, 105, 140, 0.2);
+        }
+
+        .browser-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .browser-btn:hover {
+            background: #f0f0f0;
+        }
+
+        #page-search-bar {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            gap: 8px;
+            align-items: center;
+            border: 1px solid #ddd;
+        }
+
+        #content-area-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+            /* Critical for preventing flexbox content expansion */
+        }
+
+        #frames-container {
+            flex: 1;
+            overflow: hidden;
+            /* Let iframe handle scrolling */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent;
+            min-height: 0;
+            /* Critical for preventing flexbox content expansion */
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="app-shell">
+        <nav id="left-panel">
+            <div id="brand-area">
+                <img src="assets/images/launch_icon.ico" alt="TMS Logo"
+                    style="width: 24px; height: 24px; margin-right: 8px; border-radius: 4px; filter: none;">
+                <span>BKB-TMS</span>
+            </div>
+            <button id="left-toggle" class="panel-toggle">&#9664;</button>
+            <div class="panel-section">
+                <div class="nav-container">
+                    <div class="nav-group" id="group-web-services">
+                        <div class="nav-label cbs">
+                            <span>CBS Services</span> <span class="arrow">▶</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-item" id="nav-cbs-link">CBS</div>
+                            <div class="nav-sub-item" id="nav-cbs-report">Report</div>
+                            <div class="nav-sub-item" id="nav-verify-nid">Veirfy NID</div>
+                            <div class="nav-sub-item" id="nav-edit-all-service-links">Edit Link</div>
+                        </div>
+                    </div>
+
+                    <div class="nav-group" id="group-forms">
+                        <div class="nav-label forms">
+                            <span>Task Manager</span> <span class="arrow">▶</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-head" id="nav-subhead-deposit">Deposit <span class="arrow">▶</span>
+                            </div>
+                            <div id="nav-list-deposit" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-deposit-current">Current AC</div>
+                                <div class="nav-sub-item" id="nav-deposit-savings">Savings AC</div>
+                                <div class="nav-sub-item" id="nav-deposit-term">Term DP AC</div>
+                                <div class="nav-sub-item" id="nav-deposit-farmer">Farmer AC</div>
+                                <div class="nav-sub-item" id="nav-deposit-cheque-setup">Cheque Print Mgmt</div>
+                            </div>
+                            <div class="nav-sub-head" id="nav-subhead-loan">Loan <span class="arrow">▶</span></div>
+                            <div id="nav-list-loan" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-loan-agri-rcc">Agri RCC</div>
+                                <div class="nav-sub-item" id="nav-loan-beef">Agri Beef & Cow</div>
+                                <div class="nav-sub-item" id="nav-loan-deposit">Deposit Loan</div>
+                                <div class="nav-sub-item" id="nav-loan-cmsme">CMSME Loan</div>
+                                <div class="nav-sub-item" id="nav-loan-project">Project Loan</div>
+                            </div>
+                            <div class="nav-sub-head" id="nav-subhead-transaction">Transaction <span
+                                    class="arrow">▶</span></div>
+                            <div id="nav-list-transaction" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-beftn">BEFTN</div>
+                                <div class="nav-sub-item" id="nav-bangla-qr">Bangla Qr Application</div>
+                                <div class="nav-sub-item" id="nav-rtgs">RTGS</div>
+                            </div>
+                            <div class="nav-sub-head" id="nav-subhead-salary">Salary & Bills <span
+                                    class="arrow">▶</span></div>
+                            <div id="nav-list-salary" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-salary-lunch">Lunch Bill</div>
+                                <div class="nav-sub-item" id="nav-salary-staff">Staff Salary</div>
+                            </div>
+                            <div class="nav-sub-head" id="nav-subhead-monitoring">Monitoring <span
+                                    class="arrow">▶</span></div>
+                            <div id="nav-list-monitoring" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-monitoring-demand">Demand Notice</div>
+                                <div class="nav-sub-item" id="nav-monitoring-legal">Legal Notice</div>
+                                <div class="nav-sub-item" id="nav-monitoring-advocate">Advocate Notice</div>
+                                <div class="nav-sub-item" id="nav-monitoring-final">Final Notice</div>
+                                <div class="nav-sub-item" id="nav-monitoring-special">Special Notice</div>
+                                <div class="nav-sub-item" id="nav-monitoring-camp">Camp Notice</div>
+                            </div>
+                            <div class="nav-sub-head" id="nav-subhead-calculators">Calculators <span
+                                    class="arrow">▶</span></div>
+                            <div id="nav-list-calculators" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-calc-loan">Default Loan Calculator</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-group" id="group-reports">
+                        <div class="nav-label reports">
+                            <span>Report Manager</span> <span class="arrow">▶</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-head" id="nav-subhead-reports">Report Generator <span
+                                    class="arrow">▶</span></div>
+                            <div id="nav-list-reports" class="nav-sub-list">
+                                <div class="nav-sub-item" id="nav-report-borrower-list">Borrower List</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-group" id="group-performance">
+                        <div class="nav-label performance">
+                            <span>Performance Analysis</span> <span class="arrow">▶</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-item" id="nav-performance-branch">Branch Performance</div>
+                        </div>
+                    </div>
+                    <div class="nav-group" id="group-customer">
+                        <div class="nav-label customer">
+                            <span>Customer Database</span> <span class="arrow">▶</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-item" id="nav-customer-list">Custromer List</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer" id="left-panel-footer">
+                    <div class="nav-group" id="group-migration"
+                        style="border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 15px; background: rgba(0,0,0,0.2);">
+                        <div class="nav-label migration"
+                            style="color: #e2e8f0; font-weight: bold; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <span>Migration / Backup</span> <span class="arrow">▼</span>
+                        </div>
+                        <div class="nav-sub-items">
+                            <div class="nav-sub-item" id="btn-change-db" style="color: #63b3ed; font-weight: 500;">
+                                Change DB Location</div>
+                            <div class="nav-sub-item" id="btn-db-manager" style="color: #d6bcfa; font-weight: 500;">
+                                Database Manager</div>
+                            <div class="nav-sub-item" id="btn-save-work" style="color: #68d391; font-weight: 500;">
+                                Export</div>
+                            <div class="nav-sub-item" id="btn-load-work" style="color: #f6e05e; font-weight: 500;">
+                                Import</div>
+                            <div class="nav-sub-item" id="btn-update-suite" style="color: #fbd38d; font-weight: 500;">
+                                Update Suit</div>
+                            <div class="nav-sub-item" id="btn-reset-suite" style="color: #fc8181; font-weight: 500;">
+                                Reset Suit</div>
+                        </div>
+                    </div>
+                    <div id="session-user-info" style="display: none;">
+                        <p><span id="display-user-name"></span></p>
+                        <p><span id="display-user-designation"></span>, <span id="display-user-pf"></span></p>
+                        <p><span id="display-user-contact"></span></p>
+                    </div>
+                    <div id="session-branch-info">
+                        <p><span id="display-branch-name"></span>, <span id="display-branch-location"></span></p>
+                        <p><span id="display-branch-division"></span></p>
+                    </div>
+                    <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 5px;">
+                        <button class="input-btn" id="btn-open-app-settings" style="flex: 1; margin: 0;">App
+                            Settings</button>
+                    </div>
+                    <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 5px;">
+                        <select id="ui-scale-selector" onchange="applyManualZoom(this.value)"
+                            style="flex: 1; margin: 0; padding: 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; background: #f8f9fa;">
+                            <option value="0.70">View 70%</option>
+                            <option value="0.75">View 75%</option>
+                            <option value="0.80">View 80%</option>
+                            <option value="0.90">View 90%</option>
+                            <option value="1.0" selected>View 100%</option>
+                            <option value="1.15">View 115%</option>
+                            <option value="1.25">View 125%</option>
+                        </select>
+                        <button class="input-btn" id="btn-open-user-manual"
+                            style="flex: 1; margin: 0; background-color: #17a2b8; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-family: 'SolaimanLipi', Arial, sans-serif;"
+                            onclick="document.getElementById('userManualModal').classList.add('visible')">User Manual
+                        </button>
+                    </div>
+                </div>
+        </nav>
+
+        <main id="main-content">
+            <div id="canvas-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="current-filename">BKB TMS</span>
+                    <span id="license-status-badge"
+                        style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; background: #f39c12; color: #fff; cursor: pointer; display: none;"
+                        onclick="showRegistrationModal()">Trial</span>
+                </div>
+
+                <div id="task-alerts-container" class="task-alerts-section">
+                    <div class="ticker-wrapper">
+                        <div id="task-scroll-area">
+                            <!-- Tasks will be injected here via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="network-monitor">
+
+                    <div class="status-group" id="status-db" style="cursor: pointer;">
+                        <span class="status-light" id="light-db"></span> <span class="status-text" id="text-db">DB
+                            CHECKING</span>
+                    </div>
+                    <div class="status-group" id="status-cbs">
+                        <span class="status-light" id="light-cbs"></span> <span class="status-text" id="text-cbs">CBS
+                            CHECKING</span>
+                    </div>
+                    <div class="status-group" id="status-inet">
+                        <span class="status-light" id="light-inet"></span> <span class="status-text"
+                            id="text-inet">INTERNET</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tabs-bar-wrapper">
+                <div id="tabs-bar"></div>
+                <div id="tabs-extra-controls">
+                    <button class="browser-btn" id="btn-tab-refresh" title="Refresh Tab">↻</button>
+                    <button class="browser-btn" id="btn-tab-new" title="New Blank Tab"
+                        style="color: #28a745;">✚</button>
+                </div>
+            </div>
+
+            <div id="content-area-wrapper"
+                style="flex: 1; height: 100%; position: relative; display: flex; flex-direction: column;">
+                <!-- Browser Controls -->
+                <div id="browser-bar">
+                    <button class="browser-btn" id="btn-browser-back" title="Back">◀</button>
+                    <button class="browser-btn" id="btn-browser-forward" title="Forward">▶</button>
+                    <button class="browser-btn" id="btn-browser-refresh" title="Refresh">↻</button>
+                    <input type="text" id="browser-url-input" placeholder="Enter URL or Search Query...">
+                    <div id="download-indicator" title="Recent Downloads"
+                        style="display: none; align-items: center; justify-content: center; position: relative; margin-left: 10px; cursor: pointer; color: #555; font-size: 18px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;">
+                        <span id="download-icon">⬇️</span>
+                        <span id="download-badge"
+                            style="position: absolute; top: -2px; right: 0px; background: #28a745; color: white; font-size: 10px; font-weight: bold; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; display: none;">1</span>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div id="page-search-bar">
+                    <input type="text" id="find-input" placeholder="Find in page..."
+                        style="padding: 4px; border: 1px solid #ccc; border-radius: 4px;">
+                    <span id="find-results" style="font-size: 12px; color: #666; min-width: 30px;">0/0</span>
+                    <button class="browser-btn" onclick="window.BrowserManager.findNext(false)"
+                        style="font-size: 14px;">▲</button>
+                    <button class="browser-btn" onclick="window.BrowserManager.findNext(true)"
+                        style="font-size: 14px;">▼</button>
+                    <button class="browser-btn" onclick="window.BrowserManager.closeSearch()"
+                        style="font-size: 14px; color: #d9534f;">×</button>
+                </div>
+
+                <div id="welcome-screen">
+                    <img src="assets/images/bkb_logo.png" alt="BKB Logo" class="bkb-logo">
+                    <div class="developer-info">
+                        <p class="software-title">BKB Task Management Solution</p>
+                        <p id="welcome-user-name"></p>
+                        <p id="welcome-user-designation"></p>
+                        <p id="welcome-user-pf"></p>
+                        <p id="welcome-user-contact"></p>
+                    </div>
+                    <div style="margin-top: 15px; font-weight: bold; color: #1b3a5b; font-size: 1.1rem;"
+                        class="bengali-font">
+                        Branch Role: <span id="display-welcome-role">Guest</span>
+                    </div>
+                    <button id="btn-manage-tasks" class="action-btn"
+                        style="width: auto; margin-top: 15px; background: #28a745; padding: 10px 25px; border-radius: 20px; font-weight: bold;">Manage
+                        Tasks</button>
+
+                    <div class="developer-credit-welcome" style="margin-top: 40px; font-size: 0.8rem; color: #975806;">
+                        Developed by- Tanvir Ahmed, T-829, Officer | Contact: 01672859216 </div>
+                </div>
+                <!-- Canvas Zoom Controls -->
+                <div id="canvas-zoom-bar" class="canvas-zoom-bar hidden">
+                    <button class="zoom-btn" onclick="CanvasZoom.change(-0.1)" title="Zoom Out">-</button>
+                    <span id="zoom-display" class="zoom-val-text">100%</span>
+                    <button class="zoom-btn" onclick="CanvasZoom.change(0.1)" title="Zoom In">+</button>
+                    <button class="zoom-btn" onclick="CanvasZoom.reset()"
+                        style="background: #4a698c; font-size: 0.9rem;" title="Reset">⟲</button>
+                </div>
+
+                <!-- Password Save Prompt Toast -->
+                <div id="password-save-prompt"
+                    style="display: none; position: absolute; top: 60px; right: 20px; background: white; border: 1px solid #ccc; border-radius: 8px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 10000; width: 300px;">
+                    <strong style="color: #2c3e50; font-size: 1.1em; margin-bottom: 10px; display: block;">Save
+                        Password?</strong>
+                    <div style="font-size: 0.9em; color: #555; margin-bottom: 15px;">Do you want BKB TMS to save your
+                        password for <strong id="pwd-hostname" style="color: #007bff;"></strong>?</div>
+                    <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 10px;">
+                        <button onclick="document.getElementById('password-save-prompt').style.display='none'"
+                            style="padding: 5px 10px; border: none; background: #e0e0e0; border-radius: 4px; cursor: pointer;">Cancel</button>
+                        <button id="btn-never-save-password"
+                            style="padding: 5px 10px; border: none; background: #dc3545; color: white; border-radius: 4px; cursor: pointer; font-size: 0.9em;">Never
+                            for this site</button>
+                        <button id="btn-save-password-confirm"
+                            style="padding: 5px 15px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Save</button>
+                    </div>
+                </div>
+
+                <div id="frames-container" style="flex: 1; position: relative; z-index: 1;"></div>
+            </div>
+        </main>
+
+        <!-- NID Portal View -->
+        <div id="nid-portal-view" style="display: none; height: calc(100vh - 60px);">
+            <div
+                style="background: #e67e22; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong class="bengali-font">এনআইডি যাচাইকরণ পোর্টাল (NID Verification Portal)</strong>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="nav-btn" onclick="document.getElementById('nidWebview').reload()"
+                        style="background: rgba(255,255,255,0.2);">Refresh</button>
+                    <button class="nav-btn" onclick="pullNidDataFromView()"
+                        style="background: #27ae60; font-weight: bold; border: 1px solid white;">Pull Info</button>
+                </div>
+            </div>
+            <!-- The webview that loads the NID portal -->
+            <webview id="nidWebview" src="about:blank" preload="preload-webview.js"
+                style="width: 100%; height: calc(100% - 60px);" allowpopups></webview>
+        </div>
+
+        <aside id="right-panel" class="collapsed">
+            <div class="right-panel-header">
+                <button id="right-toggle" class="panel-toggle">&#9664;</button>
+                <span class="control-label">Control Panel</span>
+            </div>
+            <div class="form-specific-buttons hidden-panel">
+                <button class="action-btn" id="btn-pull-nid-data-show-modal"
+                    style="background:#e67e22; color:white;">Pull NID Data</button>
+                <button class="action-btn" id="btn-data-entry" style="background:#3498db; color:white;">Data Entry
+                    Form</button>
+                <button class="action-btn" id="btn-generate-notice" style="background:#e74c3c; color:white;">Generate
+                    Notice</button>
+                <button class="action-btn" id="btn-start-new" style="background:#2ecc71; color:white;">Start New
+                    Form</button>
+                <button class="action-btn" id="btn-import-customer" style="background:#8e44ad; color:white;">Import
+                    Customer</button>
+                <button class="action-btn" id="btn-inject-rtgs-data" style="background:#d35400; color:white;">Inject
+                    RTGS Data</button>
+                <button class="action-btn" id="btn-scan-rtgs-form" style="background:#1abc9c; color:white;">Scan RTGS
+                    Form</button>
+                <button class="action-btn" id="btn-inject-eftn-data" style="background:#f39c12; color:white;">Inject
+                    EFTN Data</button>
+                <button class="action-btn" id="btn-restore-cbs-data" style="background:#2980b9; color:white;">Restore
+                    CBS Data</button>
+                <button class="action-btn" id="btn-smart-mode" style="background:#9b59b6; color:white;">Smart AutoFill
+                    Mode</button>
+                <button class="action-btn" id="btn-clear-form" style="background:#c0392b; color:white;">Clear
+                    Form</button>
+
+                <div id="borrower-list-buttons" style="display: none;">
+                    <button class="action-btn" id="btn-download-excel-format"
+                        style="background:#27ae60; color:white;">Download Excel Format</button>
+                    <button class="action-btn" id="btn-upload-filled-excel"
+                        style="background:#34495e; color:white;">Upload Filled Excel</button>
+                    <button class="action-btn" id="btn-update-from-module"
+                        style="background:#8e44ad; color:white;">Update from Module</button>
+                    <button class="action-btn" id="btn-apply-classification"
+                        style="background:#e74c3c; color:white;">Apply Classification</button>
+                    <button class="action-btn" id="btn-unify-borrower-list"
+                        style="background:#16a085; color:white;">Unify Borrower List</button>
+                    <button class="action-btn" id="btn-progress-report"
+                        style="background:#d35400; color:white;">Progress Report</button>
+                    <button class="action-btn" id="btn-performance-analysis"
+                        style="background:#2c3e50; color:white;">Performance Analysis</button>
+                </div>
+            </div>
+            <div class="calculator-buttons" id="calculator-buttons-section"
+                style="display: none; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div
+                    style="font-size: 0.9rem; color: #aaa; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                    Calculator Tools</div>
+                <button class="action-btn" id="calc-import-data" style="background: #28a745; color: white;">Import
+                    Data</button>
+                <button class="action-btn" id="calc-import-secondary"
+                    style="background: #8e44ad; color: white; display: none;">Import Secondary</button>
+                <button class="action-btn" id="calc-data-input"
+                    style="background: #e67e22; color: white; display: none;">Data Input</button>
+                <button class="action-btn" id="calc-apply-penalty" style="background: #dc3545; color: white;">Apply
+                    Penalty</button>
+                <button class="action-btn" id="calc-calculate-balance"
+                    style="background: #17a2b8; color: white;">Calculate</button>
+                <button class="action-btn" id="calc-save-report"
+                    style="background: #6c1d20; color: white;">Save/Print</button>
+                <button class="action-btn" id="calc-clear-data"
+                    style="background: #6c757d; color: white;">Clear</button>
+                <button class="action-btn" id="calc-update-rates" style="background: #ffc107; color: #333;">Update
+                    Rates</button>
+                <button class="action-btn" id="calc-show-loans" style="background: #00664f; color: white;">View
+                    Loans</button>
+                <button class="action-btn" id="calc-add-loan" style="background: #7c3aed; color: white;">Add Loan
+                    Type</button>
+            </div>
+            <div id="action-buttons">
+                <!-- Populated via JS -->
+            </div>
+            <div class="form-actions-section hidden-panel">
+                <div id="form-actions-header">Form Actions</div>
+                <button class="action-btn btn-save" id="btn-save-form">Save Form</button>
+                <button class="action-btn btn-pdf">Save PDF</button>
+                <button class="action-btn btn-print" id="btn-print-form">Print</button>
+            </div>
+
+            <div class="backup-actions-section hidden-panel"
+                style="padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div
+                    style="font-size: 0.8rem; color: #aaa; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                    Migration / Backup</div>
+                <button class="action-btn" id="btn-change-db"
+                    style="background: #1b3a5b; color: white; font-weight: bold; margin-bottom: 5px;">Change DB
+                    Location</button>
+                <button class="action-btn btn-backup-save" id="btn-save-work">Save Work (Export)</button>
+                <button class="action-btn btn-backup-load" id="btn-load-work">Load Work (Import)</button>
+            </div>
+
+            <div id="system-maintenance-section" class="hidden-panel"
+                style="padding: 10px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;">
+                <button class="action-btn" id="btn-reset-suite"
+                    style="background: #dc3545; color: white; border: 1px solid #a71d2a; font-weight: bold;">Reset
+                    Suit</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- User Info Modal -->
+    <div id="userInfoModal" class="modal-overlay">
+        <div class="modal large-modal">
+            <h3>User Information</h3>
+            <div class="modal-body split-panel">
+                <div class="panel-column">
+                    <h4 class="bengali-font">বাংলা (Bangla)</h4>
+                    <div class="form-group">
+                        <label for="modalUserNameBn" class="bengali-font">নাম:</label>
+                        <input type="text" id="modalUserNameBn" class="bangla-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalUserDesignationBn" class="bengali-font">পদবি:</label>
+                        <input type="text" id="modalUserDesignationBn" class="bangla-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalUserPFBn" class="bengali-font">পিএফ নম্বর:</label>
+                        <input type="text" id="modalUserPFBn" class="bangla-input">
+                    </div>
+                </div>
+                <div class="panel-column">
+                    <h4 class="english-font">English</h4>
+                    <div class="form-group">
+                        <label for="modalUserNameEn" class="english-font">Name:</label>
+                        <input type="text" id="modalUserNameEn" class="english-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalUserDesignationEn" class="english-font">Designation:</label>
+                        <input type="text" id="modalUserDesignationEn" class="english-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalUserPFEn" class="english-font">PF/Employee ID:</label>
+                        <input type="text" id="modalUserPFEn" class="english-input">
+                    </div>
+                </div>
+            </div>
+            <div class="form-grid"
+                style="grid-template-columns: 1fr 1fr; padding: 0 20px; margin-top: 15px; gap: 15px;">
+                <div class="form-group">
+                    <label for="modalUserContact" class="english-font">Contact No.:</label>
+                    <input type="text" id="modalUserContact" placeholder="e.g., 01XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label for="modalUserRole" class="english-font">Branch Role:</label>
+                    <select id="modalUserRole" class="english-input"
+                        style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="Manager">Manager</option>
+                        <option value="2nd Officer">2nd Officer</option>
+                        <option value="General Banking">General Banking</option>
+                        <option value="Credit Officer">Credit Officer</option>
+                        <option value="Officer Cash">Officer Cash</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-user-info" class="modal-btn-primary">Save</button>
+                <button id="btn-close-user-info" class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Branch Info Modal -->
+    <div id="branchInfoModal" class="modal-overlay">
+        <div class="modal large-modal">
+            <h3>Branch Information</h3>
+            <div class="modal-body branch-info-grid">
+                <!-- Bangla Information (Row 1) -->
+                <div class="form-group">
+                    <label for="modalBranchNameBn" class="bengali-font">শাখার নাম:</label>
+                    <input type="text" id="modalBranchNameBn" class="bangla-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchLocationBn" class="bengali-font">অবস্থান:</label>
+                    <input type="text" id="modalBranchLocationBn" class="bangla-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchThanaBn" class="bengali-font">থানা:</label>
+                    <input type="text" id="modalBranchThanaBn" class="bangla-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchUpazilaBn" class="bengali-font">উপজেলা:</label>
+                    <input type="text" id="modalBranchUpazilaBn" class="bangla-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchDistrictBn" class="bengali-font">জেলা:</label>
+                    <input type="text" id="modalBranchDistrictBn" class="bangla-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchDivisionBn" class="bengali-font">অঞ্চল (বিকেবি):</label>
+                    <input type="text" id="modalBranchDivisionBn" class="bangla-input">
+                </div>
+
+                <!-- English Information (Row 2) -->
+                <div class="form-group">
+                    <label for="modalBranchNameEn" class="english-font">Branch Name:</label>
+                    <input type="text" id="modalBranchNameEn" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchLocationEn" class="english-font">Location:</label>
+                    <input type="text" id="modalBranchLocationEn" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchThanaEn" class="english-font">Thana:</label>
+                    <input type="text" id="modalBranchThanaEn" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchUpazilaEn" class="english-font">Upazila:</label>
+                    <input type="text" id="modalBranchUpazilaEn" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchDistrictEn" class="english-font">District:</label>
+                    <input type="text" id="modalBranchDistrictEn" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchDivisionEn" class="english-font">Region (BKB):</label>
+                    <input type="text" id="modalBranchDivisionEn" class="english-input">
+                </div>
+
+                <!-- Email (Row 3) -->
+                <div class="form-group" style="grid-column: span 3;">
+                    <label for="modalBranchEmail" class="english-font">Email:</label>
+                    <input type="email" id="modalBranchEmail" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchCode" class="english-font">Branch Code:</label>
+                    <input type="text" id="modalBranchCode" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchMobile" class="english-font">Mobile No:</label>
+                    <input type="text" id="modalBranchMobile" class="english-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalBranchTel" class="english-font">Telephone:</label>
+                    <input type="text" id="modalBranchTel" class="english-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-branch-info" class="modal-btn-primary">Save</button>
+                <button id="btn-close-branch-info" class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Injection Modal -->
+    <div id="transactionInjectModal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="injectModalTitle">Inject Transaction Data</h3>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Select Date:</label>
+                    <input type="date" id="inject-tx-date" style="width: 100%; padding: 8px;">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Select Transaction:</label>
+                    <select id="inject-tx-select" style="width: 100%; padding: 8px;">
+                        <option value="">-- Please select a date first --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-do-inject-tx" class="modal-btn-primary">Input Data</button>
+                <button onclick="document.getElementById('transactionInjectModal').classList.remove('visible')"
+                    class="modal-btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Preview Modal -->
+    <div id="printPreviewModal" class="modal-overlay">
+        <div class="modal large-modal" style="width: 1000px; max-width: 98vw;">
+            <h3>Print Preview</h3>
+            <div class="modal-body" style="padding: 8px 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <label style="font-weight:600;">Size</label>
+                    <select id="preview-page-size">
+                        <option value="A4">A4</option>
+                        <option value="Letter">Letter</option>
+                    </select>
+                    <label style="font-weight:600;">Orientation</label>
+                    <select id="preview-orientation">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                    <label style="font-weight:600;">Margins</label>
+                    <select id="preview-margin">
+                        <option value="default">Default (20mm)</option>
+                        <option value="narrow">Narrow (10mm)</option>
+                        <option value="none">None</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <label style="font-weight:600;">Scale</label>
+                    <input id="preview-scale-range" type="range" min="50" max="150" value="100" style="width:140px;">
+                    <span id="preview-scale-value">100%</span>
+                    <button id="preview-apply-settings" class="modal-btn-primary"
+                        style="margin-left:auto;">Apply</button>
+                </div>
+                <div style="flex:1; display:flex; gap:12px;">
+                    <div
+                        style="flex:1; background:#e9ecef; padding:12px; overflow:auto; display:flex; justify-content:center; align-items:flex-start;">
+                        <div id="preview-sheet-wrapper"
+                            style="background:white; box-shadow:0 6px 18px rgba(0,0,0,0.25); width:210mm; height:297mm; overflow:auto; transform-origin:top left;">
+                            <iframe id="print-preview-iframe"
+                                style="width:100%; height:100%; border: none; background: white;"></iframe>
+                        </div>
+                    </div>
+                    <div style="width:260px; background:#fafafa; padding:12px; border:1px solid #eee;">
+                        <div style="font-weight:700; margin-bottom:8px;">Preview Settings</div>
+                        <div style="font-size:13px; color:#444; margin-bottom:6px;">Page size and margins affect print
+                            layout. Click Apply to refresh preview.</div>
+                        <div style="margin-top:8px;"><label>Show page borders:</label> <input type="checkbox"
+                                id="preview-show-borders" checked></div>
+                        <div id="preview-custom-margins" style="display:none; margin-top:8px;">
+                            <div><label>Top (mm)</label><input id="preview-margin-top" type="number" value="20"
+                                    style="width:100%;"></div>
+                            <div><label>Right (mm)</label><input id="preview-margin-right" type="number" value="20"
+                                    style="width:100%;"></div>
+                            <div><label>Bottom (mm)</label><input id="preview-margin-bottom" type="number" value="20"
+                                    style="width:100%;"></div>
+                            <div><label>Left (mm)</label><input id="preview-margin-left" type="number" value="20"
+                                    style="width:100%;"></div>
+                        </div>
+                        <div style="margin-top:12px; font-size:13px; color:#666;">Note: Relative asset paths are
+                            preserved by setting a base URL for the preview. If certain styles break, use the 'Open form
+                            in new window' option and print from there.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-do-print" class="modal-btn-primary">Print</button>
+                <button id="btn-close-print-preview" class="modal-btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unified Service Links Edit Modal -->
+    <div id="serviceLinksEditModal" class="modal-overlay">
+        <div class="modal">
+            <h3>Manage Portals & Service Links</h3>
+            <div class="modal-body">
+                <div class="form-group" id="group-service-name" style="display: none;">
+                    <label for="modalServiceName">Portal Display Name:</label>
+                    <input type="text" id="modalServiceName" placeholder="Enter name (e.g. My CBS)">
+                </div>
+
+                <div class="form-group">
+                    <label for="modalServiceSelector">Select Service:</label>
+                    <select id="modalServiceSelector" onchange="window.switchServiceLinkView()">
+                        <optgroup label="Default Portals">
+                            <option value="cbsUrl">CBS Portal</option>
+                            <option value="reportUrl">Report Portal</option>
+                            <option value="nidUrl">NID Portal</option>
+                        </optgroup>
+                        <optgroup label="Custom Links" id="optgroup-custom-links">
+                            <option value="new">+ Add New Custom Link</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modalServiceUrl">Service URL:</label>
+                    <input type="text" id="modalServiceUrl" placeholder="Enter URL here...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-delete-service-link" class="modal-btn-secondary"
+                    style="background: #dc3545; color: white; display: none; margin-right: auto;">Delete Link</button>
+                <button id="btn-save-service-links" class="modal-btn-primary">Save Changes</button>
+                <button id="btn-close-service-links" class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Scheduler Modal -->
+    <div id="taskSchedulerModal" class="modal-overlay">
+        <div class="modal large-modal" style="width: 1150px;">
+            <h3 class="bengali-font">টাস্ক সিডিউলার (Task Scheduler)</h3>
+            <div class="modal-body">
+                <div class="section-label-modal bengali-font">নতুন কাজ যোগ করুন (Task Entry)</div>
+                <div class="form-grid"
+                    style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+                    <div class="form-group">
+                        <label>Task Details</label>
+                        <input type="text" id="sched_text" placeholder="Describe the task..."
+                            class="english-input bengali-font">
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <select id="sched_freq">
+                            <option value="Day">Day (One-time)</option>
+                            <option value="Term">Term (Duration)</option>
+                            <option value="daily">Daily</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="sched_start_date" style="width: 100%;">
+                    </div>
+                    <div class="form-group" id="sched_end_date_group">
+                        <label>End Date</label>
+                        <input type="date" id="sched_end_date" style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="sched_type">
+                            <option value="Regular">Regular</option>
+                            <option value="General Task">General Task</option>
+                            <option value="Training">Training</option>
+                            <option value="Meeting">Meeting</option>
+                            <option value="Camp">Camp</option>
+                            <option value="Conference">Conference</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Flag</label>
+                        <select id="sched_flag">
+                            <option value="Normal">Normal</option>
+                            <option value="Important">Important</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="text-align: right; margin-bottom: 25px;">
+                    <button id="btn-open-calendar-events" class="modal-btn-primary"
+                        style="background: #1b3a5b; margin-right: 10px;">Book Calendar Events</button>
+                    <button id="btn-save-custom-task" class="modal-btn-primary"
+                        style="background: #28a745; padding: 8px 30px;">Add to Schedule</button>
+                </div>
+
+                <div class="section-label-modal bengali-font">বর্তমান কাজের তালিকা (Task View)</div>
+                <div id="scheduler-task-list-container">
+                    <table class="scheduler-table">
+                        <thead>
+                            <tr>
+                                <th>Task Details</th>
+                                <th>Frequency</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Type</th>
+                                <th>Flag</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduler-task-list-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeTaskSchedulerModal()" class="modal-btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Events Bulk Modal -->
+    <div id="calendarEventsModal" class="modal-overlay">
+        <div class="modal large-modal" style="width: 1100px;">
+            <h3 class="bengali-font">বার্ষিক ক্যালেন্ডার এন্ট্রি (Calendar Events Booking)</h3>
+            <div class="modal-body">
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="bengali-font">মাস (Month)</label>
+                        <select id="bulk_month_name">
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="bengali-font">তারিখ নির্বাচন করুন (Select Date)</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="date" id="bulk_date_picker" style="flex: 1;">
+                            <button id="btn-add-bulk-date" class="modal-btn-primary"
+                                style="background: #3498db; padding: 5px 15px;">Add</button>
+                        </div>
+                        <div id="bulk-date-staging" class="date-staging-area"></div>
+                    </div>
+                </div>
+
+                <div class="section-label-modal bengali-font">ইভেন্ট তালিকা (Bulk Task List)</div>
+                <div id="bulk-calendar-list-container" style="max-height: 400px; overflow-y: auto;">
+                    <table class="scheduler-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">Date</th>
+                                <th>Task Details</th>
+                                <th style="width: 100px;">Frequency</th>
+                                <th style="width: 130px;">Type</th>
+                                <th style="width: 110px;">Flag</th>
+                                <th style="width: 50px;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-calendar-body">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="bulk-month-display" class="bengali-font"
+                    style="margin-right: auto; font-weight: bold; color: #28a745;"></div>
+                <button id="btn-save-bulk-calendar" class="modal-btn-primary" style="background: #28a745;">Save All
+                    Events</button>
+                <button onclick="document.getElementById('calendarEventsModal').classList.remove('visible')"
+                    class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Import Search Modal -->
+    <div id="customerImportModal" class="modal-overlay">
+        <div class="modal" style="width: 600px;">
+            <h3 class="bengali-font">গ্রাহক তথ্য ইমপোর্ট (Import Customer Info)</h3>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="import_search_query">এনআইডি বা মোবাইল নম্বর লিখুন (Enter NID or Mobile):</label>
+                    <input type="text" id="import_search_query" class="english-input"
+                        placeholder="e.g. 1990... or 017..." autocomplete="off">
+                </div>
+
+                <!-- Preview Card -->
+                <div id="import-result-preview" class="section-box"
+                    style="margin-top: 20px; display: none; padding: 15px; border: 1px solid #28a745; background: #f9fff9; border-radius: 8px;">
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="flex-shrink: 0;">
+                            <!-- 1x1 Photo with missing info handling -->
+                            <img id="import_preview_photo" src="assets/images/user_placeholder.png"
+                                style="width: 1in; height: 1in; object-fit: cover; border: 1px solid #ddd; background: #eee; border-radius: 4px;"
+                                onerror="this.onerror=null; this.src='assets/images/bkb_logo.png';">
+                        </div>
+                        <div style="flex-grow: 1; font-size: 0.95rem; line-height: 1.6;">
+                            <p style="margin: 0;"><strong>নাম:</strong> <span id="import_preview_name"></span></p>
+                            <p style="margin: 0;"><strong>পিতার নাম:</strong> <span id="import_preview_father"></span>
+                            </p>
+                            <p style="margin: 0;"><strong>জন্ম তারিখ:</strong> <span id="import_preview_dob"
+                                    class="english-font"></span></p>
+                            <p style="margin: 0;"><strong>গ্রাম:</strong> <span id="import_preview_village"></span></p>
+                        </div>
+                    </div>
+                    <!-- Accounts Dropdown -->
+                    <div id="import-accounts-container"
+                        style="margin-top: 15px; border-top: 1px dashed #28a745; padding-top: 10px; display: none;">
+                        <label for="import_account_select"
+                            style="font-weight: bold; display: block; margin-bottom: 5px; color: #1e7e34;">হিসাব নম্বর
+                            নির্বাচন করুন (Select Account):</label>
+                        <select id="import_account_select"
+                            style="width: 100%; padding: 6px; border: 1px solid #28a745; border-radius: 4px; font-size: 0.9rem; background: white; color: #333;"></select>
+                    </div>
+                </div>
+
+                <div id="import-no-result"
+                    style="display: none; text-align: center; color: #d9534f; margin-top: 20px; font-weight: bold;">
+                    <img src="assets/images/user_placeholder.png"
+                        style="width: 40px; opacity: 0.5; display: block; margin: 0 auto 5px;">
+                    কোনো গ্রাহক তথ্য পাওয়া যায়নি।
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #eee; padding-top: 15px;">
+                <button id="btn-confirm-import-populate" class="modal-btn-primary"
+                    style="display: none; background: #28a745; padding: 8px 25px;">Populate Form</button>
+                <button onclick="document.getElementById('customerImportModal').classList.remove('visible')"
+                    class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Adjustment Modal -->
+    <div id="photoAdjustModal" class="modal-overlay">
+        <div class="modal" style="width: 500px; max-width: 90vw;">
+            <h3 class="bengali-font">ছবি সমন্বয় করুন (Adjust Photo)</h3>
+            <div class="modal-body" style="text-align: center;">
+                <div id="cropperContainer"
+                    style="width: 100%; height: 400px; background: #333; position: relative; overflow: hidden; cursor: move; border-radius: 4px;">
+                    <img id="cropPreviewImage" src=""
+                        style="position: absolute; top: 0; left: 0; transform-origin: top left; pointer-events: none;">
+                    <!-- Fixed passport size frame (3.5cm x 4.5cm) -->
+                    <!-- 3.5cm = 132px, 4.5cm = 170px at standard 96dpi -->
+                    <div id="cropFrame"
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 132px; height: 170px; border: 2px solid #28a745; box-shadow: 0 0 0 1000px rgba(0,0,0,0.6); z-index: 10; pointer-events: none;">
+                    </div>
+                </div>
+                <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                    <label style="white-space: nowrap; font-size: 0.9rem;">জুম (Zoom):</label>
+                    <input type="range" id="cropZoomSlider" min="0.1" max="3" step="0.01" value="1" style="flex: 1;">
+                </div>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">মাউস দিয়ে ড্রাগ করে ছবি পজিশন করুন</div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-apply-crop" class="modal-btn-primary">Apply Adjustment</button>
+                <button id="btn-cancel-crop" class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pulled NID Data Display Modal -->
+    <div id="pulledNidDataModal" class="modal-overlay">
+        <div class="modal large-modal" style="width: 1400px; max-width: 95%;">
+            <div class="list-modal-header"
+                style="background: #e67e22; color: white; padding: 10px 15px; display: flex; justify-content: space-between; border-radius: 8px 8px 0 0;">
+                <span class="bengali-font">সংগৃহীত এনআইডি তথ্য</span>
+                <span class="list-modal-close" onclick="closePulledNidDataModal()"
+                    style="cursor:pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                    <div style="flex-shrink: 0; text-align: center;">
+                        <img id="pulled_nid_photo" src="" alt="NID Photo"
+                            style="width: 132px; height: 170px; object-fit: cover; border: 2px solid #e67e22; border-radius: 4px; margin-bottom: 10px; background: #eee;"
+                            onerror="this.onerror=null; this.src='assets/images/bkb_logo.png'">
+                        <div style="font-size: 0.8em; color: #666;">(Passport Size)</div>
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div class="form-grid" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="form-group">
+                                <label>Name (Bangla):</label>
+                                <input type="text" id="pulled_nid_name_bn">
+                            </div>
+                            <div class="form-group">
+                                <label>Name (English):</label>
+                                <input type="text" id="pulled_nid_name_en"
+                                    oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                            <div class="form-group">
+                                <label>National ID:</label>
+                                <input type="text" id="pulled_nid_nid" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth:</label>
+                                <input type="text" id="pulled_nid_dob" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>PIN:</label>
+                                <input type="text" id="pulled_nid_pin" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Name:</label>
+                                <input type="text" id="pulled_nid_father_name_bn">
+                            </div>
+                            <div class="form-group">
+                                <label>Mother's Name:</label>
+                                <input type="text" id="pulled_nid_mother_name_bn">
+                            </div>
+                            <div class="form-group">
+                                <label>Spouse Name:</label>
+                                <input type="text" id="pulled_nid_spouse_name_bn">
+                            </div>
+                            <div class="form-group">
+                                <label>Gender / লিঙ্গ:</label>
+                                <select id="pulled_nid_gender"
+                                    style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; width: 100%;">
+                                    <option value="">- Select -</option>
+                                    <option value="Male">Male / পুরুষ</option>
+                                    <option value="Female">Female / মহিলা</option>
+                                    <option value="Third Gender">Third Gender / তৃতীয় লিঙ্গ</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile no:</label>
+                                <input type="text" id="pulled_nid_mobile" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান বাড়ি/হোল্ডিং:</label>
+                                <input type="text" id="pulled_nid_present_house" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান গ্রাম/রাস্তা:</label>
+                                <input type="text" id="pulled_nid_present_village" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান ডাকঘর:</label>
+                                <input type="text" id="pulled_nid_present_post" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান পোস্ট কোড:</label>
+                                <input type="text" id="pulled_nid_present_post_code" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান ইউনিয়ন:</label>
+                                <input type="text" id="pulled_nid_present_union" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>বর্তমান সিটি কর্পোরেশন:</label>
+                                <input type="text" id="pulled_nid_present_city_corp" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Present Address (Upozila):</label>
+                                <input type="text" id="pulled_nid_present_upozila">
+                            </div>
+                            <div class="form-group">
+                                <label>Present Address (District):</label>
+                                <input type="text" id="pulled_nid_present_district">
+                            </div>
+                            <div class="form-group">
+                                <label>Present Address (Division):</label>
+                                <input type="text" id="pulled_nid_present_division">
+                            </div>
+
+                            <!-- Permanent Address Header & Checkbox -->
+                            <div
+                                style="grid-column: 1 / -1; margin-top: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #2c3e50; font-size: 1.05em;">Permanent
+                                    Address</span>
+                                <label
+                                    style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #e67e22; font-weight: bold; user-select: none;">
+                                    <input type="checkbox" id="pulled_nid_same_address"
+                                        style="width: 16px; height: 16px;"
+                                        onchange="copyNidPresentToPermanent(this.checked)">
+                                    Same as Present Address
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label>স্থায়ী বাড়ি/হোল্ডিং:</label>
+                                <input type="text" id="pulled_nid_permanent_house" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>স্থায়ী গ্রাম/রাস্তা:</label>
+                                <input type="text" id="pulled_nid_permanent_village" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>স্থায়ী ডাকঘর:</label>
+                                <input type="text" id="pulled_nid_permanent_post" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>স্থায়ী পোস্ট কোড:</label>
+                                <input type="text" id="pulled_nid_permanent_post_code" class="english-font">
+                            </div>
+                            <div class="form-group">
+                                <label>স্থায়ী ইউনিয়ন:</label>
+                                <input type="text" id="pulled_nid_permanent_union" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>স্থায়ী সিটি কর্পোরেশন:</label>
+                                <input type="text" id="pulled_nid_permanent_city_corp" class="bangla-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Permanent Address (Upozila):</label>
+                                <input type="text" id="pulled_nid_permanent_upozila">
+                            </div>
+                            <div class="form-group">
+                                <label>Permanent Address (District):</label>
+                                <input type="text" id="pulled_nid_permanent_district">
+                            </div>
+                            <div class="form-group">
+                                <label>Permanent Address (Division):</label>
+                                <input type="text" id="pulled_nid_permanent_division">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-populate" id="btn-add-customer-from-nid" style="background: #27ae60;">Add
+                    to Database</button>
+                <button class="modal-btn btn-clear" onclick="closePulledNidDataModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Toast -->
+    <div id="warning-toast">only numbers are accepted</div>
+
+    <script>
+        /**
+         * Canvas Zoom Controller
+         * Intercepts Ctrl+Key and MouseWheel to zoom only the active form canvas.
+         */
+        window.CanvasZoom = {
+            level: parseFloat(localStorage.getItem('bkb_canvas_zoom')) || 1.0,
+            min: 0.5,
+            max: 3.0,
+
+            apply: function () {
+                const container = document.getElementById('frames-container');
+                const zoomBar = document.getElementById('canvas-zoom-bar');
+                const activeFrame = Array.from(container.querySelectorAll('iframe, webview'))
+                    .find(f => f.style.display === 'block');
+
+                if (activeFrame) {
+                    const targetZoom = Number(this.level.toFixed(1));
+                    let currentFrameZoom = 1.0;
+                    if (activeFrame.style.zoom) {
+                        if (activeFrame.style.zoom.endsWith('%')) {
+                            currentFrameZoom = parseFloat(activeFrame.style.zoom) / 100;
+                        } else {
+                            currentFrameZoom = parseFloat(activeFrame.style.zoom);
+                        }
+                    }
+
+                    if (Math.abs(currentFrameZoom - targetZoom) > 0.001) {
+                        zoomObserver.disconnect();
+                        activeFrame.style.zoom = targetZoom;
+
+                        if (activeFrame.tagName === 'WEBVIEW' && typeof activeFrame.setZoomFactor === 'function') {
+                            try {
+                                activeFrame.setZoomFactor(targetZoom);
+                            } catch (e) { }
+                        }
+
+                        zoomObserver.observe(document.getElementById('frames-container'), {
+                            childList: true,
+                            subtree: true,
+                            attributes: true,
+                            attributeFilter: ['style']
+                        });
+                    }
+
+                    document.getElementById('zoom-display').innerText = Math.round(targetZoom * 100) + '%';
+                    zoomBar.classList.remove('hidden');
+                } else {
+                    zoomBar.classList.add('hidden');
+                }
+            },
+
+            change: function (delta) {
+                let next = parseFloat((this.level + delta).toFixed(1));
+                this.level = Math.min(Math.max(next, this.min), this.max);
+                localStorage.setItem('bkb_canvas_zoom', this.level);
+                this.apply();
+            },
+
+            reset: function () {
+                this.level = 1.0;
+                localStorage.setItem('bkb_canvas_zoom', this.level);
+                this.apply();
+            }
+        };
+
+        // Global Keyboard Intercept
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey) {
+                if (e.key === '=' || e.key === '+' || e.code === 'Equal' || e.code === 'NumpadAdd') {
+                    e.preventDefault();
+                    window.CanvasZoom.change(0.1);
+                } else if (e.key === '-' || e.code === 'Minus' || e.code === 'NumpadSubtract') {
+                    e.preventDefault();
+                    window.CanvasZoom.change(-0.1);
+                } else if (e.key === '0' || e.code === 'Digit0' || e.code === 'Numpad0') {
+                    e.preventDefault();
+                    window.CanvasZoom.reset();
+                }
+            }
+        });
+
+        // Mouse Wheel Intercept (Canvas Only)
+        document.getElementById('frames-container').addEventListener('wheel', (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                window.CanvasZoom.change(e.deltaY < 0 ? 0.1 : -0.1);
+            }
+        }, { passive: false });
+
+        // Monitor Tab Changes to show/hide zoom bar
+        const zoomObserver = new MutationObserver(() => window.CanvasZoom.apply());
+        zoomObserver.observe(document.getElementById('frames-container'), {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        /**
+         * Browser Functionality & Dynamic Links Manager
+         */
+        window.BrowserManager = {
+            init: function () {
+                this.setupListeners();
+            },
+            setupListeners: function () {
+                document.getElementById('btn-browser-refresh').onclick = () => this.refresh();
+                document.getElementById('btn-tab-refresh').onclick = () => this.refresh();
+                document.getElementById('btn-browser-back').onclick = () => this.goBack();
+                document.getElementById('btn-browser-forward').onclick = () => this.goForward();
+                document.getElementById('btn-tab-new').onclick = () => {
+                    const webview = document.createElement('webview');
+                    webview.setAttribute('preload', 'preload-webview.js');
+                    webview.style.width = '100%';
+                    webview.style.height = '100%';
+                    webview.style.display = 'flex';
+                    webview.style.flex = '1';
+                    webview.setAttribute('allowpopups', 'true');
+                    webview.src = 'https://www.google.com';
+                    if (typeof createTab === 'function') createTab('Browser', webview, 'portal-');
+                };
+                document.getElementById('browser-url-input').onkeydown = (e) => {
+                    if (e.key === 'Enter') this.navigate(e.target.value);
+                };
+                window.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
+                        e.preventDefault();
+                        this.openSearch();
+                    }
+                });
+                document.getElementById('find-input').oninput = (e) => this.findInPage(e.target.value);
+            },
+            getActiveFrame: function () {
+                const container = document.getElementById('frames-container');
+                const activeContent = Array.from(container.querySelectorAll('.tab-content'))
+                    .find(div => div.style.display === 'flex');
+                return activeContent ? activeContent.querySelector('iframe, webview') : null;
+            },
+            refresh: function () {
+                const frame = this.getActiveFrame();
+                if (frame) {
+                    if (frame.tagName === 'WEBVIEW') frame.reload();
+                    else frame.src = frame.src;
+                }
+                if (typeof window.restoreAppFocus === 'function') {
+                    window.restoreAppFocus(150);
+                }
+            },
+            goBack: function () {
+                const frame = this.getActiveFrame();
+                if (frame && frame.tagName === 'WEBVIEW' && frame.canGoBack()) frame.goBack();
+            },
+            goForward: function () {
+                const frame = this.getActiveFrame();
+                if (frame && frame.tagName === 'WEBVIEW' && frame.canGoForward()) frame.goForward();
+            },
+            navigate: function (url) {
+                if (!url) return;
+                let target = url;
+                if (!target.startsWith('http') && !target.includes('.')) {
+                    target = 'https://www.google.com/search?q=' + encodeURIComponent(target);
+                } else if (!target.startsWith('http')) {
+                    target = 'https://' + target;
+                }
+                const frame = this.getActiveFrame();
+                if (frame) frame.src = target;
+                else if (typeof createTab === 'function') {
+                    const webview = document.createElement('webview');
+                    webview.setAttribute('preload', 'preload-webview.js');
+                    webview.style.width = '100%';
+                    webview.style.height = '100%';
+                    webview.style.display = 'flex';
+                    webview.style.flex = '1';
+                    webview.setAttribute('allowpopups', 'true');
+                    webview.src = target;
+                    createTab('Browser', webview, 'portal-');
+                }
+            },
+            openSearch: function () {
+                document.getElementById('page-search-bar').style.display = 'flex';
+                document.getElementById('find-input').focus();
+            },
+            closeSearch: function () {
+                const frame = this.getActiveFrame();
+                if (frame && frame.tagName === 'WEBVIEW') frame.stopFindInPage('clearSelection');
+                document.getElementById('page-search-bar').style.display = 'none';
+            },
+            findInPage: function (text) {
+                const frame = this.getActiveFrame();
+                if (frame && frame.tagName === 'WEBVIEW') frame.findInPage(text);
+            },
+            findNext: function (forward) {
+                const frame = this.getActiveFrame();
+                const text = document.getElementById('find-input').value;
+                if (frame && frame.tagName === 'WEBVIEW' && text) frame.findInPage(text, { forward, findNext: true });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => window.BrowserManager.init());
+    </script>
+    <script src="assets/engines/database-engine.js"></script>
+    <script src="assets/engines/loan-engine.js"></script>
+    <script src="assets/engines/deposit-engine.js"></script>
+    <script src="assets/engines/calculator-engine.js"></script>
+    <script src="assets/engines/web_engine.js"></script>
+    <script src="assets/engines/scheduler-engine.js"></script>
+    <script src="assets/app-logic.js"></script>
+
+    <!-- Scan Web Form Modal -->
+    <div id="scanWebFormModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px; width: 90%;">
+            <div class="modal-header">
+                <h3 id="scanModalTitle" style="display:inline-block; margin-right: 15px;">Scanned Form Fields</h3>
+                <select id="mapping-form-type"
+                    style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; margin-bottom: 20px;">
+                    <option value="rtgs">Save as RTGS Mapping</option>
+                    <option value="eftn">Save as EFTN Mapping</option>
+                    <option value="cbs">Save as CBS Mapping</option>
+                    <option value="both">Save for All (RTGS + EFTN + CBS)</option>
+                </select>
+                <span class="modal-close"
+                    onclick="document.getElementById('scanWebFormModal').classList.remove('visible')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 10px; font-size: 0.9em; color: #666;">
+                    Select the corresponding App Field for each extracted web element to create a mapping.
+                </p>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="data-table" id="scan-fields-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">Web Field (ID)</th>
+                                <th style="width: 20%;">Extracted Keyword</th>
+                                <th style="width: 35%;">Label / Context</th>
+                                <th style="width: 30%;">Map to App Field</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="document.getElementById('scanWebFormModal').classList.remove('visible')"
+                    class="modal-btn-secondary">Cancel</button>
+                <button id="btn-save-field-mapping" class="modal-btn-primary">Save Mapping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Application Confirm Dialog (Non-blocking, fixes input freeze bugs) -->
+    <div id="appConfirmModal" class="modal-overlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center; opacity:1; transition: opacity 0.2s ease;">
+        <div class="modal"
+            style="max-width: 450px; width: 90%; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; border-top: 5px solid #d9534f;">
+            <h3
+                style="margin-top:0; color:#d9534f; font-size:1.4rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+                ⚠️ নিশ্চিতকরণ / Confirmation</h3>
+            <p id="appConfirmMessage"
+                style="margin: 15px 0 25px 0; font-size:1.1rem; line-height:1.6; color:#333; white-space:pre-wrap;"></p>
+            <div style="display:flex; justify-content:center; gap:15px;">
+                <button id="appConfirmYesBtn" class="modal-btn-primary"
+                    style="background:#d9534f; border-color:#d43f3a; min-width: 100px; padding: 10px 20px;">Yes /
+                    নিশ্চিত</button>
+                <button id="appConfirmNoBtn" class="modal-btn-secondary"
+                    style="min-width: 100px; padding: 10px 20px;">No / বাতিল</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100000; justify-content:center; align-items:center;">
+        <div
+            style="background: white; padding: 30px; border-radius: 8px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h2 style="color: #2c3e50; margin-top: 0; font-family: sans-serif;">Product Registration</h2>
+            <p id="regStatusText" style="color: #e67e22; font-size: 14px; margin-bottom: 20px; font-weight: bold;">
+                Checking status...</p>
+            <input type="text" id="serialKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19"
+                oninput="this.value = this.value.replace(/[^0-9a-zA-Z]/g, '').replace(/(.{4})/g, '$1-').replace(/-$/, '').toUpperCase()"
+                style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #bdc3c7; border-radius: 4px; margin-bottom: 15px; text-align: center; box-sizing: border-box; letter-spacing: 2px;">
+            <div id="regErrorText"
+                style="color: #e74c3c; font-size: 13px; margin-bottom: 15px; display: none; font-weight: bold;">Invalid
+                Serial Key</div>
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <button id="btnSkipReg" onclick="skipRegistration()"
+                    style="flex: 1; padding: 10px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">Skip
+                    for Now</button>
+                <button onclick="activateLicense()"
+                    style="flex: 1; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px;">Activate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Report Modal -->
+    <div id="progressReportModal" class="modal-overlay"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100000; justify-content:center; align-items:center; display:none;">
+        <div class="modal"
+            style="width: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; font-family: 'SolaimanLipi', Arial, sans-serif;">
+            <span class="modal-close" onclick="document.getElementById('progressReportModal').style.display='none'"
+                style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">&times;</span>
+            <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #17a2b8; padding-bottom: 10px;">Progress
+                Report</h2>
+            <div style="margin-top: 15px;">
+                <label style="display:block; margin-bottom:5px; color:#555;">Start Date:</label>
+                <input type="date" id="progress-start-date"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; margin-bottom: 15px;">
+
+                <label style="display:block; margin-bottom:5px; color:#555;">End Date:</label>
+                <input type="date" id="progress-end-date"
+                    style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; margin-bottom: 20px;">
+
+                <button id="btn-run-progress-report"
+                    style="width:100%; padding: 10px; background: #d35400; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px;">Generate
+                    Report</button>
+            </div>
+
+            <div id="progress-report-results"
+                style="margin-top: 20px; display: none; background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd;">
+                <!-- Results will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- User Manual Modal -->
+    <div id="userManualModal" class="modal-overlay"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100000; justify-content:center; align-items:center;">
+        <div class="modal"
+            style="max-width: 600px; width: 90%; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; max-height: 80vh; overflow-y: auto; font-family: 'SolaimanLipi', Arial, sans-serif;">
+            <span class="modal-close" onclick="document.getElementById('userManualModal').classList.remove('visible')"
+                style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888;">&times;</span>
+            <h2 style="color: #2c3e50; margin-top: 0; border-bottom: 2px solid #17a2b8; padding-bottom: 10px;">User
+                Manual (ব্যবহার নির্দেশিকা)</h2>
+
+            <div style="text-align: left; line-height: 1.6; color: #333; font-size: 15px;">
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">১. প্রথম ইনস্টলেশনের পর করণীয়</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    সফটওয়্যারটি প্রথমবার ইনস্টল করার পর, প্রথমেই App Settings এ প্রবেশ করে <b>Manage Branch Profile</b>
+                    এবং <b>Manage User Profile</b> ফর্মগুলো অবশ্যই সঠিকভাবে পূরণ করে সংরক্ষণ করতে হবে।
+                    এটি সফটওয়্যারের অন্যান্য কাজ ও রিপোর্টিংয়ের জন্য অত্যন্ত গুরুত্বপূর্ণ।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">২. ডিসপ্লে জুম বা আকার পরিবর্তন</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    আপনার মনিটরের আকারের উপর ভিত্তি করে এপ্লিকেশনের ডিসপ্লে সাইজ ছোট বা বড় করতে চাইলে বাম দিকের প্যানেল
+                    থেকে পার্সেন্টেজ (যেমন- ৭০% থেকে ১১৫% পর্যন্ত) নির্বাচন করতে পারেন। সফটওয়্যারে আপনার পছন্দ সংরক্ষিত
+                    রাখবে।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৩. কাস্টমার ডেটাবেস (Customer Database)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    সফটওয়্যারে আপনি যেসব কাস্টমারের তথ্য এন্ট্রি করবেন, তা একটি কেন্দ্রীয় কাস্টমার ডেটাবেসে সংরক্ষিত
+                    থাকে। পরবর্তীতে একই কাস্টমারের জন্য নতুন কোনো ফর্ম খুললে তা সহজেই খুঁজে পাওয়া যায়।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৪. ডেটাবেস লিংক (Database Links)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    বিভিন্ন অ্যাকাউন্টের ফর্ম (যেমন- লোন, ডিপিএস) কাস্টমার ডেটাবেসের সাথে সংযুক্ত (sync) থাকে।
+                    এর ফলে এনআইডি (NID) বা মোবাইল নম্বর দিয়ে সার্চ করলে কাস্টমারের প্রাথমিক তথ্য স্বয়ংক্রিয়ভাবে ফর্মে
+                    পূরণ হয়ে যায়, যা আপনার সময় বাঁচাবে।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৫. 'Save to DB' বাটনের ব্যবহার ও গুরুত্ব</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    যে কোনো ফর্মে ডেটা ইনপুট পপ-আপ (Data Input Pop-up) থেকে তথ্য পূরণের পর অবশ্যই <b>Save to DB</b>
+                    বাটনে ক্লিক করে তথ্য সংরক্ষণ করতে হবে।
+                    এর ফলে আপনার দেওয়া তথ্য সেন্ট্রাল কাস্টমার ডেটাবেসে (Customer Database) যুক্ত (Link) হয়ে যায়।
+                    পরবর্তীতে 'Import/Load' অপশন ব্যবহার করে পূর্বের কাজ পুনরায় শুরু বা প্রিন্ট করা সম্ভব হবে।
+                </p>
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৬. টাইপিং/ইনপুট এর ভাষা</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    বাংলা টাইপের ক্ষেত্রে অভ্র অথবা বিজয় ইউনিকোড ব্যবহার কাতে হবে।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৭. টাস্ক স্ক্রলবার এবং ম্যানেজমেন্ট (Task Alerts &
+                    Management)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    স্ক্রিনের উপরের অংশে একটি চলমান স্ক্রলবার রয়েছে, যা আপনার গুরুত্বপূর্ণ এবং শিডিউল করা টাস্কগুলো
+                    প্রদর্শন করে। 'Manage Tasks' থেকে আপনি নতুন টাস্ক যোগ করতে পারেন এবং সেগুলোর গুরুত্ব নির্ধারণ করতে
+                    পারেন।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৮. নেটওয়ার্ক ইন্ডিকেটর (Network Indicators)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    স্ক্রিনের উপরে ডানদিকে তিনটি ইন্ডিকেটর (DB, CBS, INTERNET) রয়েছে। এগুলো সবুজ থাকলে লোকাল ডেটাবেস,
+                    সেন্ট্রাল কোর ব্যাংকিং (CBS), এবং ইন্টারনেট সংযোগ সঠিকভাবে কাজ করছে। লাল বা হলুদ হলে সংযোগে সমস্যা
+                    আছে।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">৯. ফর্ম ফোল্ডার এবং নেভিগেশন (Form Folders)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    বাম দিকের প্যানেলে সব ধরণের ফর্ম সুশৃঙ্খলভাবে সাজানো আছে (যেমন- Deposit, Loan, General)। আপনার
+                    প্রয়োজনীয় ফর্মটি নির্দিষ্ট ক্যাটাগরির ফোল্ডার থেকে সহজেই ওপেন করে কাজ শুরু করতে পারেন।
+                </p>
+
+                <h4 style="color: #17a2b8; margin-bottom: 5px;">১০. এনআইডি (NID) অটো-ফিল সিস্টেম (NID Auto-fill)</h4>
+                <p style="margin-top: 0; margin-bottom: 15px;">
+                    যেকোনো ফর্মে গ্রাহকের তথ্য ডাটাবেজ থেকে সরাসরি ইনপুট করার জন্য প্রথমেই এনআইডি ভেরিফাই পোর্টাল থেকে
+                    ফর্মের একেবারে উপরে থাকা <b>"NID Server Search"</b> বাটনটিতে ক্লিক করুন, যা একটি
+                    পপ-আপ ব্রাউজারে নির্বাচন কমিশনের (EC) পোর্টাল ওপেন করবে।</li>
+                    <li>সেখানে গ্রাহকের এনআইডি নম্বর এবং জন্মতারিখ দিয়ে তথ্য যাচাই (Search) করুন।</li>
+                    <li>গ্রাহকের তথ্য স্ক্রিনে প্রদর্শিত হলে, ব্রাউজারের <b>"Pull NID Data"</b> বাটনটিতে ক্লিক করুন।
+                        এটি স্বয়ংক্রিয়ভাবে গ্রাহকের নাম, পিতা/মাতার নাম, ছবি ও ঠিকানা ইত্যাদি কপি করে আনবে।</li>
+                    <li>এরপর Save to Database বাটনে ক্লিক করুন।
+                        এতে সকল তথ্য ডেটাবেসে সংরক্ষণ হয়ে যাবে!</li>
+                    <li>সবশেষে, ডাটাবেইজে প্রবেশ করে বাকি তথ্য পূরণ করে <b>"Save Customer"</b> বাটনে ক্লিক করে
+                        তথ্যটি লোকাল ডেটাবেসে সংরক্ষণ করে নিন।</li>
+                    </ol>
+                    এরপর থেকে যেকোনো লোন, ডিপিএস বা একাউন্ট ওপেনিং ফর্মে ডাটাবেস পপ-আপ চালু করে Import Customer Info
+                    অপশন থেকে মোবাইল নম্বর/এনআইডি অথবা গ্রাহকের নাম দিয়ে সংশ্লিষ্ট গ্রাহকের তথ্য সিলেক্ট
+                    করলে পুরো ফর্মটি স্বয়ংক্রিয়ভাবে পূরণ (Auto-fill) হয়ে যাবে।
+            </div>
+
+            <h4 style="color: #17a2b8; margin-bottom: 5px;">১৪. ঋণগ্রহীতা তালিকা (Borrower List) সংরক্ষণ এবং ব্যাকআপ
+            </h4>
+            <p style="margin-top: 0; margin-bottom: 15px; font-size: 14.5px; line-height: 1.6;">
+                অন্যান্য ফর্মের মত ঋণগ্রহীতা তালিকার জন্য আলাদা কোনো ডাটা ফাইল তৈরি হয় না। তালিকার সকল তথ্য সরাসরি
+                মূল ডাটাবেইজে (<code>bkb_tms.db</code>) সংরক্ষিত হয়। <br>
+                <b>তথ্য আদান-প্রদান বা একীভূত (Unification) করতে:</b> বাম দিকের নেভিগেশন প্যানেলের নিচে
+                <b>Migration/Backup</b> অপশনে ক্লিক করুন। তারপর <b>"Save Work (Export)"</b> বাটনে ক্লিক করে যে
+                <code>.bkb</code> ব্যাকআপ ফাইলটি তৈরি করবেন, তার মধ্যেই ঋণগ্রহীতা তালিকার সকল সর্বশেষ তথ্য
+                স্বয়ংক্রিয়ভাবে যুক্ত থাকবে। অন্য কোনো পিসিতে <b>"Load Work (Import)"</b> করলে ওই তথ্যগুলো অন্যান্য
+                ফর্মের মতোই সফলভাবে লোড হয়ে যাবে।
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button onclick="document.getElementById('userManualModal').classList.remove('visible')"
+                style="font-family: 'SolaimanLipi'; padding: 10px 25px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; font-weight: bold;">
+                বুঝতে পেরেছি (Close)
+            </button>
+        </div>
+    </div>
+    </div>
+
+    <!-- ══ Machine ID Modal ══════════════════════════════════════════════════ -->
+    <div id="machineIdModal" class="modal-overlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:99999; align-items:center; justify-content:center;">
+        <div
+            style="background:#fff; border-radius:12px; padding:32px 28px; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.35); font-family:'SolaimanLipi',Arial,sans-serif; position:relative;">
+            <!-- Header -->
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+                <div
+                    style="width:44px; height:44px; background:linear-gradient(135deg,#343a40,#6c757d); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">
+                    🔑</div>
+                <div>
+                    <div style="font-size:16px; font-weight:700; color:#212529;">Machine ID</div>
+                    <div style="font-size:12px; color:#6c757d; margin-top:2px;">Hardware Fingerprint for Offline
+                        Licensing
+                    </div>
+                </div>
+                <button onclick="document.getElementById('machineIdModal').style.display='none'"
+                    style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:22px; cursor:pointer; color:#999; line-height:1;">×</button>
+            </div>
+
+            <!-- ID Display Box -->
+            <div
+                style="background:#f8f9fa; border:1.5px solid #dee2e6; border-radius:8px; padding:16px 14px; margin-bottom:16px;">
+                <div
+                    style="font-size:10px; font-weight:600; color:#6c757d; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">
+                    Device Fingerprint</div>
+                <div id="machine-id-display"
+                    style="font-family:'Courier New',monospace; font-size:14px; color:#212529; word-break:break-all; letter-spacing:0.05em; line-height:1.6; min-height:24px;">
+                    <span style="color:#adb5bd; font-style:italic;">Reading...</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button id="btn-copy-machine-id"
+                    style="flex:1; padding:10px; background:#343a40; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; font-family:inherit; transition:background 0.2s;">
+                    📋 Copy to Clipboard
+                </button>
+                <button onclick="document.getElementById('machineIdModal').style.display='none'"
+                    style="flex:1; padding:10px; background:#6c757d; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-family:inherit;">
+                    Close
+                </button>
+            </div>
+
+            <!-- Instructions -->
+            <div
+                style="background:#e8f4f8; border-left:3px solid #17a2b8; border-radius:0 6px 6px 0; padding:12px 14px;">
+                <div style="font-size:12px; color:#0c5460; line-height:1.6;">
+                    <strong>How to activate:</strong><br>
+                    ১। উপরের Machine ID টি কপি করুন。<br>
+                    ২। এই ID টি ডেভেলপারের কাছে পাঠান。<br>
+                    ৩। আপনার জন্য একটি লাইসেন্স কী তৈরি করা হবে。<br>
+                    ৪। <em>App Settings → Activate License</em> এ কী দিন।
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

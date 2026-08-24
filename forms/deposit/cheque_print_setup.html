@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>BKB Cheque & FDR Visual Calibrator</title>
+  <script>
+    if (typeof require !== 'undefined') {
+        const { ipcRenderer } = require('electron');
+        window.ipcRenderer = ipcRenderer;
+    } else if (window.parent && window.parent.ipcRenderer) {
+        window.ipcRenderer = window.parent.ipcRenderer;
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #38bdf8;
+    }
+
+    .controls {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      border: 1px solid #334155;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    input,
+    select {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input[type="number"] {
+      width: 75px;
+    }
+
+    /* Dynamic Cheque / FDR Canvas */
+    #canvas-wrapper {
+      background: #334155;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      overflow: auto;
+    }
+
+    #cheque-canvas {
+      position: relative;
+      background-color: #ffffff;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      border: 2px dashed #0284c7;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      user-select: none;
+    }
+
+    /* Draggable Markers */
+    .field-marker {
+      position: absolute;
+      background: rgba(14, 165, 233, 0.2);
+      border: 1.5px solid #0284c7;
+      color: #0f172a;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: move;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* FDR Specific Markers Styling */
+    .field-marker.fdr-tag {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #d97706;
+      color: #78350f;
+    }
+
+    /* Preview Mode overrides */
+    #cheque-canvas.preview-active .field-marker {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      color: #000 !important; /* Black ink appearance */
+      font-weight: bold !important;
+      font-size: 11pt !important;
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+    #cheque-canvas.preview-active .date-container > div {
+      border-color: transparent !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      font-size: 11pt !important;
+    }
+
+    .output-grid {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .code-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .code-box h4 {
+      margin: 0 0 8px 0;
+      color: #a855f7;
+      font-size: 13px;
+    }
+
+    pre {
+      color: #4ade80;
+      font-family: 'Consolas', monospace;
+      font-size: 12px;
+      margin: 0;
+      white-space: pre-wrap;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>BKB Document Visual Calibrator (Cheque & FDR Engine)</h2>
+
+  <div class="controls">
+    <label>Document Category:
+      <select id="doc-category" onchange="switchCategory()">
+        <option value="cheque">Standard Withdrawal Cheque</option>
+        <option value="micr_cheque">MICR Cheque</option>
+        <option value="fdr">FDR Block</option>
+      </select>
+    </label>
+
+    <label>Width (mm):
+      <input type="number" id="cfg-width" value="215" onchange="updateCanvasSize()">
+    </label>
+
+    <label>Height (mm):
+      <input type="number" id="cfg-height" value="92" onchange="updateCanvasSize()">
+    </label>
+
+    <label>Date Box Size (mm):
+      <input type="number" id="cfg-date-size" value="5" step="0.5" onchange="updateDateBoxes()">
+    </label>
+
+    <label>Date Gap (mm):
+      <input type="number" id="cfg-date-gap" value="1" step="0.5" onchange="updateDateBoxes()">
+    </label>
+
+    <label>Background Image:
+      <input type="file" id="img-upload" accept="image/*" onchange="loadDocumentImage(event)">
+    </label>
+    <button class="no-print" style="margin-left: auto; background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="window.print()">🖨️ Print Cheque</button>
+    <button class="no-print" style="background: #8b5cf6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="togglePreviewMode()">Toggle Preview</button>
+    <button class="no-print" style="background: #0ea5e9; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="saveConfiguration()">Save Setup</button>
+  </div>
+
+  <!-- Interactive Document Sheet -->
+  <div id="canvas-wrapper">
+    <div id="cheque-canvas"></div>
+  </div>
+
+  <div class="output-grid">
+    <div class="code-box">
+      <h4>CSS Print Stylesheet (@media print)</h4>
+      <pre id="css-code">Select category and drag markers...</pre>
+    </div>
+    <div class="code-box">
+      <h4>JSON Map (For Electron SQLite Settings)</h4>
+      <pre id="json-code">Select category and drag markers...</pre>
+    </div>
+  <script src="../../assets/engines/database-engine.js"></script>
+  <script src="../../assets/engines/cheque-engine.js"></script>
+</body>
+
+</html>

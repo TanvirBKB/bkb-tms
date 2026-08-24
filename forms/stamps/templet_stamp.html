@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Stamp</title>
+
+
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 11pt;
+      line-height: 1.4;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    .dotted-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: center;
+    }
+
+    .dotted-input:empty {
+      min-width: 1in;
+    }
+
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+      text-transform: uppercase;
+      font-size: 18pt;
+    }
+
+    /* =========================================================
+     PRINT RULES FOR REAL STAMP PAPER / PDF EXPORT
+     ========================================================= */
+    @media print {
+      @page {
+        size: 8.5in 14in portrait;
+        /* Legal paper */
+        margin: 0;
+      }
+
+      /* Document container allows all stamp pages to render sequentially */
+      html,
+      body,
+      body.stamp-body-wrapper {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 8.5in !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+      }
+
+      /* Individual Stamp Sheet Layout */
+      .stamp-page {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        width: 8.5in !important;
+        height: 13.85in !important;
+        /* Locks each sheet boundary */
+        max-height: 13.85in !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        padding-top: 4.3in !important;
+        /* Uniform 4.3in clearance for emblem on ALL sheets */
+        padding-bottom: 0.8in !important;
+        padding-left: 0.7in !important;
+        padding-right: 0.7in !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        /* Clips content inside its own sheet */
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+      }
+
+      /* Forces a page break between stamp sheets, but NOT after the last one */
+      .stamp-page:not(:last-of-type) {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .stamp-page:last-of-type {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
+
+    .stamp-name {
+      text-align: right;
+      font-size: 10pt;
+    }
+
+    .manager-address {
+      text-align: left;
+    }
+
+    .page1-body,
+    .page2-body,
+    .page3-body {
+      text-align: justify;
+      line-height: 1.8;
+      font-size: 12pt;
+    }
+  </style>
+
+</head>
+
+<body class="stamp-body-wrapper">
+
+  <!-- Legal Stamp Paper Page Container (8.5in x 14in) -->
+  <div class="stamp-page">
+
+    <!-- Input Area Page-1-->
+    <p class="stamp-name">LF 60(e)</p>
+    <h1>LETTER OF CONTINUITY</h1>
+    <div style="text-align: right; margin-top: 10px; font-size: 12pt;">
+      Place: <span class="dotted-input" contenteditable="true" data-db-field="branch_upazila"
+        placeholder="Place"></span><br>
+      Date: <span class="dotted-input" contenteditable="true" data-field="date" placeholder="dd/mm/yyyy"></span>
+    </div>
+
+    <div class="manager-address" style="font-size: 12pt; margin-top: 10px;">
+      The Manager<br>
+      Bangladesh Krishi Bank<br>
+      <span class="dotted-input" contenteditable="true" data-db-field="branch_name_en" placeholder="Branch Name"></span>
+      Branch<br>
+      <span class="dotted-input" contenteditable="true" data-db-field="branch_upazila_en"
+        placeholder="Thana/Upazila"></span>
+    </div>
+
+    <div class="page1-body">
+      Dear Sir,<br>
+      Referring to the Demand Promissory Note for Tk <span class="dotted-input" contenteditable="true"
+        data-db-field="loan_amount" placeholder="Amount"></span>/-(Taka-<span class="dotted-input"
+        contenteditable="true" data-db-field="loan_amount_words" placeholder="Amount in words"></span>) dated <span
+        class="dotted-input" contenteditable="true" data-field="dpn_date" placeholder="dd/mm/yyyy"></span> made
+      by
+      <span class="dotted-input" contenteditable="true" data-db-field="applicant_name_en"
+        placeholder="Borrower Name"></span>, S/O-<span class="dotted-input" contenteditable="true"
+        data-db-field="applicant_father_name_en" placeholder="Father's Name"></span>, Address: <span
+        class="dotted-input" contenteditable="true" data-db-field="address_en" placeholder="Borrower Address"></span> in
+      favour of <span class="dotted-input" contenteditable="true" placeholder="Bank">Bangladesh</span>
+      Krishi Bank and endorsed by the latter to your bank which is given to
+      you as a Continuing Security for repayment of any outstanding including interest in my/our overdraft/cash credit
+      account which is at present outstanding or may be outstanding in future in my/our account with you.
+    </div>
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%;  border: none;"
+      placeholder="Type here..."></div>
+    <!-- Page Footer Slogan in the Bottom 1.0in Margin Space -->
+    <div class="stamp-footer-slogan">
+
+    </div>
+
+  </div>
+
+  <div class="stamp-page">
+
+
+
+    <!-- Input Area Page-2-->
+    <p class="page2-body">
+      I/We undertake that I/we will remain stable on the said Promissory Note jointly and severally until final
+      adjustment of the loan notwithstanding the fact that
+    </p>
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%;  border: none;"
+      placeholder="Type here..."></div>
+
+    <!-- Page Footer Slogan in the Bottom 1.0in Margin Space -->
+    <div class="stamp-footer-slogan">
+
+    </div>
+
+  </div>
+
+  <div class="stamp-page">
+
+
+
+    <!-- Input Area Page-3 -->
+    <p class="page3-body">the outstanding in the said amount may from time to time be reduced or completely extinguished
+      or brought into credit by payment of cash/cheque therein by me/us.</p>
+    <div style="margin-top: 1in; font-size: 12pt; display: flex; flex-direction: column; align-items: flex-end;">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <p style="margin-bottom: 0.6in;">Yours faithfully,</p>
+
+        <div style="display: flex; justify-content: center; gap: 1.5in; align-items: flex-end;">
+          <!-- Guarantor Side -->
+          <div style="text-align: center;">
+            <span class="dotted-input" contenteditable="true" placeholder="Guarantor Name"></span><br>
+            Guarantor
+          </div>
+
+          <!-- Borrower Side -->
+          <div style="text-align: center;">
+            <span class="dotted-input" contenteditable="true" data-db-field="applicant_name_en"
+              placeholder="Applicant Name"></span><br>
+            Borrower
+          </div>
+        </div>
+      </div>
+    </div>
+    <div contenteditable="true" style="margin-top: 5mm; outline: none; width: 100%;  border: none;"
+      placeholder="Type here..."></div>
+
+    <!-- Page Footer Slogan in the Bottom 1.0in Margin Space -->
+    <div class="stamp-footer-slogan">
+
+    </div>
+
+  </div>
+
+    <style>
+        /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+        .stamp-page, .page, .a4-page {
+            font-family: 'SolaimanLipi', Arial, sans-serif !important;
+        }
+        
+        /* Fix excessive line gap - ONLY IN STAMPS */
+        .stamp-page {
+            line-height: 1.6 !important;
+        }
+        .stamp-page .content-body, .stamp-page .paragraph, .stamp-page p {
+            line-height: 1.6 !important;
+        }
+
+        /* Fix dotted line alignment and wrapping behavior */
+        span.dotted-input, span.data-input, span.dotted-field, span[contenteditable="true"] {
+            font-weight: bold !important;
+            display: inline !important; /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+            vertical-align: baseline !important; /* Align exactly with text */
+            line-height: inherit !important;
+            border-bottom: none !important;
+            text-decoration: underline !important;
+            text-decoration-style: dotted !important;
+            text-underline-offset: 4px !important;
+            text-decoration-thickness: 1.5px !important;
+        }
+
+        /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+        span.dotted-input:empty, span.data-input:empty, span.dotted-field:empty, span[contenteditable="true"]:empty {
+            display: inline-block !important;
+            min-width: 0.5in !important;
+            text-decoration: none !important;
+            border-bottom: 1.5px dotted #000000 !important;
+        }
+    </style>
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+                if (val !== converted) {
+                    e.target.innerText = converted;
+
+                    // Seamless caret position restoration
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+
+        // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        let val = data[key] || '';
+
+                        // Automatically convert digits to Bangla if the class is present
+                        if (el.classList.contains('bangla-numbers') && val) {
+                            val = val.replace(/[0-9]/g, match => enToBn[match]);
+                        }
+
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+                            el.innerText = val;
+                        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                            el.value = val;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

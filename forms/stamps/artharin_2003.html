@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অর্থঋণ আদালত ২০০৩-ক্ষমতা পত্র</title>
+
+  <style>
+    /* Font Definition */
+    @font-face {
+      font-family: 'SolaimanLipi';
+      src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+    }
+
+    .stamp-body-wrapper * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Screen Canvas Setup */
+    body.stamp-body-wrapper {
+      background-color: #374151;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
+      color: #000000;
+      padding: 5mm 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* =========================================================
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     ========================================================= */
+    .stamp-page {
+      background: #ffffff;
+      width: 8.5in;
+      height: 13.9in;
+      /* 13.9in prevents sub-pixel height spillover */
+      padding-top: 4.3in;
+      /* Uniform 4.3in emblem clearance for ALL pages */
+      padding-bottom: 0.8in;
+      padding-left: 0.7in;
+      padding-right: 0.7in;
+      box-sizing: border-box;
+      box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 8mm;
+      font-size: 10pt;
+      line-height: 1.8;
+      overflow: hidden;
+    }
+
+    span[contenteditable] {
+      min-width: 1px;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: Legal portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0;
+      }
+
+      .stamp-page {
+        box-shadow: none;
+        margin-bottom: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        height: 14in;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .page-badge {
+        display: none !important;
+      }
+    }
+
+    /* Document Specific Styles */
+    .page-badge {
+      display: block;
+      text-align: right;
+      font-size: 9pt;
+      font-weight: 600;
+      color: #475569;
+      padding-top: 4px;
+      letter-spacing: 0.5px;
+      position: absolute;
+      top: 10px;
+      right: 0.5in;
+    }
+
+    .mandatory-header {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 4mm;
+      border-bottom: 1px solid #000;
+      padding-bottom: 2mm;
+    }
+
+    .bank-header {
+      text-align: center;
+      margin-bottom: 4mm;
+    }
+
+    .bank-name {
+      font-size: 16pt;
+      font-weight: 700;
+      margin-bottom: 1mm;
+    }
+
+    .doc-sub-title {
+      font-size: 14pt;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .bengali-p {
+      font-size: 11pt;
+      text-align: justify;
+      line-height: 2.1;
+      margin-bottom: 3mm;
+    }
+
+    .dotted-input,
+    span[contenteditable="true"],
+    .data-input {
+      display: inline-block;
+      border-bottom: 1.5px dotted #000;
+      outline: none;
+      text-align: center;
+      min-width: 1px;
+    }
+
+    .dotted-input:empty,
+    span[contenteditable="true"]:empty,
+    .data-input:empty {
+      min-width: 0.5in;
+    }
+
+    .schedule-title {
+      text-align: center;
+      font-size: 11pt;
+      font-weight: 700;
+      margin-top: 2mm;
+      margin-bottom: 1mm;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-underline-offset: 4px;
+    }
+
+    .schedule-sub-title {
+      text-align: center;
+      font-size: 10pt;
+      font-weight: 700;
+      margin-bottom: 2mm;
+    }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3mm;
+      font-size: 9.5pt;
+    }
+
+    .custom-table th,
+    .custom-table td {
+      border: 1px solid #000000;
+      padding: 4px 6px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .custom-table th {
+      font-weight: 700;
+      background-color: #f8fafc;
+    }
+
+    .sig-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 4mm;
+      padding-top: 2mm;
+    }
+
+    .witness-table {\n      width: 100%;\n      border-collapse: collapse;\n      font-size: 9.5pt;\n    }\n    .witness-table td {\n      border: none;\n      padding: 2px 4px;\n      vertical-align: bottom;\n    }\n    .witness-table .w-num { width: 25px; }\n    .witness-table .w-label { width: 70px; }\n    .witness-table .w-colon { width: 10px; }\n    .witness-section {
+      width: 55%;
+      font-size: 9.5pt;
+      line-height: 1.8;
+    }
+
+    .borrower-section {
+      width: 40%;
+      text-align: center;
+      font-size: 10pt;
+      font-weight: 700;
+    }
+
+    .sig-line {
+      border-top: 1px dotted #000;
+      margin-top: 0.5in;
+      padding-top: 2px;
+    }
+
+    span[contenteditable="true"] {
+      border-bottom: 1px dotted transparent;
+    }
+  </style>
+</head>
+
+<body class="stamp-body-wrapper">\n
+
+  <!-- PAGE 1 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 1 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+
+    <div class="bank-header">
+      <div class="bank-name">বাংলাদেশ কৃষি ব্যাংক</div>
+      <div class="doc-sub-title">৫০ লক্ষ টাকা পর্যন্ত কৃষি ঋণের বন্ধকী স্থাবর সম্পত্তির ক্ষমতা পত্র</div>
+    </div>
+
+    <p class="bengali-p">
+      আমি/ আমরা <span class="dotted-input" contenteditable="true"></span> এর প্রোপ্রাইটরঃ
+      <span class="dotted-input" contenteditable="true"></span>, পিতা/স্বামী: <span class="dotted-input"
+        contenteditable="true"></span>, ঠিকানাঃ <span class="dotted-input" contenteditable="true"></span>, বাংলাদেশ কৃষি
+      ব্যাংক, <span class="dotted-input" contenteditable="true" data-db-field="branch_name"></span> শাখা হতে- <span
+        class="dotted-input" contenteditable="true"></span> নং ঋণ কেইস মোতাবেক মং = <span class="dotted-input"
+        contenteditable="true"></span>/- (কথায়: <span class="dotted-input" contenteditable="true"></span>) টাকা ঋণ
+      গ্রহন করিয়া ঋণের বিপরীতে
+      নিম্ন তফসীলের ভুমি ব্যাংক শাখা <span class="dotted-input" contenteditable="true"></span>
+      ইং তারিখের- <span class="dotted-input" contenteditable="true"></span> নং বন্ধকী দলিল
+      মূল্যে দায়বদ্ধ।
+    </p>
+
+    <p class="bengali-p">
+      (১) এতদ্বারা বাংলাদেশ কৃষি ব্যাংক, <span class="dotted-input" contenteditable="true"
+        data-db-field="branch_name"></span> শাখার অনুকূলে উক্ত ঋণের জামানত হিসেবে বন্ধকীকৃত সম্পত্তির স্ব-উদ্যোগে নিলাম
+      বিক্রয়ের পূর্ণ ক্ষমতা ও অধিকার অর্পণ করা হইল।
+    </p>
+
+    <p class="bengali-p">
+      (২) ব্যাংক উহার সুবিধামত সময়ে ঋণগ্রহীতার ঝুঁকি ও খরচে উক্ত সম্পত্তি পরিদর্শণ, মূল্যায়ন এবং নিলাম বিক্রয়ের সমুদয়
+      প্রক্রিয়া পরিচালনা করিতে পারিবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 2 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+
+    <p class="bengali-p" style="margin-top: 2mm;">
+      অর্থঋণ আদালত ২০০৩ এর ধারাসমূহের আলোকে অত্র বিক্রয়ের ক্ষমতা অর্পণ পত্র সম্পাদন করিয়া অঙ্গীকার করিতেছি যে, ঋণের আসল
+      ও সুদের টাকা চুক্তি অনুযায়ী পরিশোধ না করিলে কিংবা পরিশোধে অস্বীকার করিলে নিম্ন তফসিলের বন্ধকাবদ্ধ সম্পত্তি
+      স্ব-উদ্যোগে নিলামে বিক্রি করিয়া ব্যাংকের পাওনা টাকা আদায় করে নেওয়ার ক্ষমতা ব্যাংক বরাবরে অর্পণ করিলাম। অত্র
+      বিক্রয়ের ক্ষমতা অর্পণ পত্র অদ্য <span class="dotted-input" contenteditable="true"></span> ইং স্বাক্ষীগণের সম্মুখে
+      স্বেচ্ছায়, সজ্ঞানে অন্যের বিনা প্ররোচনায় সহি সম্পাদন
+      করিয়া দস্তগত করিলাম। ইতি তাং- <span class="dotted-input" contenteditable="true"></span>
+      ইং।
+    </p>
+
+    <div class="schedule-title">বন্ধকী/ দায়বদ্ধ সম্পত্তির বিবরণ/তফসীল</div>
+    <div class="schedule-sub-title">তফসীল "ক"</div>
+
+    <table class="custom-table">
+      <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 12.5%;">
+        <col style="width: 12.5%;">
+        <col style="width: 12.5%;">
+        <col style="width: 12.5%;">
+        <col style="width: 10%;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th rowspan="2" style="width: 20%;">উপজেলা</th>
+          <th rowspan="2" style="width: 20%;">মৌজা</th>
+          <th colspan="2" style="width: 25%;">খতিয়ান নং</th>
+          <th colspan="2" style="width: 25%;">দাগ নং</th>
+          <th rowspan="2" style="width: 10%;">জমির পরিমান (একরে)</th>
+        </tr>
+        <tr>
+          <th style="width: 12.5%;">এসএ</th>
+          <th style="width: 12.5%;">আরএস</th>
+          <th style="width: 12.5%;">এসএ</th>
+          <th style="width: 12.5%;">আরএস</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+        </tr>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+        </tr>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+        </tr>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+        </tr>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true">&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="text-align: right; font-weight: 700;">মোট</td>
+          <td contenteditable="true" style="font-weight: 700;">&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Signatures Area -->
+    <div class="sig-container">
+      <div class="witness-section">
+        <strong>স্বাক্ষীগণের স্বাক্ষর:</strong><br>
+        <table class="witness-table">
+          <tr>
+            <td class="w-num">১।</td><td class="w-label">নাম</td><td class="w-colon">:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+          <tr>
+            <td></td><td>পিতার নাম</td><td>:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+          <tr>
+            <td></td><td>ঠিকানা</td><td>:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+          <tr><td colspan="4" style="height: 10px;"></td></tr>
+          <tr>
+            <td class="w-num">২।</td><td class="w-label">নাম</td><td class="w-colon">:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+          <tr>
+            <td></td><td>পিতার নাম</td><td>:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+          <tr>
+            <td></td><td>ঠিকানা</td><td>:</td>
+            <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="borrower-section">
+        <div style="height: 0.6in;"></div>
+        <div class="sig-line">
+          ১ম পক্ষ / পাওয়ার দাতার স্বাক্ষর<br>
+          (ঋণগ্রহীতা/ বন্ধকদাতা)
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 3 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ১২ ও ১৩ ধারার সংস্থানসমূহ
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ১২ (বন্ধকী সম্পত্তি বিক্রয়ের অধিকার):</strong> (১) এই আইনের বিধান সাপেক্ষে, ব্যাংক ঋণগ্রহীতার খেলাপি
+      ঋণের বকেয়া পাওনা আদায়ের লক্ষে অর্থঋণ আদালতে মামলা দায়েরের পূর্বে বা মামলা চলাকালীন সময়ে, ঋণগ্রহীতা কর্তৃক ব্যাংকের
+      অনুকূলে কার্যকরকৃত ক্ষমতা পত্রের ভিত্তিতে তফসীল বর্ণিত বন্ধকী সম্পত্তি স্ব-উদ্যোগে প্রকাশ্য নিলামে বিক্রয় পূর্বক
+      বিক্রয়লব্ধ অর্থ দ্বারা পাওনা ঋণ সমন্বয় করিবার পূর্ণ অধিকারী হইবে।
+    </p>
+    <p class="bengali-p">
+      (২) উক্তরূপ নিলাম বিক্রয়ের পূর্বে ব্যাংক অন্ততঃপক্ষে ২টি বহুল প্রচারিত জাতীয় বাংলা দৈনিক পত্রিকায় বিজ্ঞপ্তি প্রকাশ
+      করিবে। বিজ্ঞপ্তি প্রকাশের অন্তত ১৫ (পনের) দিন পর নিলাম অনুষ্ঠান করিতে হইবে।
+    </p>
+    <p class="bengali-p">
+      (৩) নিলাম বিক্রয়ের সমুদয় প্রক্রিয়া স্বচ্ছ ও নিরপেক্ষ হইবে এবং সর্বোচ্চ দরদাতাকে বিজয়ী ঘোষণা করিয়া ব্যাংক বিক্রয়
+      দলিল সম্পাদন ও রেজিস্ট্রি করিয়া দেওয়ার অধিকারী হইবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 4 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 4 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ১২ ধারার অবশিষ্ট সংস্থানসমূহ
+    </div>
+    <p class="bengali-p">
+      (৪) ব্যাংক বা উহার কোন মনোনীত কর্মকর্তা অথবা নিলাম ক্রেতা, এই আইন ও পাওয়ার অব অ্যাটর্নি আইনের বিধান অনুযায়ী বন্ধকী
+      সম্পত্তির দখল গ্রহণে আইনগতভাবে ক্ষমতাবান হইবেন।
+    </p>
+    <p class="bengali-p">
+      (৫) যদি ঋণগ্রহীতা বা তৃতীয় কোন স্বার্থসংশ্লিষ্ট ব্যক্তি নিলাম গ্রহণে বাধা সৃষ্টি করে, তবে ব্যাংক সংশ্লিষ্ট স্থানীয়
+      আইন প্রয়োগকারী সংস্থা ও জেলা ম্যাজিস্ট্রেটের সহায়তা গ্রহণ করিয়া সম্পত্তির দখল নিতে পারিবে।
+    </p>
+    <p class="bengali-p">
+      (৬) নিলাম বিক্রয় হইতে প্রাপ্ত অর্থ দ্বারা সর্বপ্রথমে নিলাম পরিচালনার যাবতীয় ব্যয় এবং আইনগত খরচ পরিশোধ করা হইবে,
+      অতঃপর অবশিষ্ট টাকা ব্যাংকের পাওনা ঋণ সমন্বয়ে ব্যবহৃত হইবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 5 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 5 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ৩৩ ধারার সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৩৩ (সম্পত্তির দখল ও সনদ প্রদান):</strong> (১) ব্যাংক কর্তৃক নিলাম পরিচালনা সত্ত্বেও যদি উপযুক্ত
+      ক্রেতার অভাবে অথবা অপর কোন কারণে বন্ধকী সম্পত্তি বিক্রয় সম্ভব না হয়, তবে ব্যাংক উক্ত সম্পত্তি ধারা ৩৩ এর বিধান মতে
+      নিজস্ব জিম্মায় গ্রহণ করিতে এবং প্রয়োজনীয় সনদ ইস্যু করিতে পারিবে।
+    </p>
+    <p class="bengali-p">
+      (২) ব্যাংক উক্ত সম্পত্তির নামজারী, জমাভাগ ও খাজনা প্রদানসহ সমুদয় স্বত্ব ও মালিকানা ভোগদখল করিতে পারিবে এবং আইনানুগ
+      সকল পদক্ষেপ গ্রহণ করিতে পারিবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 6 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 6 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ৩৪ ধারার সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৩৪ (মামলা দায়েরে বাধা না থাকা):</strong> (১) ব্যাংকের এই ক্ষমতা পত্র প্রয়োগ করিয়া বন্ধকী সম্পত্তি
+      বিক্রয়ের চেষ্টা করা সত্বেও যদি পূর্ণ পাওনা আদায় না হয়, তবে অবশিষ্ট পাওনা টাকার জন্য ব্যাংক ঋণগ্রহীতার বিরুদ্ধে
+      অর্থঋণ আদালতে মামলা দায়ের করিতে বা চলমান মামলা অব্যাহত রাখিতে পারিবে।
+    </p>
+    <p class="bengali-p">
+      (২) এই ক্ষমতা পত্র কার্যকর করার কারণে ব্যাংক ঋণগ্রহীতার বিরুদ্ধে অন্য কোন দেওয়ানী বা ফৌজদারী প্রতিকার গ্রহণ করা
+      হইতে বারিত হইবে না।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 7 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 7 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ৩৫ ধারার সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৩৫ (অ্যাসেসমেন্ট ও মূল্য নির্ধারণ):</strong> বন্ধকী সম্পত্তির নিলাম বিক্রয়ের পূর্বে ব্যাংক স্বীকৃত ও
+      তালিকাভুক্ত সার্ভেয়ার অথবা মূল্যায়নকারী প্রতিষ্ঠান দ্বারা সম্পত্তির বাজার মূল্য ও সর্বনিম্ন নিলাম মূল্য (Reserve
+      Price) নির্ধারণ করাইতে পারিবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 8 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 8 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ৩৬ ধারার সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৩৬ (ক্রয় বিক্রয়ের বৈধতা):</strong> এই আইনের অধীনে পরিচালিত বিক্রয় প্রক্রিয়ায় ক্রেতা যে স্বত্ব ও
+      স্বামিত্ব লাভ করিবেন, তাহা সর্বপ্রকার দায় ও এনকামব্রেন্স (Encumbrance) মুক্ত বলিয়া গণ্য হইবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 9 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 9 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      অর্থঋণ আদালত আইন, ২০০৩ এর ৩৭ ধারার সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৩৭ (আইনানুগ সুরক্ষা):</strong> এই ক্ষমতার অধীনে ব্যাংক বা উহার কর্মকর্তা কর্তৃক সরল বিশ্বাসে কৃত কোন
+      কাজের জন্য কোন দেওয়ানী বা ফৌজদারী আদালতে ক্ষতিপূরণ বা অন্য কোন মামলা দায়ের করা যাইবে না।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 10 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 10 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      পাওয়ার অব অ্যাটর্নি আইন, ২০১২ এর সংশ্লিষ্ট বিধানাবলী
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৬ (অপ্রত্যাহারযোগ্য পাওয়ার অব অ্যাটর্নি):</strong> এই পাওয়ার অব অ্যাটর্নিটি একটি অপ্রত্যাহারযোগ্য
+      (Irrevocable) ক্ষমতা পত্র। ঋণ সম্পূর্ণ পরিশোধ না হওয়া পর্যন্ত দাতা কর্তৃক এই ক্ষমতা পত্র এককভাবে বাতিল বা
+      প্রত্যাহার করা যাইবে না।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 11 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 11 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      পাওয়ার অব অ্যাটর্নি আইন, ২০১২ এর ধারা ৮ ও ৯
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৮ (নিবন্ধন বাধ্যতামূলক):</strong> স্থাবর সম্পত্তি সংক্রান্ত এই পাওয়ার অব অ্যাটর্নি দলিলটি
+      রেজিস্ট্রেশন আইন, ১৯০৮ এর বিধান মতে সাব-রেজিস্ট্রি অফিসে সঠিকভাবে নিবন্ধিত হইতে হইবে।
+    </p>
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 12 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 12 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      রেজিস্ট্রেশন আইন, ১৯০৮ এর ১৭ ধারার অনুচ্ছেদসমূহ
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ১৭ (বাধ্যতামূলক রেজিস্ট্রিযোগ্য দলিল):</strong> আর্থিক লেনদেন ও স্থাবর সম্পত্তির সহিত জড়িত ক্ষমতা
+      পত্র সমূহ রেজিস্ট্রেশন আইন ১৯০৮ এর ধারা ১৭(১) অনুযায়ী বাধ্যতামূলকভাবে নিবন্ধিত হইতে হইবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 13 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 13 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      সম্পত্তি হস্তান্তর আইন, ১৮৮২ এর সংস্থান
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৫৮ (বন্ধকের সংজ্ঞা ও প্রকারভেদ):</strong> সম্পত্তি হস্তান্তর আইন, ১৮৮২ এর ৫৮ ধারা মতে ব্যাংক ঋণের
+      বিপরীতে স্থাবর সম্পত্তির স্বত্ব দলিল জমাদান সাপেক্ষে বা রেজিস্ট্রিকৃত বন্ধকী দলিলের মাধ্যমে ব্যাংক প্রথম চার্জ
+      সৃষ্টি করিয়া থাকে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 14 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 14 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      সম্পত্তি হস্তান্তর আইন, ১৮৮২ এর ৬৯ ধারা
+    </div>
+    <p class="bengali-p">
+      <strong>ধারা ৬৯ (আদালতের হস্তক্ষেপ ব্যতিরেকে বিক্রয়ের ক্ষমতা):</strong> চুক্তি অনুযায়ী বন্ধকগ্রহীতা ব্যাংক
+      নির্দিষ্ট শর্তে আদালতের আশ্রয় না লইয়াও বন্ধকী সম্পত্তি বিক্রয় করিবার ক্ষমতা ধারণ করে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 15 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 15 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      বাংলাদেশ কৃষি ব্যাংক আদেশ, ১৯৭৩ (P.O. No. 27 of 1973)
+    </div>
+    <p class="bengali-p">
+      <strong>অনুচ্ছেদ ২৭ (পাওনা আদায়ের বিশেষ ক্ষমতা):</strong> বাংলাদেশ কৃষি ব্যাংক আদেশ, ১৯৭৩ এর ২৭ অনুচ্ছেদ মোতাবেক
+      ব্যাংকের বকেয়া ঋণ ল্যান্ড রেভিনিউ বা সরকারি পাওনার ন্যায় সার্টিফিকেট মামলার মাধ্যমে বা সরাসরি সম্পত্তি নিলামের
+      মাধ্যমে আদায়যোগ্য।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 16 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 16 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      বন্ধকী সম্পত্তির চৌহদ্দী ও সীমানা বিবরণ (তফসীল "খ")
+    </div>
+    <table class="custom-table" style="margin-top: 4mm;">
+      <thead>
+        <tr>
+          <th style="width: 20%;">উত্তর সীমানা</th>
+          <th style="width: 20%;">দক্ষিণ সীমানা</th>
+          <th style="width: 20%;">পূর্ব সীমানা</th>
+          <th style="width: 20%;">পশ্চিম সীমানা</th>
+          <th style="width: 20%;">মোট পরিমাণ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true">&nbsp;</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+
+  <!-- PAGE 17 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 17 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      দায়বদ্ধ যন্ত্রপাতি ও মালামালের বিবরণ (তফসীল "গ") (প্রযোজ্য ক্ষেত্রে)
+    </div>
+    <table class="custom-table" style="margin-top: 4mm;">
+      <thead>
+        <tr>
+          <th style="width: 10%;">ক্রমিক</th>
+          <th style="width: 45%;">যন্ত্রপাতি / মালামালের বিবরণ</th>
+          <th style="width: 20%;">সংখ্যা/পরিমাণ</th>
+          <th style="width: 25%;">আনুমানিক মূল্য (টাকা)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>১</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td>২</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+
+  <!-- PAGE 18 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 18 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      পাওয়ার অফ অ্যাটর্নি সম্পর্কিত বিশেষ অঙ্গীকারনামা
+    </div>
+    <p class="bengali-p">
+      দাতার অত্র পাওয়ার অব অ্যাটর্নির অধীনে কৃত সকল কার্যাবলী দাতা কর্তৃক স্বয়ং সম্পাদন বলিয়া বিবেচিত হইবে এবং উক্ত সকল
+      কার্যাবলীর জন্য দাতা বা তাহার আইনানুগ ওয়ারিশগণ ব্যাংককে সম্পূণরুপে দায়মুক্ত রাখিবে।
+    </p>
+
+
+  </div>
+
+  <!-- PAGE 19 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 19 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 6mm; text-decoration: underline; text-underline-offset: 4px;">
+      ১ম পক্ষ / পাওয়ার দাতার স্বাক্ষর ও সম্মতি
+    </div>
+    <p class="bengali-p" style="margin-bottom: 1.5in;">
+      আমি/আমরা সুস্থ শরীরে, সজ্ঞানে, অপরের প্ররোচনা ব্যতীত অত্র পাওয়ার অব অ্যাটর্নি দলিলের যাবতীয় শর্তাবলী পাঠ করিয়া ও
+      উহার মর্ম উপলব্ধি করিয়া তাহাতে নিজ হস্তাক্ষরে স্বাক্ষর প্রদান করিলাম।
+    </p>
+
+    <div style="text-align: right; margin-right: 0.5in;">
+      <div
+        style="border-top: 1px dotted #000; display: inline-block; width: 2.5in; text-align: center; padding-top: 4px;">
+        <strong>১ম পক্ষ / পাওয়ার দাতার স্বাক্ষর</strong><br>
+        (ঋণগ্রহীতা / বন্ধকদাতা)
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- PAGE 20 -->
+  <div class="stamp-page">
+    <span class="page-badge">PAGE 20 OF 20</span>
+
+
+    <div class="mandatory-header">
+      অর্থঋণ আদালত ২০০৩ এর বিধানে অনাদায়ী ঋণের টাকা আদায়ের উদ্দেশে ব্যাংক কর্তৃক তফসীলকৃত বন্ধকী জমি/ দায়বদ্ধ
+      সম্পত্তির সরাসরি বিক্রয়ের ক্ষমতা পত্র।
+    </div>
+    <div
+      style="font-size: 11pt; font-weight: 700; text-align: center; margin-bottom: 4mm; text-decoration: underline; text-underline-offset: 4px;">
+      স্বাক্ষীগণ ও সনাক্তকারীর স্বাক্ষর
+    </div>
+
+    <div class="witness-section" style="width: 100%;">
+      <strong>স্বাক্ষীগণের বিবরণ:</strong><br>
+      <table class="witness-table">
+        <tr>
+          <td class="w-num">১।</td><td class="w-label">নাম</td><td class="w-colon">:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>পিতার নাম</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>ঠিকানা</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr><td colspan="4" style="height: 10px;"></td></tr>
+        <tr>
+          <td class="w-num">২।</td><td class="w-label">নাম</td><td class="w-colon">:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>পিতার নাম</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>ঠিকানা</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr><td colspan="4" style="height: 10px;"></td></tr>
+        <tr>
+          <td class="w-num">৩।</td><td class="w-label">নাম</td><td class="w-colon">:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>পিতার নাম</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+        <tr>
+          <td></td><td>ঠিকানা</td><td>:</td>
+          <td><span class="dotted-input" contenteditable="true" style="width: 100%;"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="margin-top: 4mm; border-top: 1px dashed #000; padding-top: 4mm;">
+      <strong>সনাক্তকারীর স্বাক্ষর ও অঙ্গীকার:</strong><br>
+      <p class="bengali-p" style="margin-top: 1mm;">
+        পাওয়ার দাতাগণ আমার পরিচিত। তাহাদের উপস্থিতিতে তাহারা অত্র দলিলে স্বাক্ষর প্রদান করিয়াছেন। আমি তাহাদিগকে সঠিকভাবে
+        সনাক্ত করিলাম।
+      </p>
+      <div style="text-align: right; margin-top: 0.4in;">
+        <div
+          style="border-top: 1px dotted #000; display: inline-block; width: 2.2in; text-align: center; padding-top: 2px;">
+          সনাক্তকারীর স্বাক্ষর
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <style>
+    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
+    .stamp-page,
+    .page,
+    .a4-page {
+      font-family: 'SolaimanLipi', Arial, sans-serif !important;
+    }
+
+    /* Fix excessive line gap - ONLY IN STAMPS */
+    .stamp-page {
+      line-height: 1.6 !important;
+    }
+
+    .stamp-page .content-body,
+    .stamp-page .paragraph,
+    .stamp-page p {
+      line-height: 1.6 !important;
+    }
+
+    /* Fix dotted line alignment and wrapping behavior */
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"] {
+      font-weight: bold !important;
+      display: inline !important;
+      /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
+      vertical-align: baseline !important;
+      /* Align exactly with text */
+      line-height: inherit !important;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+    }
+
+    /* Exception: When empty, force inline-block to respect min-width (0.5in) */
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:empty {
+      display: inline-block !important;
+      min-width: 0.5in !important;
+      text-decoration: none !important;
+      border-bottom: 1.5px dotted #000000 !important;
+    }
+  </style>
+  <script>
+    const enToBn = {
+      '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+      '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+    };
+
+    // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
+    document.addEventListener('input', (e) => {
+      if (e.target.hasAttribute('contenteditable') && e.target.classList.contains('bangla-numbers')) {
+        let range = document.getSelection().getRangeAt(0);
+        let currentPos = range.startOffset;
+
+        let val = e.target.innerText;
+        let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+
+        if (val !== converted) {
+          e.target.innerText = converted;
+
+          // Seamless caret position restoration
+          let newRange = document.createRange();
+          let selection = window.getSelection();
+
+          if (e.target.childNodes.length > 0) {
+            let textNode = e.target.childNodes[0];
+            newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+          } else {
+            newRange.setStart(e.target, 0);
+          }
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    });
+
+    // Listen for FILL command to populate branch info and auto-convert Bangla numbers
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.command === 'FILL') {
+        const data = event.data.data;
+        Object.keys(data).forEach(key => {
+          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+          const els = document.querySelectorAll(queryStr);
+          els.forEach(el => {
+            let val = data[key] || '';
+
+            // Automatically convert digits to Bangla if the class is present
+            if (el.classList.contains('bangla-numbers') && val) {
+              val = val.replace(/[0-9]/g, match => enToBn[match]);
+            }
+
+            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
+              el.innerText = val;
+            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+              el.value = val;
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>

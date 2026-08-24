@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশ কৃষি ব্যাংক - মঞ্জুরীপত্র</title>
+    <style>
+        /* A4 Layout Standard Definition with 0.5in margins */
+        @page {
+            size: A4;
+            margin: 0.5in;
+        }
+        
+        body {
+            font-family: 'SolaimanLipi', 'Nikosh', 'Arial', sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.4;
+            color: #000;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 0.5in;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Standardized Flat Interactive Blanks */
+        [contenteditable] {
+            display: inline-block;
+            min-width: 1in; /* Exactly 1 inch baseline length */
+            border-bottom: 1px dotted #000;
+            outline: none;
+            padding: 0 2px;
+            text-align: center;
+            min-height: 1.2em;
+            background: transparent;
+            color: #000;
+            transition: border-bottom 0.2s;
+            vertical-align: bottom;
+        }
+
+        [contenteditable]:focus {
+            border-bottom: 1.5px solid #000;
+        }
+
+        [contenteditable]:empty { min-width: 1in; }
+        [contenteditable]:empty::before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            font-weight: normal;
+        }
+
+        /* Paragraphs and list item alignment rules */
+        p {
+            margin: 6px 0;
+            text-align: justify;
+        }
+
+        ol {
+            margin: 5px 0;
+            padding-left: 18px;
+        }
+
+        li {
+            margin-bottom: 4px;
+            text-align: justify;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .indent-group {
+            padding-left: 20px;
+            margin-top: 2px;
+        }
+
+        /* Traditional Signature Columns */
+        .signature-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 30px;
+            padding-right: 30px;
+            text-align: left;
+        }
+
+        .signature-item {
+            margin-bottom: 3px;
+        }
+
+        .acceptance-footer {
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: left;
+        }
+
+        /* Print Override - Strips system styles, leaving clean legal text */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+                display: block;
+            }
+            .a4-page {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                min-height: 100%;
+            }
+            [contenteditable] {
+                border-bottom: 1px solid #000; /* Flat solid border for print output */
+            }
+        }
+    
+        /* Input Focus and Select Fixes */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../../../assets/css/common.css">
+</head>
+<body>
+
+    <!-- Main Letter Page -->
+    <div class="a4-page">
+        
+        <!-- Document Identifier -->
+        <div style="text-align: right; font-weight: bold; font-size: 11pt; margin-bottom: 5px;">এল এফ ১২(ক)</div>
+        
+        <!-- Bank Header -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h1 style="text-decoration: underline; font-size: 14pt; font-weight: bold; margin: 0 0 2px 0;">মঞ্জুরীপত্রঃ প্রকল্প / চলতি মূলধন ঋণ / নগদ ঋণ</h1>
+            <p style="font-weight: bold; margin: 2px 0;" class="text-center">(শাখা হইতে ঋণ গ্রহীতা)</p>
+            <p style="font-size: 13pt; font-weight: bold; margin: 2px 0;" class="text-center"><strong>বাংলাদেশ কৃষি ব্যাংক</strong></p>
+            <p style="margin: 2px 0;" class="text-center">
+                <span contenteditable="true" data-placeholder="শাখার নাম" data-db-field="branch_name"></span> শাখা
+            </p>
+        </div>
+
+        <!-- Row 1 meta -->
+        <div style="display: flex; justify-content: space-between; margin-top: 15px; margin-bottom: 10px;">
+            <p>ঋণ নং- <span contenteditable="true" data-placeholder="ঋণ নং" data-db-field="loan_no"></span></p>
+            <p>তারিখ : <span contenteditable="true" data-placeholder="তারিখ" data-db-field="date" class="bangla-numbers"></span></p>
+        </div>
+
+        <!-- Applicant Identification Paragraph -->
+        <p>
+            <span class="bold">জনাব/ জনাবা,</span><span contenteditable="true" data-placeholder="আবেদনকারীর নাম" data-db-field="applicant_name"></span>, 
+            পিতাঃ <span contenteditable="true" data-placeholder="পিতার নাম" data-db-field="father_name"></span>, 
+            ঠিকানাঃ <span contenteditable="true" data-placeholder="গ্রাম" data-db-field="address"></span>, 
+            ডাকঘর : <span contenteditable="true" data-placeholder="ডাকঘর" data-db-field="post_office"></span>, 
+            <span contenteditable="true" data-placeholder="উপজেলা/জেলা" data-db-field="location"></span>। 
+            পরিচালিত প্রতিষ্ঠানঃ <span contenteditable="true" data-placeholder="প্রতিষ্ঠানের নাম" data-db-field="organization"></span>, 
+            ব্যবসায়িক ঠিকানাঃ <span contenteditable="true" data-placeholder="ব্যবসায়িক ঠিকানা" data-db-field="biz_address"></span>। 
+            মোবাইলঃ <span contenteditable="true" data-placeholder="মোবাইল নম্বর" data-db-field="mobile" class="bangla-numbers"></span>।
+        </p>
+
+        <!-- Subject Header Section -->
+        <div style="text-align: center; font-weight: bold; margin-top: 15px; margin-bottom: 15px;">
+            <span style="text-decoration: underline;">বিষয় : ঋণ/ অগ্রিম/নগদ ঋণ নবায়ন-মঞ্জুর</span>
+            <div style="margin-top: 5px;">
+                টাকাঃ <span contenteditable="true" data-placeholder="টাকার পরিমাণ" data-db-field="amount" class="bangla-numbers"></span>
+            </div>
+        </div>
+
+        <p class="bold">প্রিয় মহোদয়,</p>
+        
+        <p>
+            আপনার <span contenteditable="true" data-placeholder="আবেদনের তারিখ" data-db-field="appl_date" class="bangla-numbers"></span> তারিখের আবেদনের প্রেক্ষিতে <span contenteditable="true" data-placeholder="অনুকূলে" data-db-field="beneficiary_name"></span> এর অনুকূলে <span contenteditable="true" data-placeholder="ঋণের খাত" data-db-field="loan_sector"></span> খাত এর আওতায় নিম্নলিখিত শর্ত সাপেক্ষে ব্যাংক টাকা মং- <span contenteditable="true" data-placeholder="কথায় টাকা" data-db-field="amount_words"></span> টাকা মাত্র ঋণ নবায়ন-মঞ্জুর করা হলোঃ
+        </p>
+
+        <!-- All 17 Specific Banking Terms & Conditions -->
+        <ol>
+            <li>
+                <span class="bold">সুযোগ সুবিধার ধরণ :</span> 
+                <span contenteditable="true" data-placeholder="সুবিধার ধরণ" data-db-field="facility_type"></span> আওতায় 
+                <span contenteditable="true" data-placeholder="ঋণের ধরণ" data-db-field="loan_type"></span> ঋণ।
+            </li>
+            <li>
+                <span class="bold">মঞ্জুরীর বিভাজনঃ</span> 
+                <span contenteditable="true" data-placeholder="বিভাজন বিবরণ" data-db-field="disbursement_details"></span>।
+            </li>
+            <li>
+                <span class="bold">মোট-</span> <span contenteditable="true" data-placeholder="মোট পরিমাণ" data-db-field="total_limit" class="bangla-numbers"></span> টাকা
+                <div class="indent-group">
+                    ক) দেশীয় মুদ্রা- <span contenteditable="true" data-placeholder="দেশীয় মুদ্রা" data-db-field="local_currency" class="bangla-numbers"></span> বৈদেশিক মুদ্রা- <span contenteditable="true" data-placeholder="বৈদেশিক" data-db-field="foreign_currency" class="bangla-numbers"></span> মাত্র।<br>
+                    খ) দ্রব্যে টাকা <span contenteditable="true" data-placeholder="দ্রব্যে টাকা" data-db-field="kind_amount" class="bangla-numbers"></span> নগদে টাকা <span contenteditable="true" data-placeholder="নগদে টাকা" data-db-field="cash_amount" class="bangla-numbers"></span> মাত্র।
+                </div>
+            </li>
+            <li>
+                <span class="bold">ব্যাংক ঋণ ও উদ্যোক্তার বিনিয়োগের অনুপাতঃ</span> 
+                <span contenteditable="true" data-placeholder="ঋণ-ইক্যুইটি অনুপাত" data-db-field="debt_equity_ratio" class="bangla-numbers"></span>।
+            </li>
+            <li>
+                <span class="bold">সংগ্রহ পদ্ধতি :</span> প্রতিষ্ঠানের চলতি হিসাব নং- 
+                <span contenteditable="true" data-placeholder="চলতি হিসাব নং" data-db-field="account_number" class="bangla-numbers"></span> হতে চেকের মাধ্যমে।
+            </li>
+            <li>
+                <span class="bold">জামানত / সহায়ক জামানতঃ</span> 
+                <span contenteditable="true" data-placeholder="জামানত বিবরণ" data-db-field="collateral_desc"></span> একর জমি।
+            </li>
+            <li>
+                <span class="bold">জামানত / সহায়ক জামানতের উপর চার্জ :</span> রেজিস্ট্রিকৃত ১ম চার্জ।
+            </li>
+            <li>
+                <span class="bold">দলিল সম্পাদনঃ</span> ব্যাংকের প্রচলিত নিয়মে সংশ্লিষ্ট সাবরেজিস্ট্রি অফিসে দলিলায়ন করা হবে।
+            </li>
+            <li>
+                <span class="bold">সুদ / সার্ভিস চার্জ :</span> 
+                <span contenteditable="true" data-placeholder="সুদের হার" data-db-field="interest_rate" class="bangla-numbers"></span>। তবে ঋণ হিসাবটি মঞ্জুরীপত্রের শর্তানুযায়ী পরিচালিত না হলে অতিরিক্ত 
+                <span contenteditable="true" data-placeholder="দণ্ড সুদ হার" data-db-field="penalty_rate" class="bangla-numbers"></span> হারে সুদ আরোপ করা হবে (সময়ে সময়ে ব্যাংক কর্তৃক পরিবর্তিত সুদের হার এই ঋণের ক্ষেত্রে প্রযোজ্য হবে)।
+            </li>
+            <li>
+                <span class="bold">পরিশোধঃ</span> মঞ্জুরীপত্র বিতরনের তারিখ হতে 
+                <span contenteditable="true" data-placeholder="পরিশোধ মেয়াদ" data-db-field="repayment_term" class="bangla-numbers"></span> পরিশোধ/নবায়নযোগ্য হবে।
+            </li>
+            <li>
+                <span class="bold">আহরণ পদ্ধতিঃ</span> গ্রাহকের চলতি হিসাব হতে চেকের এর মাধ্যমে।
+            </li>
+            <li>
+                <span class="bold">বীমা :</span> ব্যাংকের প্রচলিত নিয়মে ঋণ বিতরণের পূর্বে বীমা করা হবে।
+            </li>
+            <li>
+                <span class="bold">ঋণ তত্ত্ববধান :</span> ব্যবস্থাপক / মাঠ কর্মকর্তা সময়- সময় পরিদর্শন করিতে পারবে।
+            </li>
+            <li>
+                <span class="bold">ঋণ পরিশোধ (রেয়াতীকাল উল্লেখ করুন)ঃ</span> প্রযোজ্য নয়।
+            </li>
+            <li>
+                <span class="bold">মজুদ ব্যবস্থাপনা / নিয়ন্ত্রণ/তালাবদ্ধ রাখা ইত্যাদিঃ</span> উদ্যোক্তার নিজস্ব ব্যবস্থাপনায়।
+            </li>
+            <li>
+                <span class="bold">বিশেষ শর্তাবলী (সংশ্লিষ্ট কাগজপত্র সংযুক্ত করতে হবে)ঃ</span><br>
+                <span contenteditable="true" data-placeholder="এখানে অতিরিক্ত বিশেষ শর্তাদি টাইপ করতে পারেন" data-db-field="special_conditions" style="width: 100%; border-bottom: 1px dotted #888; text-align: left; min-height: 2.5em;"></span>
+            </li>
+            <li>
+                <span class="bold">উপরোক্ত ঋণ সীমা পরিচালনের ক্ষেত্রে অন্য যে কোন শর্তাবলী আরোপ এবং ঋণ বিলি রহিত/ বাতিল / প্রত্যাহার করিবার ক্ষমতা ব্যাংক কর্তৃক সংরক্ষিত থাকবে।</span>
+            </li>
+        </ol>
+
+        <!-- Acceptance Instruction Row -->
+        <p style="margin-top: 15px;">
+            যদি উপরোক্ত শর্তাবলী গ্রহণযোগ্য হয় তাহলে অত্র মঞ্জুরীপত্রের একটি অনুলিপি “গৃহীত এবং দ্বীক্ষীকৃত” বলিয়া স্বাক্ষর দান পূর্বক নিম্ন স্বাক্ষরকারীর নিকট 
+            <span contenteditable="true" data-placeholder="ফেরত দেওয়ার শেষ তারিখ" data-db-field="return_deadline" class="bangla-numbers"></span> তারিখের মধ্যেই ফেরত পাঠাতে হবে।
+        </p>
+
+        <!-- Bank Signatures Block -->
+        <div class="signature-group">
+            <div class="signature-item bold">আপনার বিশ্বস্ত</div>
+            <div class="signature-item" style="margin-top: 40px;">
+                স্বাক্ষরঃ <span contenteditable="true" data-placeholder="স্বাক্ষর" data-db-field="banker_signature"></span>
+            </div>
+            <div class="signature-item">
+                পদবিঃ <span contenteditable="true" data-placeholder="পদবি ও সিল" data-db-field="banker_designation"></span>
+            </div>
+        </div>
+
+        <!-- Concluding Acceptance Statement -->
+        <div class="acceptance-footer">
+            মঞ্জুরীপত্র গৃহীত এবং দ্বীক্ষীকৃত বলিয়া স্বজ্ঞানে ও স্বেচ্ছায় স্বাক্ষর করিলাম।
+        </div>
+    </div>
+	<!-- Main Conditions Page Wrapper -->
+    <div class="a4-page">
+        
+        <!-- Document Title Header exactly matching image_8c456a.png -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <span class="bold underline" style="font-size: 11pt;">চলতি মূলধন/নগদ পুঁজি ঋণের বিশেষ শর্তাবলীঃ</span>
+        </div>
+
+        <!-- Section (ক) -->
+        <p>
+            <span class="bold">(ক) প্রতিষ্ঠানের নাম ও অবস্থান ঃ</span> 
+            <span contenteditable="true" data-placeholder="প্রতিষ্ঠানের নাম ও অবস্থান" data-db-field="organization_meta" style="min-width: 4.5in;"></span>।
+        </p>
+
+        <!-- Section (খ) -->
+        <p class="bold">(খ) জামানত/সহযোগী জামানত ঃ</p>
+        <div class="indent-group">
+            <ul class="conditions-list">
+                <li>(১) প্লেজ/হাইপোথিকেশন;</li>
+                <li>(২) বন্ধকী দলিল (এল,এফ-১৩) শাখার পূর্বানুমতি প্রতিবেদন (এল,এফ-৫) অনুযায়ী প্রস্তাবিত জামানতি সম্পত্তি যথানিয়মে বন্ধক থাকবে। তাছাড়া প্রকল্প/প্রতিষ্ঠানের সকল স্থাপনা ও যন্ত্রপাতি, বর্তমান ও ভবিষ্যৎ সম্পদাতি ইত্যাদি বন্ধক থাকবে;</li>
+                <li>(৩) হলফনামা (এল,এফ-৯);</li>
+                <li>(৪) পাওয়ার অব এটর্নী, বন্ধককৃত সম্পত্তি সরাসরি নিলামে বিক্রির জন্য আইন বিভাগ কর্তৃক জারীকৃত ঋণ আদায় মহাবিভাগ পরিপত্র নং- ০৯/২০০৫, তারিখ ২০/১১/২০০৫ অনুযায়ী;</li>
+                <li>(৫) স্বত্ব দলিলাদি জমা দেয়ার স্মারকলিপি (এল,এফ-১৯) পৌর এলাকার জমি বন্ধক নেয়া হলে;</li>
+                <li>(৬) স্বত্বাধিকারীর প্রতিষ্ঠা সংক্রান্ত অবহিতকরণ পত্র (এল,এফ-৪৪);</li>
+                <li>(৭) আইন বিভাগের পত্র নং-প্রকা/আইন-১০৫৯/০৫-০৬/৪৫৮(১২৫০), তারিখ ১৩/০৯/২০০৫ অনুযায়ী বন্ধকী সম্পত্তির ২৫ বছরের মালিকানা লিপিবদ্ধকরণ ও দলিলায়ন সম্পাদন করতে হবে।</li>
+            </ul>
+        </div>
+
+        <!-- Section (গ) -->
+        <p class="bold" style="margin-top: 10px;">(গ) দলিলপত্র সম্পাদন (Documentation) (প্রযোজ্য ক্ষেত্রে)ঃ</p>
+        <div class="indent-group">
+            <ul class="conditions-list">
+                <li>(১) ডিপি নোট একক ও যৌথভাবে;</li>
+                <li>(২) লেটার অব কনটিনিউটি (এলএফ-৬০ই);</li>
+                <li>
+                    (৩) <span contenteditable="true" data-placeholder="বিবরণ" data-db-field="revival_letter_details" style="min-width: 1in;"></span> রিভাইভাল লেটার (এলএফ-৬০জি);
+                </li>
+                <li>(৪) সকল পরিচালকদের/উদ্যোক্তাদের নিকট হতে ব্যক্তিগত গ্যারান্টি একক ও যৌথ নামে (এলএফ-৬০আই);</li>
+                <li>(৫) পরিচালকদের/উদ্যোক্তাদের সম্পদ ও দায়ের ঘোষণা (পৃথক পৃথক ভাবে);</li>
+                <li>(৬) ঋণ হিসাবের স্থিতিনিশ্চয়পত্র;</li>
+                <li>(৭) দলিল সম্পাদনের ২১ (একুশ) দিনের মধ্যে রেজিস্টার অব জয়েন্ট স্টক কোম্পানিতে চার্জ সৃষ্টি করতে হবে (কোম্পানি/অংশীদারী প্রতিষ্ঠানের ক্ষেত্রে প্রযোজ্য);</li>
+                <li>(৮) ব্যাংকের সাথে দলিলাদি সম্পাদন ও ঋণ গ্রহনেরজন্য রেজুলেশন (কোম্পানি/অংশীদারী প্রতিষ্ঠানের ক্ষেত্রে প্রযোজ্য);</li>
+                <li>(৯) এগ্রিমেন্ট ফর ক্যাশ ক্রেডিট
+                    <ul class="conditions-sublist">
+                        <li>ক) মালামাল হাইপোথিকেশন (এলএফ-৬০বি/এলএফ-৬০সি);</li>
+                        <li>খ) হাইপোথিকেশনঅব ডেটস এন্ড এ্যাসেটস (এলএফ-৬০ডি);</li>
+                    </ul>
+                </li>
+                <li>(১০) অন্য কোথাও ও বন্ধক/চার্জ সৃষ্টি করবেন না মর্মে কোম্পানী/উদ্যোক্তা থেকে অঙ্গীকারনামা;</li>
+                <li>(১১) স্টক থেকে মালামালচুরি, ঘাটতি হলে তার দায়-দায়িত্ব উদ্যোক্তার/কোম্পানীর উপর বর্তাবে মর্মে ঘোষনা;</li>
+                <li>(১২) ব্যাংক কর্তৃক ব্যবসায়ের ব্যবস্থাপনা, স্থায়ীসম্পদ বিক্রি অথবা উপ-বন্ধক প্রদান করতে পারার বিষয়ে ঋণগ্রহীতার ক্ষমতা অর্পণপত্র;</li>
+                <li>(১৩) লেটার অব ডিসক্লেইমার (এলএফ-৬০এফ) গোডাউন ভাড়ার ক্ষেত্রে;</li>
+                <li>(১৪) গুদামের ব্যবহারিক দখলিস্বত্ব উদ্যোক্তা কর্তৃক ব্যাংকের বরাবরে হস্তান্তরের ক্ষমতাদান (প্রযোজ্য ক্ষেত্রে);</li>
+                <li>(১৫) রেজিস্টার্ড পার্টনারশীপ দলিল (অংশীদারী প্রতিষ্ঠানের ক্ষেত্রে);</li>
+                <li>(১৬) সম্মতিপত্র (Letter of Acceptance);</li>
+                <li>(১৭) অন্যান্য প্রযোজ্য দলিলাদি।</li>
+            </ul>
+        </div>
+
+        <!-- Section (ঘ) -->
+        <p style="margin-top: 10px;">
+            <span class="bold">(ঘ)</span> অপারেশন পরিপত্র নং- ১২১/৯৩, তারিখ ০৫/১২/৯৩ মোতাবেক 'টাস্ক ফোর্স' কর্তৃক ঋণটি তদারকী করতে হবে এবং ভবিষ্যতে ঋণ প্রস্তাবের সাথে অবশ্যই টাস্ক ফোর্স প্রতিবেদন পাঠাতে হবে।
+        </p>
+
+        <!-- Section (ঙ) -->
+        <p>
+            <span class="bold">(ঙ)</span> পরিদর্শন ঃ হাইপোথিকেটেড পণ্য নিয়মিতভাবে যাচাই করতে হবে এবং অপারেশন পরিপত্র নং-৪/৯৪, তারিখ ০৯/০১/৯৪ ও ৫/৯৫, তারিখ ১৫/০১/৯৫ এর নির্দেশনা অনুসরন করতে হবে।
+        </p>
+
+        <!-- Section (চ) -->
+        <p class="bold" style="margin-top: 10px;">(চ) অন্যান্য শর্তাবলী ঃ</p>
+        <div class="indent-group">
+            <ul class="conditions-list">
+                <li>(১) ঋণ হিসাবটি মঞ্জুরীপত্রের শর্তানুযায়ী পরিচালিত না হলে প্রচলিত সুদ হারের সাথে অতিরিক্ত ১.৫% হারে সুদারোপ করে সমুদয় সুদের টাকা ঋণগ্রহীতার নিকট হতে আদায়যোগ্য হবে;</li>
+            </ul>
+        </div>
+
+    </div>
+	<!-- Main Conditions Page Wrapper -->
+    <div class="a4-page">
+        
+        <div class="content-body">
+            <!-- Continuous Conditions List exactly matching image_8c4908.png -->
+            <ul class="conditions-list">
+                <li>
+                    (২) ঋণের মেয়াদ প্রথম বিতরণের তারিখ হতে ০১ (এক) বছর পর্যন্ত বলবৎ থাকবে। আলাদা ঋণ হিসাব খুলে দলিলানয়নের মাধ্যমে মঞ্জুরীকৃত ঋণ বিতরণ করতে হবে। ঋণটি মেয়াদপূর্তিতে সুদসহ পরিশোধযোগ্য/নবায়নযোগ্য। ঋণের চক্রায়ন ৯০ দিন;
+                </li>
+                <li>
+                    (৩) এ ঋণের ক্ষেত্রে বাংলাদেশ ব্যাংকের এসএমইএসপিডি সার্কুলার নং-০১, তারিখঃ ১৩/০৪/২০২০ নীতিমালা এবং বাংলাদেশ ব্যাংক কর্তৃক সময়ে সময়ে জারীকৃত এ সংক্রান্ত নিয়মাচার আরোপযোগ্য হবে;
+                </li>
+                <li>
+                    (৪) পূর্বানুমান প্রতিবেদন (এল.এফ-৫) মোতাবেক জামানতি সম্পত্তির স্বত্ব ও মূল্য নির্ধারণ নিশ্চিত হয়ে যথাযথভাবে বন্ধক গ্রহণপূর্বক মঞ্জুরীকৃত ঋণ বিতরণযোগ্য হবে;
+                </li>
+                <li>
+                    (৫) প্রতিষ্ঠান, সহযোগী প্রতিষ্ঠান এবং কোম্পানীর পরিচালকদের নামে হালনাগাদ ক্লিনসিআইবি প্রতিবেদন এবং সংশ্লিষ্ট/স্থানীয় ব্যাংকশাখা সমূহ হতে দায়-দেনার প্রত্যয়নপত্র গ্রহণ সাপেক্ষে প্রতিষ্ঠান/সহযোগী প্রতিষ্ঠান/কোম্পানীর পরিচালকদের নামে কোন ব্যাংক বা আর্থিক প্রতিষ্ঠানে অনিয়মিত/শ্রেণীকৃত ঋণ নেই মর্মে নিশ্চিত হয়ে এ ঋণ বিতরণ করতে হবে;
+                </li>
+                <li>
+                    (৬) বিবেচ্য প্রতিষ্ঠানের চলতি মূলধনের চাহিদা যথাযথভাবে নিরূপন করা হয়েছে মর্মে শাখা কর্তৃক নিশ্চিত হতে হবে। এছাড়াও ঋণ মার্জিন অনুপাত ৬৪:৩৬ (ব্যাংক : উদ্যোক্তা) অনুসরণপূর্বক বিবেচ্য প্রতিষ্ঠানের অনুকূলে ঋণ বিতরণ ও পরবর্তীতে মনিটরিং করতে হবে;
+                </li>
+                <li>
+                    (৭) প্রধান কার্যালয়ের আইন বিভাগের ০৩/০৯/২০১৪ তারিখের পত্রনংঃ প্রকা/আইন-৭৯৫(অংশ-১)/২০১৪-১৫/১৪১(১১৫০) এর নির্দেশনা অনুসরণপূর্বক বন্ধকী দলিল সম্পাদনের পূর্বে প্রস্তাবিত জামানতি সম্পত্তি সাব-রেজিস্ট্রি অফিস হতে তল্লাশীপূর্বক দায় মুক্তির সনদপত্র গ্রহণ করতে হবে এবং বন্ধকী জমির সীমানা চিহ্নিত কাগজপত্র নথিতে সংরক্ষন করতে হবে;
+                </li>
+                <li>
+                    (৮) প্রকল্প/প্রতিষ্ঠানের এবং বন্ধকী সম্পত্তির দৃশ্যমান স্থানে “বাংলাদেশ কৃষি ব্যাংক, <span contenteditable="true" data-placeholder="শাখার নাম" data-db-field="branch_name" style="min-width: 1.5in;"></span> শাখায় দায়বদ্ধ” মর্মে সাইনবোর্ড লাগাতে হবে;
+                </li>
+                <li>
+                    (৯) প্রদানকৃত জামানত ও বন্ধকীতে প্রদত্ত পণ্যেও বাজার মূল্যের সাথে ১০% যোগ করে সকল প্রকার ঝুঁকির বিপরীতে ব্যাংক ও উদ্যোক্তার যৌথনামে ব্যাংক বিধি মোতাবেক উদ্যোক্তার খরচে কম্প্রিহেনসিভ বীমা করতে হবে। এক্ষেত্রে অপারেশন পরিপত্র ৮৮/৯৫ তারিখ ০৪/০৯/১৯৯৫ এর নির্দেশনা অনুসরন করতে হবে;
+                </li>
+                <li>
+                    (১০) এ ঋণের ক্ষেত্রে বিধি মোতাবেক সকল প্রকার চার্জ/ফি আদায় করতে হবে। এছাড়াও মেয়াদপূর্তির পূর্বে ঋণ হিসাব বন্ধ/অবসায়ন করা হলে পরিকল্পনা ও পরিচালন (প্রবাবি) পরিপত্র নং-১৪/২০১৩ তারিখ ২০/১১/২০১৩ এরনির্দেশনা মোতাবেক ২% হারে Early Settlement Fee আদায় করতে হবে (প্রযোজ্য ক্ষেত্রে);
+                </li>
+                <li>
+                    (১১) এসএমইপরিপত্র নং-২৬/২০১০ তারিখঃ ৩০.১১.২০১০ এর নীতিমালা এবং চলতি মূলধন/নগদ পুঁজি ঋণ সংক্রান্ত ব্যাংকের বর্তমানে প্রচলিত এবং ভবিষ্যতে জারীতব্য সকল নিয়মাচার যথারীতি আরোপযোগ্য হবে;
+                </li>
+                <li>
+                    (১২) এছাড়াও প্রযোজ্য অন্যান্য শর্তাবলী (যদি থাকে) <span contenteditable="true" data-placeholder="অন্যান্য শর্তাবলী" data-db-field="other_conditions" style="min-width: 2.5in;"></span>।
+                </li>
+            </ul>
+
+            <!-- Read & understood declaration block -->
+            <div class="acceptance-statement">
+                “পড়িয়া বুঝিলাম এবং শর্তসমূহ পরিপালনের জন্য স্বীকারোক্তি করিলাম”
+            </div>
+        </div>
+
+        <!-- Footer Signatures Section -->
+        <div class="signature-row">
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                কর্মকর্তা
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                ব্যবস্থাপক
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script implementing automatic Bangla digit replacement for numbers -->
+    <script>
+        const enToBn = {
+            '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', 
+            '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
+        };
+
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('contenteditable')) {
+                let range = document.getSelection().getRangeAt(0);
+                let currentPos = range.startOffset;
+                
+                let val = e.target.innerText;
+                let converted = val.replace(/[0-9]/g, (match) => enToBn[match]);
+                
+                if (val !== converted) {
+                    e.target.innerText = converted;
+                    
+                    // Restore cursor position seamlessly
+                    let newRange = document.createRange();
+                    let selection = window.getSelection();
+                    
+                    // Try to find the correct text node offset safely
+                    if (e.target.childNodes.length > 0) {
+                        let textNode = e.target.childNodes[0];
+                        newRange.setStart(textNode, Math.min(currentPos, textNode.length));
+                    } else {
+                        newRange.setStart(e.target, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        });
+    
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.command === 'FILL') {
+                const data = event.data.data;
+                Object.keys(data).forEach(key => {
+                    const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+                    const els = document.querySelectorAll(queryStr);
+                    els.forEach(el => {
+                        if (el.tagName === 'SPAN' || el.tagName === 'DIV') el.innerText = data[key] || '';
+                        else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                            el.value = data[key] || '';
+                        }
+                    });
+                });
+            }
+        });
+
+    </script>
+<script src="../../../assets/engines/cmsme-engine.js"></script>
+</body>
+</html>
