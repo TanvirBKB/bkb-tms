@@ -200,7 +200,8 @@ function openLocalForm(filePath, tabTitle, onLoad) {
                         branch_district_en: branchData.districtEn || '',
                         branch_location_2: branchData.districtBn || '',
                         branch_mobile: branchData.mobile || '',
-                        branch_email: branchData.email || ''
+                        branch_email: branchData.email || '',
+                        manager_name: localStorage.getItem('bkb_manager_name') || ''
                     }
                 }, '*');
             }

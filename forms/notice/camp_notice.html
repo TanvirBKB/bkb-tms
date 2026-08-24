@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camp Notice — ঋণ আদায়ের ক্যাম্প/মহাক্যাম্প নোটিশ</title>
     <style>
+        body, input, textarea, select, button, span, div {
+            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Kalpurush', 'Nikosh', Arial, sans-serif;
+        }
+
         body {
-            font-family: 'SolaimanLipi', 'Noto Serif Bengali', 'Kalpurush', 'Nikosh', 'Vrinda', 'Siyam Rupali', Arial, sans-serif;
             background-color: #f0f2f5;
             margin: 0;
             padding: 10mm 0;
@@ -273,49 +276,49 @@
             <div class="divider-line"></div>
 
             <div class="top-row">
-                <div>ফোলিও নং:&nbsp;<span class="df" contenteditable="true" id="folio_no_1" data-placeholder="নং"></span></div>
-                <div>তারিখ :&nbsp;<span class="df" contenteditable="true" id="notice_date_1" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
+                <div>ফোলিও নং:&nbsp;<span class="df bangla-numbers" contenteditable="true" id="folio_no_1" data-db-field="হিসাব নম্বর" data-placeholder="নং"></span></div>
+                <div>তারিখ :&nbsp;<span class="df bangla-numbers" contenteditable="true" id="notice_date_1" data-db-field="notice_date" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
             </div>
 
             <div class="recipient-section">
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1.2;">
                         <span>নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_name_1" data-placeholder="প্রাপকের নাম"
+                        <span class="df" contenteditable="true" id="recipient_name_1" data-db-field="নাম" data-placeholder="প্রাপকের নাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1.4;">
                         <span>পিতার নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_father_1" data-placeholder="পিতার নাম"
+                        <span class="df" contenteditable="true" id="recipient_father_1" data-db-field="পিতা/স্বামীর নাম" data-placeholder="পিতার নাম"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>বাড়ি:</span>
-                        <span class="df" contenteditable="true" id="recipient_house_1" data-placeholder="বাড়ি"
+                        <span class="df" contenteditable="true" id="recipient_house_1" data-db-field="বাড়ি" data-placeholder="বাড়ি"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>গ্রাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_village_1" data-placeholder="গ্রাম"
+                        <span class="df" contenteditable="true" id="recipient_village_1" data-db-field="গ্রাম" data-placeholder="গ্রাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>ইউ/পৌর:</span>
-                        <span class="df" contenteditable="true" id="recipient_union_1" data-placeholder="ইউনিয়ন/পৌরসভা"
+                        <span class="df" contenteditable="true" id="recipient_union_1" data-db-field="ইউনিয়ন" data-placeholder="ইউনিয়ন/পৌরসভা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>থানা:</span>
-                        <span class="df" contenteditable="true" id="recipient_thana_1" data-placeholder="থানা/উপজেলা"
+                        <span class="df" contenteditable="true" id="recipient_thana_1" data-db-field="থানা/উপজেলা" data-placeholder="থানা/উপজেলা"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>জেলা:</span>
-                        <span class="df" contenteditable="true" id="recipient_district_1" data-placeholder="জেলা"
+                        <span class="df" contenteditable="true" id="recipient_district_1" data-db-field="জেলা" data-placeholder="জেলা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
@@ -332,14 +335,14 @@
                     <span style="font-weight: bold;">জনাব/জনাবা,</span><br>
                     আপনি/আপনারা বিকেবি <span class="df" contenteditable="true" id="branch_name_body_1"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা হতে যে ঋণ গ্রহণ করেছেন, তা সুদে-আসলে বর্তমানে <span
-                        class="df" contenteditable="true" id="total_due_amount_1" data-placeholder="টাকা"></span>/- টাকা
+                        class="df bangla-numbers" contenteditable="true" id="total_due_amount_1" data-db-field="বর্তমান স্থিতি" data-placeholder="টাকা"></span>/- টাকা
                     দাঁড়িয়েছে।
                 </div>
 
                 <div class="body-para">
                     <span style="font-weight: bold;">০২।</span> আপনার উল্লিখিত ঋণের টাকা পরিশোধের সুবিধার্থে আগামী <span
-                        class="df" contenteditable="true" id="camp_date_1" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
-                        id="camp_day_1" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_1"
+                        class="df bangla-numbers" contenteditable="true" id="camp_date_1" data-db-field="camp_date" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
+                        id="camp_day_1" data-db-field="camp_day" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_1"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা, <span class="df" contenteditable="true" id="camp_district_1"
                         data-db-field="branch_location_2" data-placeholder="জেলা"></span> স্থানে এক বিশেষ ঋণআদায় ক্যাম্পের আয়োজন করা হয়েছে। উক্ত
                     ক্যাম্পে সকাল ০৯ ঘটিকা হতে বিকাল ০৪ ঘটিকা সময়ের মধ্যে ঋণ পরিশোধ না করলে আপনার বিরুদ্ধে মামলা দায়ের
@@ -349,7 +352,7 @@
             </div>
 
             <div class="bottom-container">
-                <div>তারিখঃ <span class="df" contenteditable="true" id="notice_date_bottom_1" data-placeholder="তারিখ"></span> ইং</div>
+                <div>তারিখঃ <span class="df bangla-numbers" contenteditable="true" id="notice_date_bottom_1" data-db-field="notice_date" data-placeholder="তারিখ"></span> ইং</div>
                 <div class="signature-block">
                     <div>আপনার বিশ্বস্ত,</div>
                     <div style="font-weight: bold; margin-top: 10pt;">ব্যবস্থাপক</div>
@@ -389,49 +392,49 @@
             <div class="divider-line"></div>
 
             <div class="top-row">
-                <div>ফোলিও নং:&nbsp;<span class="df" contenteditable="true" id="folio_no_2" data-placeholder="নং"></span></div>
-                <div>তারিখ :&nbsp;<span class="df" contenteditable="true" id="notice_date_2" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
+                <div>ফোলিও নং:&nbsp;<span class="df bangla-numbers" contenteditable="true" id="folio_no_2" data-db-field="হিসাব নম্বর" data-placeholder="নং"></span></div>
+                <div>তারিখ :&nbsp;<span class="df bangla-numbers" contenteditable="true" id="notice_date_2" data-db-field="notice_date" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
             </div>
 
             <div class="recipient-section">
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1.2;">
                         <span>নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_name_2" data-placeholder="প্রাপকের নাম"
+                        <span class="df" contenteditable="true" id="recipient_name_2" data-db-field="নাম" data-placeholder="প্রাপকের নাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1.4;">
                         <span>পিতার নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_father_2" data-placeholder="পিতার নাম"
+                        <span class="df" contenteditable="true" id="recipient_father_2" data-db-field="পিতা/স্বামীর নাম" data-placeholder="পিতার নাম"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>বাড়ি:</span>
-                        <span class="df" contenteditable="true" id="recipient_house_2" data-placeholder="বাড়ি"
+                        <span class="df" contenteditable="true" id="recipient_house_2" data-db-field="বাড়ি" data-placeholder="বাড়ি"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>গ্রাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_village_2" data-placeholder="গ্রাম"
+                        <span class="df" contenteditable="true" id="recipient_village_2" data-db-field="গ্রাম" data-placeholder="গ্রাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>ইউ/পৌর:</span>
-                        <span class="df" contenteditable="true" id="recipient_union_2" data-placeholder="ইউনিয়ন/পৌরসভা"
+                        <span class="df" contenteditable="true" id="recipient_union_2" data-db-field="ইউনিয়ন" data-placeholder="ইউনিয়ন/পৌরসভা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>থানা:</span>
-                        <span class="df" contenteditable="true" id="recipient_thana_2" data-placeholder="থানা/উপজেলা"
+                        <span class="df" contenteditable="true" id="recipient_thana_2" data-db-field="থানা/উপজেলা" data-placeholder="থানা/উপজেলা"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>জেলা:</span>
-                        <span class="df" contenteditable="true" id="recipient_district_2" data-placeholder="জেলা"
+                        <span class="df" contenteditable="true" id="recipient_district_2" data-db-field="জেলা" data-placeholder="জেলা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
@@ -448,14 +451,14 @@
                     <span style="font-weight: bold;">জনাব/জনাবা,</span><br>
                     আপনি/আপনারা বিকেবি <span class="df" contenteditable="true" id="branch_name_body_2"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা হতে যে ঋণ গ্রহণ করেছেন, তা সুদে-আসলে বর্তমানে <span
-                        class="df" contenteditable="true" id="total_due_amount_2" data-placeholder="টাকা"></span>/- টাকা
+                        class="df bangla-numbers" contenteditable="true" id="total_due_amount_2" data-db-field="বর্তমান স্থিতি" data-placeholder="টাকা"></span>/- টাকা
                     দাঁড়িয়েছে।
                 </div>
 
                 <div class="body-para">
                     <span style="font-weight: bold;">০২।</span> আপনার উল্লিখিত ঋণের টাকা পরিশোধের সুবিধার্থে আগামী <span
-                        class="df" contenteditable="true" id="camp_date_2" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
-                        id="camp_day_2" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_2"
+                        class="df bangla-numbers" contenteditable="true" id="camp_date_2" data-db-field="camp_date" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
+                        id="camp_day_2" data-db-field="camp_day" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_2"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা, <span class="df" contenteditable="true" id="camp_district_2"
                         data-db-field="branch_location_2" data-placeholder="জেলা"></span> স্থানে এক বিশেষ ঋণআদায় ক্যাম্পের আয়োজন করা হয়েছে। উক্ত
                     ক্যাম্পে সকাল ০৯ ঘটিকা হতে বিকাল ০৪ ঘটিকা সময়ের মধ্যে ঋণ পরিশোধ না করলে আপনার বিরুদ্ধে মামলা দায়ের
@@ -465,7 +468,7 @@
             </div>
 
             <div class="bottom-container">
-                <div>তারিখঃ <span class="df" contenteditable="true" id="notice_date_bottom_2" data-placeholder="তারিখ"></span> ইং</div>
+                <div>তারিখঃ <span class="df bangla-numbers" contenteditable="true" id="notice_date_bottom_2" data-db-field="notice_date" data-placeholder="তারিখ"></span> ইং</div>
                 <div class="signature-block">
                     <div>আপনার বিশ্বস্ত,</div>
                     <div style="font-weight: bold; margin-top: 10pt;">ব্যবস্থাপক</div>
@@ -505,49 +508,49 @@
             <div class="divider-line"></div>
 
             <div class="top-row">
-                <div>ফোলিও নং:&nbsp;<span class="df" contenteditable="true" id="folio_no_3" data-placeholder="নং"></span></div>
-                <div>তারিখ :&nbsp;<span class="df" contenteditable="true" id="notice_date_3" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
+                <div>ফোলিও নং:&nbsp;<span class="df bangla-numbers" contenteditable="true" id="folio_no_3" data-db-field="হিসাব নম্বর" data-placeholder="নং"></span></div>
+                <div>তারিখ :&nbsp;<span class="df bangla-numbers" contenteditable="true" id="notice_date_3" data-db-field="notice_date" data-placeholder="তারিখ"></span>&nbsp;ইং</div>
             </div>
 
             <div class="recipient-section">
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1.2;">
                         <span>নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_name_3" data-placeholder="প্রাপকের নাম"
+                        <span class="df" contenteditable="true" id="recipient_name_3" data-db-field="নাম" data-placeholder="প্রাপকের নাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1.4;">
                         <span>পিতার নাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_father_3" data-placeholder="পিতার নাম"
+                        <span class="df" contenteditable="true" id="recipient_father_3" data-db-field="পিতা/স্বামীর নাম" data-placeholder="পিতার নাম"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>বাড়ি:</span>
-                        <span class="df" contenteditable="true" id="recipient_house_3" data-placeholder="বাড়ি"
+                        <span class="df" contenteditable="true" id="recipient_house_3" data-db-field="বাড়ি" data-placeholder="বাড়ি"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>গ্রাম:</span>
-                        <span class="df" contenteditable="true" id="recipient_village_3" data-placeholder="গ্রাম"
+                        <span class="df" contenteditable="true" id="recipient_village_3" data-db-field="গ্রাম" data-placeholder="গ্রাম"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>ইউ/পৌর:</span>
-                        <span class="df" contenteditable="true" id="recipient_union_3" data-placeholder="ইউনিয়ন/পৌরসভা"
+                        <span class="df" contenteditable="true" id="recipient_union_3" data-db-field="ইউনিয়ন" data-placeholder="ইউনিয়ন/পৌরসভা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
                 <div class="recipient-line">
                     <div class="recipient-item" style="flex: 1;">
                         <span>থানা:</span>
-                        <span class="df" contenteditable="true" id="recipient_thana_3" data-placeholder="থানা/উপজেলা"
+                        <span class="df" contenteditable="true" id="recipient_thana_3" data-db-field="থানা/উপজেলা" data-placeholder="থানা/উপজেলা"
                             style="flex: 1;"></span>
                     </div>
                     <div class="recipient-item" style="flex: 1;">
                         <span>জেলা:</span>
-                        <span class="df" contenteditable="true" id="recipient_district_3" data-placeholder="জেলা"
+                        <span class="df" contenteditable="true" id="recipient_district_3" data-db-field="জেলা" data-placeholder="জেলা"
                             style="flex: 1;"></span>
                     </div>
                 </div>
@@ -564,14 +567,14 @@
                     <span style="font-weight: bold;">জনাব/জনাবা,</span><br>
                     আপনি/আপনারা বিকেবি <span class="df" contenteditable="true" id="branch_name_body_3"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা হতে যে ঋণ গ্রহণ করেছেন, তা সুদে-আসলে বর্তমানে <span
-                        class="df" contenteditable="true" id="total_due_amount_3" data-placeholder="টাকা"></span>/- টাকা
+                        class="df bangla-numbers" contenteditable="true" id="total_due_amount_3" data-db-field="বর্তমান স্থিতি" data-placeholder="টাকা"></span>/- টাকা
                     দাঁড়িয়েছে।
                 </div>
 
                 <div class="body-para">
                     <span style="font-weight: bold;">০২।</span> আপনার উল্লিখিত ঋণের টাকা পরিশোধের সুবিধার্থে আগামী <span
-                        class="df" contenteditable="true" id="camp_date_3" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
-                        id="camp_day_3" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_3"
+                        class="df bangla-numbers" contenteditable="true" id="camp_date_3" data-db-field="camp_date" data-placeholder="তারিখ"></span> ইং তারিখ রোজ <span class="df" contenteditable="true"
+                        id="camp_day_3" data-db-field="camp_day" data-placeholder="বার"></span>, <span class="df" contenteditable="true" id="camp_location_3"
                         data-db-field="branch_name" data-placeholder="শাখার নাম"></span> শাখা, <span class="df" contenteditable="true" id="camp_district_3"
                         data-db-field="branch_location_2" data-placeholder="জেলা"></span> স্থানে এক বিশেষ ঋণআদায় ক্যাম্পের আয়োজন করা হয়েছে। উক্ত
                     ক্যাম্পে সকাল ০৯ ঘটিকা হতে বিকাল ০৪ ঘটিকা সময়ের মধ্যে ঋণ পরিশোধ না করলে আপনার বিরুদ্ধে মামলা দায়ের
@@ -581,7 +584,7 @@
             </div>
 
             <div class="bottom-container">
-                <div>তারিখঃ <span class="df" contenteditable="true" id="notice_date_bottom_3" data-placeholder="তারিখ"></span> ইং</div>
+                <div>তারিখঃ <span class="df bangla-numbers" contenteditable="true" id="notice_date_bottom_3" data-db-field="notice_date" data-placeholder="তারিখ"></span> ইং</div>
                 <div class="signature-block">
                     <div>আপনার বিশ্বস্ত,</div>
                     <div style="font-weight: bold; margin-top: 16pt;">ব্যবস্থাপক</div>
@@ -612,6 +615,7 @@
 
         try { window.parent.postMessage({ command: 'GET_BRANCH_INFO' }, '*'); } catch (e) { }
     </script>
+    <script src="../../assets/engines/notice-engine.js"></script>
 </body>
 
 </html>

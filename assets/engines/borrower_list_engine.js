@@ -1758,13 +1758,19 @@ if (window.parent && window.parent.document) {
                 let mobile = loan['মোবাইল'] || loan['মোবাইল নম্বর'] || '';
 
                 const rawAddr = (loan['বাড়ি ও গ্রাম (পোস্ট, উপজেলা, জেলা)'] || loan['বাড়ি ও গ্রাম'] || '').trim();
+                let house = '';
+                let union = '';
                 if (rawAddr) {
+                    const hMatch = rawAddr.match(/(?:বাড়ি|বাড়ি)\s*[:ঃ\-]?\s*([^,]+)/);
                     const vMatch = rawAddr.match(/গ্রাম\s*[:ঃ\-]?\s*([^,]+)/);
+                    const unMatch = rawAddr.match(/(?:ইউনিয়ন|ইউ\/পৌর|পৌরসভা|ইউনিয়ন)\s*[:ঃ\-]?\s*([^,]+)/);
                     const pMatch = rawAddr.match(/পোস্ট\s*[:ঃ\-]?\s*([^,]+)/);
                     const uMatch = rawAddr.match(/(?:উপজেলা|থানা)\s*[:ঃ\-]?\s*([^,]+)/);
                     const dMatch = rawAddr.match(/জেলা\s*[:ঃ\-]?\s*([^,]+)/);
 
+                    if (hMatch) house = hMatch[1].trim();
                     if (!village && vMatch) village = vMatch[1].trim();
+                    if (unMatch) union = unMatch[1].trim();
                     if (!post && pMatch) post = pMatch[1].trim();
                     if (!upazila && uMatch) upazila = uMatch[1].trim();
                     if (!district && dMatch) district = dMatch[1].trim();
@@ -1782,7 +1788,9 @@ if (window.parent && window.parent.document) {
                     }
                 }
 
+                loan['বাড়ি'] = house;
                 loan['গ্রাম'] = village;
+                loan['ইউনিয়ন'] = union;
                 loan['পোস্ট'] = post;
                 loan['থানা/উপজেলা'] = upazila;
                 
@@ -1837,6 +1845,16 @@ if (window.parent && window.parent.document) {
                 loan['total_due_words'] = convertToBanglaWords(balance);
                 loan['upcoming_total_num'] = loan['বর্তমান স্থিতি'];
                 loan['upcoming_total_words'] = loan['total_due_words'];
+
+                // 5. Manager Name
+                let managerName = '';
+                try {
+                    managerName = localStorage.getItem('bkb_manager_name') || '';
+                    if (!managerName && window.parent && window.parent.localStorage) {
+                        managerName = window.parent.localStorage.getItem('bkb_manager_name') || '';
+                    }
+                } catch(e) {}
+                loan['manager_name'] = managerName;
                 
                 return loan;
             });

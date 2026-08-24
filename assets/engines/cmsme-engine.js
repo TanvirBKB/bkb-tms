@@ -3190,7 +3190,11 @@ window.addEventListener('message', function (event) {
                     });
                 }
                 if (selectedOwners.length === 0) {
-                    alert('যৌথ মালিকানার জন্য কমপক্ষে একজন মালিক নির্বাচন করুন।');
+                    if (window.parent && typeof window.parent.showAppToast === 'function') {
+                        window.parent.showAppToast('যৌথ মালিকানার জন্য কমপক্ষে একজন মালিক নির্বাচন করুন।', true);
+                    } else if (typeof window.showAppToast === 'function') {
+                        window.showAppToast('যৌথ মালিকানার জন্য কমপক্ষে একজন মালিক নির্বাচন করুন।', true);
+                    }
                     return;
                 }
             }

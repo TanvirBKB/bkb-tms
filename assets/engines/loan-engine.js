@@ -34,6 +34,7 @@ function appToast(msg, isError = false) {
         }
     } catch (e) { console.warn('appToast failed:', e); }
 }
+window.showAppToast = window.showAppToast || appToast;
 // ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -1463,15 +1464,9 @@ function addLand() {
                 if (el) el.value = '';
             });
         document.getElementById('dynamic_dag_container').innerHTML = '';
-        if (window.showAppToast) {
-            window.showAppToast('Land data added successfully!', false);
-        }
+        appToast('Land data added successfully!', false);
     } else {
-        if (window.showAppToast) {
-            window.showAppToast('Failed to add land data. Please make sure Mouza, Dag No, and Area are filled.', true);
-        } else {
-            alert('Failed to add land data. Please make sure Mouza, Dag No, and Area are filled.');
-        }
+        appToast('Failed to add land data. Please make sure Mouza, Dag No, and Area are filled.', true);
     }
 }
 
