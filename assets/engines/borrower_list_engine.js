@@ -299,10 +299,12 @@ function toBanglaNumbers(str) {
                                     "বাড়ি ও গ্রাম": (customer.applicant_curr_addr_house || '') + (customer.applicant_curr_addr_village ? ' ' + customer.applicant_curr_addr_village : ''),
                                     "বাড়ি": customer.applicant_curr_addr_house || '',
                                     "গ্রাম": customer.applicant_curr_addr_village || '',
+                                    "ইউনিয়ন": customer.applicant_curr_addr_union || '',
+                                    "ইউ/পৌর": customer.applicant_curr_addr_union || '',
                                     "পোস্ট": customer.applicant_curr_addr_post || '',
-                                    "থানা/উপজেলা": customer.applicant_present_upozila || '',
-                                    "_district": customer.applicant_present_district || '',
-                                    "জেলা": customer.applicant_present_district || '',
+                                    "থানা/উপজেলা": customer.applicant_present_upozila || customer.applicant_curr_addr_thana || '',
+                                    "_district": customer.applicant_present_district || customer.applicant_curr_addr_district || '',
+                                    "জেলা": customer.applicant_present_district || customer.applicant_curr_addr_district || '',
                                     "ঋণের পরিমাণ": loan.loan_amount || loan.sanction_amount || loan.sanctioned_amount || '',
                                     "interest_rate": loan.interest_rate || loan.interest || loan.rate || '',
                                     "বিতরণের তারিখ": loan.dist_date || loan.sanction_date || '',
@@ -541,7 +543,7 @@ function toBanglaNumbers(str) {
             let item = { ...row };
             
             // Fix Excel formula blank evaluation (empty cell reference returns 0 instead of blank)
-            const textCols = ['পোস্ট', 'থানা/উপজেলা', 'গ্রাম', 'বাড়ি', 'বাড়ি ও গ্রাম', 'নাম', 'পিতা/স্বামীর নাম', 'নাম ও পিতার নাম'];
+            const textCols = ['পোস্ট', 'থানা/উপজেলা', 'উপজেলা', 'থানা', 'জেলা', 'গ্রাম', 'বাড়ি', 'বাড়ি', 'ইউনিয়ন', 'ইউনিয়ন', 'ইউ/পৌর', 'পৌরসভা', 'বাড়ি ও গ্রাম', 'নাম', 'পিতা/স্বামীর নাম', 'নাম ও পিতার নাম', 'মোবাইল'];
             textCols.forEach(col => {
                 if (item[col] === 0 || item[col] === '0') item[col] = '';
             });
@@ -719,6 +721,7 @@ function toBanglaNumbers(str) {
         } catch(e){}
 
         setupFilters();
+        syncEconomicYearHeader();
         if (typeof window.showBreakdown === 'function') {
             try { window.showBreakdown(true); } catch(e) {}
         }
@@ -1134,11 +1137,97 @@ function toBanglaNumbers(str) {
 
         renderPages(filtered);
         
+        // Sync Economic Year & Timeframe on document headers
+        syncEconomicYearHeader(yearFilter);
+
         // Silently update the breakdown stats for the printable title page
         if (typeof window.showBreakdown === 'function') {
             window.showBreakdown(true);
         }
     }
+
+    // Synchronize Economic Year and Time Frame to Document Headers
+    function syncEconomicYearHeader(customYear) {
+        const yearSelect = document.getElementById('pfilter-economic-year');
+        const asOfInput = document.getElementById('ui-as-of-date');
+        
+        let selectedYear = customYear || (yearSelect ? yearSelect.value : 'all');
+        let asOfVal = asOfInput ? asOfInput.value : '';
+
+        let ecoYearText = '';
+        let timeFrameText = '';
+
+        if (selectedYear && selectedYear !== 'all') {
+            const parts = selectedYear.split('-');
+            if (parts.length === 2) {
+                const y1 = parts[0].trim();
+                const y2 = parts[1].trim();
+                ecoYearText = `${toBanglaNumbers(y1)}-${toBanglaNumbers(y2)}`;
+                
+                if (asOfVal) {
+                    const asOfParts = asOfVal.split('-');
+                    if (asOfParts.length === 3) {
+                        const asOfBn = `${toBanglaNumbers(asOfParts[2])}/${toBanglaNumbers(asOfParts[1])}/${toBanglaNumbers(asOfParts[0])}`;
+                        timeFrameText = `০১/০৭/${toBanglaNumbers(y1)} হতে ${asOfBn} পর্যন্ত`;
+                    } else {
+                        timeFrameText = `০১/০৭/${toBanglaNumbers(y1)} হতে ৩০/০৬/${toBanglaNumbers(y2)}`;
+                    }
+                } else {
+                    timeFrameText = `০১/০৭/${toBanglaNumbers(y1)} হতে ৩০/০৬/${toBanglaNumbers(y2)}`;
+                }
+            } else {
+                ecoYearText = toBanglaNumbers(selectedYear);
+            }
+        } else if (asOfVal) {
+            const asOfParts = asOfVal.split('-');
+            if (asOfParts.length === 3) {
+                let y = parseInt(asOfParts[0], 10);
+                let m = parseInt(asOfParts[1], 10);
+                let startY = m < 7 ? y - 1 : y;
+                let endY = m < 7 ? y : y + 1;
+                ecoYearText = `${toBanglaNumbers(startY.toString())}-${toBanglaNumbers(endY.toString())}`;
+                const asOfBn = `${toBanglaNumbers(asOfParts[2])}/${toBanglaNumbers(asOfParts[1])}/${toBanglaNumbers(asOfParts[0])}`;
+                timeFrameText = `০১/০৭/${toBanglaNumbers(startY.toString())} হতে ${asOfBn} পর্যন্ত`;
+            }
+        } else {
+            // Auto-detect economic year from current date
+            const now = new Date();
+            let y = now.getFullYear();
+            let m = now.getMonth() + 1;
+            let startY = m < 7 ? y - 1 : y;
+            let endY = m < 7 ? y : y + 1;
+            ecoYearText = `${toBanglaNumbers(startY.toString())}-${toBanglaNumbers(endY.toString())}`;
+            timeFrameText = `০১/০৭/${toBanglaNumbers(startY.toString())} হতে ৩০/০৬/${toBanglaNumbers(endY.toString())}`;
+        }
+
+        document.querySelectorAll('.report-economic-year').forEach(el => {
+            el.innerText = ecoYearText;
+        });
+        document.querySelectorAll('.report-timeframe').forEach(el => {
+            el.innerText = timeFrameText;
+        });
+    }
+
+    window.syncEconomicYearHeader = syncEconomicYearHeader;
+    window.handleAsOfDateChange = function(val) {
+        const yearSelect = document.getElementById('pfilter-economic-year');
+        syncEconomicYearHeader(yearSelect ? yearSelect.value : 'all');
+    };
+
+    // Live typing sync for contenteditable economic year / timeframe spans across all pages
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.classList.contains('report-economic-year')) {
+            const val = e.target.innerText;
+            document.querySelectorAll('.report-economic-year').forEach(el => {
+                if (el !== e.target) el.innerText = val;
+            });
+        } else if (e.target && e.target.classList.contains('report-timeframe')) {
+            const val = e.target.innerText;
+            document.querySelectorAll('.report-timeframe').forEach(el => {
+                if (el !== e.target) el.innerText = val;
+            });
+        }
+    });
 
     // Expose applyFilters globally so inline onchange="applyFilters()" works
     window.applyFilters = applyFilters;
@@ -2030,6 +2119,7 @@ if (window.parent && window.parent.document) {
     if (sector) sector.value = 'all';
     if (year) year.value = 'all';
     if (status) status.value = 'all';
+    syncEconomicYearHeader('all');
     if (currentData) {
         renderPages(currentData);
     }
@@ -2399,19 +2489,34 @@ const subCategoriesMap = {
     let renewedCount = 0;
     let renewedAmount = 0;
 
-    // Current Economic Year determination
-    const now = new Date();
-    let currentYear = now.getFullYear();
-    let currentMonth = now.getMonth() + 1;
-    let ecoStart, ecoEnd;
-    if (currentMonth >= 7) {
-        // July to Dec -> eco year is currentYear to currentYear+1
-        ecoStart = new Date(currentYear, 6, 1); // July 1
-        ecoEnd = new Date(currentYear + 1, 5, 30, 23, 59, 59); // June 30
+    // Economic Year determination from filter or active selection
+    const yearSelect = document.getElementById('pfilter-economic-year');
+    const selectedYear = yearSelect ? yearSelect.value : 'all';
+    
+    let ecoStart, ecoEnd, ecoYearLabel, timeFrameLabel;
+    if (selectedYear && selectedYear !== 'all') {
+        const parts = selectedYear.split('-');
+        let y1 = parseInt(parts[0], 10);
+        let y2 = parseInt(parts[1], 10);
+        ecoStart = new Date(y1, 6, 1);
+        ecoEnd = new Date(y2, 5, 30, 23, 59, 59);
+        ecoYearLabel = `${toBanglaNumbers(y1.toString())}-${toBanglaNumbers(y2.toString())}`;
+        timeFrameLabel = `০১/০৭/${toBanglaNumbers(y1.toString())} হতে ৩০/০৬/${toBanglaNumbers(y2.toString())}`;
     } else {
-        // Jan to June -> eco year is currentYear-1 to currentYear
-        ecoStart = new Date(currentYear - 1, 6, 1); // July 1
-        ecoEnd = new Date(currentYear, 5, 30, 23, 59, 59); // June 30
+        const now = new Date();
+        let currentYear = now.getFullYear();
+        let currentMonth = now.getMonth() + 1;
+        if (currentMonth >= 7) {
+            ecoStart = new Date(currentYear, 6, 1);
+            ecoEnd = new Date(currentYear + 1, 5, 30, 23, 59, 59);
+            ecoYearLabel = `${toBanglaNumbers(currentYear.toString())}-${toBanglaNumbers((currentYear + 1).toString())}`;
+            timeFrameLabel = `০১/০৭/${toBanglaNumbers(currentYear.toString())} হতে ৩০/০৬/${toBanglaNumbers((currentYear + 1).toString())}`;
+        } else {
+            ecoStart = new Date(currentYear - 1, 6, 1);
+            ecoEnd = new Date(currentYear, 5, 30, 23, 59, 59);
+            ecoYearLabel = `${toBanglaNumbers((currentYear - 1).toString())}-${toBanglaNumbers(currentYear.toString())}`;
+            timeFrameLabel = `০১/০৭/${toBanglaNumbers((currentYear - 1).toString())} হতে ৩০/০৬/${toBanglaNumbers(currentYear.toString())}`;
+        }
     }
 
     currentData.forEach(item => {
@@ -2443,38 +2548,42 @@ const subCategoriesMap = {
     });
 
     const resultHtml = `
-        <div style="padding: 20px; font-family: Arial, sans-serif;">
-            <h3 style="margin-top:0; border-bottom: 2px solid #2c3e50; padding-bottom: 5px;">Performance Analysis</h3>
-            <p><strong>Economic Year:</strong> ${ecoStart.getFullYear()}-${ecoEnd.getFullYear()}</p>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-                <tr style="background: #ecf0f1;">
-                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: left;">Metric</th>
-                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">Number of Accounts</th>
-                    <th style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">Amount (Tk)</th>
+        <div style="padding: 20px; font-family: 'SolaimanLipi', Arial, sans-serif;">
+            <h3 style="margin-top:0; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; color: #2c3e50;">📊 অর্থবছর ভিত্তিক অগ্রগতি ও কর্মক্ষমতা বিশ্লেষণ</h3>
+            <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
+                <div><strong>অর্থবছর (Economic Year):</strong> <span class="bangla-numbers">${ecoYearLabel}</span></div>
+                <div style="margin-top: 4px;"><strong>সময়কাল (Timeframe):</strong> <span class="bangla-numbers">${timeFrameLabel}</span></div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;">
+                <tr style="background: #2c3e50; color: white;">
+                    <th style="padding: 8px 10px; border: 1px solid #34495e; text-align: left;">সূচক (Metric)</th>
+                    <th style="padding: 8px 10px; border: 1px solid #34495e; text-align: center;">ঋণ সংখ্যা (Accounts)</th>
+                    <th style="padding: 8px 10px; border: 1px solid #34495e; text-align: right;">পরিমাণ (Amount Tk)</th>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7;">New Sanctioned (Fresh)</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">${newLoansCount}</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">${newLoansAmount.toLocaleString('en-IN')}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7;">নতুন ঋণ বিতরণ (New / Fresh)</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: center; font-weight: bold;">${toBanglaNumbers(newLoansCount.toString())} টি</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: right; font-weight: bold;">${toBanglaNumbers(newLoansAmount.toLocaleString('en-IN'))}/-</td>
+                </tr>
+                <tr style="background: #fdfdfd;">
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7;">নবায়নকৃত ঋণ (Renewed Loans)</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: center; font-weight: bold;">${toBanglaNumbers(renewedCount.toString())} টি</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: right; font-weight: bold;">${toBanglaNumbers(renewedAmount.toLocaleString('en-IN'))}/-</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Renewed Loans</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">${renewedCount}</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">${renewedAmount.toLocaleString('en-IN')}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7;">Recovered / Closed</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">${recoveredCount}</td>
-                    <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">${recoveredAmount.toLocaleString('en-IN')}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7;">আদায়কৃত / ক্লোজড ঋণ (Recovered / Closed)</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: center; font-weight: bold;">${toBanglaNumbers(recoveredCount.toString())} টি</td>
+                    <td style="padding: 8px 10px; border: 1px solid #bdc3c7; text-align: right; font-weight: bold;">${toBanglaNumbers(recoveredAmount.toLocaleString('en-IN'))}/-</td>
                 </tr>
             </table>
             <div style="margin-top: 20px; text-align: right;">
-                <button onclick="document.body.removeChild(this.parentNode.parentNode.parentNode);" style="padding: 8px 15px; background: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+                <button onclick="document.body.removeChild(this.closest('.perf-modal-overlay'));" style="padding: 8px 18px; background: #7f8c8d; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Close</button>
             </div>
         </div>
     `;
 
     const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'perf-modal-overlay no-print';
     modalOverlay.style.position = 'fixed';
     modalOverlay.style.top = '0';
     modalOverlay.style.left = '0';
@@ -2489,8 +2598,8 @@ const subCategoriesMap = {
     const modalContent = document.createElement('div');
     modalContent.style.background = '#fff';
     modalContent.style.borderRadius = '8px';
-    modalContent.style.width = '500px';
-    modalContent.style.maxWidth = '90%';
+    modalContent.style.width = '550px';
+    modalContent.style.maxWidth = '92%';
     modalContent.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
     modalContent.innerHTML = resultHtml;
 

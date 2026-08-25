@@ -308,9 +308,16 @@
             </div>
             <div class="divider-line" style="border-top: 1px solid #000; margin: 4px 0 30px 0; width: 100%;"></div>
             
-            <h2 style="text-align: center; font-size: 16pt; font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 40px;">
+            <h2 style="text-align: center; font-size: 16pt; font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 12px;">
                 <span contenteditable="true" spellcheck="false" data-placeholder="বিষয় লিখুন... (e.g. SME borrower list 26-27)"></span>
             </h2>
+
+            <div style="display: flex; justify-content: center; margin-bottom: 25px;">
+                <div style="display: inline-flex; align-items: center; gap: 20px; border: 1.5px solid #000; background: #f8f9fa; padding: 4px 18px; border-radius: 4px; font-size: 11pt; font-weight: bold;">
+                    <div>অর্থবছর: <span contenteditable="true" spellcheck="false" class="report-economic-year bangla-numbers" data-placeholder="যেমন: ২০২৪-২০২৫" style="color: #2c3e50; font-weight: bold;"></span></div>
+                    <div style="font-size: 10pt; font-weight: normal; color: #555;">সময়কাল: <span contenteditable="true" spellcheck="false" class="report-timeframe bangla-numbers" data-placeholder="০১/০৭/২০২৪ হতে ৩০/০৬/২০২৫" style="color: #000; font-weight: bold;"></span></div>
+                </div>
+            </div>
 
             <h3 style="text-align: center; font-size: 13pt; margin-bottom: 15px; color: #2c3e50; text-decoration: underline; text-underline-offset: 4px;">Loan Portfolio Overview (শ্রেণী করণ অনুযায়ী)</h3>
             <div id="print-breakdown-container" style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-start; margin: 0 auto; width: 95%;">
@@ -344,8 +351,16 @@
                                 <div style="font-size: 8pt; margin-top: 2px;">ইমেইল <span contenteditable="true" spellcheck="false" data-placeholder="শাখার ইমেইল" data-db-field="branch_email"></span></div>
                             </div>
                         </div>
-                        <div class="divider-line" style="border-top: 1px solid #000; margin: 4px 0 15px 0; width: 100%;"></div>
-                        <h2 style="text-align: center; font-size: 14pt; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 15px;">ঋণগ্রহীতাদের তালিকা (Borrower List) অর্থবছর-..........</h2>
+                        <div class="divider-line" style="border-top: 1px solid #000; margin: 4px 0 12px 0; width: 100%;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; padding: 0 5px;">
+                            <h2 style="margin: 0; font-size: 14pt; font-weight: bold; text-decoration: underline; text-underline-offset: 4px;">
+                                ঋণগ্রহীতাদের তালিকা (Borrower List)
+                            </h2>
+                            <div style="border: 1.5px solid #000; background: #f8f9fa; padding: 3px 12px; border-radius: 4px; font-size: 10.5pt; font-weight: bold; display: flex; gap: 15px; align-items: center;">
+                                <div>অর্থবছর: <span contenteditable="true" spellcheck="false" class="report-economic-year bangla-numbers" data-placeholder="যেমন: ২০২৪-২০২৫" style="color: #2c3e50;"></span></div>
+                                <div style="font-size: 9.5pt; font-weight: normal; color: #555;">সময়কাল: <span contenteditable="true" spellcheck="false" class="report-timeframe bangla-numbers" data-placeholder="০১/০৭/২০২৪ হতে ৩০/০৬/২০২৫" style="color: #000; font-weight: bold;"></span></div>
+                            </div>
+                        </div>
                     </th>
                 </tr>
                 <tr>
