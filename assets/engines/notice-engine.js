@@ -72,6 +72,65 @@
         console.warn("Could not access sessionStorage.");
     }
 
+    // Intelligent key & alias resolver supporting unicode normalization and alternate Bangla spellings
+    function resolveDataValue(data, key) {
+        if (!data || !key) return '';
+        if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+            return data[key];
+        }
+
+        const normKey = (typeof key.normalize === 'function') ? key.normalize('NFC') : key;
+
+        const aliases = {
+            'বাড়ি': ['বাড়ি', 'house', 'বাড়ি ও গ্রাম', 'ঠিকানা', 'বাড়ি নং', 'বাড়ি নং', 'recipient_house'],
+            'বাড়ি': ['বাড়ি', 'house', 'বাড়ি ও গ্রাম', 'ঠিকানা', 'বাড়ি নং', 'বাড়ি নং', 'recipient_house'],
+            'ইউনিয়ন': ['ইউনিয়ন', 'ইউ/পৌর', 'ইউ/পৌরসভা', 'পৌরসভা', 'ইউপি', 'ইউ.পি', 'union', 'পৌর', 'recipient_union'],
+            'ইউনিয়ন': ['ইউনিয়ন', 'ইউ/পৌর', 'ইউ/পৌরসভা', 'পৌরসভা', 'ইউপি', 'ইউ.পি', 'union', 'পৌর', 'recipient_union'],
+            'ইউ/পৌর': ['ইউনিয়ন', 'ইউনিয়ন', 'ইউ/পৌরসভা', 'পৌরসভা', 'ইউপি', 'ইউ.পি', 'union', 'পৌর', 'recipient_union'],
+            'গ্রাম': ['village', 'গ্রাম/মহল্লা', 'মহল্লা', 'recipient_village'],
+            'পোস্ট': ['ডাকঘর', 'ডাক', 'post', 'পো:', 'recipient_post'],
+            'থানা/উপজেলা': ['উপজেলা', 'থানা', 'upazila', 'thana', 'recipient_thana'],
+            'উপজেলা': ['থানা/উপজেলা', 'থানা', 'upazila', 'thana', 'recipient_thana'],
+            'থানা': ['থানা/উপজেলা', 'উপজেলা', 'upazila', 'thana', 'recipient_thana'],
+            'জেলা': ['district', 'branch_location_2', 'recipient_district'],
+            'নাম': ['recipient_name', 'borrower_name', 'গ্রাহকের নাম', 'নাম ও পিতার নাম'],
+            'পিতা/স্বামীর নাম': ['পিতার নাম', 'পিতা', 'স্বামী', 'father_name', 'recipient_father'],
+            'হিসাব নম্বর': ['account_no', 'হিসাব নং', 'হিসাব_নম্বর', '_caseNo', 'folio_no'],
+            'বর্তমান স্থিতি': ['total_due', 'বকেয়া স্থিতি', 'cbs_balance', 'স্থিতি', 'upcoming_total_num'],
+            'ঋণের পরিমাণ': ['loan_amount', 'মঞ্জুরীকৃত পরিমাণ', 'মঞ্জুরিকৃত পরিমাণ'],
+            'notice_date': ['তারিখ', 'date'],
+            'manager_name': ['ব্যবস্থাপক']
+        };
+
+        if (aliases[normKey]) {
+            for (const alt of aliases[normKey]) {
+                if (data[alt] !== undefined && data[alt] !== null && data[alt] !== '') {
+                    return data[alt];
+                }
+            }
+        }
+
+        // Search in case-insensitive / normalized keys
+        for (const dKey of Object.keys(data)) {
+            const normDKey = (typeof dKey.normalize === 'function') ? dKey.normalize('NFC') : dKey;
+            if (normDKey === normKey && data[dKey] !== undefined && data[dKey] !== null && data[dKey] !== '') {
+                return data[dKey];
+            }
+        }
+
+        // Check if ID matches after stripping trailing digits (e.g., recipient_house_1 -> recipient_house)
+        const strippedId = key.replace(/_\d+$/, '');
+        if (strippedId !== key && aliases[strippedId]) {
+            for (const alt of aliases[strippedId]) {
+                if (data[alt] !== undefined && data[alt] !== null && data[alt] !== '') {
+                    return data[alt];
+                }
+            }
+        }
+
+        return '';
+    }
+
     // Helper to safely populate a container (page or slip) with a loan data object
     function fillContainer(container, data) {
         if (!container || !data) return;
@@ -85,8 +144,8 @@
         const dbElements = container.querySelectorAll('[data-db-field]');
         dbElements.forEach(el => {
             const key = el.getAttribute('data-db-field');
-            if (key && data[key] !== undefined && data[key] !== null) {
-                let val = data[key];
+            let val = resolveDataValue(data, key);
+            if (val !== undefined && val !== null && val !== '') {
                 if (typeof val === 'string' && val.match(/^\d{4}-\d{2}-\d{2}$/)) {
                     const parts = val.split('-');
                     val = `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -106,9 +165,9 @@
         const idElements = container.querySelectorAll('[id]');
         idElements.forEach(el => {
             const key = el.id;
-            if (key && data[key] !== undefined && data[key] !== null) {
-                if (!el.hasAttribute('data-db-field') || el.getAttribute('data-db-field') === key) {
-                    let val = data[key];
+            if (key) {
+                let val = resolveDataValue(data, key);
+                if (val !== undefined && val !== null && val !== '') {
                     if (typeof val === 'string' && val.match(/^\d{4}-\d{2}-\d{2}$/)) {
                         const parts = val.split('-');
                         val = `${parts[2]}/${parts[1]}/${parts[0]}`;

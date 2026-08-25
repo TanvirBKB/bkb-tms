@@ -719,6 +719,9 @@ function toBanglaNumbers(str) {
         } catch(e){}
 
         setupFilters();
+        if (typeof window.showBreakdown === 'function') {
+            try { window.showBreakdown(true); } catch(e) {}
+        }
     }
 
     window.sortByVillageCode = function() {
@@ -744,6 +747,12 @@ function toBanglaNumbers(str) {
     window.generateLegalReport = function() {
         if (!window.currentRenderedData) return;
         const data = window.currentRenderedData;
+        
+        // Ensure breakdown summary tables on the Title Page are fully populated
+        if (typeof window.showBreakdown === 'function') {
+            try { window.showBreakdown(true); } catch(e) {}
+        }
+
         const printContainer = document.getElementById('print-container');
         if (!printContainer) return;
         
@@ -1750,49 +1759,91 @@ if (window.parent && window.parent.document) {
                 loan['নাম'] = name;
                 loan['পিতা/স্বামীর নাম'] = father;
 
-                // 2. Extract Village, Post, Upazila, District
-                let village = loan['গ্রাম'] || '';
-                let post = loan['পোস্ট'] || '';
-                let upazila = loan['থানা/উপজেলা'] || loan['উপজেলা'] || loan['থানা'] || '';
-                let district = loan['জেলা'] || loan['_district'] || '';
+                // 2. Extract House, Village, Union, Post, Upazila, District
+                let house = loan['বাড়ি'] || loan['বাড়ি'] || loan['house'] || '';
+                let village = loan['গ্রাম'] || loan['village'] || '';
+                let union = loan['ইউনিয়ন'] || loan['ইউনিয়ন'] || loan['ইউ/পৌর'] || loan['পৌরসভা'] || loan['union'] || '';
+                let post = loan['পোস্ট'] || loan['ডাকঘর'] || loan['ডাক'] || loan['post'] || '';
+                let upazila = loan['থানা/উপজেলা'] || loan['উপজেলা'] || loan['থানা'] || loan['upazila'] || '';
+                let district = loan['জেলা'] || loan['_district'] || loan['district'] || '';
                 let mobile = loan['মোবাইল'] || loan['মোবাইল নম্বর'] || '';
 
-                const rawAddr = (loan['বাড়ি ও গ্রাম (পোস্ট, উপজেলা, জেলা)'] || loan['বাড়ি ও গ্রাম'] || '').trim();
-                let house = '';
-                let union = '';
+                const rawAddr = (loan['বাড়ি ও গ্রাম (পোস্ট, উপজেলা, জেলা)'] || loan['বাড়ি ও গ্রাম'] || loan['ঠিকানা'] || '').trim();
+                
                 if (rawAddr) {
-                    const hMatch = rawAddr.match(/(?:বাড়ি|বাড়ি)\s*[:ঃ\-]?\s*([^,]+)/);
-                    const vMatch = rawAddr.match(/গ্রাম\s*[:ঃ\-]?\s*([^,]+)/);
-                    const unMatch = rawAddr.match(/(?:ইউনিয়ন|ইউ\/পৌর|পৌরসভা|ইউনিয়ন)\s*[:ঃ\-]?\s*([^,]+)/);
-                    const pMatch = rawAddr.match(/পোস্ট\s*[:ঃ\-]?\s*([^,]+)/);
-                    const uMatch = rawAddr.match(/(?:উপজেলা|থানা)\s*[:ঃ\-]?\s*([^,]+)/);
-                    const dMatch = rawAddr.match(/জেলা\s*[:ঃ\-]?\s*([^,]+)/);
+                    // Pattern 1: Explicit labels with colon, hyphen, or space
+                    const hMatch = rawAddr.match(/(?:বাড়ি|বাড়ি|বাসা|হোল্ডিং|রোড)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+                    const vMatch = rawAddr.match(/গ্রাম\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+                    const unMatch = rawAddr.match(/(?:ইউনিয়ন|ইউনিয়ন|ইউ\/পৌর|ইউ\/পৌরসভা|পৌরসভা|ইউপি|ইউ\.পি|পৌর)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+                    const pMatch = rawAddr.match(/(?:পোস্ট|ডাকঘর|ডাক|পো:)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+                    const uMatch = rawAddr.match(/(?:উপজেলা|থানা)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+                    const dMatch = rawAddr.match(/জেলা\s*[:ঃ\-]?\s*([^,;\n]+)/i);
 
-                    if (hMatch) house = hMatch[1].trim();
+                    if (!house && hMatch) house = hMatch[1].trim();
                     if (!village && vMatch) village = vMatch[1].trim();
-                    if (unMatch) union = unMatch[1].trim();
+                    if (!union && unMatch) union = unMatch[1].trim();
                     if (!post && pMatch) post = pMatch[1].trim();
                     if (!upazila && uMatch) upazila = uMatch[1].trim();
                     if (!district && dMatch) district = dMatch[1].trim();
 
-                    if (!village) {
-                        const parts = rawAddr.split(/[,;\/]/).map(s => s.trim()).filter(Boolean);
-                        if (parts.length === 1) {
-                            village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
-                        } else if (parts.length >= 2) {
-                            if (!village) village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
-                            if (!post && parts[1]) post = parts[1].replace(/^পোস্ট\s*[:ঃ\-]?/, '').trim();
-                            if (!upazila && parts[2]) upazila = parts[2].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
-                            if (!district && parts[3]) district = parts[3].replace(/^জেলা\s*[:ঃ\-]?/, '').trim();
-                        }
+                    // Pattern 2: Suffix patterns like "খন্দকার বাড়ি, রামপুর" or "কাশিপুর ইউনিয়ন"
+                    if (!house) {
+                        const hSuffixMatch = rawAddr.match(/(?:^|[,;]\s*)([^,;\n]+(?:\s+বাড়ি|\s+বাড়ি|\s+ভবন|\s+ভিলা|\s+মহল্লা|\s+মঞ্জিল))/);
+                        if (hSuffixMatch) house = hSuffixMatch[1].trim();
+                    }
+                    if (!union) {
+                        const unSuffixMatch = rawAddr.match(/(?:^|[,;]\s*)([^,;\n]+(?:\s+ইউনিয়ন|\s+ইউনিয়ন|\s+পৌরসভা|\s+ইউপি|\s+ইউ\.পি))/);
+                        if (unSuffixMatch) union = unSuffixMatch[1].trim();
+                    }
+
+                    // Pattern 3: Position-based fallback if unlabeled comma-separated parts exist
+                    const parts = rawAddr.split(/[,;\/]/).map(s => s.trim()).filter(Boolean);
+                    if (parts.length >= 5) {
+                        if (!house) house = parts[0].replace(/^(?:বাড়ি|বাড়ি)\s*[:ঃ\-]?/, '').trim();
+                        if (!village) village = parts[1].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                        if (!union) union = parts[2].replace(/^(?:ইউনিয়ন|ইউনিয়ন|ইউ\/পৌর|পৌরসভা)\s*[:ঃ\-]?/, '').trim();
+                        if (!post) post = parts[2].replace(/^(?:পোস্ট|ডাকঘর)\s*[:ঃ\-]?/, '').trim();
+                        if (!upazila) upazila = parts[3].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
+                        if (!district) district = parts[4].replace(/^জেলা\s*[:ঃ\-]?/, '').trim();
+                    } else if (parts.length === 4) {
+                        if (!village) village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                        if (!union) union = parts[1].replace(/^(?:ইউনিয়ন|ইউনিয়ন|ইউ\/পৌর|পৌরসভা)\s*[:ঃ\-]?/, '').trim();
+                        if (!post) post = parts[1].replace(/^(?:পোস্ট|ডাকঘর)\s*[:ঃ\-]?/, '').trim();
+                        if (!upazila) upazila = parts[2].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
+                        if (!district) district = parts[3].replace(/^জেলা\s*[:ঃ\-]?/, '').trim();
+                    } else if (parts.length === 3) {
+                        if (!village) village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                        if (!upazila) upazila = parts[1].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
+                        if (!district) district = parts[2].replace(/^জেলা\s*[:ঃ\-]?/, '').trim();
+                    } else if (parts.length === 2) {
+                        if (!village) village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
+                        if (!upazila) upazila = parts[1].replace(/^(?:উপজেলা|থানা)\s*[:ঃ\-]?/, '').trim();
+                    } else if (parts.length === 1 && !village) {
+                        village = parts[0].replace(/^গ্রাম\s*[:ঃ\-]?/, '').trim();
                     }
                 }
 
+                // If post is available but union is still empty, fallback union to post
+                if (!union && post) {
+                    union = post;
+                }
+
+                // Populate loan object with all possible alias variations
                 loan['বাড়ি'] = house;
-                loan['গ্রাম'] = village;
+                loan['বাড়ি'] = house;
+                loan['house'] = house;
+
                 loan['ইউনিয়ন'] = union;
+                loan['ইউনিয়ন'] = union;
+                loan['ইউ/পৌর'] = union;
+                loan['পৌরসভা'] = union;
+                loan['union'] = union;
+
+                loan['গ্রাম'] = village;
                 loan['পোস্ট'] = post;
                 loan['থানা/উপজেলা'] = upazila;
+                loan['উপজেলা'] = upazila;
+                loan['থানা'] = upazila;
                 
                 // Branch District lookup
                 let branchDistrict = '';
@@ -2078,16 +2129,18 @@ if (window.parent && window.parent.document) {
     });
 
     const classTbody = document.getElementById('breakdown-class-tbody');
-    const printClassTbody = document.getElementById('print-breakdown-class-tbody');
+    const printBreakdownContainer = document.getElementById('print-breakdown-container');
+    const printBreakdownGrandTotal = document.getElementById('print-breakdown-grand-total');
     
     if (classTbody) classTbody.innerHTML = '';
-    if (printClassTbody) printClassTbody.innerHTML = '';
+    if (printBreakdownContainer) printBreakdownContainer.innerHTML = '';
     
     Object.keys(nestedTypes).sort().forEach(type => {
         let typeData = nestedTypes[type];
         let statusKeys = Object.keys(typeData.statuses).sort();
         let rowSpan = statusKeys.length;
         
+        // 1. Populate In-App Modal Table
         statusKeys.forEach((status, idx) => {
             let statData = typeData.statuses[status];
             let tr = `<tr>`;
@@ -2099,19 +2152,68 @@ if (window.parent && window.parent.document) {
                    <td style="text-align: right; border: 1px solid #ddd; padding: 8px;">${statData.amt.toLocaleString('en-IN')}/-</td>
                    </tr>`;
             if (classTbody) classTbody.innerHTML += tr;
-            if (printClassTbody) printClassTbody.innerHTML += tr.replace(/#ddd/g, '#000'); // Print uses black borders
         });
         
-        if (rowSpan > 1) {
+        if (rowSpan > 1 && classTbody) {
             let totalTr = `<tr style="background: #fafafa; font-weight: bold; font-size: 13px;">
-                                        <td colspan="2" style="text-align: right; border: 1px solid #ddd; padding: 8px;">Total (${type}):</td>
-                                        <td style="text-align: center; border: 1px solid #ddd; padding: 8px;">${typeData.totalNum}</td>
-                                        <td style="text-align: right; border: 1px solid #ddd; padding: 8px;">${typeData.totalAmt.toLocaleString('en-IN')}/-</td>
-                                     </tr>`;
-            if (classTbody) classTbody.innerHTML += totalTr;
-            if (printClassTbody) printClassTbody.innerHTML += totalTr.replace(/#ddd/g, '#000').replace(/#fafafa/g, '#e0e0e0');
+                                <td colspan="2" style="text-align: right; border: 1px solid #ddd; padding: 8px;">Total (${type}):</td>
+                                <td style="text-align: center; border: 1px solid #ddd; padding: 8px;">${typeData.totalNum}</td>
+                                <td style="text-align: right; border: 1px solid #ddd; padding: 8px;">${typeData.totalAmt.toLocaleString('en-IN')}/-</td>
+                           </tr>`;
+            classTbody.innerHTML += totalTr;
+        }
+
+        // 2. Populate Compact Side-by-Side Cards for Legal Print Title Page
+        if (printBreakdownContainer) {
+            let rowsHTML = '';
+            statusKeys.forEach(status => {
+                const statData = typeData.statuses[status];
+                rowsHTML += `
+                    <tr>
+                        <td style="padding: 3px 6px; border: 1px solid #000; text-align: left;">${status}</td>
+                        <td style="padding: 3px 6px; border: 1px solid #000; text-align: center; font-weight: bold;">${toBanglaNumbers(statData.num.toString())}</td>
+                        <td style="padding: 3px 6px; border: 1px solid #000; text-align: right;">${toBanglaNumbers(statData.amt.toLocaleString('en-IN'))}/-</td>
+                    </tr>
+                `;
+            });
+
+            const card = document.createElement('div');
+            card.className = 'loan-type-summary-card';
+            card.style.cssText = 'flex: 1 1 calc(50% - 10px); max-width: calc(50% - 7px); min-width: 260px; box-sizing: border-box; page-break-inside: avoid; margin-bottom: 8px;';
+            card.innerHTML = `
+                <div style="background: #2c3e50; color: #fff; font-weight: bold; font-size: 10pt; padding: 3px 6px; border: 1px solid #000; border-bottom: none; text-align: center;">
+                    ${type}
+                </div>
+                <table class="report-table" style="width: 100%; font-size: 9pt; border-collapse: collapse; border: 1px solid #000; margin: 0;">
+                    <thead style="background: #e0e0e0;">
+                        <tr>
+                            <th style="padding: 3px 6px; border: 1px solid #000; text-align: left; width: 44%;">স্ট্যাটাস (Status)</th>
+                            <th style="padding: 3px 6px; border: 1px solid #000; text-align: center; width: 22%;">সংখ্যা (No.)</th>
+                            <th style="padding: 3px 6px; border: 1px solid #000; text-align: right; width: 34%;">পরিমাণ (Amount)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHTML}
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight: bold; background: #f2f2f2; font-size: 9.5pt;">
+                            <td style="padding: 3px 6px; border: 1px solid #000; text-align: right;">উপমোট:</td>
+                            <td style="padding: 3px 6px; border: 1px solid #000; text-align: center;">${toBanglaNumbers(typeData.totalNum.toString())}</td>
+                            <td style="padding: 3px 6px; border: 1px solid #000; text-align: right;">${toBanglaNumbers(typeData.totalAmt.toLocaleString('en-IN'))}/-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+            printBreakdownContainer.appendChild(card);
         }
     });
+
+    if (printBreakdownGrandTotal) {
+        printBreakdownGrandTotal.innerHTML = `
+            <span>সর্বমোট ঋণ (Total Loans): ${toBanglaNumbers(totalNum.toString())} টি</span>
+            <span>সর্বমোট স্থিতি (Total Outstanding): ${toBanglaNumbers(totalAmt.toLocaleString('en-IN'))}/-</span>
+        `;
+    }
 
     // Populate Pie Chart Data with Strict Color Mappings
     let pieData = [];
@@ -2139,8 +2241,6 @@ if (window.parent && window.parent.document) {
     }
     if (document.getElementById('breakdown-class-total-num')) document.getElementById('breakdown-class-total-num').innerText = totalNum;
     if (document.getElementById('breakdown-class-total-amt')) document.getElementById('breakdown-class-total-amt').innerText = totalAmt.toLocaleString('en-IN') + '/-';
-    if (document.getElementById('print-breakdown-class-total-num')) document.getElementById('print-breakdown-class-total-num').innerText = totalNum;
-    if (document.getElementById('print-breakdown-class-total-amt')) document.getElementById('print-breakdown-class-total-amt').innerText = totalAmt.toLocaleString('en-IN') + '/-';
 
     // Draw Pie Chart
     const canvas = document.getElementById('breakdown-chart');

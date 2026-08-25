@@ -312,27 +312,13 @@
                 <span contenteditable="true" spellcheck="false" data-placeholder="বিষয় লিখুন... (e.g. SME borrower list 26-27)"></span>
             </h2>
 
-            <h3 style="text-align: center; font-size: 14pt; margin-bottom: 15px; color: #2c3e50; text-decoration: underline; text-underline-offset: 4px;">Loan Portfolio Overview (শ্রেণী করণ অনুযায়ী)</h3>
-            <table class="report-table" style="margin: 0 auto; width: 80%; font-size: 12pt; border: 2px solid #000;">
-                <thead style="background: #e0e0e0;">
-                    <tr>
-                        <th style="padding: 10px; border: 1px solid #000;">ঋণের ধরণ (Loan Type)</th>
-                        <th style="padding: 10px; border: 1px solid #000;">স্ট্যাটাস (Status)</th>
-                        <th style="padding: 10px; border: 1px solid #000;">সংখ্যা (Number)</th>
-                        <th style="padding: 10px; border: 1px solid #000;">পরিমাণ (Amount)</th>
-                    </tr>
-                </thead>
-                <tbody id="print-breakdown-class-tbody">
-                    <!-- Populated by JS simultaneously with the modal -->
-                </tbody>
-                <tfoot>
-                    <tr style="font-weight:bold; background:#e0e0e0; font-size: 13pt;">
-                        <td colspan="2" style="text-align:right; padding: 10px; border: 1px solid #000;">Total:</td>
-                        <td id="print-breakdown-class-total-num" style="text-align: center; padding: 10px; border: 1px solid #000;">0</td>
-                        <td id="print-breakdown-class-total-amt" style="text-align: right; padding: 10px; border: 1px solid #000;">0</td>
-                    </tr>
-                </tfoot>
-            </table>
+            <h3 style="text-align: center; font-size: 13pt; margin-bottom: 15px; color: #2c3e50; text-decoration: underline; text-underline-offset: 4px;">Loan Portfolio Overview (শ্রেণী করণ অনুযায়ী)</h3>
+            <div id="print-breakdown-container" style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-start; margin: 0 auto; width: 95%;">
+                <!-- Populated dynamically with compact side-by-side tables for each Loan Type -->
+            </div>
+            <div id="print-breakdown-grand-total" style="margin: 15px auto 0 auto; width: 95%; text-align: center; border: 1.5px solid #000; background: #e0e0e0; padding: 6px 12px; font-size: 11pt; font-weight: bold; box-sizing: border-box; display: flex; justify-content: space-around;">
+                <!-- Grand Total bar -->
+            </div>
         </div>
 
         <!-- MAIN DATA PAGE(S) -->
