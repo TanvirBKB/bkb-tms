@@ -695,23 +695,22 @@
                 <td style="text-align:center;">${toBanglaNumbers(index + 1)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="হিসাব নম্বর" style="text-align:center;">${toBanglaNumbers(item['হিসাব নম্বর'] || '')}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="ঋণের ধরণ" style="text-align:center;">${item['ঋণের ধরণ'] || ''}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="প্রতিষ্ঠান" style="text-align:center;">${item['প্রতিষ্ঠান'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="নাম ও পিতার নাম" style="white-space: pre-wrap; min-width: 150px; line-height: 1.3;">${nameStr}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বাড়ি ও গ্রাম">${mergedAddress.join(', ')}</td>
-                <td style="text-align:center; min-width:70px;">
-                    <input type="text" class="village-code-input" data-id="${item._id}" value="${item._villageCode || ''}" placeholder="-" style="width:60px; text-align:center; border:1px solid #ccc; border-radius:3px; padding:2px 4px; font-size:11px;" title="${item._villageName || 'Click to set village code'}">
-                </td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="পোস্ট" style="text-align:center;">${item['পোস্ট'] || ''}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="থানা/উপজেলা" style="text-align:center;">${item['থানা/উপজেলা'] || ''}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="জেলা" style="text-align:center;">${item['জেলা'] || ''}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="অর্থনৈতিক খাত" style="text-align:center;">${item['অর্থনৈতিক খাত'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="ঋণের পরিমাণ" style="text-align:center;">${toBanglaNumbers(item['ঋণের পরিমাণ'] || '')}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="interest_rate" style="text-align:center;">${toBanglaNumbers(irateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বিতরণের তারিখ" style="text-align:center; white-space:nowrap;">${toBanglaNumbers(distDateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="দেয় তারিখ" style="text-align:center; white-space:nowrap;">${toBanglaNumbers(expDateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বর্তমান স্থিতি" style="text-align:center; ${item._isCreditBalance ? 'color:red; font-weight:bold;' : ''}">${toBanglaNumbers(item['বর্তমান স্থিতি'] || '')}</td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="মোবাইল" style="text-align:center;">${toBanglaNumbers(item['মোবাইল'] || '')}</td>
                 <td style="text-align:center;">${item['স্ট্যাটাস'] || ''}</td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" class="comment-cell">${item['মন্তব্য'] || ''}</td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="cbs_balance"></td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="current_due"></td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="notice_status"></td>
-            `;
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="শ্রেণীমান" style="text-align:center;">${item['শ্রেণীমান'] || ''}</td>
+                <td style="text-align:center;"><button onclick="if(confirm('Are you sure you want to delete this loan?')) window.deleteLoan('${item._id}')" style="background:none;border:none;cursor:pointer;color:red;" title="Delete">🗑</button></td>
+            `
             uiTbody.appendChild(tr);
         });
 
@@ -1300,6 +1299,7 @@
                 "বাড়ি ও গ্রাম": item['বাড়ি ও গ্রাম'] || '',
                 "পোস্ট": item['পোস্ট'] || '',
                 "থানা/উপজেলা": item['থানা/উপজেলা'] || '',
+                "জেলা": item['জেলা'] || '',
                 "ঋণের পরিমাণ": item['ঋণের পরিমাণ'] || '',
                 "বিতরণের তারিখ": distDateDisplay,
                 "দেয় তারিখ": expDateDisplay,
@@ -1332,7 +1332,7 @@
             { key: 'c6',  width: 16 }, { key: 'c7',  width: 16 }, { key: 'c8',  width: 20 },
             { key: 'c9',  width: 18 }, { key: 'c10', width: 12 }, { key: 'c11', width: 16 },
             { key: 'c12', width: 16 }, { key: 'c13', width: 18 }, { key: 'c14', width: 20 },
-            { key: 'c15', width: 22 },
+            { key: 'c15', width: 22 }, { key: 'c16', width: 22 },
         ];
 
         const headerStyle = {
@@ -2513,8 +2513,8 @@ const subCategoriesMap = {
     function downloadExcelFormat() {
         if (typeof ExcelJS === 'undefined') { if(window.parent && window.parent.showAppToast) window.parent.showAppToast('ExcelJS library not loaded.'); else alert('ExcelJS library not loaded.'); return; }
 
-        var headers = ['ক্রম','ঋণ নথি নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের তারিখ','মেয়াদোত্তীর্ণ তারিখ','ঋণের পরিমাণ','ঋণের স্ট্যাটাস','মন্তব্য'];
-        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 20, 12, 16, 16, 18, 20, 22];
+        var headers = ['ক্রম','ঋণ নথি নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','জেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের তারিখ','মেয়াদোত্তীর্ণ তারিখ','ঋণের পরিমাণ','ঋণের স্ট্যাটাস','মন্তব্য'];
+        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 16, 20, 12, 16, 16, 18, 20, 22];
 
         var wb2 = new ExcelJS.Workbook();
         wb2.creator = 'BKB TMS';
