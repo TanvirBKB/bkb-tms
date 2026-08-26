@@ -429,11 +429,22 @@
                 const accNo = (row['হিসাব নম্বর'] || '').toString().trim();
                 if (!accNo) return;
                 
-                const name = (row['নাম'] || '').toString().trim();
-                const fname = (row['পিতা/স্বামীর নাম'] || '').toString().trim();
+                                let name = (row['নাম'] || '').toString().trim();
+                let fname = (row['পিতা/স্বামীর নাম'] || '').toString().trim();
+                const protisthan = (row['প্রতিষ্ঠান'] || '').toString().trim();
+                
+                if (protisthan) {
+                    name = protisthan + ', প্রো: ' + name;
+                    if (fname && !fname.startsWith('পিতা/স্বামী:')) {
+                        fname = 'পিতা/স্বামী: ' + fname;
+                    }
+                }
+
                 const recombinedName = name + (fname ? '\n' + fname : '');
 
                 let newItem = { ...row };
+                newItem['নাম'] = name;
+                newItem['পিতা/স্বামীর নাম'] = fname;
                 newItem['নাম ও পিতার নাম'] = recombinedName;
                 newItem['_id'] = 'loan_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
                 
