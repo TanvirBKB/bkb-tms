@@ -13,6 +13,7 @@
     "better-sqlite3": "^11.3.0",
     "decimal.js": "^10.6.0",
     "electron-store": "^11.0.2",
+    "exceljs": "^4.4.0",
     "fs-extra": "^11.2.0",
     "jsdom": "^29.1.1",
     "jspdf": "^2.5.1",

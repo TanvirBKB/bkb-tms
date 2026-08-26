@@ -1,4 +1,4 @@
-function toBanglaNumbers(str) {
+﻿function toBanglaNumbers(str) {
     if (!str && str !== 0) return '';
     const banglaDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
     return str.toString().replace(/[0-9]/g, d => banglaDigits[d]);
@@ -1300,24 +1300,94 @@ function toBanglaNumbers(str) {
             };
         });
 
-        if (typeof XLSX === 'undefined') {
-            if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Excel library not loaded.'); else alert('Excel library not loaded.');
+        if (typeof ExcelJS === 'undefined') {
+            if(window.parent && window.parent.showAppToast) window.parent.showAppToast('ExcelJS library not loaded.'); else alert('ExcelJS library not loaded.');
             return;
         }
-
-        const worksheet = XLSX.utils.json_to_sheet(exportData);
-        const workbook  = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Borrower List");
 
         let filename = "Borrower_List";
         if (topN) filename += "_Top_" + topN;
         if (statusFilter !== 'all') filename += "_" + statusFilter;
         filename += ".xlsx";
 
-        XLSX.writeFile(workbook, filename);
-        if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Excel Exported successfully! Check your default Downloads folder.'); else alert('Excel Exported successfully! Check your default Downloads folder.');
-    }
+        const wb = new ExcelJS.Workbook();
+        wb.creator = 'BKB TMS';
+        wb.created = new Date();
+        const ws = wb.addWorksheet('Borrower List');
 
+        ws.columns = [
+            { key: 'c0',  width: 6  }, { key: 'c1',  width: 22 }, { key: 'c2',  width: 18 },
+            { key: 'c3',  width: 30 }, { key: 'c4',  width: 28 }, { key: 'c5',  width: 16 },
+            { key: 'c6',  width: 16 }, { key: 'c7',  width: 16 }, { key: 'c8',  width: 20 },
+            { key: 'c9',  width: 18 }, { key: 'c10', width: 12 }, { key: 'c11', width: 16 },
+            { key: 'c12', width: 16 }, { key: 'c13', width: 18 }, { key: 'c14', width: 20 },
+            { key: 'c15', width: 22 },
+        ];
+
+        const headerStyle = {
+            font: { name: 'SolaimanLipi', bold: true, size: 11, color: { argb: 'FFFFFFFF' } },
+            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF154360' } },
+            alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+            border: {
+                top:    { style: 'thin', color: { argb: 'FF000000' } },
+                bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                left:   { style: 'thin', color: { argb: 'FF000000' } },
+                right:  { style: 'thin', color: { argb: 'FF000000' } }
+            }
+        };
+
+        if (exportData.length > 0) {
+            const headerRow = ws.addRow(Object.keys(exportData[0]));
+            headerRow.height = 30;
+            headerRow.eachCell(function(cell) { Object.assign(cell, headerStyle); });
+        }
+
+        const evenFill  = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F3F4' } };
+        const oddFill   = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFFFFF' } };
+        const cellFont  = { name: 'SolaimanLipi', size: 10 };
+        const cellBorder = {
+            top:    { style: 'hair', color: { argb: 'FFAAB7B8' } },
+            bottom: { style: 'hair', color: { argb: 'FFAAB7B8' } },
+            left:   { style: 'hair', color: { argb: 'FFAAB7B8' } },
+            right:  { style: 'hair', color: { argb: 'FFAAB7B8' } }
+        };
+
+        exportData.forEach(function(item, idx) {
+            const row = ws.addRow(Object.values(item));
+            row.height = 18;
+            const fill = idx % 2 === 0 ? evenFill : oddFill;
+            row.eachCell(function(cell) {
+                cell.font   = cellFont;
+                cell.fill   = fill;
+                cell.border = cellBorder;
+                cell.alignment = { vertical: 'middle', wrapText: false };
+            });
+            const slCell = row.getCell(1);
+            if (slCell) slCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        });
+
+        ws.views = [{ state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'A2' }];
+
+        if (exportData.length > 0) {
+            ws.autoFilter = { from: 'A1', to: ws.getRow(1).getCell(Object.keys(exportData[0]).length).address };
+        }
+
+        wb.xlsx.writeBuffer().then(function(buffer) {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Excel exported with full formatting!'); else alert('Excel exported successfully!');
+        }).catch(function(err) {
+            console.error('ExcelJS export error:', err);
+            if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Export failed: ' + err.message, true);
+        });
+    }
     function handleStatusUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -2430,12 +2500,47 @@ const subCategoriesMap = {
     document.getElementById('categorizeModal').style.display = 'none';
 };
     function downloadExcelFormat() {
-        if (typeof XLSX === 'undefined') { if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Excel library not loaded.'); else alert('Excel library not loaded.'); return; }
-        const ws = XLSX.utils.aoa_to_sheet([['ক্রম','হিসাব নম্বর','ঋণের ধরণ','নাম','পিতা/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','মঞ্জুরীকৃত পরিমাণ','সুদের হার(%)','বিতরণের তারিখ','মেয়াদ উত্তীর্ণ','বর্তমান স্থিতি','মোবাইল নম্বর','শ্রেণীমান','মন্তব্য']]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Borrower List Format');
-        XLSX.writeFile(wb, 'Borrower_List_Format.xlsx');
-        if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Format downloaded successfully!'); else alert('Format downloaded successfully!');
+        if (typeof ExcelJS === 'undefined') { if(window.parent && window.parent.showAppToast) window.parent.showAppToast('ExcelJS library not loaded.'); else alert('ExcelJS library not loaded.'); return; }
+
+        var headers = ['ক্রম','ঋণ নথি নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের তারিখ','মেয়াদোত্তীর্ণ তারিখ','ঋণের পরিমাণ','ঋণের স্ট্যাটাস','মন্তব্য'];
+        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 20, 12, 16, 16, 18, 20, 22];
+
+        var wb2 = new ExcelJS.Workbook();
+        wb2.creator = 'BKB TMS';
+        var ws2 = wb2.addWorksheet('Borrower List Format');
+
+        ws2.columns = headers.map(function(h, i) { return { header: h, key: 'c' + i, width: colWidths[i] || 18 }; });
+
+        var hStyle = {
+            font: { name: 'SolaimanLipi', bold: true, size: 11, color: { argb: 'FFFFFFFF' } },
+            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF154360' } },
+            alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+            border: {
+                top:    { style: 'thin', color: { argb: 'FF000000' } },
+                bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                left:   { style: 'thin', color: { argb: 'FF000000' } },
+                right:  { style: 'thin', color: { argb: 'FF000000' } }
+            }
+        };
+
+        var hr = ws2.getRow(1);
+        hr.height = 32;
+        hr.eachCell(function(cell) { Object.assign(cell, hStyle); });
+
+        ws2.views = [{ state: 'frozen', xSplit: 0, ySplit: 1, activeCell: 'A2' }];
+
+        wb2.xlsx.writeBuffer().then(function(buffer) {
+            var blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            var url  = URL.createObjectURL(blob);
+            var a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'Borrower_List_Format.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Format downloaded with formatting!'); else alert('Format downloaded successfully!');
+        }).catch(function(err) { console.error('ExcelJS format error:', err); });
     }
 
     window.downloadExcelFormat = downloadExcelFormat;
