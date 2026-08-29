@@ -909,7 +909,12 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         // Fallback to ACCOUNTNO header if extraction from text failed
         if (!accountNumber) accountNumber = metaIndices.accountNo !== -1 ? getCellValue(9, metaIndices.accountNo) : getCellValue(9, 9); 
 
-        document.getElementById('branch_name').value = metaIndices.branch !== -1 ? getCellValue(dataRowIndex, metaIndices.branch) : getCellValue(dataRowIndex, 0); 
+        const branchElem = document.getElementById('branch_name');
+        if (branchElem) {
+            const val = metaIndices.branch !== -1 ? getCellValue(dataRowIndex, metaIndices.branch) : getCellValue(dataRowIndex, 0);
+            if (branchElem.tagName === 'INPUT') branchElem.value = val;
+            else branchElem.innerText = val;
+        } 
         document.getElementById('deposit_account_no').value = accountNumber;
         document.getElementById('applicant_name_bn').value = metaIndices.acName !== -1 ? getCellValue(dataRowIndex, metaIndices.acName) : getCellValue(dataRowIndex, 19);    
         document.getElementById('address').value = metaIndices.address !== -1 ? getCellValue(dataRowIndex, metaIndices.address) : getCellValue(dataRowIndex, 20); // U10
