@@ -444,7 +444,7 @@
 
     .printable-area table {
       width: 100%;
-      table-layout: fixed;
+      table-layout: auto;
       border-collapse: collapse;
       font-size: 11pt;
     }
@@ -588,7 +588,7 @@
 
       #loanTable {
         font-size: 11pt;
-        table-layout: fixed;
+        table-layout: auto;
         width: 100%;
         border-collapse: collapse;
       }
@@ -723,18 +723,16 @@
   
     .right-col .field-label { white-space: nowrap !important; }
   
-    /* Enforce exact column widths and text wrapping globally to match print exactly */
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /* Table Sizing Logic */
+    #loanTable th, #loanTable td {
+      white-space: nowrap !important; /* All columns stay on one line by default */
+    }
+    #loanTable th:nth-child(3), #loanTable td:nth-child(3) {
+      white-space: normal !important; /* Only Particulars wraps */
+      word-break: break-word;
+      max-width: 1.8in !important; /* Cap Particulars width */
+    }
   </style>
 
   <link rel="stylesheet" href="../../assets/css/common.css">
@@ -806,6 +804,7 @@
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Category</label>
               <select id="newProductCategory" class="w-full p-2 border rounded text-sm focus:ring-blue-300">
+                <option value="Agri">Agri</option>
                 <option value="AGRI">AGRI</option>
                 <option value="CMSME">CMSME</option>
                 <option value="PROJECT">PROJECT</option>
@@ -943,95 +942,6 @@
     </div>
   </div>
 
-  <!-- Add New Loan Type Modal -->
-  <div id="addLoanTypeModal"
-    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden justify-center items-center">
-    <div class="relative p-5 border w-96 shadow-lg rounded-md bg-white">
-      <h3 class="text-lg font-medium text-gray-800 text-center">Add New Loan Type</h3>
-      <p class="text-sm text-gray-600 text-center mt-1">This will add a new loan type to the calculator's internal maps.
-      </p>
-      <div class="mt-4 flex flex-col gap-4">
-        <div>
-          <label class="block text-sm font-medium">Loan Rate Type</label>
-          <select id="newLoanRateType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"
-            onchange="handleNewLoanRateTypeChange()">
-            <option value="general" selected>General Rate Loan</option>
-            <option value="special">Special Rate Loan</option>
-          </select>
-        </div>
-        <div><label class="block text-sm font-medium">Loan Head (4-digit code)</label><input type="text"
-            id="newLoanHead" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"
-            placeholder="e.g., 9999" maxlength="4" /></div>
-        <div><label class="block text-sm font-medium">Loan Type</label><input type="text" id="newLoanTypeName"
-            class="block w-full rounded-md border-2 border-[#adadad] shadow-sm" placeholder="e.g., PERSONAL LOAN" />
-        </div>
-        <div id="specialRateContainer" class="hidden flex flex-col gap-4 border-t-2 border-b-2 border-gray-200 py-4">
-          <h4 class="text-sm font-semibold text-center text-gray-700">Special Rate Configuration</h4>
-          <div><label class="block text-sm font-medium">Fixed Interest Rate (%)</label><input type="text"
-              id="newFixedRate" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"
-              placeholder="e.g., 7.0" /></div>
-          <div>
-            <label class="block text-sm font-medium">Fixed Rate Applicable Till</label>
-            <select id="newFixedRateApplicableTill" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-              <option value="loan_due_date" selected>Loan Due Date</option>
-              <option value="whole_period">Whole Calculation Period</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium" id="pullRateHistoryLabel">Pull Interest Rate History From</label>
-          <select id="newLoanCopyRates" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm"
-            onchange="handleNewLoanGroupChange()"></select>
-        </div>
-        <div id="newLoanCmsmeSubTypeContainer" class="hidden">
-          <label class="block text-sm font-medium">CMSME Sub-Type</label>
-          <select id="newLoanCmsmeSubType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-            <option value="MANUFACTURING">Manufacturing</option>
-            <option value="TRADING">Trading</option>
-            <option value="SERVICE">Service</option>
-          </select>
-        </div>
-        <div id="newLoanPersonalLoanSubTypeContainer" class="hidden">
-          <label class="block text-sm font-medium">Personal Loan Sub-Type</label>
-          <select id="newLoanPersonalLoanSubType" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-            <option value="OTHERS">Others</option>
-            <option value="BKB STAFF">BKB Staff</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Interest Capitalization</label>
-          <select id="newLoanCapitalization" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-            <option value="monthly">Monthly</option>
-            <option value="quarterly" selected>Quarterly</option>
-            <option value="yearly">Yearly</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Loan Structure (for Penalty Logic)</label>
-          <select id="newLoanStructure" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-            <option value="Continuous">Continuous</option>
-            <option value="Term" selected>Term</option>
-            <option value="Agri">Agri</option>
-            <option value="Project">Project</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Apply Penalty?</label>
-          <select id="newLoanPenalty" class="block w-full rounded-md border-2 border-[#adadad] shadow-sm">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="mt-4 flex justify-end gap-2">
-        <button onclick="InterestCalcLogic.hideAddLoanTypeModal()"
-          class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md hover:bg-gray-300">Cancel</button>
-        <button onclick="InterestCalcLogic.saveNewLoanType()"
-          class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md hover:bg-blue-700">Save Loan
-          Type</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Calculation Method Modal -->
   <div id="calculationMethodModal"
@@ -1098,11 +1008,11 @@
           </p>
           <div class="no-print flex justify-center items-center gap-1 mt-1">
             <span class="font-bold text-sm text-gray-700">Calculation from:</span>
-            <input type="date" id="calcStartDate" onchange="InterestCalcLogic.updateHeaderMeta()"
+            <input type="date" id="calcStartDate" onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
               class="borderless-input text-sm font-bold text-center"
               style="width: 90pt; padding-top: 0 !important; padding-bottom: 0 !important; cursor: pointer;" />
             <span class="font-bold text-sm text-gray-700">to</span>
-            <input type="date" id="calcEndDate" onchange="InterestCalcLogic.updateHeaderMeta()"
+            <input type="date" id="calcEndDate" onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
               class="borderless-input text-sm font-bold text-center"
               style="width: 90pt; padding-top: 0 !important; padding-bottom: 0 !important; cursor: pointer;" />
           </div>
@@ -1204,20 +1114,7 @@
     </div>
   </div>
 
-  <script>
-    window.onerror = function (message, source, lineno, colno, error) {
-      if (window.require) {
-        const fs = require('fs');
-        fs.appendFileSync('C:/Users/User/.gemini/antigravity-ide/brain/76f411ee-aeef-494b-97ad-faf66b17746f/scratch/renderer_errors.txt', `Error: ${message} at ${source}:${lineno}:${colno}\n`);
-      }
-    };
-    window.addEventListener("unhandledrejection", function (promiseRejectionEvent) {
-      if (window.require) {
-        const fs = require('fs');
-        fs.appendFileSync('C:/Users/User/.gemini/antigravity-ide/brain/76f411ee-aeef-494b-97ad-faf66b17746f/scratch/renderer_errors.txt', `Unhandled Rejection: ${promiseRejectionEvent.reason}\n`);
-      }
-    });
-  </script>
+  <script src="../../assets/js/exceljs.min.js"></script>
   <script src="../../assets/js/xlsx.full.min.js"></script>
   <script src="../../assets/js/jspdf.umd.min.js"></script>
   <script src="../../assets/js/jspdf.plugin.autotable.min.js"></script>

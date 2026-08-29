@@ -1295,20 +1295,29 @@ function importData(append = false, ignoreStartDate = false) {
   const calcEndDateInput=document.getElementById('calcEndDate');
   let isValid=true;
   const isDateInvalid = (input) => !input.value || isNaN(new Date(input.value).getTime());
+        const markInvalid = (el) => {
+        el.style.setProperty('outline', '2pt solid #e53e3e', 'important');
+        el.style.setProperty('background-color', '#fff5f5', 'important');
+        el.style.setProperty('border-radius', '3pt', 'important');
+    };
+    const markValid = (el) => {
+        el.style.removeProperty('outline');
+        el.style.removeProperty('background-color');
+        el.style.removeProperty('border-radius');
+    };
 
-  if(!ignoreStartDate && isDateInvalid(calcStartDateInput)){
-    calcStartDateInput.classList.add('border-red-500');
-    isValid=false;
-  } else {
-    calcStartDateInput.classList.remove('border-red-500');
-  }
-
-  if(isDateInvalid(calcEndDateInput)){
-    calcEndDateInput.classList.add('border-red-500');
-    isValid=false;
-  } else {
-    calcEndDateInput.classList.remove('border-red-500');
-  }
+    if (!ignoreStartDate && isDateInvalid(calcStartDateInput)) {
+        markInvalid(calcStartDateInput);
+        isValid = false;
+    } else {
+        markValid(calcStartDateInput);
+    }
+    if (isDateInvalid(calcEndDateInput)) {
+        markInvalid(calcEndDateInput);
+        isValid = false;
+    } else {
+        markValid(calcEndDateInput);
+    }
   if(!isValid){showMessageBox("Please provide valid dates before importing.", true); return;}
 
   const fileInput=document.createElement('input');
@@ -1404,7 +1413,7 @@ function recalculateTable(suppressMessage = false) {
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             const data = tableData[i];
-            row.cells[7].innerText = data.balance > 0 ? data.balance : "";
+            row.cells[7].innerText = data.balance !== 0 ? data.balance : "";
             // Leave last row's calculation columns blank
             if (i === rows.length - 1) { // Last row has 0 days
                 row.cells[8].innerText = "";
@@ -1666,7 +1675,7 @@ function proceedWithPenaltyApplication() {
     const calcStartDateInput = document.getElementById('calcStartDate');
     if (!calcStartDateInput.value || isNaN(new Date(calcStartDateInput.value))) {
         showMessageBox("Please provide a valid Calculation Start Date.", true);
-        calcStartDateInput.classList.add('border-red-500');
+        markInvalid(calcStartDateInput);
         return;
     }
     const userCalcStartDate = new Date(calcStartDateInput.value);
@@ -1677,10 +1686,10 @@ function proceedWithPenaltyApplication() {
     const calcStartDate = (firstRowDate && firstRowDate > userCalcStartDate) ? firstRowDate : userCalcStartDate;
 
     const calcEndDateInput = document.getElementById('calcEndDate');
-    calcEndDateInput.classList.remove('border-red-500');
+    markValid(calcEndDateInput);
     if (!calcEndDateInput.value || isNaN(new Date(calcEndDateInput.value))) {
         showMessageBox("Please provide a valid Calculation End Date.", true);
-        calcEndDateInput.classList.add('border-red-500');
+        markInvalid(calcEndDateInput);
         return;
     }
     const calcEndDate = new Date(calcEndDateInput.value);
@@ -1871,32 +1880,82 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     // 3. Inject Missing Capitalization Rows (The "Yearly/Quarterly" Logic)
     const loanInputVal = (document.getElementById('loan_scheme_name').value || "").trim();
     
-    // Robust lookup: check Name, then Code, then Case-insensitive
-    let capFrequency = capitalizationMap[loanInputVal];
-    if (!capFrequency) {
-        // Try to find the name if input is a GL code
-        const resolvedName = loanTypeMap[loanInputVal];
-        if (resolvedName) capFrequency = capitalizationMap[resolvedName];
-    }
-    if (!capFrequency) {
-        // Case-insensitive fallback
-        const upperVal = loanInputVal.toUpperCase();
+    // PRIORITY 1: Use the UI Inst. Frequency field set by the user
+    const uiFrequency = (document.getElementById('installmentFrequency').value || '').trim().toLowerCase();
+    
+    // PRIORITY 2: Fall back to the capitalizationMap (product-based)
+        // 1. Resolve Capitalization Frequency strictly from loan name/code
+    let capFrequency = null;
+    
+    // Helper to check the maps
+    const resolveCapFreq = (val) => {
+        if (!val) return null;
+        let freq = capitalizationMap[val];
+        if (freq) return freq;
+        const resolvedName = loanTypeMap[val];
+        if (resolvedName && capitalizationMap[resolvedName]) return capitalizationMap[resolvedName];
+        const upperVal = val.toUpperCase();
         const matchedKey = Object.keys(capitalizationMap).find(k => k.toUpperCase() === upperVal);
-        if (matchedKey) capFrequency = capitalizationMap[matchedKey];
+        if (matchedKey) return capitalizationMap[matchedKey];
+        return null;
+    };
+
+    capFrequency = resolveCapFreq(loanInputVal);
+
+    // If not found, try parsing "1101 - AGRI" format
+    if (!capFrequency && loanInputVal.includes('-')) {
+        const parts = loanInputVal.split('-');
+        const code = parts[0].trim();
+        const name = parts.slice(1).join('-').trim();
+        capFrequency = resolveCapFreq(code) || resolveCapFreq(name);
     }
     
+    // If STILL not found, check if it's a known Term Loan that might use uiFrequency or default to yearly?
+    // Based on user feedback: Inst. Frequency is for PENALTY, not capitalization.
+    // So we will NOT use uiFrequency. If we can't find it, we throw an error.
+    if (!capFrequency) {
+        if (!isAuto) showMessageBox("Capitalization frequency (Yearly/Quarterly) could not be determined for loan: " + loanInputVal + ". Please ensure the loan name/code is correct.", true);
+        if (btn) { btn.removeAttribute('disabled'); btn.classList.remove('button-disabled'); isAutoRecalcActive = false; }
+        return;
+    }
+
+    // Read sanction date to use its month/day as the anniversary anchor for yearly/half-yearly
+    const sanctionDateStr = (document.getElementById('sanction_date') ? document.getElementById('sanction_date').value : '') || '';
+    let anchorMonth = 5; // Default June (0-indexed) for legacy fallback
+    let anchorDay   = 30;
+    if (sanctionDateStr) {
+        const sancParsed = parseDateFromDisplay(sanctionDateStr);
+        if (sancParsed && !isNaN(sancParsed)) {
+            anchorMonth = sancParsed.getUTCMonth();
+            anchorDay   = sancParsed.getUTCDate();
+        }
+    }
+    
+    console.log('[CAP DEBUG] uiFrequency:', uiFrequency, '| capFrequency:', capFrequency, '| effectiveCapStart:', effectiveCapStart ? effectiveCapStart.toISOString() : null, '| endDate:', endDate ? endDate.toISOString() : null);
     if (capFrequency) {
         const capDates = [];
         let cursor = new Date(Date.UTC(effectiveCapStart.getUTCFullYear(), effectiveCapStart.getUTCMonth(), 1));
         
         while (cursor <= endDate) {
             let month = cursor.getUTCMonth();
-            let year = cursor.getUTCFullYear();
+            let year  = cursor.getUTCFullYear();
             let targetDate = null;
             
-            if (capFrequency === 'monthly') targetDate = new Date(Date.UTC(year, month + 1, 0));
-            else if (capFrequency === 'quarterly') { if ([2, 5, 8, 11].includes(month)) targetDate = new Date(Date.UTC(year, month + 1, 0)); }
-            else if (capFrequency === 'yearly') { if (month === 5) targetDate = new Date(Date.UTC(year, 6, 0)); }
+            if (capFrequency === 'monthly') {
+                // Last day of every month
+                targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'quarterly') {
+                // Fiscal year quarters: 30/09, 31/12, 31/03, 30/06
+                // months: Sep=8, Dec=11, Mar=2, Jun=5
+                if ([8, 11, 2, 5].includes(month)) targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'half-yearly') {
+                // Fiscal year halves: 31/12 and 30/06
+                // months: Dec=11, Jun=5
+                if ([11, 5].includes(month)) targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'yearly') {
+                // Economic year end: always 30/06 (June, month index 5)
+                if (month === 5) targetDate = new Date(Date.UTC(year, 5, 30));
+            }
 
             if (targetDate && targetDate >= effectiveCapStart && targetDate <= endDate) {
                 if (!capDates.some(d => d.getTime() === targetDate.getTime())) capDates.push(targetDate);
@@ -1905,15 +1964,15 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         }
         
         capDates.forEach(date => {
-            const exists = allRowsData.some(r => r.date && r.date.getTime() === date.getTime());
-            if (!exists) {
-                allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
-            } else {
-                const match = allRowsData.find(r => r.date && r.date.getTime() === date.getTime());
-                match.isCapitalization = true;
-                if (!match.particulars) match.particulars = 'Interest Capitalization';
-            }
+            // ALWAYS push a distinct row for capitalization
+            allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
         });
+
+        // Always ensure the final calc end date is a capitalization row
+        const lastCapAlreadyOnEndDate = capDates.some(d => d.getTime() === endDate.getTime());
+        if (!lastCapAlreadyOnEndDate) {
+            allRowsData.push({ date: endDate, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+        }
     }
 
     // NEW: Inject Interest Rate Change Dates to ensure period breaks during calculation
@@ -1987,14 +2046,15 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         let interestSum = 0;
         for (let i = lastIndex; i < capIndex; i++) {
             const row = activeRows[i];
-            const balance = parseFloat(row.cells[7].innerText) || 0;
-            const days = parseInt(row.cells[8].innerText) || 0;
-            const rate = parseFloat(String(row.cells[9].innerText).replace('%', '')) || 0;
+            const balance = parseFloat(String(row.cells[7].innerText).replace(/,/g, '')) || 0;
+            const days = parseInt(String(row.cells[8].innerText).replace(/,/g, '')) || 0;
+            const rate = parseFloat(String(row.cells[9].innerText).replace(/[%,]/g, '')) || 0;
             let currentInterest = 0;
             if (days > 0 && rate > 0 && balance > 0) {
-                currentInterest = Math.round(balance * rate * days / 36000);
+                // Standard formula: Interest = Principal x Rate% x Days / 365
+                currentInterest = Math.round(balance * rate * days / 36500);
             }
-            row.cells[10].innerText = currentInterest; // Update interest cell
+            row.cells[10].innerText = currentInterest > 0 ? currentInterest : ''; // Update interest cell
             interestSum += currentInterest;
         }
 
@@ -2805,66 +2865,149 @@ function hideMessageBox() {
   box.classList.add('hidden'); box.classList.remove('flex');
 }
 
-function downloadExcel() {
-    const wb = XLSX.utils.book_new();
-    const ws_name = "Loan Calculation";
-    let data = [];
 
-    // --- 1. Header ---
-    data.push(["Bangladesh Krishi Bank"]);
-    data.push(["Default Loan Calculator"]);
-    data.push([]); // Spacer
-
-    // --- 2. Form Data (two-column layout) ---
-    const formDetailsContainer = document.getElementById('loanDetailsForm');
-    const formDivs = Array.from(formDetailsContainer.children).filter(child => !child.classList.contains('hidden'));
-    
-    const allFormItems = formDivs.map(div => {
-        const label = div.querySelector('label');
-        const input = div.querySelector('input, select');
-        if (label && input) {
-            return { label: label.innerText.trim(), value: input.value };
+    async function downloadExcel() {
+        if (typeof ExcelJS === 'undefined') {
+            alert('ExcelJS library is not loaded!');
+            return;
         }
-        return null;
-    }).filter(Boolean);
 
-    const half = Math.ceil(allFormItems.length / 2);
+        const wb = new ExcelJS.Workbook();
+        const ws = wb.addWorksheet('Loan Calculation');
 
-    for (let i = 0; i < half; i++) {
-        const leftItem = allFormItems[i];
-        const rightItem = allFormItems[i + half];
-        const row = [];
+        // Column Setup
+        ws.columns = [
+            { width: 5 },   // A: Sl
+            { width: 12 },  // B: Date
+            { width: 30 },  // C: Particulars
+            { width: 15 },  // D: Amount
+            { width: 15 },  // E: Debit
+            { width: 12 },  // F: Penalty
+            { width: 15 },  // G: Credit
+            { width: 18 },  // H: Balance
+            { width: 6 },   // I: Days
+            { width: 8 },   // J: Rate
+            { width: 15 }   // K: Interest
+        ];
 
-        row.push(leftItem ? leftItem.label : '', leftItem ? leftItem.value : '');
-        row.push(''); // Spacer column
-        row.push(rightItem ? rightItem.label : '', rightItem ? rightItem.value : '');
+        // 1. Headers
+        ws.mergeCells('A1:K1');
+        const r1 = ws.getCell('A1');
+        r1.value = 'Bangladesh Krishi Bank';
+        r1.font = { bold: true, size: 16 };
+        r1.alignment = { horizontal: 'center' };
+
+        ws.mergeCells('A2:K2');
+        const r2 = ws.getCell('A2');
+        const branchEl = document.getElementById('branch_name');
+        r2.value = branchEl ? branchEl.innerText : 'Branch Name';
+        r2.font = { bold: true, size: 12 };
+        r2.alignment = { horizontal: 'center' };
+
+        ws.mergeCells('A3:K3');
+        const r3 = ws.getCell('A3');
+        r3.value = 'Default Loan Calculator';
+        r3.font = { bold: true, size: 14 };
+        r3.alignment = { horizontal: 'center' };
+
+        ws.mergeCells('A4:K4');
+        const r4 = ws.getCell('A4');
+        const calcStart = document.getElementById('calcStartDate') ? document.getElementById('calcStartDate').value : '';
+        const calcEnd = document.getElementById('calcEndDate') ? document.getElementById('calcEndDate').value : '';
+        r4.value = `Calculation from: ${calcStart} to ${calcEnd}`;
+        r4.font = { size: 11 };
+        r4.alignment = { horizontal: 'center' };
+
+        // 2. Loan Details Form (Left and Right columns)
+        const leftLabels = ['A/C Number', 'A/C Name', 'Address', 'Loan Type', 'Sanction Amount', 'Sanction Rate', 'Duration (in months)', 'Classification'];
+        const leftIds = ['deposit_account_no', 'applicant_name_bn', 'address', 'loan_scheme_name', 'sanctionAmount', 'sanctionRate', 'loanTerm', 'classification'];
         
-        data.push(row);
+        const rightLabels = ['Sanction Date', 'Inst. Due Date', 'Loan Due Date', 'Inst. Size', 'CL Date', 'Grace Period', 'Inst. Frequency', 'Penalty Rate'];
+        const rightIds = ['sanction_date', 'installmentDueDate', 'loanDueDate', 'installmentSize', 'clDate', 'gracePeriod', 'installmentFrequency', 'penaltyRate'];
+
+        let rowOffset = 6;
+        for (let i = 0; i < Math.max(leftLabels.length, rightLabels.length); i++) {
+            const leftLabel = leftLabels[i] || '';
+            let leftVal = '';
+            if (leftIds[i]) {
+                const el = document.getElementById(leftIds[i]);
+                leftVal = el ? el.value : '';
+            }
+
+            const rightLabel = rightLabels[i] || '';
+            let rightVal = '';
+            if (rightIds[i]) {
+                const el = document.getElementById(rightIds[i]);
+                rightVal = el ? el.value : '';
+            }
+
+            ws.getCell(`A${rowOffset}`).value = leftLabel ? leftLabel + ':' : '';
+            ws.getCell(`A${rowOffset}`).font = { bold: true };
+            ws.getCell(`C${rowOffset}`).value = leftVal;
+            
+            ws.getCell(`G${rowOffset}`).value = rightLabel ? rightLabel + ':' : '';
+            ws.getCell(`G${rowOffset}`).font = { bold: true };
+            ws.getCell(`H${rowOffset}`).value = rightVal;
+            
+            rowOffset++;
+        }
+
+        rowOffset += 2; // Space before table
+
+        // 3. Table Headers
+        const tableHeaders = ['Sl', 'Date', 'Particulars', 'Amount', 'Debit', 'Penalty', 'Credit', 'Balance', 'Days', 'Rate', 'Interest'];
+        const headerRow = ws.getRow(rowOffset);
+        headerRow.values = tableHeaders;
+        headerRow.font = { bold: true };
+        headerRow.eachCell((cell) => {
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+            cell.alignment = { vertical: 'top', horizontal: 'center', wrapText: true };
+        });
+        rowOffset++;
+
+        // 4. Table Body
+        const tbody = document.getElementById('loanTableBody');
+        if (tbody) {
+            const trs = tbody.querySelectorAll('tr');
+            trs.forEach(tr => {
+                const row = ws.getRow(rowOffset);
+                const tds = tr.querySelectorAll('td');
+                let vals = [];
+                tds.forEach(td => vals.push(td.innerText.trim()));
+                row.values = vals;
+                row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                    cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+                    cell.alignment = { vertical: 'top', wrapText: colNumber === 3 };
+                    if (colNumber > 3 && colNumber !== 9 && colNumber !== 10) {
+                        cell.alignment.horizontal = 'right';
+                    } else if (colNumber === 1 || colNumber === 2 || colNumber === 9 || colNumber === 10) {
+                        cell.alignment.horizontal = 'center';
+                    }
+                    
+                    if (tr.classList.contains('bg-gray-200') || (tr.querySelector('.font-bold') && !tr.querySelector('.font-bold').parentElement.classList.contains('no-print'))) {
+                        cell.font = { bold: true };
+                    }
+                });
+                rowOffset++;
+            });
+        }
+
+        // 5. Generate and Download
+        const buffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const acNoEl = document.getElementById('deposit_account_no');
+        const acNo = acNoEl ? acNoEl.value : 'Report';
+        a.download = `Loan_Calculation_${acNo}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
     }
-    
-    data.push([]); // Spacer
 
-    const ws = XLSX.utils.aoa_to_sheet(data);
 
-    // --- 3. Table Data ---
-    const table = document.getElementById('loanTable');
-    if (table) {
-        XLSX.utils.sheet_add_dom(ws, table, { origin: -1 });
-    }
-
-    // --- 4. Page Setup & Styling ---
-    ws['!pageSetup'] = {
-        paperSize: 5, // Legal
-        orientation: "portrait",
-        margins: { top: 0, right: 0, bottom: 0, left: 0 },
-        fitToWidth: 1
-    };
-
-    ws['!cols'] = [ {wch:25}, {wch:20}, {wch:5}, {wch:25}, {wch:20} ];
-
-    XLSX.utils.book_append_sheet(wb, ws, ws_name);
-    XLSX.writeFile(wb, 'Interest_Calculator_Report.xlsx');
-}
 
 // Populates form fields with customer data from the App Shell
 function populate(data) {
@@ -2896,6 +3039,7 @@ window.addEventListener('message', (event) => {
             case 'applyPenalty': InterestCalcLogic.applyPenaltyRates(); break;
             case 'calculate': InterestCalcLogic.calculateAndCapitalizeInterest(); break;
             case 'saveReport': InterestCalcLogic.savePrintReport(); break;
+            case 'downloadExcel': InterestCalcLogic.downloadExcel(); break;
             case 'clear': InterestCalcLogic.clearAllData(); break;
             case 'updateRates': InterestCalcLogic.showRateChangeModal(); break;
             case 'showLoans': InterestCalcLogic.showAvailableLoansModal(); break;

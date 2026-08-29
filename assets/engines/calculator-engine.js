@@ -10,11 +10,10 @@ window.CalculatorEngine = {
             'calc-data-input': 'manualInput',
             'calc-apply-penalty': 'applyPenalty',
             'calc-calculate-balance': 'calculate',
-            'calc-save-report': 'saveReport',
+            'calc-download-excel': 'downloadExcel',
             'calc-clear-data': 'clear',
             'calc-update-rates': 'updateRates',
-            'calc-show-loans': 'showLoans',
-            'calc-add-loan': 'addLoan'
+            'calc-show-loans': 'showLoans'
         };
 
         Object.keys(actions).forEach(id => {
