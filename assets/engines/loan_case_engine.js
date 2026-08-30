@@ -293,7 +293,12 @@ function toBanglaNumbers(str) {
                                     "_nid": customer.applicant_nid || '',
                                     "ঋণের ধরণ": loan.loan_type || loan.product || '',
                                     "_sector": loan.loan_sector || loan.loan_type || loan.product || '',
-                                    "নাম ও পিতার নাম": (customer.applicant_name_bn || '') + (customer.applicant_father_name_bn ? ' ও ' + customer.applicant_father_name_bn : ''),
+                                    
+                                    "ঋণ কেস নম্বর": loan.loan_case_no || loan.input_loan_case_num || loan.cbs_account_no || loan.account_no || '',
+                                    "প্রতিষ্ঠানের নাম": loan.institution_name || loan.input_institution_name_bn || customer.applicant_name_bn || '',
+                                    "সিটি কর্পো:": customer.applicant_curr_addr_city_corp || loan.present_city_corp || loan.input_present_city_corp || '',
+                                    "ওয়ার্ড": customer.applicant_curr_addr_ward || loan.present_ward || loan.input_present_ward || '',
+                                        "নাম ও পিতার নাম": (customer.applicant_name_bn || '') + (customer.applicant_father_name_bn ? ' ও ' + customer.applicant_father_name_bn : ''),
                                     "নাম": customer.applicant_name_bn || '',
                                     "পিতা/স্বামীর নাম": customer.applicant_father_name_bn || '',
                                     "বাড়ি ও গ্রাম": (customer.applicant_curr_addr_house || '') + (customer.applicant_curr_addr_village ? ' ' + customer.applicant_curr_addr_village : ''),
@@ -813,29 +818,24 @@ function toBanglaNumbers(str) {
         let currentTbody = firstTbody;
 
         function buildPrintRow(item, seqNum) {
-            const tr = document.createElement('tr');
-            let dD = item['\u09ac\u09bf\u09a4\u09b0\u09a3\u09c7\u09b0 \u09a4\u09be\u09b0\u09bf\u0996']||'', eD = item['\u09a6\u09c7\u09af\u09bc \u09a4\u09be\u09b0\u09bf\u0996']||'';
-            if (item._distDate instanceof Date && !isNaN(item._distDate)) dD = `${item._distDate.getDate().toString().padStart(2,'0')}/${(item._distDate.getMonth()+1).toString().padStart(2,'0')}/${item._distDate.getFullYear()}`;
-            if (item._expDate instanceof Date && !isNaN(item._expDate)) eD = `${item._expDate.getDate().toString().padStart(2,'0')}/${(item._expDate.getMonth()+1).toString().padStart(2,'0')}/${item._expDate.getFullYear()}`;
-            let nm = item['\u09a8\u09be\u09ae \u0993 \u09aa\u09bf\u09a4\u09be\u09b0 \u09a8\u09be\u09ae']||'';
-            if (!nm.includes('\n')) nm = nm.replace(/\u09aa\u09bf\u09a4\u09be:/g,'\n\u09aa\u09bf\u09a4\u09be:').replace(/\u09b8\u09cd\u09ac\u09be\u09ae\u09c0:/g,'\n\u09b8\u09cd\u09ac\u09be\u09ae\u09c0:');
-            let ir = (item.interest_rate||'').toString().trim(); if(ir&&!ir.includes('%')) ir+='%';
-            tr.innerHTML = `<td class="no-print" style="text-align:center;"><input type="checkbox" class="loan-checkbox" value="${item._id}"></td>
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="no-print" style="text-align:center;"><input type="checkbox" class="loan-checkbox" value="${item._id}"></td>
                 <td style="text-align:center;">${toBanglaNumbers(seqNum.toString())}</td>
-                <td style="text-align:center;">${toBanglaNumbers(item['\u09b9\u09bf\u09b8\u09be\u09ac \u09a8\u09ae\u09cd\u09ac\u09b0']||'')}</td>
-                <td style="text-align:center;">${item['\u098b\u09a3\u09c7\u09b0 \u09a7\u09b0\u09a3']||''}</td>
-                <td style="white-space:pre-wrap;min-width:150px;line-height:1.3;">${nm}</td>
-                <td>${item['\u09ac\u09be\u09a1\u09bc\u09bf \u0993 \u0997\u09cd\u09b0\u09be\u09ae']||''}</td><td>${item['\u09aa\u09cb\u09b8\u09cd\u099f']||''}</td><td>${item['\u09a5\u09be\u09a8\u09be/\u0989\u09aa\u099c\u09c7\u09b2\u09be']||''}</td>
-                <td style="text-align:center;">${toBanglaNumbers(item['\u098b\u09a3\u09c7\u09b0 \u09aa\u09b0\u09bf\u09ae\u09be\u09a3']||'')}</td>
-                <td style="text-align:center;">${toBanglaNumbers(ir)}</td>
-                <td style="text-align:center;white-space:nowrap;">${toBanglaNumbers(dD)}</td>
-                <td style="text-align:center;white-space:nowrap;">${toBanglaNumbers(eD)}</td>
-                <td style="text-align:center;${item._isCreditBalance?'color:red;font-weight:bold;':''}">${toBanglaNumbers(item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'')}</td>
-                <td style="text-align:center;">${toBanglaNumbers(item['৫২ স্থগিত সুদ']||'')}</td>
-                <td style="text-align:center;">${toBanglaNumbers(item['\u09ae\u09cb\u09ac\u09be\u0987\u09b2']||'')}</td>
-                <td style="text-align:center;">${item['\u09b8\u09cd\u099f\u09cd\u09af\u09be\u099f\u09be\u09b8']||''}</td>
-                <td>${item['\u09ae\u09a8\u09cd\u09a4\u09ac\u09cd\u09af']||''}</td>`;
-            return tr;
+                <td style="text-align:center;">${item['ঋণ কেস নম্বর'] || item['_caseNo'] || ''}</td>
+                <td style="text-align:center;">${item['ঋণের ধরণ'] || item['loan_type'] || ''}</td>
+                <td style="text-align:center;">${item['ঋণের খাত'] || item['_sector'] || ''}</td>
+                <td style="text-align:center;">${item['প্রতিষ্ঠানের নাম'] || ''}</td>
+                <td style="text-align:center;">${item['নাম'] || ''}</td>
+                <td style="text-align:center;">${item['পিতা/স্বামীর নাম'] || ''}</td>
+                <td style="text-align:center;">${item['বাড়ি'] || ''}</td>
+                <td style="text-align:center;">${item['গ্রাম'] || ''}</td>
+                <td style="text-align:center;">${item['ইউ/পৌর'] || item['ইউনিয়ন'] || item['ইউ/পৌর'] || ''}</td>
+                <td style="text-align:center;">${item['সিটি কর্পো:'] || ''}</td>
+                <td style="text-align:center;">${toBanglaNumbers(item['ওয়ার্ড'] || '')}</td>
+                <td style="text-align:center;">${item['জেলা'] || item['_district'] || ''}</td>
+                <td style="text-align:center;">${toBanglaNumbers(item['মোবাইল'] || '')}</td>`;
+        return tr;
+    }
         }
 
         const anyCode = data.some(d => d._villageCode);
@@ -856,70 +856,9 @@ function toBanglaNumbers(str) {
                 if (!g) { g = {code, name: item._villageName||'', items:[]}; groups.push(g); }
                 g.items.push(item);
             });
-            let grandTotal = 0;
-            let grandTotalSus = 0;
-            groups.forEach((grp, gi) => {
-                const lbl = grp.code === '__NONE__'
-                    ? '\u0985\u09b6\u09cd\u09b0\u09c7\u09a3\u09c0\u09ac\u09a6\u09cd\u09a7 (\u09ac\u09bf\u09a8\u09be \u0995\u09cb\u09a1)'
-                    : `\u0997\u09cd\u09b0\u09be\u09ae \u0995\u09cb\u09a1: ${grp.code}${grp.name ? ' \u2014 ' + grp.name : ''}`;
-                const hTr = document.createElement('tr');
-                hTr.style.cssText = 'background:#2c3e50;color:white;font-weight:bold;font-size:11pt;';
-                hTr.innerHTML = `<td colspan="16" style="padding:8px;border:none;">${lbl}</td>`;
-                currentTbody.appendChild(hTr);
-                let grpTotal = 0;
-                let grpTotalSus = 0;
-                grp.items.forEach(item => {
-                    currentTbody.appendChild(buildPrintRow(item, seqNum++));
-                    grpTotal += parseFloat((item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'').toString().replace(/[^\d.]/g,'')) || 0;
-                    grpTotalSus += parseFloat((item['৫২ স্থগিত সুদ']||'').toString().replace(/[^\d.]/g,'')) || 0;
-                });
-                grandTotal += grpTotal;
-                grandTotalSus += grpTotalSus;
-                
-                const sTr1 = document.createElement('tr');
-                sTr1.style.cssText = 'font-weight:bold;background:#d5e8d4;';
-                sTr1.innerHTML = `<td colspan="8" style="text-align:right;padding:6px;border-top:2px solid #000;">\u0989\u09aa\u09ae\u09cb\u099f (${lbl}): ${toBanglaNumbers(grp.items.length.toString())} \u099f\u09bf</td><td colspan="4" style="text-align:right;padding:6px;border-top:2px solid #000;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;padding:6px;border-top:2px solid #000;">${toBanglaNumbers(grpTotal.toLocaleString('en-IN'))}/-</td><td colspan="4" style="border-top:2px solid #000;"></td>`;
-                currentTbody.appendChild(sTr1);
-                
-                const sTr2 = document.createElement('tr');
-                sTr2.style.cssText = 'font-weight:bold;background:#d5e8d4;';
-                sTr2.innerHTML = `<td colspan="12" style="text-align:right;padding:6px;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;padding:6px;color:#d35400;">${toBanglaNumbers(grpTotalSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
-                currentTbody.appendChild(sTr2);
-                if (gi < groups.length - 1) {
-                    const bTr = document.createElement('tr');
-                    bTr.style.cssText = 'page-break-after:always;border:none;';
-                    bTr.innerHTML = '<td colspan="16" style="border:none;padding:0;height:0;"></td>';
-                    currentTbody.appendChild(bTr);
-                }
-            });
-            const gTr1 = document.createElement('tr');
-            gTr1.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            gTr1.innerHTML = `<td colspan="8" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Grand Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="4" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;">${toBanglaNumbers(grandTotal.toLocaleString('en-IN'))}/-</td><td colspan="4"></td>`;
-            currentTbody.appendChild(gTr1);
-            
-            const gTr2 = document.createElement('tr');
-            gTr2.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            gTr2.innerHTML = `<td colspan="12" style="text-align:right;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;color:#d35400;">${toBanglaNumbers(grandTotalSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
-            currentTbody.appendChild(gTr2);
-        } else {
             data.forEach(item => currentTbody.appendChild(buildPrintRow(item, seqNum++)));
-            let ft = 0;
-            let ftSus = 0;
-            data.forEach(item => { 
-                ft += parseFloat((item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'').toString().replace(/[^\d.]/g,'')) || 0; 
-                ftSus += parseFloat((item['৫২ স্থগিত সুদ']||'').toString().replace(/[^\d.]/g,'')) || 0;
-            });
-            const tTr1 = document.createElement('tr');
-            tTr1.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            tTr1.innerHTML = `<td colspan="8" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="4" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;">${toBanglaNumbers(ft.toLocaleString('en-IN'))}/-</td><td colspan="4"></td>`;
-            currentTbody.appendChild(tTr1);
-            
-            const tTr2 = document.createElement('tr');
-            tTr2.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            tTr2.innerHTML = `<td colspan="12" style="text-align:right;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;color:#d35400;">${toBanglaNumbers(ftSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
-            currentTbody.appendChild(tTr2);
-        }
-        // Overview table is on the Title Page at top.
+        // No totals for Loan Case Register
+        
 
         const originalDisplay = printContainer.style.display;
         printContainer.style.display = 'block';
@@ -1260,7 +1199,12 @@ function toBanglaNumbers(str) {
                 "ক্রম": (index + 1),
                 "হিসাব নম্বর": item['হিসাব নম্বর'] || '',
                 "ঋণের ধরণ": item['ঋণের ধরণ'] || '',
-                "নাম ও পিতার নাম": item['নাম ও পিতার নাম'] || '',
+                
+                                    "ঋণ কেস নম্বর": loan.loan_case_no || loan.input_loan_case_num || loan.cbs_account_no || loan.account_no || '',
+                                    "প্রতিষ্ঠানের নাম": loan.institution_name || loan.input_institution_name_bn || customer.applicant_name_bn || '',
+                                    "সিটি কর্পো:": customer.applicant_curr_addr_city_corp || loan.present_city_corp || loan.input_present_city_corp || '',
+                                    "ওয়ার্ড": customer.applicant_curr_addr_ward || loan.present_ward || loan.input_present_ward || '',
+                                        "নাম ও পিতার নাম": item['নাম ও পিতার নাম'] || '',
                 "বাড়ি ও গ্রাম": item['বাড়ি ও গ্রাম'] || '',
                 "পোস্ট": item['পোস্ট'] || '',
                 "থানা/উপজেলা": item['থানা/উপজেলা'] || '',
@@ -2476,8 +2420,8 @@ const subCategoriesMap = {
     function downloadExcelFormat() {
         if (typeof ExcelJS === 'undefined') { if(window.parent && window.parent.showAppToast) window.parent.showAppToast('ExcelJS library not loaded.'); else alert('ExcelJS library not loaded.'); return; }
 
-        var headers = ['ক্রম','হিসাব নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','জেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের পরিমান','বিতরণের তারিখ','মেয়াদোর্ত্তীণের তারিখ','বর্তমান স্থিতি','ঋণের স্ট্যাটাস','৫২ স্থগিত সুদ','মন্তব্য'];
-        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 16, 20, 12, 18, 16, 16, 18, 20, 18, 22];
+        var headers = ['ক্রম','ঋণ কেস নম্বর','ঋণের ধরণ','ঋণের খাত','প্রতিষ্ঠানের নাম','ঋণগ্রহীতার নাম','পিতা/স্বামীর নাম','বাড়ি','গ্রাম','ইউ/পৌর','সিটি কর্পো:','ওয়ার্ড','জেলা','মোবাইল নং'];
+        var colWidths = [6, 22, 18, 20, 30, 30, 28, 16, 16, 16, 16, 12, 16, 18];
 
         var wb2 = new ExcelJS.Workbook();
         wb2.creator = 'BKB TMS';

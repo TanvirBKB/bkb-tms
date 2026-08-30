@@ -794,6 +794,38 @@ function parseCSV(text){
   return rows.filter(r=>r.length && r.some(c=>c!=='')); // drop blank lines
 }
 
+
+    // Helper to resiliently resolve Capitalization Frequency from maps
+    const resolveCapFreq = (val) => {
+        if (!val) return null;
+        let freq = capitalizationMap[val];
+        if (freq) return freq;
+        
+        const resolvedName = loanTypeMap[val];
+        if (resolvedName && capitalizationMap[resolvedName]) return capitalizationMap[resolvedName];
+        
+        // Handle "1101 - AGRI" format natively so it works everywhere
+        if (val.includes('-')) {
+            const parts = val.split('-');
+            const code = parts[0].trim();
+            const name = parts.slice(1).join('-').trim();
+            
+            // Try resolving by code
+            if (loanTypeMap[code] && capitalizationMap[loanTypeMap[code]]) return capitalizationMap[loanTypeMap[code]];
+            if (capitalizationMap[code]) return capitalizationMap[code];
+            
+            // Try resolving by name
+            const upperName = name.toUpperCase().trim();
+            const matchedNameKey = Object.keys(capitalizationMap).find(k => k.toUpperCase().trim() === upperName);
+            if (matchedNameKey) return capitalizationMap[matchedNameKey];
+        }
+
+        const upperVal = val.toUpperCase().trim();
+        const matchedKey = Object.keys(capitalizationMap).find(k => k.toUpperCase().trim() === upperVal);
+        if (matchedKey) return capitalizationMap[matchedKey];
+        return null;
+    };
+
 function processAndDisplayData(rows, appendData = false, ignoreStartDate = false) {
     const calcStartDateInput = document.getElementById('calcStartDate');
     const calcEndDateInput = document.getElementById('calcEndDate');
@@ -1114,30 +1146,30 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         const endDate = new Date(document.getElementById('calcEndDate').value);
 
         // 1. Get Capitalization Dates
-        const capFrequency = capitalizationMap[loanType];
+        const capFrequency = resolveCapFreq(loanType);
         if (capFrequency) { // Check if capFrequency is defined
             const capDates = [];
-            let currentDate = new Date(startDate.getTime()); // UTC copy
+            // Start at the 1st of the month to avoid skipping months like February
+            let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1); 
             while (currentDate <= endDate) { // Loop until current date exceeds end date
-                let month = currentDate.getUTCMonth();
-                let year = currentDate.getUTCFullYear();
+                let month = currentDate.getMonth();
+                let year = currentDate.getFullYear();
                 let capitalizationDate = null;
-                if (capFrequency === 'monthly') capitalizationDate = new Date(Date.UTC(year, month + 1, 0));
-                else if (capFrequency === 'quarterly') { if ([2, 5, 8, 11].includes(month)) capitalizationDate = new Date(Date.UTC(year, month + 1, 0)); } // March, June, Sep, Dec
-                else if (capFrequency === 'yearly') { if (month === 5) capitalizationDate = new Date(Date.UTC(year, 6, 0)); } // June 30
+                if (capFrequency === 'monthly') capitalizationDate = new Date(year, month + 1, 0);
+                else if (capFrequency === 'quarterly') { if ([2, 5, 8, 11].includes(month)) capitalizationDate = new Date(year, month + 1, 0); } // March, June, Sep, Dec
+                else if (capFrequency === 'yearly') { if (month === 5) capitalizationDate = new Date(year, 6, 0); } // June 30
 
                 if (capitalizationDate && capitalizationDate >= startDate && capitalizationDate <= endDate) {
                     if (!capDates.some(d => d.getTime() === capitalizationDate.getTime())) capDates.push(capitalizationDate);
                 } // Add capitalization date if it's within the range and not already present
-                currentDate.setUTCMonth(currentDate.getUTCMonth() + 1);
+                currentDate.setMonth(currentDate.getMonth() + 1);
             }
             capDates.forEach(date => {
-            const dateExists = allRowsData.some(r => r.date && r.date.getTime() === date.getTime());
-            if (!dateExists) allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
-            else {
-                const match = allRowsData.find(r => r.date && r.date.getTime() === date.getTime());
-                if (match) match.isCapitalization = true;
-            }
+                // Check if a capitalization row specifically exists for this date, not just ANY transaction
+                const capExists = allRowsData.some(r => r.date && r.date.getFullYear() === date.getFullYear() && r.date.getMonth() === date.getMonth() && r.date.getDate() === date.getDate() && (r.isCapitalization || r.particulars === 'Interest Capitalization'));
+                if (!capExists) {
+                    allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+                }
             });
         }
 
@@ -1888,27 +1920,11 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     let capFrequency = null;
     
     // Helper to check the maps
-    const resolveCapFreq = (val) => {
-        if (!val) return null;
-        let freq = capitalizationMap[val];
-        if (freq) return freq;
-        const resolvedName = loanTypeMap[val];
-        if (resolvedName && capitalizationMap[resolvedName]) return capitalizationMap[resolvedName];
-        const upperVal = val.toUpperCase();
-        const matchedKey = Object.keys(capitalizationMap).find(k => k.toUpperCase() === upperVal);
-        if (matchedKey) return capitalizationMap[matchedKey];
-        return null;
-    };
+
 
     capFrequency = resolveCapFreq(loanInputVal);
 
-    // If not found, try parsing "1101 - AGRI" format
-    if (!capFrequency && loanInputVal.includes('-')) {
-        const parts = loanInputVal.split('-');
-        const code = parts[0].trim();
-        const name = parts.slice(1).join('-').trim();
-        capFrequency = resolveCapFreq(code) || resolveCapFreq(name);
-    }
+
     
     // If STILL not found, check if it's a known Term Loan that might use uiFrequency or default to yearly?
     // Based on user feedback: Inst. Frequency is for PENALTY, not capitalization.

@@ -1346,6 +1346,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         openLocalForm('forms/reportgeneration/borrower_list.html', 'Borrower List');
     }, 'Borrower List');
 
+    setupNavLink('nav-report-loan-case', () => {
+        console.log('Clicked: Loan Case Register');
+        openLocalForm('forms/reportgeneration/loan_case_register.html', 'Loan Case Register');
+    }, 'Loan Case Register');
+
     setupNavLink('nav-performance-branch', () => {
         console.log('Clicked: Branch Performance');
     }, 'Branch Performance');
