@@ -1,4 +1,4 @@
-﻿function toBanglaNumbers(str) {
+function toBanglaNumbers(str) {
     if (!str && str !== 0) return '';
     const banglaDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
     return str.toString().replace(/[0-9]/g, d => banglaDigits[d]);
@@ -38,7 +38,7 @@
     }
 
     // Standard headers we expect from Excel
-    const EXPECTED_HEADERS = ['হিসাব নম্বর', 'ঋণের ধরণ', 'নাম ও পিতার নাম', 'বাড়ি ও গ্রাম', 'পোস্ট', 'থানা/উপজেলা', 'ঋণের পরিমাণ', 'বিতরণের তারিখ', 'দেয় তারিখ', 'বর্তমান স্থিতি', 'মোবাইল', 'স্ট্যাটাস', 'মন্তব্য'];
+    const EXPECTED_HEADERS = ['হিসাব নম্বর', 'ঋণের ধরণ', 'নাম ও পিতার নাম', 'বাড়ি ও গ্রাম', 'পোস্ট', 'থানা/উপজেলা', 'ঋণের পরিমাণ', 'বিতরণের তারিখ', 'দেয় তারিখ', 'বর্তমান স্থিতি', 'মোবাইল', 'স্ট্যাটাস', '৫২ স্থগিত সুদ', 'মন্তব্য'];
 
     async function init() {
 
@@ -576,6 +576,18 @@
             if (item['মঞ্জুরীকৃত পরিমাণ'] && !item['ঋণের পরিমাণ']) {
                 item['ঋণের পরিমাণ'] = item['মঞ্জুরীকৃত পরিমাণ'];
             }
+            if (item['বিতরণের পরিমাণ'] && !item['ঋণের পরিমাণ']) {
+                item['ঋণের পরিমাণ'] = item['বিতরণের পরিমাণ'];
+            }
+            if (item['বিতরণের পরিমান'] && !item['ঋণের পরিমাণ']) {
+                item['ঋণের পরিমাণ'] = item['বিতরণের পরিমান'];
+            }
+            if (item['বিতরণের পরিমাণ'] && !item['ঋণের পরিমাণ']) {
+                item['ঋণের পরিমাণ'] = item['বিতরণের পরিমাণ'];
+            }
+            if (item['বিতরণের পরিমান'] && !item['ঋণের পরিমাণ']) {
+                item['ঋণের পরিমাণ'] = item['বিতরণের পরিমান'];
+            }
             if (item['সুদের হার(%)'] && !item['interest_rate']) {
                 item['interest_rate'] = item['সুদের হার(%)'];
             }
@@ -596,6 +608,12 @@
             }
             if (item['Notice Status'] && !item['notice_status']) {
                 item['notice_status'] = item['Notice Status'];
+            }
+            if (item['স্থগিত সুদ'] && !item['৫২ স্থগিত সুদ']) {
+                item['৫২ স্থগিত সুদ'] = item['স্থগিত সুদ'];
+            }
+            if (item['suspended_interest'] && !item['৫২ স্থগিত সুদ']) {
+                item['৫২ স্থগিত সুদ'] = item['suspended_interest'];
             }
             
             item['_id'] = index;
@@ -707,6 +725,7 @@
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বিতরণের তারিখ" style="text-align:center; white-space:nowrap;">${toBanglaNumbers(distDateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="দেয় তারিখ" style="text-align:center; white-space:nowrap;">${toBanglaNumbers(expDateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বর্তমান স্থিতি" style="text-align:center; ${item._isCreditBalance ? 'color:red; font-weight:bold;' : ''}">${toBanglaNumbers(item['বর্তমান স্থিতি'] || '')}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="৫২ স্থগিত সুদ" style="text-align:center;">${toBanglaNumbers(item['৫২ স্থগিত সুদ'] || '')}</td>
                 <td style="text-align:center;">${item['স্ট্যাটাস'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="শ্রেণীমান" style="text-align:center;">${item['শ্রেণীমান'] || ''}</td>
                 <td style="text-align:center;"><button onclick="if(confirm('Are you sure you want to delete this loan?')) window.deleteLoan('${item._id}')" style="background:none;border:none;cursor:pointer;color:red;" title="Delete">🗑</button></td>
@@ -716,14 +735,19 @@
 
         // Update UI Totals
         let totalAmt = 0;
+        let totalSuspended = 0;
         data.forEach(item => {
             let bal = parseFloat((item['বর্তমান স্থিতি'] || '').toString().replace(/[^\d.]/g, '')) || 0;
+            let sus = parseFloat((item['৫২ স্থগিত সুদ'] || '').toString().replace(/[^\d.]/g, '')) || 0;
             totalAmt += bal;
+            totalSuspended += sus;
         });
         const uiTotalLoans = document.getElementById('ui-total-loans');
         const uiTotalAmt = document.getElementById('ui-total-outstanding');
-        if (uiTotalLoans) uiTotalLoans.innerText = `${toBanglaNumbers(data.length.toString())} টি ঋণ`;
+        const uiTotalSuspended = document.getElementById('ui-total-suspended');
+        if (uiTotalLoans) uiTotalLoans.innerText = `${toBanglaNumbers(data.length.toString())} টি`;
         if (uiTotalAmt) uiTotalAmt.innerText = toBanglaNumbers(totalAmt.toLocaleString('en-IN')) + '/-';
+        if (uiTotalSuspended) uiTotalSuspended.innerText = toBanglaNumbers(totalSuspended.toLocaleString('en-IN')) + '/-';
 
         // Request header population again so new pages get branch info
         try {
@@ -807,6 +831,7 @@
                 <td style="text-align:center;white-space:nowrap;">${toBanglaNumbers(dD)}</td>
                 <td style="text-align:center;white-space:nowrap;">${toBanglaNumbers(eD)}</td>
                 <td style="text-align:center;${item._isCreditBalance?'color:red;font-weight:bold;':''}">${toBanglaNumbers(item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'')}</td>
+                <td style="text-align:center;">${toBanglaNumbers(item['৫২ স্থগিত সুদ']||'')}</td>
                 <td style="text-align:center;">${toBanglaNumbers(item['\u09ae\u09cb\u09ac\u09be\u0987\u09b2']||'')}</td>
                 <td style="text-align:center;">${item['\u09b8\u09cd\u099f\u09cd\u09af\u09be\u099f\u09be\u09b8']||''}</td>
                 <td>${item['\u09ae\u09a8\u09cd\u09a4\u09ac\u09cd\u09af']||''}</td>`;
@@ -832,6 +857,7 @@
                 g.items.push(item);
             });
             let grandTotal = 0;
+            let grandTotalSus = 0;
             groups.forEach((grp, gi) => {
                 const lbl = grp.code === '__NONE__'
                     ? '\u0985\u09b6\u09cd\u09b0\u09c7\u09a3\u09c0\u09ac\u09a6\u09cd\u09a7 (\u09ac\u09bf\u09a8\u09be \u0995\u09cb\u09a1)'
@@ -841,15 +867,24 @@
                 hTr.innerHTML = `<td colspan="16" style="padding:8px;border:none;">${lbl}</td>`;
                 currentTbody.appendChild(hTr);
                 let grpTotal = 0;
+                let grpTotalSus = 0;
                 grp.items.forEach(item => {
                     currentTbody.appendChild(buildPrintRow(item, seqNum++));
                     grpTotal += parseFloat((item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'').toString().replace(/[^\d.]/g,'')) || 0;
+                    grpTotalSus += parseFloat((item['৫২ স্থগিত সুদ']||'').toString().replace(/[^\d.]/g,'')) || 0;
                 });
                 grandTotal += grpTotal;
-                const sTr = document.createElement('tr');
-                sTr.style.cssText = 'font-weight:bold;background:#d5e8d4;';
-                sTr.innerHTML = `<td colspan="7" style="text-align:right;padding:6px;border-top:2px solid #000;">\u0989\u09aa\u09ae\u09cb\u099f (${lbl}): ${toBanglaNumbers(grp.items.length.toString())} \u099f\u09bf</td><td colspan="5" style="text-align:right;padding:6px;border-top:2px solid #000;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td colspan="4" style="text-align:left;padding:6px;border-top:2px solid #000;">${toBanglaNumbers(grpTotal.toLocaleString('en-IN'))}/-</td>`;
-                currentTbody.appendChild(sTr);
+                grandTotalSus += grpTotalSus;
+                
+                const sTr1 = document.createElement('tr');
+                sTr1.style.cssText = 'font-weight:bold;background:#d5e8d4;';
+                sTr1.innerHTML = `<td colspan="8" style="text-align:right;padding:6px;border-top:2px solid #000;">\u0989\u09aa\u09ae\u09cb\u099f (${lbl}): ${toBanglaNumbers(grp.items.length.toString())} \u099f\u09bf</td><td colspan="4" style="text-align:right;padding:6px;border-top:2px solid #000;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;padding:6px;border-top:2px solid #000;">${toBanglaNumbers(grpTotal.toLocaleString('en-IN'))}/-</td><td colspan="4" style="border-top:2px solid #000;"></td>`;
+                currentTbody.appendChild(sTr1);
+                
+                const sTr2 = document.createElement('tr');
+                sTr2.style.cssText = 'font-weight:bold;background:#d5e8d4;';
+                sTr2.innerHTML = `<td colspan="12" style="text-align:right;padding:6px;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;padding:6px;color:#d35400;">${toBanglaNumbers(grpTotalSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
+                currentTbody.appendChild(sTr2);
                 if (gi < groups.length - 1) {
                     const bTr = document.createElement('tr');
                     bTr.style.cssText = 'page-break-after:always;border:none;';
@@ -857,18 +892,32 @@
                     currentTbody.appendChild(bTr);
                 }
             });
-            const gTr = document.createElement('tr');
-            gTr.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            gTr.innerHTML = `<td colspan="7" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Grand Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="5" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td colspan="4" style="text-align:left;">${toBanglaNumbers(grandTotal.toLocaleString('en-IN'))}/-</td>`;
-            currentTbody.appendChild(gTr);
+            const gTr1 = document.createElement('tr');
+            gTr1.style.cssText = 'font-weight:bold;background:#ecf0f1;';
+            gTr1.innerHTML = `<td colspan="8" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Grand Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="4" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;">${toBanglaNumbers(grandTotal.toLocaleString('en-IN'))}/-</td><td colspan="4"></td>`;
+            currentTbody.appendChild(gTr1);
+            
+            const gTr2 = document.createElement('tr');
+            gTr2.style.cssText = 'font-weight:bold;background:#ecf0f1;';
+            gTr2.innerHTML = `<td colspan="12" style="text-align:right;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;color:#d35400;">${toBanglaNumbers(grandTotalSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
+            currentTbody.appendChild(gTr2);
         } else {
             data.forEach(item => currentTbody.appendChild(buildPrintRow(item, seqNum++)));
             let ft = 0;
-            data.forEach(item => { ft += parseFloat((item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'').toString().replace(/[^\d.]/g,'')) || 0; });
-            const tTr = document.createElement('tr');
-            tTr.style.cssText = 'font-weight:bold;background:#ecf0f1;';
-            tTr.innerHTML = `<td colspan="7" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="5" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td colspan="4" style="text-align:left;">${toBanglaNumbers(ft.toLocaleString('en-IN'))}/-</td>`;
-            currentTbody.appendChild(tTr);
+            let ftSus = 0;
+            data.forEach(item => { 
+                ft += parseFloat((item['\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf']||'').toString().replace(/[^\d.]/g,'')) || 0; 
+                ftSus += parseFloat((item['৫২ স্থগিত সুদ']||'').toString().replace(/[^\d.]/g,'')) || 0;
+            });
+            const tTr1 = document.createElement('tr');
+            tTr1.style.cssText = 'font-weight:bold;background:#ecf0f1;';
+            tTr1.innerHTML = `<td colspan="8" style="text-align:right;">\u09b8\u09b0\u09cd\u09ac\u09ae\u09cb\u099f (Total): ${toBanglaNumbers(data.length.toString())} \u099f\u09bf \u098b\u09a3</td><td colspan="4" style="text-align:right;">\u09ae\u09cb\u099f \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf:</td><td style="text-align:center;">${toBanglaNumbers(ft.toLocaleString('en-IN'))}/-</td><td colspan="4"></td>`;
+            currentTbody.appendChild(tTr1);
+            
+            const tTr2 = document.createElement('tr');
+            tTr2.style.cssText = 'font-weight:bold;background:#ecf0f1;';
+            tTr2.innerHTML = `<td colspan="12" style="text-align:right;">মোট স্থগিত সুদের পরিমাণ:</td><td style="text-align:center;color:#d35400;">${toBanglaNumbers(ftSus.toLocaleString('en-IN'))}/-</td><td colspan="3"></td>`;
+            currentTbody.appendChild(tTr2);
         }
         // Overview table is on the Title Page at top.
 
@@ -1095,55 +1144,7 @@
     function applyFilters() {
         if (!currentData) return;
         
-        const typeSelect = document.getElementById('pfilter-loan-type');
-        const sectorSelect = document.getElementById('pfilter-loan-sector');
-        const yearSelect = document.getElementById('pfilter-economic-year');
-        const statusSelect = document.getElementById('pfilter-loan-status');
-        const topNInput = document.getElementById('ui-top-loans');
-        
-        const typeFilter = typeSelect ? typeSelect.value : 'all';
-        const sectorFilter = sectorSelect ? sectorSelect.value : 'all';
-        const yearFilter = yearSelect ? yearSelect.value : 'all';
-        const statusFilter = statusSelect ? statusSelect.value : 'all';
-        const topN = topNInput && topNInput.value ? parseInt(topNInput.value) : null;
-
-        let filtered = currentData.filter(item => {
-            if (typeFilter !== 'all' && (item['ঋণের ধরণ'] || '').toString().trim() !== typeFilter) return false;
-            if (sectorFilter !== 'all' && (item._sector || '').toString().trim() !== sectorFilter) return false;
-            
-            if (statusFilter === 'not_closed') {
-                const itemStatus = (item['স্ট্যাটাস'] || '').toString().toUpperCase();
-                if (itemStatus.includes('CLOSED')) return false;
-            } else if (statusFilter !== 'all') {
-                const itemStatus = (item['স্ট্যাটাস'] || '').toString().toUpperCase();
-                // We check if the exact keyword exists in the string
-                if (!itemStatus.includes(statusFilter)) {
-                    return false;
-                }
-            }
-            
-            if (yearFilter !== 'all') {
-                const dDate = item._distDate || parseDate(item['বিতরণের তারিখ']);
-                if (dDate instanceof Date && !isNaN(dDate)) {
-                    let year = dDate.getFullYear();
-                    let month = dDate.getMonth() + 1;
-                    let ecYear = month < 7 ? `${year-1}-${year}` : `${year}-${year+1}`;
-                    if (ecYear !== yearFilter) return false;
-                } else {
-                    return false; // Cannot filter if no valid date
-                }
-            }
-            return true;
-        });
-        if (topN && topN > 0) {
-            // Sort by 'বর্তমান স্থিতি' descending
-            filtered.sort((a, b) => {
-                let valA = parseFloat((a['বর্তমান স্থিতি'] || '').toString().replace(/[^\d.]/g, '')) || 0;
-                let valB = parseFloat((b['বর্তমান স্থিতি'] || '').toString().replace(/[^\d.]/g, '')) || 0;
-                return valB - valA;
-            });
-            filtered = filtered.slice(0, topN);
-        }
+        let filtered = currentData.slice();
 
         renderPages(filtered);
         
@@ -1245,43 +1246,7 @@
     function exportToExcel() {
         if (!currentData || currentData.length === 0) return;
         
-        // Grab the currently displayed data by applying the current filters again
-        const typeSelect = document.getElementById('pfilter-loan-type');
-        const sectorSelect = document.getElementById('pfilter-loan-sector');
-        const yearSelect = document.getElementById('pfilter-economic-year');
-        const statusSelect = document.getElementById('pfilter-loan-status');
-        const topNInput = document.getElementById('ui-top-loans');
-        
-        const typeFilter = typeSelect ? typeSelect.value : 'all';
-        const sectorFilter = sectorSelect ? sectorSelect.value : 'all';
-        const yearFilter = yearSelect ? yearSelect.value : 'all';
-        const statusFilter = statusSelect ? statusSelect.value : 'all';
-        const topN = topNInput && topNInput.value ? parseInt(topNInput.value) : null;
-
-        let filtered = currentData.filter(item => {
-            if (typeFilter !== 'all' && (item['ঋণের ধরণ'] || '').toString().trim() !== typeFilter) return false;
-            if (sectorFilter !== 'all' && (item._sector || '').toString().trim() !== sectorFilter) return false;
-            if (statusFilter !== 'all' && !(item['স্ট্যাটাস'] || '').toString().toUpperCase().includes(statusFilter)) return false;
-            if (yearFilter !== 'all') {
-                const dDate = item._distDate || parseDate(item['বিতরণের তারিখ']);
-                if (dDate instanceof Date && !isNaN(dDate)) {
-                    let year = dDate.getFullYear();
-                    let month = dDate.getMonth() + 1;
-                    let ecYear = month < 7 ? `${year-1}-${year}` : `${year}-${year+1}`;
-                    if (ecYear !== yearFilter) return false;
-                } else return false;
-            }
-            return true;
-        });
-
-        if (topN && topN > 0) {
-            filtered.sort((a, b) => {
-                let valA = parseFloat((a['বর্তমান স্থিতি'] || '').toString().replace(/[^\d.]/g, '')) || 0;
-                let valB = parseFloat((b['বর্তমান স্থিতি'] || '').toString().replace(/[^\d.]/g, '')) || 0;
-                return valB - valA;
-            });
-            filtered = filtered.slice(0, topN);
-        }
+        let filtered = currentData.slice();
 
         const exportData = filtered.map((item, index) => {
             let distDateDisplay = item['বিতরণের তারিখ'] || '';
@@ -1300,13 +1265,14 @@
                 "পোস্ট": item['পোস্ট'] || '',
                 "থানা/উপজেলা": item['থানা/উপজেলা'] || '',
                 "জেলা": item['জেলা'] || '',
-                "ঋণের পরিমাণ": item['ঋণের পরিমাণ'] || '',
+                "বিতরণের পরিমান": item['ঋণের পরিমাণ'] || '',
                 "বিতরণের তারিখ": distDateDisplay,
-                "দেয় তারিখ": expDateDisplay,
+                "মেয়াদোর্ত্তীণের তারিখ": expDateDisplay,
                 "বর্তমান স্থিতি": item['বর্তমান স্থিতি'] || '',
                 "মোবাইল": item['মোবাইল'] || '',
                 "স্ট্যাটাস": item['স্ট্যাটাস'] || '',
                 "শ্রেণীমান": item['শ্রেণীমান'] || '',
+                "৫২ স্থগিত সুদ": item['৫২ স্থগিত সুদ'] || '',
                 "মন্তব্য": item['মন্তব্য'] || ''
             };
         });
@@ -1316,10 +1282,7 @@
             return;
         }
 
-        let filename = "Borrower_List";
-        if (topN) filename += "_Top_" + topN;
-        if (statusFilter !== 'all') filename += "_" + statusFilter;
-        filename += ".xlsx";
+        let filename = "Borrower_List.xlsx";
 
         const wb = new ExcelJS.Workbook();
         wb.creator = 'BKB TMS';
@@ -2513,8 +2476,8 @@ const subCategoriesMap = {
     function downloadExcelFormat() {
         if (typeof ExcelJS === 'undefined') { if(window.parent && window.parent.showAppToast) window.parent.showAppToast('ExcelJS library not loaded.'); else alert('ExcelJS library not loaded.'); return; }
 
-        var headers = ['ক্রম','ঋণ নথি নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','জেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের তারিখ','মেয়াদোত্তীর্ণ তারিখ','ঋণের পরিমাণ','ঋণের স্ট্যাটাস','মন্তব্য'];
-        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 16, 20, 12, 16, 16, 18, 20, 22];
+        var headers = ['ক্রম','ঋণ নথি নম্বর','ঋণের ধরণ','প্রতিষ্ঠান','নাম','পিতার/স্বামীর নাম','বাড়ি','গ্রাম','পোস্ট','থানা/উপজেলা','জেলা','অর্থনৈতিক খাত','সুদের হার(%)','বিতরণের পরিমান','বিতরণের তারিখ','মেয়াদোর্ত্তীণের তারিখ','বর্তমান স্থিতি','ঋণের স্ট্যাটাস','৫২ স্থগিত সুদ','মন্তব্য'];
+        var colWidths = [6, 22, 18, 22, 30, 28, 16, 16, 16, 16, 16, 20, 12, 18, 16, 16, 18, 20, 18, 22];
 
         var wb2 = new ExcelJS.Workbook();
         wb2.creator = 'BKB TMS';
