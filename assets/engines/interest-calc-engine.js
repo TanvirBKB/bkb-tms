@@ -961,12 +961,9 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         }
         document.getElementById('sanctionRate').value = formatRate(parseFloat(rateRaw || '0'));
 
-        // Determine Loan Type
-        let loanTypeVal = '';
-        if (metaIndices.glHead !== -1) {
-            const glCode = String(getCellValue(9, metaIndices.glHead)).trim();
-            loanTypeVal = loanTypeMap[glCode] || glCode;
-        } else {
+        // Determine Loan Type (Strictly from Account Number to follow internal structure)
+        let loanTypeVal = 'Unknown Loan Type';
+        if (accountNumber) {
             const hyphenIndex = accountNumber.indexOf('-');
             if (hyphenIndex > -1 && accountNumber.length >= hyphenIndex + 5) {
                 const loanCode = accountNumber.substr(hyphenIndex + 1, 4);
@@ -1143,7 +1140,8 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
 
         const loanType = document.getElementById('loan_scheme_name').value;
         const startDate = allRowsData[0].date;
-        const endDate = new Date(document.getElementById('calcEndDate').value);
+        let uiEndDate = new Date(document.getElementById('calcEndDate').value);
+        const endDate = (!isNaN(uiEndDate.getTime())) ? uiEndDate : allRowsData[allRowsData.length - 1].date;
 
         // 1. Get Capitalization Dates
         const capFrequency = resolveCapFreq(loanType);
@@ -1256,7 +1254,8 @@ function applyRatesAndRecalculate() {
 
     const loanType = document.getElementById('loan_scheme_name').value; // Corrected ID
     const startDate = allRowsData[0].date;
-    const endDate = new Date(document.getElementById('calcEndDate').value);
+    let uiEndDate = new Date(document.getElementById('calcEndDate').value);
+        const endDate = (!isNaN(uiEndDate.getTime())) ? uiEndDate : allRowsData[allRowsData.length - 1].date;
 
     // Get Interest Rate Change Dates from the (potentially updated) history
     const rateChanges = interestRateHistory[loanType.toUpperCase().trim()];
