@@ -207,16 +207,21 @@
 
                 <div style="display: flex; align-items: center; gap: 4px; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border: 1px solid #bdc3c7; margin-right: 6px;">
                     <label for="ui-filter-main" style="font-size: 12px; font-weight: bold; color: #34495e; margin:0;">ফিল্টার:</label>
-                    <select id="ui-filter-main" onchange="window.onMainFilterChange()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;">
-                        <option value="all">সব (All)</option>
+                    <select id="ui-filter-main" onchange="window.onMainFilterChange()" style="padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black; font-weight: 500;">
+                        <option value="all">-- সব কলাম (All) --</option>
                         <option value="ঋণের ধরণ">ঋণের ধরণ</option>
-                        <option value="ঋণের খাত">ঋণের খাত</option>
-                        <option value="গ্রাম">গ্রাম</option>
-                        <option value="স্ট্যাটাস">স্ট্যাটাস</option>
+                        <option value="ঋণের খাত">ঋণের খাত / অর্থনৈতিক খাত</option>
+                        <option value="গ্রাম">গ্রাম (Village)</option>
+                        <option value="পোস্ট">পোস্ট (Post)</option>
+                        <option value="থানা/উপজেলা">থানা/উপজেলা (Upazila)</option>
+                        <option value="জেলা">জেলা (District)</option>
+                        <option value="স্ট্যাটাস">ঋণের স্ট্যাটাস (Status: UC/SMA/SS/DF/BL)</option>
+                        <option value="সুদের হার">সুদের হার (Interest Rate)</option>
                     </select>
-                    <select id="ui-filter-sub" onchange="window.applyFilters()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;" disabled>
+                    <select id="ui-filter-sub" onchange="window.applyFilters()" style="padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black; min-width: 140px;" disabled>
                         <option value="all">সব (All)</option>
                     </select>
+                    <button type="button" onclick="window.resetUIFilters()" style="background: #95a5a6; color: white; border: none; border-radius: 3px; padding: 3px 7px; font-size: 11px; cursor: pointer;" title="Reset Filter">✕</button>
                 </div>
                 <button onclick="window.showBreakdown()"
                     style="background:#f39c12; color:white; padding: 7px 13px; border:none; border-radius:4px; cursor: pointer; font-weight:bold;">

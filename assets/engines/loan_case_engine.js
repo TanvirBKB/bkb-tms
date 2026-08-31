@@ -2739,57 +2739,132 @@ const subCategoriesMap = {
         }
     };
 
-})();
 
-    window.onMainFilterChange = function() {
+
+    // ─────────────────────────────────────────────────────────────────
+    // EXCEL-STYLE DYNAMIC FILTER ENGINE
+    // ─────────────────────────────────────────────────────────────────
+    function onMainFilterChange() {
         const mainSelect = document.getElementById('ui-filter-main');
         const subSelect = document.getElementById('ui-filter-sub');
         if (!mainSelect || !subSelect) return;
 
         const mainVal = mainSelect.value;
-        subSelect.innerHTML = '<option value="all">সব (All)</option>';
+        subSelect.innerHTML = '';
 
         if (mainVal === 'all') {
+            subSelect.innerHTML = '<option value="all">সব (All)</option>';
             subSelect.disabled = true;
-            window.applyFilters();
+            applyFilters();
             return;
         }
 
         subSelect.disabled = false;
-        const uniqueValues = new Set();
+        subSelect.innerHTML = '<option value="all">সব (All - ' + mainVal + ')</option>';
 
-        if (mainVal === 'গ্রাম') {
-            currentData.forEach(item => {
-                let val = (item['গ্রাম'] || item._villageName || '').toString().trim();
-                if (val) uniqueValues.add(val);
-            });
-        } else if (mainVal === 'ঋণের ধরণ') {
-            currentData.forEach(item => {
-                let val = (item['ঋণের ধরণ'] || '').toString().trim();
-                if (val) uniqueValues.add(val);
-            });
-        } else if (mainVal === 'ঋণের খাত') {
-            currentData.forEach(item => {
-                let val = (item['ঋণের খাত'] || item['ঋণের খাত'] || '').toString().trim();
-                if (val) uniqueValues.add(val);
-            });
-        } else if (mainVal === 'স্ট্যাটাস') {
-            currentData.forEach(item => {
-                let val = (item['স্ট্যাটাস'] || '').toString().trim().toUpperCase();
-                if (val) uniqueValues.add(val);
-            });
+        if (!currentData || !currentData.length) {
+            applyFilters();
+            return;
         }
 
-        // Sort unique values and append as options
-        Array.from(uniqueValues).sort().forEach(val => {
+        const counts = new Map();
+
+        currentData.forEach(item => {
+            let val = '';
+            if (mainVal === 'গ্রাম') {
+                val = (item['গ্রাম'] || item._villageName || '').toString().trim();
+            } else if (mainVal === 'ঋণের ধরণ') {
+                val = (item['ঋণের ধরণ'] || '').toString().trim();
+            } else if (mainVal === 'ঋণের খাত') {
+                val = (item['ঋণের খাত'] || item['অর্থনৈতিক খাত'] || '').toString().trim();
+            } else if (mainVal === 'পোস্ট') {
+                val = (item['পোস্ট'] || '').toString().trim();
+            } else if (mainVal === 'থানা/উপজেলা') {
+                val = (item['থানা/উপজেলা'] || item['উপজেলা'] || item['থানা'] || '').toString().trim();
+            } else if (mainVal === 'জেলা') {
+                val = (item['জেলা'] || '').toString().trim();
+            } else if (mainVal === 'স্ট্যাটাস') {
+                val = (item['স্ট্যাটাস'] || item['ঋণের স্ট্যাটাস'] || item['শ্রেণীমান'] || '').toString().trim().toUpperCase();
+            } else if (mainVal === 'সুদের হার') {
+                let ir = (item.interest_rate || item['সুদের হার(%)'] || item['সুদের হার'] || '').toString().trim();
+                if (ir && !ir.includes('%')) ir += '%';
+                val = ir;
+            } else {
+                val = (item[mainVal] || '').toString().trim();
+            }
+
+            if (val) {
+                counts.set(val, (counts.get(val) || 0) + 1);
+            }
+        });
+
+        const sortedValues = Array.from(counts.keys()).sort((a, b) => a.localeCompare(b, 'bn'));
+
+        sortedValues.forEach(val => {
+            const count = counts.get(val);
             const opt = document.createElement('option');
             opt.value = val;
-            opt.textContent = val;
+            opt.textContent = `${val} (${toBanglaNumbers(count.toString())} টি)`;
             subSelect.appendChild(opt);
         });
 
-        window.applyFilters();
-    };
+        if (sortedValues.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = 'all';
+            opt.textContent = '(কোনো ডেটা নেই)';
+            subSelect.appendChild(opt);
+        }
+
+        applyFilters();
+    }
+
+    function applyFilters() {
+        if (!currentData) return;
+
+        const mainSelect = document.getElementById('ui-filter-main');
+        const subSelect = document.getElementById('ui-filter-sub');
+
+        const mainVal = mainSelect ? mainSelect.value : 'all';
+        const subVal = subSelect ? subSelect.value : 'all';
+
+        let filtered = currentData.slice();
+
+        if (mainVal !== 'all' && subVal !== 'all') {
+            filtered = filtered.filter(item => {
+                if (mainVal === 'গ্রাম') {
+                    const v = (item['গ্রাম'] || item._villageName || '').toString().trim();
+                    return v === subVal;
+                } else if (mainVal === 'ঋণের ধরণ') {
+                    return (item['ঋণের ধরণ'] || '').toString().trim() === subVal;
+                } else if (mainVal === 'ঋণের খাত') {
+                    const k = (item['ঋণের খাত'] || item['অর্থনৈতিক খাত'] || '').toString().trim();
+                    return k === subVal;
+                } else if (mainVal === 'পোস্ট') {
+                    return (item['পোস্ট'] || '').toString().trim() === subVal;
+                } else if (mainVal === 'থানা/উপজেলা') {
+                    const th = (item['থানা/উপজেলা'] || item['উপজেলা'] || item['থানা'] || '').toString().trim();
+                    return th === subVal;
+                } else if (mainVal === 'জেলা') {
+                    return (item['জেলা'] || '').toString().trim() === subVal;
+                } else if (mainVal === 'স্ট্যাটাস') {
+                    const st = (item['স্ট্যাটাস'] || item['ঋণের স্ট্যাটাস'] || item['শ্রেণীমান'] || '').toString().trim().toUpperCase();
+                    return st === subVal.toUpperCase();
+                } else if (mainVal === 'সুদের হার') {
+                    let ir = (item.interest_rate || item['সুদের হার(%)'] || item['সুদের হার'] || '').toString().trim();
+                    if (ir && !ir.includes('%')) ir += '%';
+                    return ir === subVal;
+                } else {
+                    return (item[mainVal] || '').toString().trim() === subVal;
+                }
+            });
+        }
+
+        renderPages(filtered);
+
+        if (typeof window.showBreakdown === 'function') {
+            window.showBreakdown(true);
+        }
+    }
 
     function resetUIFilters() {
         const mainSelect = document.getElementById('ui-filter-main');
@@ -2799,4 +2874,11 @@ const subCategoriesMap = {
             subSelect.innerHTML = '<option value="all">সব (All)</option>';
             subSelect.disabled = true;
         }
+        applyFilters();
     }
+
+    window.onMainFilterChange = onMainFilterChange;
+    window.applyFilters = applyFilters;
+    window.resetUIFilters = resetUIFilters;
+
+})();
