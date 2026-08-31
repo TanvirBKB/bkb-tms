@@ -494,7 +494,7 @@ function toBanglaNumbers(str) {
                 const recombinedName = name + (fname ? '\n' + fname : '');
 
                 let newItem = { ...row };
-                newItem['ঋণের খাত'] = row['ঋণের খাত'] || row['ঋণের খাত'] || '';
+                newItem['ঋণের খাত'] = row['ঋণের খাত'] || row['ঋণের খাত'] || row['অর্থনৈতিক খাত'] || '';
                 newItem['ঋণের খাত'] = newItem['ঋণের খাত'];
                 newItem['নাম'] = name;
                 newItem['পিতা/স্বামীর নাম'] = fname;
@@ -615,7 +615,7 @@ function toBanglaNumbers(str) {
         // Ensure data consistency
         const processed = jsonData.map((row, index) => {
             let item = { ...row };
-            item['ঋণের খাত'] = item['ঋণের খাত'] || item['ঋণের খাত'] || '';
+            item['ঋণের খাত'] = item['ঋণের খাত'] || item['ঋণের খাত'] || item['অর্থনৈতিক খাত'] || '';
             item['ঋণের খাত'] = item['ঋণের খাত'];
             
             // Fix Excel formula blank evaluation (empty cell reference returns 0 instead of blank)
@@ -1208,11 +1208,32 @@ function toBanglaNumbers(str) {
 
     function applyFilters() {
         if (!currentData) return;
-        
+
+        const mainSelect = document.getElementById('ui-filter-main');
+        const subSelect  = document.getElementById('ui-filter-sub');
+
+        const mainVal = mainSelect ? mainSelect.value : 'all';
+        const subVal  = subSelect  ? subSelect.value  : 'all';
+
         let filtered = currentData.slice();
 
+        if (mainVal !== 'all' && subVal !== 'all') {
+            filtered = filtered.filter(item => {
+                if (mainVal === 'গ্রাম') {
+                    return (item['গ্রাম'] || item._villageName || '').toString().trim() === subVal;
+                } else if (mainVal === 'ঋণের ধরণ') {
+                    return (item['ঋণের ধরণ'] || '').toString().trim() === subVal;
+                } else if (mainVal === 'ঋণের খাত') {
+                    return (item['ঋণের খাত'] || item['ঋণের খাত'] || item['অর্থনৈতিক খাত'] || '').toString().trim() === subVal;
+                } else if (mainVal === 'স্ট্যাটাস') {
+                    return (item['স্ট্যাটাস'] || '').toString().trim().toUpperCase() === subVal;
+                }
+                return true;
+            });
+        }
+
         renderPages(filtered);
-        
+
         // Sync Economic Year & Timeframe on document headers
         syncEconomicYearHeader(yearFilter);
 
