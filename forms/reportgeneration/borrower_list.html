@@ -126,6 +126,15 @@
                 margin: 0.5in;
             }
 
+            .sort-icon,
+            .no-print {
+                display: none !important;
+            }
+
+            .report-table th {
+                white-space: nowrap !important;
+            }
+
             [contenteditable="true"]:empty::before {
                 display: none;
             }
@@ -167,6 +176,7 @@
         .report-table th {
             background-color: #f2f2f2;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .header-container {
@@ -211,6 +221,19 @@
                     <input type="date" id="ui-as-of-date"
                         style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none;">
                 </div>
+                <div style="display: flex; align-items: center; gap: 4px; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border: 1px solid #bdc3c7; margin-right: 6px;">
+                    <label for="ui-filter-main" style="font-size: 12px; font-weight: bold; color: #34495e; margin:0;">ফিল্টার:</label>
+                    <select id="ui-filter-main" onchange="window.onMainFilterChange()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;">
+                        <option value="all">সব (All)</option>
+                        <option value="ঋণের ধরণ">ঋণের ধরণ</option>
+                        <option value="ঋণের খাত">ঋণের খাত</option>
+                        <option value="গ্রাম">গ্রাম</option>
+                        <option value="স্ট্যাটাস">স্ট্যাটাস</option>
+                    </select>
+                    <select id="ui-filter-sub" onchange="window.applyFilters()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;" disabled>
+                        <option value="all">সব (All)</option>
+                    </select>
+                </div>
                 <button onclick="window.showBreakdown()"
                     style="background:#f39c12; color:white; padding: 7px 13px; border:none; border-radius:4px; cursor: pointer; font-weight:bold;">
                     Breakdown</button>
@@ -252,7 +275,7 @@
                         <th>ক্রম</th>
                         <th>হিসাব নম্বর</th>
                         <th>ঋণের ধরণ</th>
-                        <th>প্রতিষ্ঠান/ব্যবসা</th>
+                        
                         <th>নাম ও পিতার নাম</th>
                         <th>বাড়ি ও গ্রাম (পোস্ট, থানা/উপজেলা, জেলা)</th>
                         <th>পোস্ট অফিস</th>
@@ -275,7 +298,7 @@
                 </tbody>
                 <tfoot style="background: #ecf0f1; font-weight: bold;">
                     <tr>
-                        <td colspan="10" style="text-align: right; padding: 10px;">সর্বমোট (Total):</td>
+                        <td colspan="9" style="text-align: right; padding: 10px;">সর্বমোট (Total):</td>
                         <td id="ui-total-loans" style="text-align: center; padding: 10px;">টি</td>
                         <td colspan="4" style="text-align: right; padding: 10px;">মোট ঋণ স্থিতি:</td>
                         <td id="ui-total-outstanding" style="text-align: center; padding: 10px;">0</td>
@@ -412,21 +435,21 @@
                     <tr>
                         <th class="no-print" style="width:30px;"><input type="checkbox" id="selectAll"
                                 onchange="toggleAllCheckboxes(this)"></th>
-                        <th>ক্রম</th>
-                        <th>হিসাব নম্বর</th>
-                        <th>ঋণের ধরণ</th>
+                        <th style="white-space:nowrap;">ক্রম</th>
+                        <th style="white-space:nowrap;">হিসাব নম্বর</th>
+                        <th style="white-space:nowrap;">ঋণের ধরণ</th>
                         <th>নাম ও পিতার নাম</th>
-                        <th>বাড়ি ও গ্রাম</th>
-                        <th>পোস্ট</th>
-                        <th>থানা/উপজেলা</th>
-                        <th>ঋণের পরিমাণ</th>
-                        <th>সুদের হার</th>
-                        <th>বিতরণের তারিখ</th>
-                        <th>দেয় তারিখ</th>
-                        <th>বর্তমান স্থিতি</th>
-                        <th>৫২ স্থগিত সুদ</th>
-                        <th>মোবাইল</th>
-                        <th>স্ট্যাটাস</th>
+                        <th>বাড়ি ও গ্রাম</th>
+                        <th style="white-space:nowrap;">পোস্ট</th>
+                        <th style="white-space:nowrap;">থানা/উপজেলা</th>
+                        <th style="white-space:nowrap;">ঋণের পরিমাণ</th>
+                        <th style="white-space:nowrap;">সুদের হার</th>
+                        <th style="white-space:nowrap;">বিতরণের তারিখ</th>
+                        <th style="white-space:nowrap;">দেয় তারিখ</th>
+                        <th style="white-space:nowrap;">বর্তমান স্থিতি</th>
+                        <th style="white-space:nowrap;">৫২ স্থগিত সুদ</th>
+                        <th style="white-space:nowrap;">স্ট্যাটাস</th>
+                        <th style="white-space:nowrap;">মোবাইল নম্বর</th>
                         <th>মন্তব্য</th>
                     </tr>
                 </thead>

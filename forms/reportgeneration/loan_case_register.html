@@ -205,6 +205,19 @@
             <h2 style="margin: 0; color: #2c3e50; font-size: 18px;">ঋণগ্রহীতাগণের তালিকা (Data Grid)</h2>
             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
 
+                <div style="display: flex; align-items: center; gap: 4px; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border: 1px solid #bdc3c7; margin-right: 6px;">
+                    <label for="ui-filter-main" style="font-size: 12px; font-weight: bold; color: #34495e; margin:0;">ফিল্টার:</label>
+                    <select id="ui-filter-main" onchange="window.onMainFilterChange()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;">
+                        <option value="all">সব (All)</option>
+                        <option value="ঋণের ধরণ">ঋণের ধরণ</option>
+                        <option value="ঋণের খাত">ঋণের খাত</option>
+                        <option value="গ্রাম">গ্রাম</option>
+                        <option value="স্ট্যাটাস">স্ট্যাটাস</option>
+                    </select>
+                    <select id="ui-filter-sub" onchange="window.applyFilters()" style="padding: 2px 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; background: white; color: black;" disabled>
+                        <option value="all">সব (All)</option>
+                    </select>
+                </div>
                 <button onclick="window.showBreakdown()"
                     style="background:#f39c12; color:white; padding: 7px 13px; border:none; border-radius:4px; cursor: pointer; font-weight:bold;">
                     Breakdown</button>
@@ -232,7 +245,7 @@
                         <th>ক্রম</th>
                         <th>হিসাব নম্বর</th>
                         <th>ঋণের ধরণ</th>
-                        <th>প্রতিষ্ঠান/ব্যবসা</th>
+                        
                         <th>নাম ও পিতার নাম</th>
                         <th>বাড়ি ও গ্রাম (পোস্ট, থানা/উপজেলা, জেলা)</th>
                         <th>পোস্ট অফিস</th>
@@ -255,7 +268,7 @@
                 </tbody>
                 <tfoot style="background: #ecf0f1; font-weight: bold;">
                     <tr>
-                        <td colspan="6" style="text-align: right; padding: 10px;">সর্বমোট (Total):</td>
+                        <td colspan="5" style="text-align: right; padding: 10px;">সর্বমোট (Total):</td>
                         <td id="ui-total-loans" style="text-align: center; padding: 10px;">0 টি</td>
                         <td colspan="8"></td>
                     </tr>

@@ -24,7 +24,7 @@ function toBanglaNumbers(str) {
     function autoLinkVillageCode(item) {
         if (item._villageCode) return; // Already has a code, don't overwrite
         if (!locationMap.length) return;
-        const village = (item['বাড়ি ও গ্রাম'] || '').toString().trim().toLowerCase();
+        const village = (item['বাড়ি ও গ্রাম'] || item['বাড়ি ও গ্রাম'] || '').toString().trim().toLowerCase();
         if (!village) return;
         // Match: check if any location entry village name is contained in the address
         const match = locationMap.find(loc => {
@@ -38,6 +38,52 @@ function toBanglaNumbers(str) {
     }
 
     // Standard headers we expect from Excel
+    
+    function parseAddressComponents(item) {
+        // Only run if গ্রাম is empty
+        if (item['গ্রাম'] || item._villageName) return;
+
+        const rawAddr = (item['বাড়ি ও গ্রাম'] || item['বাড়ি ও গ্রাম'] || item['ঠিকানা'] || '').toString().trim();
+        if (!rawAddr) return;
+
+        // Extract posts, upazilas, etc. if not already present
+        const pMatch = rawAddr.match(/(?:পোস্ট|ডাকঘর|ডাক|পো:)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+        const uMatch = rawAddr.match(/(?:উপজেলা|থানা)\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+        const dMatch = rawAddr.match(/জেলা\s*[:ঃ\-]?\s*([^,;\n]+)/i);
+        
+        if (!item['পোস্ট'] && pMatch) item['পোস্ট'] = pMatch[1].trim();
+        if (!item['থানা/উপজেলা'] && uMatch) {
+            item['থানা/উপজেলা'] = uMatch[1].trim();
+            item['উপজেলা'] = uMatch[1].trim();
+            item['থানা'] = uMatch[1].trim();
+        }
+        if (!item['জেলা'] && dMatch) item['জেলা'] = dMatch[1].trim();
+
+        // Isolate the house & village part (before পোস্ট, উপজেলা, জেলা, etc.)
+        const postIndex = rawAddr.search(/(?:পোস্ট|ডাকঘর|ডাক|পো:|উপজেলা|থানা|জেলা)/i);
+        let addrPart = postIndex > -1 ? rawAddr.substring(0, postIndex) : rawAddr;
+        addrPart = addrPart.replace(/[,;\s]+$/, ''); // clean trailing
+
+        // Split by comma
+        const parts = addrPart.split(/[,;]/).map(s => s.trim()).filter(Boolean);
+        if (parts.length >= 2) {
+            const p0Clean = parts[0].replace(/^(?:গ্রাম|বাড়ি|বাড়ি|ঠিকানা)\s*[:ঃ\-]?\s*/i, '').trim();
+            const p1Clean = parts[1].replace(/^(?:গ্রাম|বাড়ি|বাড়ি|ঠিকানা)\s*[:ঃ\-]?\s*/i, '').trim();
+
+            if (parts[0].includes('বাড়ি') || parts[0].includes('বাড়ি') || parts[0].includes('দোকান') || parts[0].includes('দক্ষিণে') || parts[0].includes('উত্তর') || parts[0].includes('দক্ষিণ')) {
+                item['গ্রাম'] = p1Clean;
+                item['বাড়ি'] = p0Clean;
+                item['বাড়ি'] = p0Clean;
+            } else {
+                item['গ্রাম'] = p0Clean;
+                item['বাড়ি'] = p1Clean;
+                item['বাড়ি'] = p1Clean;
+            }
+        } else if (parts.length === 1) {
+            item['গ্রাম'] = parts[0].replace(/^(?:গ্রাম|বাড়ি|বাড়ি|ঠিকানা)\s*[:ঃ\-]?\s*/i, '').trim();
+        }
+    }
+
     const EXPECTED_HEADERS = ['হিসাব নম্বর', 'ঋণের ধরণ', 'নাম ও পিতার নাম', 'বাড়ি ও গ্রাম', 'পোস্ট', 'থানা/উপজেলা', 'ঋণের পরিমাণ', 'বিতরণের তারিখ', 'দেয় তারিখ', 'বর্তমান স্থিতি', 'মোবাইল', 'স্ট্যাটাস', '৫২ স্থগিত সুদ', 'মন্তব্য'];
 
     async function init() {
@@ -182,7 +228,8 @@ function toBanglaNumbers(str) {
                             if (item['দেয় তারিখ'] && !item._expDate) {
                                 item._expDate = parseDate(item['দেয় তারিখ']);
                             }
-                            autoLinkVillageCode(item);
+                            parseAddressComponents(item);
+            autoLinkVillageCode(item);
                         });
                         currentData = list;
                         applyFilters();
@@ -448,6 +495,8 @@ function toBanglaNumbers(str) {
                 const recombinedName = name + (fname ? '\n' + fname : '');
 
                 let newItem = { ...row };
+                newItem['ঋণের খাত'] = row['ঋণের খাত'] || row['ঋণের খাত'] || '';
+                newItem['ঋণের খাত'] = newItem['ঋণের খাত'];
                 newItem['নাম'] = name;
                 newItem['পিতা/স্বামীর নাম'] = fname;
                 newItem['নাম ও পিতার নাম'] = recombinedName;
@@ -485,11 +534,14 @@ function toBanglaNumbers(str) {
                     newItem['বকেয়া স্থিতি'] = newItem['বর্তমান স্থিতি'];
                 }
                 
+                parseAddressComponents(newItem);
+                autoLinkVillageCode(newItem);
                 newRecords.push(newItem);
             });
 
             if (newRecords.length > 0) {
                 currentData = newRecords;
+                resetUIFilters();
                 saveCurrentList();
                 renderPages(currentData);
                 if(window.parent && window.parent.showAppToast) window.parent.showAppToast(`Successfully loaded ${newRecords.length} records from the filled Excel.`); else alert(`Successfully loaded ${newRecords.length} records from the filled Excel.`);
@@ -522,6 +574,7 @@ function toBanglaNumbers(str) {
                 return;
             }
 
+            resetUIFilters();
             processData(jsonData);
         };
         reader.readAsArrayBuffer(file);
@@ -557,6 +610,8 @@ function toBanglaNumbers(str) {
         // Ensure data consistency
         const processed = jsonData.map((row, index) => {
             let item = { ...row };
+            item['ঋণের খাত'] = item['ঋণের খাত'] || item['ঋণের খাত'] || '';
+            item['ঋণের খাত'] = item['ঋণের খাত'];
             
             // Fix Excel formula blank evaluation (empty cell reference returns 0 instead of blank)
             const textCols = ['পোস্ট', 'থানা/উপজেলা', 'উপজেলা', 'থানা', 'জেলা', 'গ্রাম', 'বাড়ি', 'বাড়ি', 'ইউনিয়ন', 'ইউনিয়ন', 'ইউ/পৌর', 'পৌরসভা', 'বাড়ি ও গ্রাম', 'নাম', 'পিতা/স্বামীর নাম', 'নাম ও পিতার নাম', 'মোবাইল'];
@@ -633,6 +688,7 @@ function toBanglaNumbers(str) {
             if (item['ঋণের পরিমাণ']) {
                 item['_loanAmount'] = parseFloat(item['ঋণের পরিমাণ'].toString().replace(/[^\d.]/g, '')) || 0;
             }
+            parseAddressComponents(item);
             autoLinkVillageCode(item);
             return item;
         });
@@ -718,13 +774,12 @@ function toBanglaNumbers(str) {
                 <td style="text-align:center;">${toBanglaNumbers(index + 1)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="হিসাব নম্বর" style="text-align:center;">${toBanglaNumbers(item['হিসাব নম্বর'] || '')}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="ঋণের ধরণ" style="text-align:center;">${item['ঋণের ধরণ'] || ''}</td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="প্রতিষ্ঠান" style="text-align:center;">${item['প্রতিষ্ঠান'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="নাম ও পিতার নাম" style="white-space: pre-wrap; min-width: 150px; line-height: 1.3;">${nameStr}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বাড়ি ও গ্রাম">${mergedAddress.join(', ')}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="পোস্ট" style="text-align:center;">${item['পোস্ট'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="থানা/উপজেলা" style="text-align:center;">${item['থানা/উপজেলা'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="জেলা" style="text-align:center;">${item['জেলা'] || ''}</td>
-                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="অর্থনৈতিক খাত" style="text-align:center;">${item['অর্থনৈতিক খাত'] || ''}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="ঋণের খাত" style="text-align:center;">${item['ঋণের খাত'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="ঋণের পরিমাণ" style="text-align:center;">${toBanglaNumbers(item['ঋণের পরিমাণ'] || '')}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="interest_rate" style="text-align:center;">${toBanglaNumbers(irateDisplay)}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="বিতরণের তারিখ" style="text-align:center; white-space:nowrap;">${toBanglaNumbers(distDateDisplay)}</td>
@@ -1032,28 +1087,28 @@ function toBanglaNumbers(str) {
         const coreCatSelect = document.getElementById('pfilter-core-category');
         const subCatSelect = document.getElementById('pfilter-sub-category');
         
-        if (!typeSelect || !sectorSelect || !yearSelect) return;
+        // if (!typeSelect || !sectorSelect || !yearSelect) return; // Commented out to ensure sorting works
 
         // Keep current selections if possible
-        const cType = typeSelect.value;
-        const cSec = sectorSelect.value;
-        const cYear = yearSelect.value;
+        const cType = typeSelect ? typeSelect.value : 'all';
+        const cSec = sectorSelect ? sectorSelect.value : 'all';
+        const cYear = yearSelect ? yearSelect.value : 'all';
         const cStatus = statusSelect ? statusSelect.value : 'all';
         const cCoreCat = coreCatSelect ? coreCatSelect.value : 'all';
         const cSubCat = subCatSelect ? subCatSelect.value : 'all';
 
-        typeSelect.innerHTML = '<option value="all">All</option>';
-        sectorSelect.innerHTML = '<option value="all">All</option>';
-        yearSelect.innerHTML = '<option value="all">All</option>';
+        if (typeSelect) typeSelect.innerHTML = '<option value="all">All</option>';
+        if (sectorSelect) sectorSelect.innerHTML = '<option value="all">All</option>';
+        if (yearSelect) yearSelect.innerHTML = '<option value="all">All</option>';
         if (statusSelect) {
             statusSelect.innerHTML = '<option value="all">Status: All</option><option value="not_closed">All except Closed</option>';
         }
         if (coreCatSelect) coreCatSelect.innerHTML = '<option value="all">Core: All</option>';
         if (subCatSelect) subCatSelect.innerHTML = '<option value="all">Sub: All</option>';
 
-        [...types].sort().forEach(t => { typeSelect.insertAdjacentHTML('beforeend', `<option value="${t}">${t}</option>`); });
-        [...sectors].sort().forEach(s => { sectorSelect.insertAdjacentHTML('beforeend', `<option value="${s}">${s}</option>`); });
-        [...years].sort((a,b) => b.localeCompare(a)).forEach(y => { yearSelect.insertAdjacentHTML('beforeend', `<option value="${y}">${y}</option>`); });
+        if (typeSelect) [...types].sort().forEach(t => { typeSelect.insertAdjacentHTML('beforeend', `<option value="${t}">${t}</option>`); });
+        if (sectorSelect) [...sectors].sort().forEach(s => { sectorSelect.insertAdjacentHTML('beforeend', `<option value="${s}">${s}</option>`); });
+        if (yearSelect) [...years].sort((a,b) => b.localeCompare(a)).forEach(y => { yearSelect.insertAdjacentHTML('beforeend', `<option value="${y}">${y}</option>`); });
         
         if (coreCatSelect) {
             [...coreCategories].sort().forEach(c => { coreCatSelect.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`); });
@@ -1072,9 +1127,9 @@ function toBanglaNumbers(str) {
             }
         }
 
-        typeSelect.value = types.has(cType) ? cType : 'all';
-        sectorSelect.value = sectors.has(cSec) ? cSec : 'all';
-        yearSelect.value = years.has(cYear) ? cYear : 'all';
+        if (typeSelect) typeSelect.value = types.has(cType) ? cType : 'all';
+        if (sectorSelect) sectorSelect.value = sectors.has(cSec) ? cSec : 'all';
+        if (yearSelect) yearSelect.value = years.has(cYear) ? cYear : 'all';
         if (statusSelect) {
             statusSelect.value = (statuses.has(cStatus) || cStatus === 'not_closed') ? cStatus : 'all';
         }
@@ -2063,6 +2118,11 @@ if (window.parent && window.parent.document) {
                     currentData[idx]['???????'] = e.target.innerText.trim();
                 } else if (col) {
                     currentData[idx][col] = e.target.innerText.trim();
+                    if (col === 'ঋণের খাত') {
+                        currentData[idx]['ঋণের খাত'] = currentData[idx]['ঋণের খাত'];
+                    } else if (col === 'ঋণের খাত') {
+                        currentData[idx]['ঋণের খাত'] = currentData[idx]['ঋণের খাত'];
+                    }
                 }
                 saveCurrentList();
             }
@@ -2680,3 +2740,63 @@ const subCategoriesMap = {
     };
 
 })();
+
+    window.onMainFilterChange = function() {
+        const mainSelect = document.getElementById('ui-filter-main');
+        const subSelect = document.getElementById('ui-filter-sub');
+        if (!mainSelect || !subSelect) return;
+
+        const mainVal = mainSelect.value;
+        subSelect.innerHTML = '<option value="all">সব (All)</option>';
+
+        if (mainVal === 'all') {
+            subSelect.disabled = true;
+            window.applyFilters();
+            return;
+        }
+
+        subSelect.disabled = false;
+        const uniqueValues = new Set();
+
+        if (mainVal === 'গ্রাম') {
+            currentData.forEach(item => {
+                let val = (item['গ্রাম'] || item._villageName || '').toString().trim();
+                if (val) uniqueValues.add(val);
+            });
+        } else if (mainVal === 'ঋণের ধরণ') {
+            currentData.forEach(item => {
+                let val = (item['ঋণের ধরণ'] || '').toString().trim();
+                if (val) uniqueValues.add(val);
+            });
+        } else if (mainVal === 'ঋণের খাত') {
+            currentData.forEach(item => {
+                let val = (item['ঋণের খাত'] || item['ঋণের খাত'] || '').toString().trim();
+                if (val) uniqueValues.add(val);
+            });
+        } else if (mainVal === 'স্ট্যাটাস') {
+            currentData.forEach(item => {
+                let val = (item['স্ট্যাটাস'] || '').toString().trim().toUpperCase();
+                if (val) uniqueValues.add(val);
+            });
+        }
+
+        // Sort unique values and append as options
+        Array.from(uniqueValues).sort().forEach(val => {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            subSelect.appendChild(opt);
+        });
+
+        window.applyFilters();
+    };
+
+    function resetUIFilters() {
+        const mainSelect = document.getElementById('ui-filter-main');
+        const subSelect = document.getElementById('ui-filter-sub');
+        if (mainSelect) mainSelect.value = 'all';
+        if (subSelect) {
+            subSelect.innerHTML = '<option value="all">সব (All)</option>';
+            subSelect.disabled = true;
+        }
+    }

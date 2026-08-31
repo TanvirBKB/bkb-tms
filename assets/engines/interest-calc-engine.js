@@ -1147,20 +1147,20 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         const capFrequency = resolveCapFreq(loanType);
         if (capFrequency) { // Check if capFrequency is defined
             const capDates = [];
-            // Start at the 1st of the month to avoid skipping months like February
-            let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1); 
+            // Start at the 1st of the month to avoid skipping months like February (Use UTC to align with calculation engine)
+            let currentDate = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), 1)); 
             while (currentDate <= endDate) { // Loop until current date exceeds end date
-                let month = currentDate.getMonth();
-                let year = currentDate.getFullYear();
+                let month = currentDate.getUTCMonth();
+                let year = currentDate.getUTCFullYear();
                 let capitalizationDate = null;
-                if (capFrequency === 'monthly') capitalizationDate = new Date(year, month + 1, 0);
-                else if (capFrequency === 'quarterly') { if ([2, 5, 8, 11].includes(month)) capitalizationDate = new Date(year, month + 1, 0); } // March, June, Sep, Dec
-                else if (capFrequency === 'yearly') { if (month === 5) capitalizationDate = new Date(year, 6, 0); } // June 30
+                if (capFrequency === 'monthly') capitalizationDate = new Date(Date.UTC(year, month + 1, 0));
+                else if (capFrequency === 'quarterly') { if ([2, 5, 8, 11].includes(month)) capitalizationDate = new Date(Date.UTC(year, month + 1, 0)); } // March, June, Sep, Dec
+                else if (capFrequency === 'yearly') { if (month === 5) capitalizationDate = new Date(Date.UTC(year, 5, 30)); } // June 30
 
                 if (capitalizationDate && capitalizationDate >= startDate && capitalizationDate <= endDate) {
                     if (!capDates.some(d => d.getTime() === capitalizationDate.getTime())) capDates.push(capitalizationDate);
                 } // Add capitalization date if it's within the range and not already present
-                currentDate.setMonth(currentDate.getMonth() + 1);
+                currentDate.setUTCMonth(currentDate.getUTCMonth() + 1);
             }
             capDates.forEach(date => {
                 // Check if a capitalization row specifically exists for this date, not just ANY transaction
@@ -1893,6 +1893,10 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         const isCapRow = row.dataset.isCapitalization === 'true' || 
                          particularsText === 'Interest Capitalization' || 
                          particularsText.includes('Int. Cap');
+                         
+        if (isCapRow || particularsText === 'Calculation End Date') {
+            continue; // Strip out existing capitalization and end-date rows to prevent duplicates on recalculation
+        }
 
         allRowsData.push({
             originalIndex: i,
@@ -1979,14 +1983,18 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         }
         
         capDates.forEach(date => {
-            // ALWAYS push a distinct row for capitalization
-            allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            // If the cap date is exactly the end date, combine them into one row
+            if (date.getTime() === endDate.getTime()) {
+                allRowsData.push({ date: date, particulars: 'Calculation End Date', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            } else {
+                allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            }
         });
 
-        // Always ensure the final calc end date is a capitalization row
+        // Always ensure the final calc end date is present and acts as a capitalization row
         const lastCapAlreadyOnEndDate = capDates.some(d => d.getTime() === endDate.getTime());
         if (!lastCapAlreadyOnEndDate) {
-            allRowsData.push({ date: endDate, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            allRowsData.push({ date: endDate, particulars: 'Calculation End Date', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
         }
     }
 
@@ -2977,6 +2985,11 @@ function hideMessageBox() {
         headerRow.eachCell((cell) => {
             cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
             cell.alignment = { vertical: 'top', horizontal: 'center', wrapText: true };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFE5E7EB' } // Gray 200 background for headers
+            };
         });
         rowOffset++;
 
@@ -2988,18 +3001,49 @@ function hideMessageBox() {
                 const row = ws.getRow(rowOffset);
                 const tds = tr.querySelectorAll('td');
                 let vals = [];
-                tds.forEach(td => vals.push(td.innerText.trim()));
+                tds.forEach((td, index) => {
+                    let text = td.innerText.trim();
+                    // Col 9 in JS (0-indexed) is Rate, which is colNumber 10 in ExcelJS.
+                    if (index === 9) {
+                        text = text.replace('%', '').trim();
+                    }
+                    // For numeric columns (index 3 to 10)
+                    if (index >= 3 && index <= 10 && text !== '') {
+                        let num = parseFloat(text.replace(/,/g, ''));
+                        if (!isNaN(num)) {
+                            vals.push(num);
+                        } else {
+                            vals.push(text);
+                        }
+                    } else {
+                        vals.push(text);
+                    }
+                });
                 row.values = vals;
                 row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
                     cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
                     cell.alignment = { vertical: 'top', wrapText: colNumber === 3 };
+                    
                     if (colNumber > 3 && colNumber !== 9 && colNumber !== 10) {
                         cell.alignment.horizontal = 'right';
                     } else if (colNumber === 1 || colNumber === 2 || colNumber === 9 || colNumber === 10) {
                         cell.alignment.horizontal = 'center';
                     }
                     
-                    if (tr.classList.contains('bg-gray-200') || (tr.querySelector('.font-bold') && !tr.querySelector('.font-bold').parentElement.classList.contains('no-print'))) {
+                    // Col 10 (Rate) format
+                    if (colNumber === 10) {
+                        cell.numFmt = '0.00'; // 2 decimal places
+                    }
+                    
+                    // Apply shading for inserted rows (capitalization and calc end date rows)
+                    if (tr.classList.contains('bg-inserted-row') || tr.classList.contains('bg-gray-200')) {
+                        cell.fill = {
+                            type: 'pattern',
+                            pattern: 'solid',
+                            fgColor: { argb: 'FFE5E7EB' } // Gray 200 equivalent
+                        };
+                        cell.font = { bold: true };
+                    } else if (tr.querySelector('.font-bold') && !tr.querySelector('.font-bold').parentElement.classList.contains('no-print')) {
                         cell.font = { bold: true };
                     }
                 });
