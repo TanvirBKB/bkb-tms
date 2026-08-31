@@ -415,10 +415,11 @@ function activateTab(tabId) {
     const btnRestoreCbs = document.getElementById('btn-restore-cbs-data');
     const btnSmartMode = document.getElementById('btn-smart-mode');
     const btnClearForm = document.getElementById('btn-clear-form');
-    [btnPullNid, btnDataEntry, btnGenerateNotice, btnStartNew, btnImport, btnInjectRtgs, btnInjectEftn, btnScanRtgs, btnRestoreCbs, btnSmartMode, btnClearForm].forEach(b => {
+    const btnCustomizeCamp = document.getElementById('btn-customize-camp-notice');
+    [btnPullNid, btnDataEntry, btnGenerateNotice, btnStartNew, btnImport, btnInjectRtgs, btnInjectEftn, btnScanRtgs, btnRestoreCbs, btnSmartMode, btnClearForm, btnCustomizeCamp].forEach(b => {
         if (b) {
             b.classList.add('hidden-panel');
-            b.style.display = ''; // Clear inline styles
+            b.style.display = 'none';
         }
     });
 
@@ -500,7 +501,23 @@ function activateTab(tabId) {
                 btnGenerateNotice.classList.remove('hidden-panel');
                 btnGenerateNotice.style.display = 'inline-block';
             }
-            if (btnStartNew) btnStartNew.classList.remove('hidden-panel');
+            if (btnStartNew) {
+                btnStartNew.classList.remove('hidden-panel');
+                btnStartNew.style.display = 'inline-block';
+            }
+
+            // If Camp Notice is opened, show Customize Notice button under Start New Form
+            const campIframe = tabInfo.contentElement.querySelector('iframe[src*="camp_notice"]');
+            if (campIframe && btnCustomizeCamp) {
+                btnCustomizeCamp.classList.remove('hidden-panel');
+                btnCustomizeCamp.style.display = 'inline-block';
+                btnCustomizeCamp.onclick = () => {
+                    if (campIframe.contentWindow && typeof campIframe.contentWindow.openCampCustomizerModal === 'function') {
+                        campIframe.contentWindow.openCampCustomizerModal();
+                    }
+                };
+            }
+
             if (btnClearForm) {
                 btnClearForm.classList.remove('hidden-panel');
                 btnClearForm.style.display = 'inline-block';
@@ -2273,7 +2290,6 @@ You can now take this file to another branch.`);
                     const btnPrimary = document.getElementById('calc-import-data');
                     const btnSecondary = document.getElementById('calc-import-secondary');
                     const btnManual = document.getElementById('calc-data-input');
-                    const btnPenalty = document.getElementById('calc-apply-penalty');
                     const btnUpdateRates = document.getElementById('calc-update-rates');
                     const btnShowLoans = document.getElementById('calc-show-loans');
                     const btnAddLoan = document.getElementById('calc-add-loan');
@@ -2286,10 +2302,6 @@ You can now take this file to another branch.`);
                     if (btnManual) {
                         btnManual.style.display = config.showInput ? 'block' : 'none';
                         if (config.inputLabel) btnManual.textContent = config.inputLabel;
-                    }
-                    if (btnPenalty) {
-                        btnPenalty.style.display = config.showPenalty ? 'block' : 'none';
-                        if (config.penaltyLabel) btnPenalty.textContent = config.penaltyLabel;
                     }
                     break;
             }

@@ -187,6 +187,47 @@ const loanStructureMap = {
   'AGRI SHORT (HILL TRACTS)': 'Agri'
 };
 
+
+function getPenaltyRateForDate(date, loanType) {
+    if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltyRate === 'function') {
+        return window.InterestRateManager.getPenaltyRate(date, loanType);
+    }
+    // Fallback default timeline
+    const d = new Date(date);
+    if (!isNaN(d.getTime()) && d >= new Date('2024-05-20')) {
+        return 1.50;
+    }
+    return 2.00;
+}
+
+function isPenaltyExempt(loanType) {
+    if (!loanType) return false;
+    if (window.InterestRateManager && typeof window.InterestRateManager.isPenaltyExempt === 'function') {
+        return window.InterestRateManager.isPenaltyExempt(loanType);
+    }
+    const nameUpper = String(loanType).toUpperCase().trim();
+    return penaltyExemptLoanTypes.some(t => t.toUpperCase().trim() === nameUpper);
+}
+
+function updatePenaltyField(loanType) {
+    const penaltyInput = document.getElementById('penaltyRate');
+    if (!penaltyInput) return;
+    const lType = loanType || document.getElementById('loan_scheme_name')?.value || '';
+    if (!lType) {
+        penaltyInput.value = 'Applicable';
+        penaltyInput.style.color = '#27ae60';
+        return;
+    }
+    const exempt = isPenaltyExempt(lType);
+    if (exempt) {
+        penaltyInput.value = 'N/A';
+        penaltyInput.style.color = '#7f8c8d';
+    } else {
+        penaltyInput.value = 'Applicable';
+        penaltyInput.style.color = '#27ae60';
+    }
+}
+
 const penaltyExemptLoanTypes = [
     'AGRI (SHORT TERM) GENERAL',
     'AGRI SHORT TERM (BEEF FATTING)',
@@ -539,30 +580,121 @@ function cancelAndContinue() {
 }
 
 /* ===== Available Loans Modal Functions ===== */
+let allAvailableLoansData = [];
+
 function showAvailableLoansModal() {
     const tableBody = document.getElementById('availableLoansTableBody');
-    tableBody.innerHTML = ''; // Clear existing content
+    if (!tableBody) return;
 
     // Get loan heads and sort them numerically
-    const loanHeads = Object.keys(loanTypeMap).sort((a, b) => a - b);
+    const loanHeads = Object.keys(loanTypeMap).sort((a, b) => Number(a) - Number(b));
+    allAvailableLoansData = [];
 
-    let rowsHtml = '';
-    let slNo = 1;
     loanHeads.forEach(head => {
         const loanName = loanTypeMap[head];
-        rowsHtml += `
-            <tr class="bg-white border-b hover:bg-gray-50">
-                <td class="px-1 py-2 text-center">${slNo++}</td>
-                <td class="px-2 py-2 font-medium text-gray-900">${head}</td>
-                <td class="px-2 py-2">${loanName}</td>
-            </tr>
-        `;
+        const category = loanCategoryMap[loanName] || 'Other';
+        const structure = loanStructureMap[loanName] || (loanName.includes('TERM') ? 'Term' : 'Continuous');
+        const cap = (resolveCapFreq(loanName) || capitalizationMap[loanName] || 'quarterly').toLowerCase();
+        const capDisplay = cap.charAt(0).toUpperCase() + cap.slice(1);
+        const isExempt = isPenaltyExempt(loanName);
+
+        let rateDisplay = '-';
+        if (window.InterestRateManager && typeof window.InterestRateManager.getLatestRate === 'function') {
+            const r = window.InterestRateManager.getLatestRate(loanName);
+            if (r !== null && r !== undefined) {
+                rateDisplay = typeof r === 'number' ? r.toFixed(2) + '%' : r;
+            }
+        } else if (fixedTermLoanRates[loanName.toUpperCase().trim()] !== undefined) {
+            rateDisplay = fixedTermLoanRates[loanName.toUpperCase().trim()] + '%';
+        }
+
+        allAvailableLoansData.push({
+            head,
+            name: loanName,
+            category,
+            structure,
+            capitalization: capDisplay,
+            isExempt,
+            rate: rateDisplay
+        });
     });
 
-    tableBody.innerHTML = rowsHtml;
+    renderAvailableLoansRows(allAvailableLoansData);
+
+    const searchInput = document.getElementById('searchAvailableLoans');
+    if (searchInput) searchInput.value = '';
+
+    const countBadge = document.getElementById('availableLoansCountBadge');
+    if (countBadge) countBadge.textContent = `Total: ${allAvailableLoansData.length} Products`;
 
     document.getElementById('availableLoansModal').classList.remove('hidden');
     document.getElementById('availableLoansModal').classList.add('flex');
+}
+
+function renderAvailableLoansRows(dataList) {
+    const tableBody = document.getElementById('availableLoansTableBody');
+    if (!tableBody) return;
+
+    if (!dataList || dataList.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-gray-500 font-medium">No matching loan products found.</td></tr>`;
+        return;
+    }
+
+    let html = '';
+    dataList.forEach((item, index) => {
+        // Capitalization badge styling
+        let capBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+        if (item.capitalization.toLowerCase().includes('year')) capBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
+        else if (item.capitalization.toLowerCase().includes('month')) capBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+
+        // Structure badge styling
+        let structBadgeClass = 'bg-gray-100 text-gray-700';
+        if (item.structure === 'Term') structBadgeClass = 'bg-indigo-50 text-indigo-700 border border-indigo-200';
+        else if (item.structure === 'Continuous') structBadgeClass = 'bg-amber-50 text-amber-800 border border-amber-200';
+        else if (item.structure === 'Agri') structBadgeClass = 'bg-teal-50 text-teal-700 border border-teal-200';
+        else if (item.structure === 'Project') structBadgeClass = 'bg-cyan-50 text-cyan-700 border border-cyan-200';
+
+        // Penalty badge styling
+        const penBadge = item.isExempt
+            ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-300">✗ N/A (Exempt)</span>'
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-50 text-green-700 border border-green-300">✓ Applicable</span>';
+
+        html += `
+            <tr class="border-b hover:bg-green-50/40 transition">
+                <td class="p-2 text-center font-bold text-gray-400">${index + 1}</td>
+                <td class="p-2 font-mono font-bold text-gray-900">${item.head}</td>
+                <td class="p-2 font-semibold text-gray-800">${item.name}</td>
+                <td class="p-2 text-gray-600">${item.category}</td>
+                <td class="p-2"><span class="px-2 py-0.5 rounded text-[11px] font-medium ${structBadgeClass}">${item.structure}</span></td>
+                <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${capBadgeClass}">${item.capitalization}</span></td>
+                <td class="p-2 text-center">${penBadge}</td>
+                <td class="p-2 text-right font-mono font-bold text-green-700">${item.rate}</td>
+            </tr>
+        `;
+    });
+    tableBody.innerHTML = html;
+}
+
+function filterAvailableLoansTable(query) {
+    if (!query || !query.trim()) {
+        renderAvailableLoansRows(allAvailableLoansData);
+        const countBadge = document.getElementById('availableLoansCountBadge');
+        if (countBadge) countBadge.textContent = `Total: ${allAvailableLoansData.length} Products`;
+        return;
+    }
+    const q = query.toLowerCase().trim();
+    const filtered = allAvailableLoansData.filter(item => {
+        return item.head.toLowerCase().includes(q) ||
+               item.name.toLowerCase().includes(q) ||
+               item.category.toLowerCase().includes(q) ||
+               item.structure.toLowerCase().includes(q) ||
+               item.capitalization.toLowerCase().includes(q) ||
+               (item.isExempt ? 'n/a exempt no' : 'applicable yes').includes(q) ||
+               item.rate.toLowerCase().includes(q);
+    });
+    renderAvailableLoansRows(filtered);
+    const countBadge = document.getElementById('availableLoansCountBadge');
+    if (countBadge) countBadge.textContent = `Showing: ${filtered.length} of ${allAvailableLoansData.length}`;
 }
 
 function hideAvailableLoansModal() {
@@ -725,8 +857,6 @@ function selectCalculationMethod(method) {
         secondaryLabel: 'Import New Head Data',
         showInput: method === 'ledger',
         inputLabel: 'Manual Ledger Input',
-        showPenalty: true,
-        penaltyLabel: 'Apply Penalty'
     };
 
     // Notify App Shell to update button visibility/labels
@@ -971,6 +1101,7 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
             }
         }
         document.getElementById('loan_scheme_name').value = loanTypeVal;
+        updatePenaltyField(loanTypeVal);
 
     } catch (e) {
         showMessageBox("Error reading header data from the Excel file. Please ensure the format is correct. Error: " + e.message, true);
@@ -1297,11 +1428,23 @@ function updateRatesForManualEntry() {
     const tableBody = document.getElementById('loanTableBody');
     if (tableBody.rows.length === 0) return;
 
-    const loanTypeUpper = document.getElementById('loan_scheme_name').value.toUpperCase().trim();
+    const loanTypeUpper = (document.getElementById('loan_scheme_name')?.value || '').toUpperCase().trim();
     const fixedRate = fixedTermLoanRates[loanTypeUpper];
-    const sanctionRate = parseFloat(String(document.getElementById('sanctionRate').value).replace(/[^\d.]/g, '')) || 0;
-    const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate').value);
+    const sanctionRate = parseFloat(String(document.getElementById('sanctionRate')?.value || '0').replace(/[^\d.]/g, '')) || 0;
+    const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate')?.value);
     const rateChanges = interestRateHistory[loanTypeUpper];
+    const loanStructure = loanStructureMap[loanTypeUpper];
+    const isExempt = isPenaltyExempt(loanTypeUpper);
+
+    let penaltyStartDate = null;
+    if (!isExempt && loanDueDateForRates) {
+        const graceMonths = parseInt((document.getElementById('gracePeriod')?.value || '').match(/\d+/)?.[0] || '0', 10);
+        if (loanStructure === 'Term' && graceMonths > 0) {
+            penaltyStartDate = addMonths(loanDueDateForRates, graceMonths);
+        } else {
+            penaltyStartDate = loanDueDateForRates;
+        }
+    }
 
     for (let i = 0; i < tableBody.rows.length; i++) {
         const row = tableBody.rows[i];
@@ -1317,6 +1460,12 @@ function updateRatesForManualEntry() {
                 if (change.date <= rowDate) applicableRate = change.rate;
             });
         }
+
+        if (penaltyStartDate && rowDate >= penaltyStartDate) {
+            const dynamicPenaltyRate = getPenaltyRateForDate(rowDate, loanTypeUpper);
+            applicableRate += dynamicPenaltyRate;
+        }
+
         row.cells[9].innerText = formatRate(applicableRate);
     }
 }
@@ -1468,8 +1617,8 @@ function recalculateTable(suppressMessage = false) {
 function applyPenaltyRates() {
     const loanType = document.getElementById('loan_scheme_name').value || "";
 
-    if (penaltyExemptLoanTypes.includes(loanType.toUpperCase().trim())) {
-        showMessageBox("Penalty is not applicable for this loan type.", true);
+    if (isPenaltyExempt(loanType)) {
+        showMessageBox("Penalty is not applicable (N/A) for this loan type.", true);
         return;
     }
 
@@ -1606,7 +1755,8 @@ function handleTermLoanPenalties(allRowsData, loanDetails) {
   const applyFixedPenaltyToRow = (row, mode = 'add') => {
     // For all Term Loans (including Consumer Credit), the fixed penalty for a
     // missed installment is based on the Installment Size.
-    const amount = Math.round(loanDetails.installmentSize * (loanDetails.penaltyRate / 100));
+    const dynamicPenRate = getPenaltyRateForDate(rowDate, loanDetails.loanType);
+    const amount = Math.round(loanDetails.installmentSize * (dynamicPenRate / 100));
     if (mode === 'set') {
       row.penalty = amount;
     } else {
@@ -1814,11 +1964,12 @@ function proceedWithPenaltyApplication() {
             return;
         }
         allRowsData.forEach(data => {
-            // Apply penalty rate only from penaltyStartDate onwards (after grace period)
+            // Apply dynamic penalty rate only from penaltyStartDate onwards (after grace period)
             if (data.date >= penaltyStartDate && !data.isPenaltyExempt) {
                 const originalRate = data.rate;
                 if (originalRate != null) {
-                    data.rate = originalRate + loanDetails.penaltyRate;
+                    const dynRate = getPenaltyRateForDate(data.date, loanDetails.loanType);
+                    data.rate = originalRate + dynRate;
                 }
             }
         });
@@ -2021,10 +2172,24 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         return 0;
     });
 
-    // 4b. Apply correct Interest Rates to all rows (The "Between dates" logic)
-    const fixedRate = fixedTermLoanRates[loanInputVal.toUpperCase().trim()];
+    // 4b. Apply correct Interest Rates to all rows (The "Between dates" logic) with AUTOMATED DYNAMIC PENALTY
+    const loanTypeUpper = loanInputVal.toUpperCase().trim();
+    const fixedRate = fixedTermLoanRates[loanTypeUpper];
     const sanctionRate = parseFloat(String(document.getElementById('sanctionRate').value).replace(/[^\d.]/g, '')) || 0;
     const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate').value);
+    const loanStructure = loanStructureMap[loanTypeUpper];
+    const isExempt = isPenaltyExempt(loanTypeUpper);
+
+    // Auto-determine penalty start date (if loan is not exempt from penalty)
+    let penaltyStartDate = null;
+    if (!isExempt && loanDueDateForRates && endDate > loanDueDateForRates) {
+        const graceMonths = parseInt((document.getElementById('gracePeriod')?.value || '').match(/\d+/)?.[0] || '0', 10);
+        if (loanStructure === 'Term' && graceMonths > 0) {
+            penaltyStartDate = addMonths(loanDueDateForRates, graceMonths);
+        } else {
+            penaltyStartDate = loanDueDateForRates;
+        }
+    }
 
     allRowsData.forEach(row => {
         let applicableRate = sanctionRate;
@@ -2038,6 +2203,13 @@ function calculateAndCapitalizeInterest(isAuto = false) {
                 }
             });
         }
+
+        // Automated Dynamic Penalty Integration:
+        if (penaltyStartDate && row.date >= penaltyStartDate && !row.isPenaltyExempt) {
+            const dynamicPenaltyRate = getPenaltyRateForDate(row.date, loanTypeUpper);
+            applicableRate += dynamicPenaltyRate;
+        }
+
         row.rate = formatRate(applicableRate);
     });
     
@@ -2150,6 +2322,14 @@ function editSelectedProduct() {
     document.getElementById('newProductCode').value = code;
     document.getElementById('newProductName').value = productName;
     document.getElementById('newProductCategory').value = cat;
+
+    const isExempt = isPenaltyExempt(productName);
+    const penCheck = document.getElementById('newProductPenalty');
+    if (penCheck) {
+        penCheck.checked = !isExempt;
+        const penLbl = document.getElementById('newProductPenaltyLabel');
+        if (penLbl) penLbl.textContent = !isExempt ? 'Yes (Applicable)' : 'No (N/A / Exempt)';
+    }
     
     // Select capitalization (capitalize first letter to match options like 'Monthly', 'Yearly')
     let capSelect = document.getElementById('newProductCap');
@@ -2179,6 +2359,12 @@ function toggleAddProductMode(show) {
             document.getElementById('newProductCategory').value = 'CMSME';
             document.getElementById('newProductCap').value = 'Monthly';
             document.getElementById('newProductExcelFile').value = '';
+            const penCheck = document.getElementById('newProductPenalty');
+            if (penCheck) {
+                penCheck.checked = true;
+                const penLbl = document.getElementById('newProductPenaltyLabel');
+                if (penLbl) penLbl.textContent = 'Yes (Applicable)';
+            }
             currentRateManagerState = [];
             renderRateManagerTableFromState();
         }
@@ -2473,9 +2659,237 @@ function updateProductPropertiesDisplay(productName) {
     document.getElementById('dispProductCode').textContent = code;
     document.getElementById('dispProductCategory').textContent = cat;
     document.getElementById('dispProductCap').textContent = cap;
+
+    const penEl = document.getElementById('dispProductPenalty');
+    if (penEl) {
+        const exempt = isPenaltyExempt(productName);
+        penEl.innerHTML = exempt
+            ? '<span class="text-gray-500 font-bold">✗ N/A</span>'
+            : '<span class="text-green-700 font-bold">✓ Applicable</span>';
+    }
 }
 
-function showRateChangeModal() {
+
+let currentPenaltyManagerState = [];
+
+function switchRateModalTab(tab) {
+    const tabBase = document.getElementById('rateModalTabBaseRates');
+    const tabPen = document.getElementById('rateModalTabPenaltyRates');
+    const btnBase = document.getElementById('tab-btn-base-rates');
+    const btnPen = document.getElementById('tab-btn-penalty-rates');
+
+    if (tab === 'penalty') {
+        if (tabBase) { tabBase.classList.add('hidden'); tabBase.style.display = 'none'; }
+        if (tabPen) { tabPen.classList.remove('hidden'); tabPen.style.display = 'flex'; }
+        if (btnBase) {
+            btnBase.classList.remove('bg-white', 'text-green-800', 'shadow-sm');
+            btnBase.classList.add('text-gray-600');
+        }
+        if (btnPen) {
+            btnPen.classList.add('bg-white', 'text-green-800', 'shadow-sm');
+            btnPen.classList.remove('text-gray-600');
+        }
+        refreshPenaltyManagerTable();
+        populatePenaltyLoanSelector();
+    } else {
+        if (tabPen) { tabPen.classList.add('hidden'); tabPen.style.display = 'none'; }
+        if (tabBase) { tabBase.classList.remove('hidden'); tabBase.style.display = 'flex'; }
+        if (btnPen) {
+            btnPen.classList.remove('bg-white', 'text-green-800', 'shadow-sm');
+            btnPen.classList.add('text-gray-600');
+        }
+        if (btnBase) {
+            btnBase.classList.add('bg-white', 'text-green-800', 'shadow-sm');
+            btnBase.classList.remove('text-gray-600');
+        }
+    }
+}
+
+function populatePenaltyLoanSelector() {
+    const sel = document.getElementById('penaltyLoanSelector');
+    if (!sel) return;
+    sel.innerHTML = '';
+    const products = Object.values(loanTypeMap).filter((v, i, a) => a.indexOf(v) === i).sort();
+    products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        sel.appendChild(opt);
+    });
+
+    const curr = document.getElementById('loan_scheme_name')?.value?.trim();
+    if (curr && products.includes(curr)) {
+        sel.value = curr;
+    }
+    refreshPenaltyLoanStatus();
+}
+
+function refreshPenaltyLoanStatus() {
+    const sel = document.getElementById('penaltyLoanSelector');
+    const badge = document.getElementById('penaltyStatusBadge');
+    const btnToggle = document.getElementById('btnTogglePenaltyExempt');
+    if (!sel || !badge) return;
+
+    const loanType = sel.value;
+    const exempt = isPenaltyExempt(loanType);
+
+    if (exempt) {
+        badge.textContent = 'N/A (Exempt)';
+        badge.className = 'px-3 py-2 rounded-md font-bold text-xs whitespace-nowrap bg-gray-200 text-gray-700 border border-gray-300';
+        if (btnToggle) btnToggle.textContent = 'Set Applicable';
+    } else {
+        badge.textContent = 'Applicable';
+        badge.className = 'px-3 py-2 rounded-md font-bold text-xs whitespace-nowrap bg-green-100 text-green-800 border border-green-300';
+        if (btnToggle) btnToggle.textContent = 'Set N/A (Exempt)';
+    }
+}
+
+function toggleCurrentLoanPenaltyExemption() {
+    const sel = document.getElementById('penaltyLoanSelector');
+    if (!sel) return;
+    const loanType = sel.value;
+    const currentExempt = isPenaltyExempt(loanType);
+    if (window.InterestRateManager && typeof window.InterestRateManager.setLoanTypePenaltyExemption === 'function') {
+        window.InterestRateManager.setLoanTypePenaltyExemption(loanType, !currentExempt);
+    }
+    refreshPenaltyLoanStatus();
+    updatePenaltyField();
+}
+
+function refreshPenaltyManagerTable() {
+    const tbody = document.getElementById('penaltyManagerTableBody');
+    if (!tbody) return;
+
+    if (currentPenaltyManagerState.length === 0) {
+        if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltySchedule === 'function') {
+            const sched = window.InterestRateManager.getPenaltySchedule();
+            currentPenaltyManagerState = sched.map(s => ({
+                dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0],
+                rate: s.rate
+            }));
+        } else {
+            currentPenaltyManagerState = [
+                { dateStr: '2024-05-20', rate: 1.50 },
+                { dateStr: '2018-08-09', rate: 2.00 }
+            ];
+        }
+    }
+
+    // Sort ascending by date for chronological presentation
+    currentPenaltyManagerState.sort((a, b) => new Date(a.dateStr) - new Date(b.dateStr));
+
+    tbody.innerHTML = '';
+    currentPenaltyManagerState.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-gray-50';
+
+        let toDateDisplay = 'Present / Onwards';
+        if (index < currentPenaltyManagerState.length - 1) {
+            const nextStart = new Date(currentPenaltyManagerState[index + 1].dateStr);
+            nextStart.setDate(nextStart.getDate() - 1);
+            toDateDisplay = `${String(nextStart.getDate()).padStart(2, '0')}/${String(nextStart.getMonth() + 1).padStart(2, '0')}/${nextStart.getFullYear()}`;
+        }
+
+        tr.innerHTML = `
+            <td class="p-2 text-center text-xs font-bold text-gray-500">${index + 1}</td>
+            <td class="p-2">
+                <input type="date" value="${item.dateStr}" onchange="InterestCalcLogic.updatePenaltyState(${index}, 'dateStr', this.value)"
+                  class="p-1 border rounded text-xs w-full">
+            </td>
+            <td class="p-2 text-xs text-gray-600 font-medium">${toDateDisplay}</td>
+            <td class="p-2">
+                <div class="flex items-center gap-1">
+                    <input type="number" step="0.01" value="${item.rate}" onchange="InterestCalcLogic.updatePenaltyState(${index}, 'rate', this.value)"
+                      class="p-1 border rounded text-xs w-20 text-right font-bold text-green-700">
+                    <span class="text-xs text-gray-500 font-bold">%</span>
+                </div>
+            </td>
+            <td class="p-2 text-center">
+                <button type="button" onclick="InterestCalcLogic.deletePenaltyRow(${index})"
+                  class="text-red-500 hover:text-red-700 font-bold text-sm px-2 py-1" title="Delete Span">&times;</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function addPenaltyRow() {
+    currentPenaltyManagerState.push({
+        dateStr: new Date().toISOString().split('T')[0],
+        rate: 1.50
+    });
+    refreshPenaltyManagerTable();
+}
+
+function deletePenaltyRow(index) {
+    if (currentPenaltyManagerState.length <= 1) {
+        showMessageBox("At least one penalty rate span must be configured.", true);
+        return;
+    }
+    currentPenaltyManagerState.splice(index, 1);
+    refreshPenaltyManagerTable();
+}
+
+function updatePenaltyState(index, field, value) {
+    if (currentPenaltyManagerState[index]) {
+        if (field === 'rate') {
+            currentPenaltyManagerState[index].rate = parseFloat(value) || 0;
+        } else {
+            currentPenaltyManagerState[index].dateStr = value;
+        }
+        refreshPenaltyManagerTable();
+    }
+}
+
+
+function quickAddPenaltyEntry() {
+    const dateInput = document.getElementById('quickPenaltyDate');
+    const rateInput = document.getElementById('quickPenaltyRate');
+
+    if (!dateInput || !dateInput.value) {
+        showMessageBox("Please select an effective date for the penalty rate.", true);
+        return;
+    }
+    const rateVal = parseFloat(rateInput ? rateInput.value : '');
+    if (isNaN(rateVal) || rateVal < 0) {
+        showMessageBox("Please enter a valid penalty rate percentage (e.g. 1.50).", true);
+        return;
+    }
+
+    // Check if date already exists in state, update or push
+    const existingIndex = currentPenaltyManagerState.findIndex(item => item.dateStr === dateInput.value);
+    if (existingIndex >= 0) {
+        currentPenaltyManagerState[existingIndex].rate = rateVal;
+    } else {
+        currentPenaltyManagerState.push({
+            dateStr: dateInput.value,
+            rate: rateVal
+        });
+    }
+
+    refreshPenaltyManagerTable();
+    rateInput.value = '';
+    showMessageBox(`Penalty rate ${rateVal}% for date ${dateInput.value} added to schedule.`);
+}
+
+function savePenaltyManager() {
+    if (window.InterestRateManager && typeof window.InterestRateManager.savePenaltySchedule === 'function') {
+        window.InterestRateManager.savePenaltySchedule(currentPenaltyManagerState);
+    }
+    showMessageBox("Penalty rate schedule and applicability saved successfully!");
+    hideRateChangeModal();
+    updatePenaltyField();
+}
+
+function resetDefaultPenaltySchedule() {
+    currentPenaltyManagerState = [
+        { dateStr: '2024-05-20', rate: 1.50 },
+        { dateStr: '2018-08-09', rate: 2.00 }
+    ];
+    refreshPenaltyManagerTable();
+}
+
+function showRateChangeModal(initialTab = 'rates') {
     populateProductDropdown();
     toggleAddProductMode(false);
 
@@ -2821,8 +3235,8 @@ function clearAllData() {
   const form = document.getElementById('loanDetailsForm');
   // Clear all text and date inputs, resetting defaults where necessary
   Array.from(form.querySelectorAll('input[type="text"], input[type="date"]')).forEach(input => {
-    if (input.id === 'penaltyRate') { // Keep default penalty rate
-      input.value = '1.50 %';
+    if (input.id === 'penaltyRate') {
+      updatePenaltyField();
     } else { // Clear other inputs
       input.value = '';
     }
@@ -3100,7 +3514,8 @@ window.addEventListener('message', (event) => {
             case 'saveReport': InterestCalcLogic.savePrintReport(); break;
             case 'downloadExcel': InterestCalcLogic.downloadExcel(); break;
             case 'clear': InterestCalcLogic.clearAllData(); break;
-            case 'updateRates': InterestCalcLogic.showRateChangeModal(); break;
+            case 'updateRates': InterestCalcLogic.showRateChangeModal('rates'); break;
+            case 'penaltyRates': InterestCalcLogic.showRateChangeModal('penalty'); break;
             case 'showLoans': InterestCalcLogic.showAvailableLoansModal(); break;
             case 'addLoan': InterestCalcLogic.showAddLoanTypeModal(); break;
         }
@@ -3135,6 +3550,7 @@ return {
     saveInstallmentDataAndContinue: saveInstallmentDataAndContinue,
     cancelAndContinue: cancelAndContinue,
     showAvailableLoansModal: showAvailableLoansModal,
+    filterAvailableLoansTable: filterAvailableLoansTable,
     hideAvailableLoansModal: hideAvailableLoansModal,
     handleNewLoanRateTypeChange: handleNewLoanRateTypeChange,
     handleNewLoanGroupChange: handleNewLoanGroupChange,
@@ -3161,6 +3577,19 @@ return {
     addRateRow: addRateRow,
     saveRateManager: saveRateManager,
     refreshRateManagerTable: refreshRateManagerTable,
+    switchRateModalTab: switchRateModalTab,
+    refreshPenaltyManagerTable: refreshPenaltyManagerTable,
+    addPenaltyRow: addPenaltyRow,
+    deletePenaltyRow: deletePenaltyRow,
+    updatePenaltyState: updatePenaltyState,
+    populatePenaltyLoanSelector: populatePenaltyLoanSelector,
+    refreshPenaltyLoanStatus: refreshPenaltyLoanStatus,
+    toggleCurrentLoanPenaltyExemption: toggleCurrentLoanPenaltyExemption,
+    savePenaltyManager: savePenaltyManager,
+    resetDefaultPenaltySchedule: resetDefaultPenaltySchedule,
+    quickAddPenaltyEntry: quickAddPenaltyEntry,
+    updatePenaltyField: updatePenaltyField,
+    isPenaltyExempt: isPenaltyExempt,
     savePrintReport: savePrintReport,
     updateHeaderMeta: updateHeaderMeta,
     showCalculationMethodModal: showCalculationMethodModal,
@@ -3212,11 +3641,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const v=(gracePeriodInput.value||'').trim();
       if(v && !/months?$/i.test(v)) gracePeriodInput.value=v+' Months';
     });
-    const penaltyRateInput = document.getElementById('penaltyRate');
-    penaltyRateInput.addEventListener('blur', () => {
-        let val = parseFloat(String(penaltyRateInput.value).replace(/[^\d.]/g, '')) || 0;
-        penaltyRateInput.value = InterestCalcLogic.formatRate(val);
-    });
+    const loanSchemeInput = document.getElementById('loan_scheme_name');
+    if (loanSchemeInput) {
+        ['input', 'change', 'blur'].forEach(evt => {
+            loanSchemeInput.addEventListener(evt, () => {
+                updatePenaltyField(loanSchemeInput.value);
+            });
+        });
+    }
+    updatePenaltyField();
     const calcEndDateInputForClass = document.getElementById('calcEndDate');
     calcEndDateInputForClass.addEventListener('change', () => {
         // Parse as UTC to match other date logic

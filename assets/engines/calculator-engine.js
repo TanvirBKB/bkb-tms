@@ -8,11 +8,11 @@ window.CalculatorEngine = {
             'calc-import-data': 'importPrimary',
             'calc-import-secondary': 'importSecondary',
             'calc-data-input': 'manualInput',
-            'calc-apply-penalty': 'applyPenalty',
             'calc-calculate-balance': 'calculate',
             'calc-download-excel': 'downloadExcel',
             'calc-clear-data': 'clear',
             'calc-update-rates': 'updateRates',
+            'calc-penalty-rates': 'penaltyRates',
             'calc-show-loans': 'showLoans'
         };
 

@@ -188,7 +188,125 @@ window.InterestRateManager = (function () {
         // If this is the first custom modification for this loan, copy the existing live history
         if (!custom[codeName]) {
             custom[codeName] = (live[codeName] || []).map(function(r) {
-                return { date: r.date.toISOString().split('T')[0], rate: r.rate };
+            
+    /* ---- Dynamic Penalty Rate Schedule & Exemptions ---- */
+    var DEFAULT_PENALTY_SCHEDULE = [
+        { date: new Date('2024-05-20'), rate: 1.50, dateStr: '2024-05-20' },
+        { date: new Date('2018-08-09'), rate: 2.00, dateStr: '2018-08-09' }
+    ];
+
+    var DEFAULT_PENALTY_EXEMPT = [
+        'AGRI (SHORT TERM) GENERAL',
+        'AGRI SHORT TERM (BEEF FATTING)',
+        'AGRI (SHORT TERM) SHAWNIRVAR CREDIT',
+        'POVERTY ALLEVIATION(MUJIB YEAR)',
+        'PAST DUE (AGRI)- SHORT TERM',
+        'PAST DUE SHAWNIRVAR',
+        'PAST DUE (LAND LESS FARMER)',
+        'COTTAGE INDUSTRIES LOANS',
+        'AGRI SHORT (HILL TRACTS)',
+        'AGRI LOAN (COVID-19)'
+    ];
+
+    var PENALTY_DB_KEY = 'custom_penalty_rates';
+
+    function _loadPenaltyDB() {
+        var ipc = _ipc();
+        if (!ipc) {
+            try {
+                var local = localStorage.getItem(PENALTY_DB_KEY);
+                return local ? JSON.parse(local) : {};
+            } catch(e) { return {}; }
+        }
+        try {
+            var r = ipc.sendSync('db-get-kv', PENALTY_DB_KEY);
+            if (typeof r === 'string') {
+                try { r = JSON.parse(r); } catch(e) {}
+            }
+            return (r && typeof r === 'object') ? r : {};
+        } catch(e) { return {}; }
+    }
+
+    function _savePenaltyDB(data) {
+        try { localStorage.setItem(PENALTY_DB_KEY, JSON.stringify(data)); } catch(e) {}
+        var ipc = _ipc();
+        if (!ipc) return;
+        try { ipc.sendSync('db-set-kv', PENALTY_DB_KEY, data); } catch(e) {}
+    }
+
+    function getPenaltySchedule(loanType) {
+        var dbData = _loadPenaltyDB();
+        var schedule = (dbData && dbData.schedule && dbData.schedule.length > 0)
+            ? dbData.schedule.map(function(s) {
+                return { date: new Date(s.dateStr || s.date), rate: parseFloat(s.rate), dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0] };
+            })
+            : DEFAULT_PENALTY_SCHEDULE.map(function(s) {
+                return { date: new Date(s.date), rate: s.rate, dateStr: s.dateStr };
+            });
+
+        schedule.sort(function(a, b) { return b.date - a.date; });
+        return schedule;
+    }
+
+    function getPenaltyRate(date, loanType) {
+        if (isPenaltyExempt(loanType)) return 0;
+        var schedule = getPenaltySchedule(loanType);
+        if (!date || isNaN(new Date(date).getTime())) return schedule[0]?.rate || 1.50;
+        var d = new Date(date);
+        for (var i = 0; i < schedule.length; i++) {
+            if (d >= schedule[i].date) {
+                return schedule[i].rate;
+            }
+        }
+        return schedule[schedule.length - 1]?.rate || 2.00;
+    }
+
+    function getPenaltyExemptTypes() {
+        var dbData = _loadPenaltyDB();
+        if (dbData && Array.isArray(dbData.exemptTypes)) {
+            return dbData.exemptTypes;
+        }
+        return DEFAULT_PENALTY_EXEMPT.slice();
+    }
+
+    function isPenaltyExempt(loanType) {
+        if (!loanType) return false;
+        var nameUpper = String(loanType).toUpperCase().trim();
+        var exempts = getPenaltyExemptTypes().map(function(t) { return t.toUpperCase().trim(); });
+        return exempts.indexOf(nameUpper) >= 0;
+    }
+
+    function savePenaltySchedule(scheduleArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.schedule = scheduleArray.map(function(s) {
+            return {
+                dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0],
+                rate: parseFloat(s.rate)
+            };
+        });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function savePenaltyExemptTypes(exemptArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.exemptTypes = exemptArray.map(function(s) { return String(s).trim(); });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function setLoanTypePenaltyExemption(loanTypeName, isExempt) {
+        if (!loanTypeName) return;
+        var list = getPenaltyExemptTypes();
+        var nameUpper = loanTypeName.toUpperCase().trim();
+        list = list.filter(function(t) { return t.toUpperCase().trim() !== nameUpper; });
+        if (isExempt) {
+            list.push(loanTypeName.trim());
+        }
+        savePenaltyExemptTypes(list);
+    }
+
+    return { date: r.date.toISOString().split('T')[0], rate: r.rate };
             });
         }
         
@@ -241,7 +359,125 @@ window.InterestRateManager = (function () {
         var custom = _loadDB();
         // Overwrite the entire custom history for this loan type
         custom[codeName] = ratesArray.map(function(r) {
-            return { date: r.dateStr, rate: parseFloat(r.rate) };
+        
+    /* ---- Dynamic Penalty Rate Schedule & Exemptions ---- */
+    var DEFAULT_PENALTY_SCHEDULE = [
+        { date: new Date('2024-05-20'), rate: 1.50, dateStr: '2024-05-20' },
+        { date: new Date('2018-08-09'), rate: 2.00, dateStr: '2018-08-09' }
+    ];
+
+    var DEFAULT_PENALTY_EXEMPT = [
+        'AGRI (SHORT TERM) GENERAL',
+        'AGRI SHORT TERM (BEEF FATTING)',
+        'AGRI (SHORT TERM) SHAWNIRVAR CREDIT',
+        'POVERTY ALLEVIATION(MUJIB YEAR)',
+        'PAST DUE (AGRI)- SHORT TERM',
+        'PAST DUE SHAWNIRVAR',
+        'PAST DUE (LAND LESS FARMER)',
+        'COTTAGE INDUSTRIES LOANS',
+        'AGRI SHORT (HILL TRACTS)',
+        'AGRI LOAN (COVID-19)'
+    ];
+
+    var PENALTY_DB_KEY = 'custom_penalty_rates';
+
+    function _loadPenaltyDB() {
+        var ipc = _ipc();
+        if (!ipc) {
+            try {
+                var local = localStorage.getItem(PENALTY_DB_KEY);
+                return local ? JSON.parse(local) : {};
+            } catch(e) { return {}; }
+        }
+        try {
+            var r = ipc.sendSync('db-get-kv', PENALTY_DB_KEY);
+            if (typeof r === 'string') {
+                try { r = JSON.parse(r); } catch(e) {}
+            }
+            return (r && typeof r === 'object') ? r : {};
+        } catch(e) { return {}; }
+    }
+
+    function _savePenaltyDB(data) {
+        try { localStorage.setItem(PENALTY_DB_KEY, JSON.stringify(data)); } catch(e) {}
+        var ipc = _ipc();
+        if (!ipc) return;
+        try { ipc.sendSync('db-set-kv', PENALTY_DB_KEY, data); } catch(e) {}
+    }
+
+    function getPenaltySchedule(loanType) {
+        var dbData = _loadPenaltyDB();
+        var schedule = (dbData && dbData.schedule && dbData.schedule.length > 0)
+            ? dbData.schedule.map(function(s) {
+                return { date: new Date(s.dateStr || s.date), rate: parseFloat(s.rate), dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0] };
+            })
+            : DEFAULT_PENALTY_SCHEDULE.map(function(s) {
+                return { date: new Date(s.date), rate: s.rate, dateStr: s.dateStr };
+            });
+
+        schedule.sort(function(a, b) { return b.date - a.date; });
+        return schedule;
+    }
+
+    function getPenaltyRate(date, loanType) {
+        if (isPenaltyExempt(loanType)) return 0;
+        var schedule = getPenaltySchedule(loanType);
+        if (!date || isNaN(new Date(date).getTime())) return schedule[0]?.rate || 1.50;
+        var d = new Date(date);
+        for (var i = 0; i < schedule.length; i++) {
+            if (d >= schedule[i].date) {
+                return schedule[i].rate;
+            }
+        }
+        return schedule[schedule.length - 1]?.rate || 2.00;
+    }
+
+    function getPenaltyExemptTypes() {
+        var dbData = _loadPenaltyDB();
+        if (dbData && Array.isArray(dbData.exemptTypes)) {
+            return dbData.exemptTypes;
+        }
+        return DEFAULT_PENALTY_EXEMPT.slice();
+    }
+
+    function isPenaltyExempt(loanType) {
+        if (!loanType) return false;
+        var nameUpper = String(loanType).toUpperCase().trim();
+        var exempts = getPenaltyExemptTypes().map(function(t) { return t.toUpperCase().trim(); });
+        return exempts.indexOf(nameUpper) >= 0;
+    }
+
+    function savePenaltySchedule(scheduleArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.schedule = scheduleArray.map(function(s) {
+            return {
+                dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0],
+                rate: parseFloat(s.rate)
+            };
+        });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function savePenaltyExemptTypes(exemptArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.exemptTypes = exemptArray.map(function(s) { return String(s).trim(); });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function setLoanTypePenaltyExemption(loanTypeName, isExempt) {
+        if (!loanTypeName) return;
+        var list = getPenaltyExemptTypes();
+        var nameUpper = loanTypeName.toUpperCase().trim();
+        list = list.filter(function(t) { return t.toUpperCase().trim() !== nameUpper; });
+        if (isExempt) {
+            list.push(loanTypeName.trim());
+        }
+        savePenaltyExemptTypes(list);
+    }
+
+    return { date: r.dateStr, rate: parseFloat(r.rate) };
         });
         _saveDB(custom);
         init(); // Refresh live rates
@@ -249,6 +485,124 @@ window.InterestRateManager = (function () {
     }
 
     init();
+
+
+    /* ---- Dynamic Penalty Rate Schedule & Exemptions ---- */
+    var DEFAULT_PENALTY_SCHEDULE = [
+        { date: new Date('2024-05-20'), rate: 1.50, dateStr: '2024-05-20' },
+        { date: new Date('2018-08-09'), rate: 2.00, dateStr: '2018-08-09' }
+    ];
+
+    var DEFAULT_PENALTY_EXEMPT = [
+        'AGRI (SHORT TERM) GENERAL',
+        'AGRI SHORT TERM (BEEF FATTING)',
+        'AGRI (SHORT TERM) SHAWNIRVAR CREDIT',
+        'POVERTY ALLEVIATION(MUJIB YEAR)',
+        'PAST DUE (AGRI)- SHORT TERM',
+        'PAST DUE SHAWNIRVAR',
+        'PAST DUE (LAND LESS FARMER)',
+        'COTTAGE INDUSTRIES LOANS',
+        'AGRI SHORT (HILL TRACTS)',
+        'AGRI LOAN (COVID-19)'
+    ];
+
+    var PENALTY_DB_KEY = 'custom_penalty_rates';
+
+    function _loadPenaltyDB() {
+        var ipc = _ipc();
+        if (!ipc) {
+            try {
+                var local = localStorage.getItem(PENALTY_DB_KEY);
+                return local ? JSON.parse(local) : {};
+            } catch(e) { return {}; }
+        }
+        try {
+            var r = ipc.sendSync('db-get-kv', PENALTY_DB_KEY);
+            if (typeof r === 'string') {
+                try { r = JSON.parse(r); } catch(e) {}
+            }
+            return (r && typeof r === 'object') ? r : {};
+        } catch(e) { return {}; }
+    }
+
+    function _savePenaltyDB(data) {
+        try { localStorage.setItem(PENALTY_DB_KEY, JSON.stringify(data)); } catch(e) {}
+        var ipc = _ipc();
+        if (!ipc) return;
+        try { ipc.sendSync('db-set-kv', PENALTY_DB_KEY, data); } catch(e) {}
+    }
+
+    function getPenaltySchedule(loanType) {
+        var dbData = _loadPenaltyDB();
+        var schedule = (dbData && dbData.schedule && dbData.schedule.length > 0)
+            ? dbData.schedule.map(function(s) {
+                return { date: new Date(s.dateStr || s.date), rate: parseFloat(s.rate), dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0] };
+            })
+            : DEFAULT_PENALTY_SCHEDULE.map(function(s) {
+                return { date: new Date(s.date), rate: s.rate, dateStr: s.dateStr };
+            });
+
+        schedule.sort(function(a, b) { return b.date - a.date; });
+        return schedule;
+    }
+
+    function getPenaltyRate(date, loanType) {
+        if (isPenaltyExempt(loanType)) return 0;
+        var schedule = getPenaltySchedule(loanType);
+        if (!date || isNaN(new Date(date).getTime())) return schedule[0]?.rate || 1.50;
+        var d = new Date(date);
+        for (var i = 0; i < schedule.length; i++) {
+            if (d >= schedule[i].date) {
+                return schedule[i].rate;
+            }
+        }
+        return schedule[schedule.length - 1]?.rate || 2.00;
+    }
+
+    function getPenaltyExemptTypes() {
+        var dbData = _loadPenaltyDB();
+        if (dbData && Array.isArray(dbData.exemptTypes)) {
+            return dbData.exemptTypes;
+        }
+        return DEFAULT_PENALTY_EXEMPT.slice();
+    }
+
+    function isPenaltyExempt(loanType) {
+        if (!loanType) return false;
+        var nameUpper = String(loanType).toUpperCase().trim();
+        var exempts = getPenaltyExemptTypes().map(function(t) { return t.toUpperCase().trim(); });
+        return exempts.indexOf(nameUpper) >= 0;
+    }
+
+    function savePenaltySchedule(scheduleArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.schedule = scheduleArray.map(function(s) {
+            return {
+                dateStr: s.dateStr || new Date(s.date).toISOString().split('T')[0],
+                rate: parseFloat(s.rate)
+            };
+        });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function savePenaltyExemptTypes(exemptArray) {
+        var dbData = _loadPenaltyDB() || {};
+        dbData.exemptTypes = exemptArray.map(function(s) { return String(s).trim(); });
+        _savePenaltyDB(dbData);
+        return true;
+    }
+
+    function setLoanTypePenaltyExemption(loanTypeName, isExempt) {
+        if (!loanTypeName) return;
+        var list = getPenaltyExemptTypes();
+        var nameUpper = loanTypeName.toUpperCase().trim();
+        list = list.filter(function(t) { return t.toUpperCase().trim() !== nameUpper; });
+        if (isExempt) {
+            list.push(loanTypeName.trim());
+        }
+        savePenaltyExemptTypes(list);
+    }
 
     return {
         init: init,
@@ -258,6 +612,13 @@ window.InterestRateManager = (function () {
         getLatestRateForCmsme: getLatestRateForCmsme,
         getRateHistory: getRateHistory,
         baseHistory: baseHistory,
-        fixedRates: fixedRates
+        fixedRates: fixedRates,
+        getPenaltySchedule: getPenaltySchedule,
+        getPenaltyRate: getPenaltyRate,
+        isPenaltyExempt: isPenaltyExempt,
+        getPenaltyExemptTypes: getPenaltyExemptTypes,
+        savePenaltySchedule: savePenaltySchedule,
+        savePenaltyExemptTypes: savePenaltyExemptTypes,
+        setLoanTypePenaltyExemption: setLoanTypePenaltyExemption
     };
 })();

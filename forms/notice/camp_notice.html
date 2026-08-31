@@ -245,10 +245,219 @@
             margin: 2pt 0;
             user-select: none;
         }
+    
+        
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 480px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: translateY(20px) scale(0.96);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #16a085, #2c3e50);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .modal-header .close-btn:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13.5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            padding: 9px 12px;
+            border: 1.5px solid #dcdfe6;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: #16a085;
+            box-shadow: 0 0 0 2px rgba(22, 160, 133, 0.15);
+        }
+
+        .preview-badge {
+            background: #e8f8f5;
+            border: 1px solid #a3e4d7;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .preview-badge .badge-title {
+            font-size: 12px;
+            color: #16a085;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-badge .badge-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .modal-footer {
+            padding: 14px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-cancel:hover {
+            background: #d5d5d5;
+        }
+
+        .btn-apply {
+            background: #16a085;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-apply:hover {
+            background: #138d75;
+        }
+
     </style>
 </head>
 
 <body>
+
+    <!-- Customize Camp Notice Modal Dialog (Non-printable) -->
+    <div id="camp-customizer-modal" class="no-print modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚙️ ক্যাম্প নোটিশ কাস্টমাইজেশন (Customize Camp Notice)</h3>
+                <button type="button" class="close-btn" onclick="closeCampCustomizerModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="cust-camp-date">📅 ক্যাম্পের তারিখ (Camp Date):</label>
+                    <input type="date" id="cust-camp-date" class="form-control" oninput="handleCampDateChange(this.value)" onchange="handleCampDateChange(this.value)">
+                </div>
+
+                <!-- Auto-Calculated Day Preview Box -->
+                <div class="preview-badge">
+                    <div class="badge-title">স্বয়ংক্রিয় বার ও বাংলা তারিখ (Auto Day of Week):</div>
+                    <div class="badge-value" id="cust-preview-text">তারিখ নির্বাচন করলে বার স্বয়ংক্রিয়ভাবে আসবে</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cust-camp-location">📍 ক্যাম্পের স্থান / শাখা (Camp Location / Venue):</label>
+                    <input type="text" id="cust-camp-location" class="form-control" placeholder="যেমন: করিমপুর শাখা / ইউনিয়ন পরিষদ ভবন">
+                </div>
+
+                <div class="form-group">
+                    <label for="cust-notice-date">📝 নোটিশ জারির তারিখ (Notice Issuance Date):</label>
+                    <input type="date" id="cust-notice-date" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeCampCustomizerModal()">বাতিল (Cancel)</button>
+                <button type="button" class="btn-apply" onclick="applyCampCustomization()">প্রয়োগ করুন (Apply to All Slips)</button>
+            </div>
+        </div>
+    </div>
+
     <div class="page" id="main-page">
 
         <!-- NOTICE SLIP 1 -->
@@ -616,6 +825,251 @@
         try { window.parent.postMessage({ command: 'GET_BRANCH_INFO' }, '*'); } catch (e) { }
     </script>
     <script src="../../assets/engines/notice-engine.js"></script>
+
+    <script>
+        const banglaDigitsMap = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+        const englishDigitsMap = { '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4', '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9' };
+        const banglaDaysList = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+
+        function convertToBanglaNumbers(str) {
+            if (!str && str !== 0) return '';
+            return String(str).replace(/[0-9]/g, d => banglaDigitsMap[d] || d);
+        }
+
+        function parseDateToISO(dateStr) {
+            if (!dateStr) return '';
+            const enStr = String(dateStr).replace(/[০-৯]/g, d => englishDigitsMap[d] || d).trim();
+
+            if (/^\d{4}-\d{2}-\d{2}$/.test(enStr)) return enStr;
+
+            const parts = enStr.split(/[\/\-\.]/);
+            if (parts.length === 3) {
+                if (parts[0].length === 4) {
+                    return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                } else {
+                    const d = parts[0].padStart(2, '0');
+                    const m = parts[1].padStart(2, '0');
+                    const y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+                    return `${y}-${m}-${d}`;
+                }
+            }
+            return '';
+        }
+
+        function calculateBanglaDayAndDate(isoDateStr) {
+            if (!isoDateStr) return { dayBn: '', dateBn: '', displayPreview: '' };
+            const parts = isoDateStr.split('-');
+            if (parts.length !== 3) return { dayBn: '', dateBn: '', displayPreview: '' };
+
+            const y = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10);
+            const d = parseInt(parts[2], 10);
+
+            const dateObj = new Date(y, m - 1, d);
+            if (isNaN(dateObj.getTime())) return { dayBn: '', dateBn: '', displayPreview: '' };
+
+            const dayBn = banglaDaysList[dateObj.getDay()];
+            const dateBn = `${convertToBanglaNumbers(String(d).padStart(2, '0'))}/${convertToBanglaNumbers(String(m).padStart(2, '0'))}/${convertToBanglaNumbers(String(y))}`;
+            const displayPreview = `তারিখ: ${dateBn} ইং | রোজ ${dayBn}`;
+
+            return { dayBn, dateBn, displayPreview };
+        }
+
+        function handleCampDateChange(val) {
+            const previewEl = document.getElementById('cust-preview-text');
+            if (!val) {
+                if (previewEl) previewEl.innerText = 'তারিখ নির্বাচন করলে বার স্বয়ংক্রিয়ভাবে আসবে';
+                return;
+            }
+            const info = calculateBanglaDayAndDate(val);
+            if (previewEl) {
+                previewEl.innerHTML = `<span style="color: #16a085;">📅 ${info.dateBn} ইং</span> &nbsp; | &nbsp; <span style="color: #d35400; font-weight: bold;">রোজ ${info.dayBn}</span>`;
+            }
+        }
+
+        function openCampCustomizerModal() {
+            const modal = document.getElementById('camp-customizer-modal');
+            if (!modal) return;
+
+            const dateInput = document.getElementById('cust-camp-date');
+            const locationInput = document.getElementById('cust-camp-location');
+            const noticeDateInput = document.getElementById('cust-notice-date');
+
+            // 1. Notice Issuance Date: First check the date currently synced/present on the notice slip
+            let currentNoticeDateText = '';
+            const slipNoticeDateEl = document.querySelector('[data-db-field="notice_date"], [id^="notice_date_bottom_"]');
+            if (slipNoticeDateEl && slipNoticeDateEl.innerText.trim()) {
+                currentNoticeDateText = slipNoticeDateEl.innerText.trim();
+            }
+
+            // Also check pending_notice_data in sessionStorage
+            if (!currentNoticeDateText) {
+                try {
+                    const pData = sessionStorage.getItem('pending_notice_data') || (window.parent && window.parent.sessionStorage.getItem('pending_notice_data'));
+                    if (pData) {
+                        const arr = JSON.parse(pData);
+                        if (arr && arr[0] && arr[0].notice_date) {
+                            currentNoticeDateText = arr[0].notice_date;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            const isoNoticeDate = parseDateToISO(currentNoticeDateText);
+            if (isoNoticeDate && noticeDateInput) {
+                noticeDateInput.value = isoNoticeDate;
+            } else if (noticeDateInput && !noticeDateInput.value) {
+                const savedNoticeRawDate = localStorage.getItem('bkb_notice_raw_date');
+                if (savedNoticeRawDate) {
+                    noticeDateInput.value = savedNoticeRawDate;
+                } else {
+                    noticeDateInput.value = new Date().toISOString().split('T')[0];
+                }
+            }
+
+            // 2. Camp Date: Check if already on the slip, or from localStorage, or default to +7 days
+            let currentCampDateText = '';
+            const slipCampDateEl = document.querySelector('[data-db-field="camp_date"], [id^="camp_date_"]');
+            if (slipCampDateEl && slipCampDateEl.innerText.trim()) {
+                currentCampDateText = slipCampDateEl.innerText.trim();
+            }
+
+            const isoCampDate = parseDateToISO(currentCampDateText);
+            if (isoCampDate && dateInput) {
+                dateInput.value = isoCampDate;
+                handleCampDateChange(isoCampDate);
+            } else {
+                const savedRawDate = localStorage.getItem('bkb_camp_raw_date');
+                if (savedRawDate && dateInput) {
+                    dateInput.value = savedRawDate;
+                    handleCampDateChange(savedRawDate);
+                } else if (dateInput && !dateInput.value) {
+                    const nextWeek = new Date();
+                    nextWeek.setDate(nextWeek.getDate() + 7);
+                    const nextIso = nextWeek.toISOString().split('T')[0];
+                    dateInput.value = nextIso;
+                    handleCampDateChange(nextIso);
+                }
+            }
+
+            // 3. Camp Location: Check if already on slip, or branch name, or localStorage
+            let currentLocText = '';
+            const slipLocEl = document.querySelector('[data-db-field="camp_location"], [id^="camp_location_"]');
+            if (slipLocEl && slipLocEl.innerText.trim()) {
+                currentLocText = slipLocEl.innerText.trim();
+            }
+
+            if (currentLocText && locationInput) {
+                locationInput.value = currentLocText;
+            } else {
+                const savedLocation = localStorage.getItem('bkb_camp_location');
+                if (savedLocation && locationInput) {
+                    locationInput.value = savedLocation;
+                } else if (locationInput && !locationInput.value) {
+                    const brEl = document.querySelector('[data-db-field="branch_name"]');
+                    if (brEl && brEl.innerText.trim()) locationInput.value = brEl.innerText.trim() + ' শাখা';
+                }
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeCampCustomizerModal() {
+            const modal = document.getElementById('camp-customizer-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function applyCampCustomization() {
+            const dateInput = document.getElementById('cust-camp-date');
+            const locationInput = document.getElementById('cust-camp-location');
+            const noticeDateInput = document.getElementById('cust-notice-date');
+
+            if (!dateInput || !dateInput.value) {
+                alert('অনুগ্রহ করে ক্যাম্পের তারিখ নির্বাচন করুন।');
+                return;
+            }
+
+            const info = calculateBanglaDayAndDate(dateInput.value);
+            if (!info.dayBn || !info.dateBn) {
+                alert('সঠিক তারিখ নির্বাচন করুন।');
+                return;
+            }
+
+            // Save to LocalStorage for persistence
+            localStorage.setItem('bkb_camp_raw_date', dateInput.value);
+            localStorage.setItem('bkb_camp_date', info.dateBn);
+            localStorage.setItem('bkb_camp_day', info.dayBn);
+
+            // 1. Update all camp_date placeholders on all slips/pages
+            document.querySelectorAll('[data-db-field="camp_date"], [id^="camp_date_"]').forEach(el => {
+                el.innerText = info.dateBn;
+            });
+
+            // 2. Update all camp_day placeholders on all slips/pages
+            document.querySelectorAll('[data-db-field="camp_day"], [id^="camp_day_"]').forEach(el => {
+                el.innerText = info.dayBn;
+            });
+
+            // 3. Update location if provided
+            if (locationInput && locationInput.value.trim()) {
+                const locVal = locationInput.value.trim();
+                localStorage.setItem('bkb_camp_location', locVal);
+                document.querySelectorAll('[data-db-field="camp_location"], [id^="camp_location_"]').forEach(el => {
+                    el.innerText = locVal;
+                });
+            }
+
+            // 4. Update notice date if provided
+            if (noticeDateInput && noticeDateInput.value) {
+                const nParts = noticeDateInput.value.split('-');
+                if (nParts.length === 3) {
+                    const nDateBn = `${convertToBanglaNumbers(nParts[2])}/${convertToBanglaNumbers(nParts[1])}/${convertToBanglaNumbers(nParts[0])}`;
+                    localStorage.setItem('bkb_notice_raw_date', noticeDateInput.value);
+                    localStorage.setItem('bkb_notice_date', nDateBn);
+                    document.querySelectorAll('[data-db-field="notice_date"], [id^="notice_date_"]').forEach(el => {
+                        el.innerText = nDateBn;
+                    });
+                }
+            }
+
+            closeCampCustomizerModal();
+
+            // Optional toast if parent window supports it
+            if (window.parent && window.parent.showAppToast) {
+                window.parent.showAppToast(`ক্যাম্পের তারিখ: ${info.dateBn} (${info.dayBn}) আপডেট করা হয়েছে ✓`);
+            }
+        }
+
+        // Close on ESC key or clicking outside modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCampCustomizerModal();
+        });
+
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('camp-customizer-modal');
+            if (e.target === modal) closeCampCustomizerModal();
+        });
+
+        window.openCampCustomizerModal = openCampCustomizerModal;
+        window.closeCampCustomizerModal = closeCampCustomizerModal;
+        window.applyCampCustomization = applyCampCustomization;
+
+        // Auto-load saved values on startup
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedDateBn = localStorage.getItem('bkb_camp_date');
+            const savedDayBn = localStorage.getItem('bkb_camp_day');
+            if (savedDateBn) {
+                document.querySelectorAll('[data-db-field="camp_date"], [id^="camp_date_"]').forEach(el => {
+                    if (!el.innerText.trim()) el.innerText = savedDateBn;
+                });
+            }
+            if (savedDayBn) {
+                document.querySelectorAll('[data-db-field="camp_day"], [id^="camp_day_"]').forEach(el => {
+                    if (!el.innerText.trim()) el.innerText = savedDayBn;
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
