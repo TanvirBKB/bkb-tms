@@ -819,6 +819,7 @@ function toBanglaNumbers(str) {
             window.parent.postMessage({ command: 'GET_BRANCH_INFO' }, '*');
         } catch(e){}
 
+        populateMainFilter();
         setupFilters();
         syncEconomicYearHeader();
         if (typeof window.showBreakdown === 'function') {
@@ -2827,6 +2828,44 @@ const subCategoriesMap = {
     };
 
 })();
+
+    // Dynamically populate the main filter dropdown from actual loaded data
+    function populateMainFilter() {
+        const mainSelect = document.getElementById('ui-filter-main');
+        if (!mainSelect || !currentData || !currentData.length) return;
+
+        // Preserve current selection
+        const prev = mainSelect.value;
+
+        // The filterable columns and their display labels
+        const FILTER_COLS = [
+            { field: 'ঋণের ধরণ',  label: 'ঋণের ধরণ' },
+            { field: 'ঋণের খাত',  label: 'ঋণের খাত' },
+            { field: 'গ্রাম',      label: 'গ্রাম',    getter: item => item['গ্রাম'] || item._villageName || '' },
+            { field: 'স্ট্যাটাস',  label: 'স্ট্যাটাস' },
+        ];
+
+        mainSelect.innerHTML = '<option value="all">সব (All)</option>';
+
+        FILTER_COLS.forEach(col => {
+            // Only add option if at least one row has a value for this column
+            const hasData = currentData.some(item => {
+                const val = col.getter ? col.getter(item) : (item[col.field] || '');
+                return val.toString().trim() !== '';
+            });
+            if (hasData) {
+                const opt = document.createElement('option');
+                opt.value = col.field;
+                opt.textContent = col.label;
+                mainSelect.appendChild(opt);
+            }
+        });
+
+        // Restore previous selection if still valid
+        if (prev && mainSelect.querySelector(`option[value="${prev}"]`)) {
+            mainSelect.value = prev;
+        }
+    }
 
     window.onMainFilterChange = function() {
         const mainSelect = document.getElementById('ui-filter-main');
