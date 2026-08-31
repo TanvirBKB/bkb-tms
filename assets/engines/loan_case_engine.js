@@ -84,6 +84,107 @@ function toBanglaNumbers(str) {
         }
     }
 
+    
+    function formatBorrowerName(item) {
+        if (!item || typeof item !== 'object') return;
+
+        function getField(patterns) {
+            for (const p of patterns) {
+                if (typeof p === 'string' && item[p] !== undefined && item[p] !== null) {
+                    const val = String(item[p]).trim();
+                    if (val && val !== '0') return val;
+                }
+            }
+            const keys = Object.keys(item);
+            for (const key of keys) {
+                const cleanKey = key.trim().replace(/\s+/g, ' ');
+                for (const p of patterns) {
+                    if (typeof p === 'string') {
+                        if (cleanKey.toLowerCase() === p.trim().toLowerCase()) {
+                            const val = String(item[key]).trim();
+                            if (val && val !== '0') return val;
+                        }
+                    } else if (p instanceof RegExp) {
+                        if (p.test(cleanKey)) {
+                            const val = String(item[key]).trim();
+                            if (val && val !== '0') return val;
+                        }
+                    }
+                }
+            }
+            return '';
+        }
+
+        let name = getField([
+            'নাম', 'গ্রাহকের নাম', 'আবেদনকারীর নাম', 'ঋণগ্রহীতার নাম', 'borrower_name', 'applicant_name', 'customer_name', 'name',
+            /^(?:গ্রাহকের\s*নাম|আবেদনকারীর\s*নাম|ঋণগ্রহীতার\s*নাম|নাম|borrower_name|applicant_name|customer_name)$/i
+        ]);
+
+        let father = getField([
+            'পিতা/স্বামীর নাম', 'পিতার/স্বামীর নাম', 'পিতার নাম', 'স্বামীর নাম', 'পিতা', 'স্বামী',
+            'পিতা/স্বামী', 'পিতার/স্বামী', 'পিতার/স্বামীর', 'পিতা / স্বামীর নাম', 'পিতার / স্বামীর নাম', 'পিতা/ স্বামীর নাম',
+            'পিতা ও স্বামীর নাম', 'অভিভাবকের নাম', 'father_name', 'father', 'husband_name', 'husband',
+            /^(?!.*নাম\s*ও\s*পিতা).*(?:পিতা|স্বামী|father|husband)/i
+        ]);
+
+        let protisthan = getField([
+            'প্রতিষ্ঠান', 'ব্যবসা প্রতিষ্ঠান', 'প্রতিষ্ঠান/ব্যবসা', 'প্রতিষ্ঠানের নাম', 'দোকানের নাম', 'ফার্মের নাম', 'business_name', 'company',
+            /প্রতিষ্ঠান|business|company|firm/i
+        ]);
+
+        let full = getField([
+            'নাম ও পিতার নাম', 'নাম ও পিতা', 'নাম ও পিতার/স্বামীর নাম',
+            /নাম\s*ও\s*(?:পিতা|স্বামী)/i
+        ]);
+
+        if (!father) {
+            const sourceToParse = full || name;
+            if (sourceToParse) {
+                if (sourceToParse.includes('\n')) {
+                    const lines = sourceToParse.split('\n').map(s => s.trim()).filter(Boolean);
+                    if (lines.length >= 2) {
+                        if (!name || name === sourceToParse) {
+                            name = lines[0].replace(/^(?:নাম|গ্রাহকের নাম)\s*[:ঃ\-]?\s*/, '').trim();
+                        }
+                        father = lines[1].replace(/^(?:পিতা\/স্বামী|পিতার\/স্বামীর নাম|পিতা\/স্বামীর নাম|পিতার নাম|স্বামীর নাম|পিতা|স্বামী)\s*[:ঃ\-]?\s*/i, '').trim();
+                    }
+                } else {
+                    const match = sourceToParse.match(/^(.*?)(?:[\s,]+|\s+ও\s+)(?:পিতা\/স্বামী|পিতার\/স্বামী|পিতা|স্বামী|পিতার নাম|স্বামীর নাম)\s*[:ঃ\-\s]+(.*)$/i);
+                    if (match) {
+                        if (!name || name === sourceToParse) {
+                            name = match[1].replace(/^(?:নাম|গ্রাহকের নাম)\s*[:ঃ\-]?\s*/, '').trim();
+                        }
+                        father = match[2].trim();
+                    } else {
+                        const oMatch = sourceToParse.match(/^(.*?)\s+ও\s+(.*)$/);
+                        if (oMatch && !oMatch[1].includes('ট্রেডার্স') && !oMatch[1].includes('এন্টারপ্রাইজ') && !oMatch[1].includes('স্টোর')) {
+                            if (!name || name === sourceToParse) {
+                                name = oMatch[1].trim();
+                            }
+                            father = oMatch[2].replace(/^(?:পিতা|স্বামী)\s*[:ঃ\-]?\s*/, '').trim();
+                        }
+                    }
+                }
+            }
+        }
+
+        if (protisthan && !name.includes(protisthan)) {
+            name = name ? `${protisthan}, প্রো: ${name}` : protisthan;
+        }
+
+        let cleanFather = father.replace(/^(?:পিতা\/স্বামী|পিতার\/স্বামীর নাম|পিতা\/স্বামীর নাম|পিতা\/\s*স্বামীর নাম|পিতার\/স্বামী|পিতা\/স্বামী|পিতার নাম|স্বামীর নাম|পিতা|স্বামী)\s*[:ঃ\-]?\s*/i, '').trim();
+
+        let recombined = name;
+        if (cleanFather) {
+            recombined = `${name}\nপিতা/স্বামী: ${cleanFather}`;
+        }
+
+        item['নাম'] = name;
+        item['পিতা/স্বামীর নাম'] = cleanFather;
+        item['পিতার/স্বামীর নাম'] = cleanFather;
+        item['নাম ও পিতার নাম'] = recombined;
+    }
+
     const EXPECTED_HEADERS = ['হিসাব নম্বর', 'ঋণের ধরণ', 'নাম ও পিতার নাম', 'বাড়ি ও গ্রাম', 'পোস্ট', 'থানা/উপজেলা', 'ঋণের পরিমাণ', 'বিতরণের তারিখ', 'দেয় তারিখ', 'বর্তমান স্থিতি', 'মোবাইল', 'স্ট্যাটাস', '৫২ স্থগিত সুদ', 'মন্তব্য'];
 
     async function init() {
@@ -481,25 +582,10 @@ function toBanglaNumbers(str) {
                 const accNo = (row['হিসাব নম্বর'] || '').toString().trim();
                 if (!accNo) return;
                 
-                                let name = (row['নাম'] || '').toString().trim();
-                let fname = (row['পিতা/স্বামীর নাম'] || '').toString().trim();
-                const protisthan = (row['প্রতিষ্ঠান'] || '').toString().trim();
-                
-                if (protisthan) {
-                    name = protisthan + ', প্রো: ' + name;
-                    if (fname && !fname.startsWith('পিতা/স্বামী:')) {
-                        fname = 'পিতা/স্বামী: ' + fname;
-                    }
-                }
-
-                const recombinedName = name + (fname ? '\n' + fname : '');
-
-                let newItem = { ...row };
-                newItem['ঋণের খাত'] = row['ঋণের খাত'] || row['ঋণের খাত'] || '';
+                                let newItem = { ...row };
+                newItem['ঋণের খাত'] = row['ঋণের খাত'] || row['ঋণের খাত'] || row['অর্থনৈতিক খাত'] || '';
                 newItem['ঋণের খাত'] = newItem['ঋণের খাত'];
-                newItem['নাম'] = name;
-                newItem['পিতা/স্বামীর নাম'] = fname;
-                newItem['নাম ও পিতার নাম'] = recombinedName;
+                formatBorrowerName(newItem);
                 newItem['_id'] = 'loan_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
                 
                 let bari = (row['বাড়ি'] || '').toString().trim();
@@ -610,7 +696,8 @@ function toBanglaNumbers(str) {
         // Ensure data consistency
         const processed = jsonData.map((row, index) => {
             let item = { ...row };
-            item['ঋণের খাত'] = item['ঋণের খাত'] || item['ঋণের খাত'] || '';
+            item['ঋণের খাত'] = item['ঋণের খাত'] || item['ঋণের খাত'] || item['অর্থনৈতিক খাত'] || '';
+            formatBorrowerName(item);
             item['ঋণের খাত'] = item['ঋণের খাত'];
             
             // Fix Excel formula blank evaluation (empty cell reference returns 0 instead of blank)
@@ -753,8 +840,13 @@ function toBanglaNumbers(str) {
             
             // Format Name
             let nameStr = item['নাম ও পিতার নাম'] || '';
+            if (!nameStr && item['নাম']) {
+                let f = (item['পিতা/স্বামীর নাম'] || '').toString().trim();
+                let cleanF = f.replace(/^(?:পিতা\/স্বামী|পিতা|স্বামী)\s*[:ঃ\-]?\s*/i, '').trim();
+                nameStr = cleanF ? item['নাম'] + '\nপিতা/স্বামী: ' + cleanF : item['নাম'];
+            }
             if (!nameStr.includes('\n')) {
-                nameStr = nameStr.replace(/পিতা:/g, '\nপিতা:').replace(/স্বামী:/g, '\nস্বামী:');
+                nameStr = nameStr.replace(/(?:পিতা\/স্বামী|পিতা|স্বামী):/g, '\n$&');
             }
 
             // Merge address
