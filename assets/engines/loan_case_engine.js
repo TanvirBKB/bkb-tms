@@ -397,7 +397,7 @@ function toBanglaNumbers(str) {
                 applyFilters();
 
                 // Show post-merge reminder
-                const msg = `✅ Unification Complete!\n\nAdded ${added} new borrower(s) from the backup file.\nSkipped ${importedList.length - added} duplicate(s) — host PC data preserved.\n\n⚠️ IMPORTANT: Please update balances and loan status from the CBS module to ensure accuracy.`;
+                const msg = ` Unification Complete!\n\nAdded ${added} new borrower(s) from the backup file.\nSkipped ${importedList.length - added} duplicate(s) — host PC data preserved.\n\n IMPORTANT: Please update balances and loan status from the CBS module to ensure accuracy.`;
                 alert(msg);
             } catch(err) {
                 console.error('Unify error:', err);
@@ -880,7 +880,7 @@ function toBanglaNumbers(str) {
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="৫২ স্থগিত সুদ" style="text-align:center;">${toBanglaNumbers(item['৫২ স্থগিত সুদ'] || '')}</td>
                 <td style="text-align:center;">${item['স্ট্যাটাস'] || ''}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${item._id}" data-col="শ্রেণীমান" style="text-align:center;">${item['শ্রেণীমান'] || ''}</td>
-                <td style="text-align:center;"><button onclick="if(confirm('Are you sure you want to delete this loan?')) window.deleteLoan('${item._id}')" style="background:none;border:none;cursor:pointer;color:red;" title="Delete">🗑</button></td>
+                <td style="text-align:center;"><button onclick="if(confirm('Are you sure you want to delete this loan?')) window.deleteLoan('${item._id}')" style="background:none;border:none;cursor:pointer;color:red;" title="Delete"></button></td>
             `
             uiTbody.appendChild(tr);
         });
@@ -930,7 +930,7 @@ function toBanglaNumbers(str) {
         });
         saveCurrentList();
         applyFilters();
-        if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Sorted by Village Code ✓');
+        if(window.parent && window.parent.showAppToast) window.parent.showAppToast('Sorted by Village Code ');
     };
 
     window.generateLegalReport = function() {
@@ -2724,7 +2724,7 @@ const subCategoriesMap = {
 
     const resultHtml = `
         <div style="padding: 20px; font-family: 'SolaimanLipi', Arial, sans-serif;">
-            <h3 style="margin-top:0; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; color: #2c3e50;">📊 অর্থবছর ভিত্তিক অগ্রগতি ও কর্মক্ষমতা বিশ্লেষণ</h3>
+            <h3 style="margin-top:0; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; color: #2c3e50;"> অর্থবছর ভিত্তিক অগ্রগতি ও কর্মক্ষমতা বিশ্লেষণ</h3>
             <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
                 <div><strong>অর্থবছর (Economic Year):</strong> <span class="bangla-numbers">${ecoYearLabel}</span></div>
                 <div style="margin-top: 4px;"><strong>সময়কাল (Timeframe):</strong> <span class="bangla-numbers">${timeFrameLabel}</span></div>

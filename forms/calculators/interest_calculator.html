@@ -23,12 +23,12 @@
       --blue-600: #2563eb;
       --blue-50: #eff6ff;
       --blue-700: #1d4ed8;
-      --green-700: #047857;
-      --custom-green: #00664F;
+      --green-700: #f7a205;
+      --custom-green: #01fa4c;
       --purple-600: #7c3aed;
-      --purple-700: #6d28d9;
-      --teal-700: #0f766e;
-      --teal-800: #115e59;
+      --purple-700: #de06fa;
+      --teal-700: #0681f3;
+      --teal-800: #07857c;
       --red-600: #dc2626;
       --red-800: #991b1b;
       --red-50: #fef2f2;
@@ -412,7 +412,7 @@
     }
 
     /* Allow Particulars column to wrap on screen to prevent overflow */
-    
+
 
 
     .particulars-col {
@@ -545,9 +545,10 @@
       font-size: 11pt;
     }
 
-        @page {
+    @page {
       size: A4 portrait;
-      margin: 12mm 10mm 12mm 10mm !important; /* Uniform 12mm top & bottom margin on EVERY page */
+      margin: 12mm 10mm 12mm 10mm !important;
+      /* Uniform 12mm top & bottom margin on EVERY page */
     }
 
     @media print {
@@ -579,7 +580,8 @@
         width: 100% !important;
         max-width: 100% !important;
         min-width: 100% !important;
-        padding: 0 !important; /* Page margins handled cleanly on all pages by @page */
+        padding: 0 !important;
+        /* Page margins handled cleanly on all pages by @page */
       }
 
       #headerMeta {
@@ -595,7 +597,8 @@
       }
 
       #loanTable thead {
-        display: table-header-group !important; /* Repeats table headers at the top of Page 2, 3... */
+        display: table-header-group !important;
+        /* Repeats table headers at the top of Page 2, 3... */
       }
 
       #loanTable tr {
@@ -703,66 +706,171 @@
       padding-top: 1pt !important;
       line-height: 1.2;
     }
-  
-    .right-col .field-label { white-space: nowrap !important; }
-  
-    
+
+    .right-col .field-label {
+      white-space: nowrap !important;
+    }
+
+
     /* Table Sizing Logic */
-    #loanTable th, #loanTable td {
-      white-space: nowrap !important; /* All columns stay on one line by default */
+    #loanTable th,
+    #loanTable td {
+      white-space: nowrap !important;
+      /* All columns stay on one line by default */
     }
-    #loanTable th:nth-child(3), #loanTable td:nth-child(3) {
-      white-space: normal !important; /* Only Particulars wraps */
+
+    #loanTable th:nth-child(3),
+    #loanTable td:nth-child(3) {
+      white-space: normal !important;
+      /* Only Particulars wraps */
       word-break: break-word;
-      max-width: 1.8in !important; /* Cap Particulars width */
+      max-width: 1.8in !important;
+      /* Cap Particulars width */
     }
-  
+
     /* Modal Dimensions & Widths */
-    .max-w-sm { max-width: 24rem; }
-    .max-w-md { max-width: 28rem; }
-    .max-w-lg { max-width: 32rem; }
-    .max-w-xl { max-width: 36rem; }
-    .max-w-2xl { max-width: 42rem; }
-    .max-w-3xl { max-width: 48rem; }
-    .max-w-4xl { max-width: 56rem; }
-    .max-w-5xl { max-width: 64rem; }
-    
+    .max-w-sm {
+      max-width: 24rem;
+    }
+
+    .max-w-md {
+      max-width: 28rem;
+    }
+
+    .max-w-lg {
+      max-width: 32rem;
+    }
+
+    .max-w-xl {
+      max-width: 36rem;
+    }
+
+    .max-w-2xl {
+      max-width: 42rem;
+    }
+
+    .max-w-3xl {
+      max-width: 48rem;
+    }
+
+    .max-w-4xl {
+      max-width: 56rem;
+    }
+
+    .max-w-5xl {
+      max-width: 64rem;
+    }
+
     /* Background & Text Colors */
-    .bg-gray-700 { background-color: #374151 !important; }
-    .bg-gray-800 { background-color: #1f2937 !important; }
-    .bg-gray-900 { background-color: #111827 !important; }
-    .text-gray-700 { color: #374151 !important; }
-    .text-gray-800 { color: #1f2937 !important; }
-    .text-gray-900 { color: #111827 !important; }
+    .bg-gray-700 {
+      background-color: #374151 !important;
+    }
 
-    .bg-purple-50 { background-color: #faf5ff !important; }
-    .bg-purple-100 { background-color: #f3e8ff !important; }
-    .bg-purple-700 { background-color: #7e22ce !important; }
-    .text-purple-700 { color: #7e22ce !important; }
-    .text-purple-900 { color: #581c87 !important; }
-    .border-purple-200 { border-color: #e9d5ff !important; }
+    .bg-gray-800 {
+      background-color: #1f2937 !important;
+    }
 
-    .bg-emerald-50 { background-color: #ecfdf5 !important; }
-    .text-emerald-700 { color: #047857 !important; }
-    .border-emerald-200 { border-color: #a7f3d0 !important; }
+    .bg-gray-900 {
+      background-color: #111827 !important;
+    }
 
-    .bg-teal-50 { background-color: #f0fdfa !important; }
-    .text-teal-700 { color: #0f766e !important; }
-    .border-teal-200 { border-color: #99f6e4 !important; }
+    .text-gray-700 {
+      color: #374151 !important;
+    }
 
-    .bg-indigo-50 { background-color: #eef2ff !important; }
-    .text-indigo-700 { color: #4338ca !important; }
-    .border-indigo-200 { border-color: #c7d2fe !important; }
+    .text-gray-800 {
+      color: #1f2937 !important;
+    }
 
-    .bg-amber-50 { background-color: #fffbeb !important; }
-    .text-amber-800 { color: #92400e !important; }
-    .border-amber-200 { border-color: #fde68a !important; }
+    .text-gray-900 {
+      color: #111827 !important;
+    }
 
-    .bg-cyan-50 { background-color: #ecfeff !important; }
-    .text-cyan-700 { color: #0e7490 !important; }
-    .border-cyan-200 { border-color: #a5f3fc !important; }
+    .bg-purple-50 {
+      background-color: #faf5ff !important;
+    }
 
-        /* Modern Premium Modal Theme & Unified Buttons */
+    .bg-purple-100 {
+      background-color: #f3e8ff !important;
+    }
+
+    .bg-purple-700 {
+      background-color: #7e22ce !important;
+    }
+
+    .text-purple-700 {
+      color: #7e22ce !important;
+    }
+
+    .text-purple-900 {
+      color: #581c87 !important;
+    }
+
+    .border-purple-200 {
+      border-color: #e9d5ff !important;
+    }
+
+    .bg-emerald-50 {
+      background-color: #ecfdf5 !important;
+    }
+
+    .text-emerald-700 {
+      color: #047857 !important;
+    }
+
+    .border-emerald-200 {
+      border-color: #a7f3d0 !important;
+    }
+
+    .bg-teal-50 {
+      background-color: #f0fdfa !important;
+    }
+
+    .text-teal-700 {
+      color: #0f766e !important;
+    }
+
+    .border-teal-200 {
+      border-color: #99f6e4 !important;
+    }
+
+    .bg-indigo-50 {
+      background-color: #eef2ff !important;
+    }
+
+    .text-indigo-700 {
+      color: #4338ca !important;
+    }
+
+    .border-indigo-200 {
+      border-color: #c7d2fe !important;
+    }
+
+    .bg-amber-50 {
+      background-color: #fffbeb !important;
+    }
+
+    .text-amber-800 {
+      color: #92400e !important;
+    }
+
+    .border-amber-200 {
+      border-color: #fde68a !important;
+    }
+
+    .bg-cyan-50 {
+      background-color: #ecfeff !important;
+    }
+
+    .text-cyan-700 {
+      color: #0e7490 !important;
+    }
+
+    .border-cyan-200 {
+      border-color: #a5f3fc !important;
+    }
+
+    /* Modern Premium Modal Theme & Unified Buttons */
     .modal-backdrop {
       background-color: rgba(15, 23, 42, 0.72) !important;
       backdrop-filter: blur(8px) !important;
@@ -770,7 +878,8 @@
     }
 
     .modal-card {
-      border-radius: 20px !important;
+    overflow: hidden !important;
+      border-radius: 12px !important;
       border: 1px solid rgba(226, 232, 240, 0.9) !important;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
       background: #ffffff !important;
@@ -811,10 +920,12 @@
       border: 1px solid transparent !important;
       text-decoration: none !important;
     }
+
     .btn-unified:hover {
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
     }
+
     .btn-unified:active {
       transform: translateY(0) !important;
     }
@@ -824,6 +935,7 @@
       color: #334155 !important;
       border: 1px solid #cbd5e1 !important;
     }
+
     .btn-modal-close:hover {
       background-color: #e2e8f0 !important;
       color: #0f172a !important;
@@ -834,6 +946,7 @@
       color: #ffffff !important;
       border: 1px solid #047857 !important;
     }
+
     .btn-modal-primary:hover {
       background-color: #047857 !important;
     }
@@ -843,6 +956,7 @@
       color: #ffffff !important;
       border: 1px solid #b91c1c !important;
     }
+
     .btn-modal-danger:hover {
       background-color: #b91c1c !important;
     }
@@ -852,6 +966,7 @@
       color: #ffffff !important;
       border: 1px solid #b45309 !important;
     }
+
     .btn-modal-warning:hover {
       background-color: #b45309 !important;
     }
@@ -861,6 +976,7 @@
       color: #ffffff !important;
       border: 1px solid #1d4ed8 !important;
     }
+
     .btn-modal-info:hover {
       background-color: #1d4ed8 !important;
     }
@@ -870,10 +986,10 @@
       color: #ffffff !important;
       border: 1px solid #6b21a8 !important;
     }
+
     .btn-modal-purple:hover {
       background-color: #6b21a8 !important;
     }
-
   </style>
 
   <link rel="stylesheet" href="../../assets/css/common.css">
@@ -885,8 +1001,10 @@
 <body class="bg-gray-100 min-h-screen p-4">
 
   <!-- Floating Toast Notification -->
-  <div id="calcFloatingToast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] hidden transition-all duration-300 pointer-events-none">
-    <div id="calcToastContent" class="px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold text-white bg-gray-900/90 backdrop-blur border border-white/20 flex items-center gap-2">
+  <div id="calcFloatingToast"
+    class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] hidden transition-all duration-300 pointer-events-none">
+    <div id="calcToastContent"
+      class="px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold text-white bg-gray-900/90 backdrop-blur border border-white/20 flex items-center gap-2">
       <span id="calcToastMsg">Notification message</span>
     </div>
   </div>
@@ -903,20 +1021,16 @@
     </div>
   </div>
 
-          <!-- =========================================================================
+  <!-- =========================================================================
        MODALS & OVERLAYS (Modern Unified Theme)
        ========================================================================= -->
 
-  <!-- Installment / Term Loan Details Modal -->
-  <div id="installmentModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+  <div id="installmentModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
     <div class="relative w-full max-w-md modal-card flex flex-col overflow-hidden">
       <!-- Header -->
       <div class="modal-header flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold shadow-xs">
-            📅
-          </div>
+          
           <div>
             <h3 class="text-base font-bold text-gray-800 m-0">Term Loan Installment Details</h3>
             <p class="text-xs text-gray-500 m-0 mt-0.5">Specify repayment frequency and grace period</p>
@@ -948,8 +1062,7 @@
 
       <!-- Footer -->
       <div class="modal-footer flex justify-end gap-3">
-        <button type="button" onclick="InterestCalcLogic.cancelAndContinue()"
-          class="btn-unified btn-modal-close">
+        <button type="button" onclick="InterestCalcLogic.cancelAndContinue()" class="btn-unified btn-modal-close">
           Skip
         </button>
         <button type="button" onclick="InterestCalcLogic.saveInstallmentDataAndContinue()"
@@ -962,88 +1075,11 @@
 
 
   <!-- Calculation Method Selector Modal -->
-  <div id="calculationMethodModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop" style="background-color: rgba(0, 0, 0, 0.5);">
-    <div class="modal-content" style="width: 400px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background-color: #fff; margin: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
-            <h3 style="margin: 0; font-size: 16px; color: #333;">Select Calculation Method</h3>
-            <span class="close" onclick="InterestCalcLogic.hideCalculationMethodModal()" style="cursor: pointer; font-size: 20px; color: #999;">&times;</span>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="InterestCalcLogic.selectCalculationMethod('ledger')" style="padding: 10px; text-align: center; background-color: #3498db; border: 1px solid #2980b9; border-radius: 4px; cursor: pointer; color: white; font-weight: bold;">
-                Calculation of loans from Ledger
-            </button>
-            <button onclick="InterestCalcLogic.selectCalculationMethod('cbs')" style="padding: 10px; text-align: center; background-color: #2ecc71; border: 1px solid #27ae60; border-radius: 4px; cursor: pointer; color: white; font-weight: bold;">
-                Calculation of Loans from CBS
-            </button>
-            <button onclick="InterestCalcLogic.selectCalculationMethod('headChange')" style="padding: 10px; text-align: center; background-color: #f1c40f; border: 1px solid #f39c12; border-radius: 4px; cursor: pointer; color: black; font-weight: bold;">
-                Calculation of Loan's GL Code Change
-            </button>
-        </div>
-    </div>
-</div>
-
-<div id="installmentModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
-    <div class="relative w-full max-w-md modal-card flex flex-col overflow-hidden">
-      <!-- Header -->
-      <div class="modal-header flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold shadow-xs">
-            📅
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-gray-800 m-0">Term Loan Installment Details</h3>
-            <p class="text-xs text-gray-500 m-0 mt-0.5">Specify repayment frequency and grace period</p>
-          </div>
-        </div>
-        <button type="button" onclick="InterestCalcLogic.cancelAndContinue()"
-          class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none cursor-pointer bg-transparent border-none p-1">&times;</button>
-      </div>
-
-      <!-- Body -->
-      <div class="p-6 flex flex-col gap-4 bg-white">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1.5">Grace Period (in Months)</label>
-          <input type="text" id="gracePeriodModal" placeholder="e.g. 6 Months"
-            class="w-full h-10 px-3.5 border border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1.5">Installment Frequency</label>
-          <select id="installmentFrequencyModal"
-            class="w-full h-10 px-3.5 border border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs">
-            <option value="">Select frequency...</option>
-            <option value="monthly">Monthly (মাসিক)</option>
-            <option value="quarterly">Quarterly (ত্রৈমাসিক)</option>
-            <option value="half-yearly">Half-Yearly (ষান্মাসিক)</option>
-            <option value="yearly">Yearly (বার্ষিক)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer flex justify-end gap-3">
-        <button type="button" onclick="InterestCalcLogic.cancelAndContinue()"
-          class="btn-unified btn-modal-close">
-          Skip
-        </button>
-        <button type="button" onclick="InterestCalcLogic.saveInstallmentDataAndContinue()"
-          class="btn-unified btn-modal-primary">
-          Save and Continue
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Calculation Method Selector Modal -->
-  <div id="calculationMethodModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+  <div id="calculationMethodModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
     <div class="relative w-full max-w-lg modal-card flex flex-col overflow-hidden">
       <!-- Header -->
       <div class="modal-header flex flex-col items-center justify-center text-center pb-4 pt-5">
-        <div class="w-12 h-12 mb-3 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold shadow-xs">
-          📊
-        </div>
+        
         <div>
           <h3 class="text-lg font-bold text-gray-800 m-0">Select Calculation Method</h3>
           <p class="text-xs text-gray-500 m-0 mt-1">Choose the source and format of the loan transactions</p>
@@ -1054,52 +1090,54 @@
       <div class="p-6 flex flex-col gap-3.5 bg-white">
         <!-- Option 1: Ledger -->
         <button type="button" onclick="InterestCalcLogic.selectCalculationMethod('ledger')"
-          class="w-full p-5 rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50/90 to-indigo-50/50 hover:from-blue-100 hover:to-indigo-100 text-blue-900 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-xs gap-3">
-          <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center text-2xl font-bold shadow-xs">📖</div>
+          class="w-full p-5 rounded-xl border border-blue-400 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-md gap-2"
+          style="background: linear-gradient(135deg, #3b82f6, #4f46e5); color: #ffffff;">
+          
           <div>
-            <div class="text-sm font-bold text-gray-900 group-hover:text-blue-700">Calculation of loans from Ledger</div>
-            <div class="text-xs text-gray-500 mt-1">Calculate individual or batch accounts from ledger sheets</div>
+            <div class="text-base font-bold text-white">Calculation of loans from Ledger</div>
+            <div class="text-xs text-blue-100 mt-1 opacity-90">Calculate individual or batch accounts from ledger sheets</div>
           </div>
         </button>
 
         <!-- Option 2: CBS -->
         <button type="button" onclick="InterestCalcLogic.selectCalculationMethod('cbs')"
-          class="w-full p-5 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50/90 to-teal-50/50 hover:from-emerald-100 hover:to-teal-100 text-emerald-900 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-xs gap-3">
-          <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold shadow-xs">💻</div>
+          class="w-full p-5 rounded-xl border border-emerald-400 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-md gap-2"
+          style="background: linear-gradient(135deg, #10b981, #0d9488); color: #ffffff;">
+          
           <div>
-            <div class="text-sm font-bold text-gray-900 group-hover:text-emerald-700">Calculation of Loans from CBS</div>
-            <div class="text-xs text-gray-500 mt-1">Extract statement balances & interest transactions directly from CBS</div>
+            <div class="text-base font-bold text-white">Calculation of Loans from CBS</div>
+            <div class="text-xs text-emerald-100 mt-1 opacity-90">Extract statement balances & interest transactions directly from CBS</div>
           </div>
         </button>
 
         <!-- Option 3: Head Change -->
         <button type="button" onclick="InterestCalcLogic.selectCalculationMethod('headChange')"
-          class="w-full p-5 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50/90 to-orange-50/50 hover:from-amber-100 hover:to-orange-100 text-amber-900 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-xs gap-3">
-          <div class="w-12 h-12 rounded-xl bg-amber-600 text-white flex items-center justify-center text-2xl font-bold shadow-xs">🔄</div>
+          class="w-full p-5 rounded-xl border border-orange-400 transition flex flex-col items-center justify-center text-center group cursor-pointer shadow-md gap-2"
+          style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: #ffffff;">
+          
           <div>
-            <div class="text-sm font-bold text-gray-900 group-hover:text-amber-700">Calculate Head Change Loans</div>
-            <div class="text-xs text-gray-500 mt-1">Recompute interest across transfer periods and GL head adjustments</div>
+            <div class="text-base font-bold text-white">Calculate Head Change Loans</div>
+            <div class="text-xs text-orange-100 mt-1 opacity-90">Recompute interest across transfer periods and GL head adjustments</div>
           </div>
         </button>
       </div>
     </div>
   </div>
 
-
   <!-- Loan Product & Rate Configurator Modal -->
-  <div id="rateChangeModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+  <div id="rateChangeModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
     <div class="relative bg-white modal-card flex flex-col w-full overflow-hidden"
       style="max-width: 1140px; max-height: 90vh; margin: auto;">
-      
+
       <!-- Modal Header (Fixed at top) -->
       <div class="modal-header flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-5">
-          <div class="flex items-center gap-2.5">
-            <span class="text-2xl">⚙️</span>
+          <div class="flex flex-wrap items-center gap-3 space-x-2">
+            <span class="text-2xl"></span>
             <div>
               <h3 class="text-base font-bold text-gray-800 m-0">Loan Product & Rate Configurator</h3>
-              <p class="text-xs text-gray-500 m-0 mt-0.5">Manage products, effective interest rate timelines, and dynamic penalty schedules</p>
+              <p class="text-xs text-gray-500 m-0 mt-0.5">Manage products, effective interest rate timelines, and
+                dynamic penalty schedules</p>
             </div>
           </div>
 
@@ -1107,11 +1145,11 @@
           <div class="flex bg-slate-200/90 p-1 rounded-xl border border-slate-300 shadow-inner">
             <button type="button" id="tab-btn-base-rates" onclick="InterestCalcLogic.switchRateModalTab('rates')"
               class="px-4 py-1.5 text-xs font-bold rounded-lg bg-green-700 text-white shadow-sm transition cursor-pointer whitespace-nowrap">
-              📈 Base Interest Rates
+               Base Interest Rates
             </button>
             <button type="button" id="tab-btn-penalty-rates" onclick="InterestCalcLogic.switchRateModalTab('penalty')"
               class="px-4 py-1.5 text-xs font-bold rounded-lg text-gray-700 hover:text-purple-900 transition cursor-pointer whitespace-nowrap">
-              ⚖️ Dynamic Penalty Rates
+               Dynamic Penalty Rates
             </button>
           </div>
         </div>
@@ -1120,7 +1158,7 @@
           <!-- Back button (Active when navigated from View Loans or child dialogs) -->
           <button type="button" id="btnBackToViewLoans" onclick="InterestCalcLogic.goBackToPreviousModal()"
             class="btn-unified btn-modal-close h-9 hidden">
-            <span>⬅️</span>
+            <span>⬅</span>
             <span>Back to View Loans</span>
           </button>
 
@@ -1131,32 +1169,35 @@
       </div>
 
       <!-- Modal Body (Scrollable container) -->
-      <div class="flex-grow overflow-y-auto px-6 py-5 bg-white flex flex-col gap-4" style="max-height: calc(90vh - 145px);">
-        
+      <div class="flex-grow overflow-y-auto px-6 py-5 bg-white flex flex-col gap-4"
+        style="max-height: calc(90vh - 145px);">
+
         <!-- Tab 1: Base Interest Rates & Product Management -->
         <div id="rateModalTabBaseRates" class="flex flex-col gap-4">
-          
+
           <!-- Top Card: Product Selector / Add / Edit -->
           <div class="p-4 rounded-xl border border-gray-200 bg-slate-50/70 shadow-xs">
             <!-- View / Select Mode -->
             <div id="productSelectMode">
-              <label class="block text-xs font-bold mb-1.5 text-gray-700">Select Existing Loan Product to View / Edit Rates:</label>
+              <label class="block text-xs font-bold mb-1.5 text-gray-700">Select Existing Loan Product to View / Edit
+                Rates:</label>
               <div class="flex flex-wrap items-center gap-2.5">
-                <select id="rateManagerLoanSelector" class="flex-grow min-w-[280px] h-10 px-3 rounded-xl border border-gray-300 shadow-xs text-sm font-semibold focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
+                <select id="rateManagerLoanSelector"
+                  class="flex-grow min-w-[280px] h-10 px-3 rounded-xl border border-gray-300 shadow-xs text-sm font-semibold focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
                   onchange="InterestCalcLogic.refreshRateManagerTable()">
                   <!-- Populated dynamically -->
                 </select>
                 <button type="button" onclick="InterestCalcLogic.editSelectedProduct()"
                   class="btn-unified btn-modal-warning h-10">
-                  ✏️ Edit Product
+                   Edit Product
                 </button>
                 <button type="button" onclick="InterestCalcLogic.deleteSelectedProduct()"
                   class="btn-unified btn-modal-danger h-10">
-                  🗑️ Delete Product
+                   Delete Product
                 </button>
                 <button type="button" onclick="InterestCalcLogic.toggleAddProductMode(true)"
                   class="btn-unified btn-modal-info h-10">
-                  ➕ Add New Product
+                   Add New Product
                 </button>
               </div>
             </div>
@@ -1165,73 +1206,88 @@
             <div id="productAddMode" class="hidden">
               <div class="flex justify-between items-center border-b pb-2 mb-3">
                 <h4 class="text-sm font-bold text-blue-700 m-0 flex items-center gap-1.5">
-                  <span>📝 Define / Edit Loan Product</span>
+                  <span> Define / Edit Loan Product</span>
                 </h4>
-                <span class="text-xs text-gray-500 font-medium">Configure GL Code, Scheme Name, Loan Type, Term Type, Capitalization & Penalty</span>
+                <span class="text-xs text-gray-500 font-medium">Configure GL Code, Scheme Name, Loan Type, Term Type,
+                  Capitalization & Penalty</span>
               </div>
-              
+
               <!-- Row 1: Core Fields in horizontal flex row -->
-              <div class="flex flex-wrap items-end gap-2.5">
-                <div class="w-24 flex-shrink-0">
-                  <label class="block text-xs font-bold text-gray-600 mb-1">GL Code</label>
-                  <input type="text" id="newProductCode" placeholder="e.g. 3055"
-                    class="w-full h-10 px-3 border border-gray-300 rounded-xl text-xs font-mono font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white" maxlength="4">
-                </div>
+              <div class="flex flex-nowrap overflow-x-auto items-end gap-2 pb-2">
+<div class="w-16 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">GL Code</label>
+<input type="text" id="newProductCode" placeholder="3055" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white" maxlength="4">
+</div>
 
-                <div class="flex-grow min-w-[220px]">
-                  <label class="block text-xs font-bold text-gray-600 mb-1">Loan Scheme Name</label>
-                  <input type="text" id="newProductName" placeholder="e.g. SPECIAL PERSONAL LOAN"
-                    class="w-full h-10 px-3 border border-gray-300 rounded-xl text-xs uppercase font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
-                </div>
+<div class="w-40 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">Loan Scheme Name</label>
+<input type="text" id="newProductName" placeholder="SPECIAL PERSONAL LOAN" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-[10px] uppercase font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
+</div>
 
-                <div class="w-32 flex-shrink-0">
-                  <label class="block text-xs font-bold text-gray-600 mb-1">Loan Type</label>
-                  <select id="newProductCategory" class="w-full h-10 px-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
-                    <option value="Agri">Agri</option>
-                    <option value="AGRI">AGRI</option>
-                    <option value="CMSME">CMSME</option>
-                    <option value="PROJECT">PROJECT</option>
-                    <option value="PERSONAL">PERSONAL</option>
-                    <option value="COMMERCIAL">COMMERCIAL</option>
-                    <option value="OTHER">OTHER</option>
-                  </select>
-                </div>
+<div class="w-24 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">Loan Type</label>
+<select id="newProductCategory" class="w-full h-9 px-1 border border-gray-300 rounded-lg text-[10px] font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
+<option value="Agri">Agri</option>
+<option value="AGRI">AGRI</option>
+<option value="CMSME">CMSME</option>
+<option value="PROJECT">PROJECT</option>
+<option value="PERSONAL">PERSONAL</option>
+<option value="COMMERCIAL">COMMERCIAL</option>
+<option value="OTHER">OTHER</option>
+</select>
+</div>
 
-                <div class="w-36 flex-shrink-0">
-                  <label class="block text-xs font-bold text-gray-600 mb-1">Term Type</label>
-                  <select id="newProductTermType" class="w-full h-10 px-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
-                    <option value="Short Term">Short Term</option>
-                    <option value="Mid Term">Mid Term</option>
-                    <option value="Long Term">Long Term</option>
-                    <option value="Continuous">Continuous</option>
-                  </select>
-                </div>
+<div class="w-24 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">Term Type</label>
+<select id="newProductTermType" class="w-full h-9 px-1 border border-gray-300 rounded-lg text-[10px] font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
+<option value="Short Term">Short Term</option>
+<option value="Mid Term">Mid Term</option>
+<option value="Long Term">Long Term</option>
+<option value="Continuous">Continuous</option>
+</select>
+</div>
 
-                <div class="w-32 flex-shrink-0">
-                  <label class="block text-xs font-bold text-gray-600 mb-1">Capitalization</label>
-                  <select id="newProductCap" class="w-full h-10 px-3 border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
-                    <option value="Monthly">Monthly</option>
-                    <option value="Quarterly">Quarterly</option>
-                    <option value="Half-Yearly">Half Yearly</option>
-                    <option value="Yearly">Yearly</option>
-                  </select>
-                </div>
+<div class="w-20 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">Interest Type</label>
+<select id="newProductInterestType" class="w-full h-9 px-1 border border-gray-300 rounded-lg text-[10px] font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
+<option value="Fixed">Fixed</option>
+<option value="Variable">Variable</option>
+</select>
+</div>
 
-                <div class="flex-shrink-0 flex items-center bg-green-50/90 border border-green-200 rounded-xl px-3.5 h-10 shadow-xs">
-                  <label class="inline-flex items-center gap-2 cursor-pointer m-0">
-                    <input type="checkbox" id="newProductPenalty" checked class="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer"
-                      onchange="
-                        const isChecked = this.checked;
-                        const lbl = document.getElementById('newProductPenaltyLabel');
-                        if (lbl) lbl.textContent = isChecked ? 'Penalty: Yes' : 'Penalty: N/A';
-                        InterestCalcLogic.showToast(isChecked ? '✓ Penalty set to Applicable (Yes)' : '✗ Penalty set to N/A / Exempt (No)');
-                      ">
-                    <span id="newProductPenaltyLabel" class="text-xs font-bold text-green-800 whitespace-nowrap">Penalty: Yes</span>
-                  </label>
-                </div>
-              </div>
+<div class="w-24 flex-shrink-0">
+<label class="block text-[10px] font-bold text-gray-600 mb-1">Capitalization</label>
+<select id="newProductCap" class="w-full h-9 px-1 border border-gray-300 rounded-lg text-[10px] font-semibold focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white">
+<option value="Monthly">Monthly</option>
+<option value="Quarterly">Quarterly</option>
+<option value="Half-Yearly">Half Yearly</option>
+<option value="Yearly">Yearly</option>
+</select>
+</div>
 
-              <!-- Row 2: Optional Excel Rate Import & Actions in one compact row -->
+<div class="w-20 flex-shrink-0">
+<label class="block text-[10px] font-bold text-green-700 mb-1">Penalty</label>
+<select id="newProductPenalty" onchange="
+const isChecked = this.value === 'Applicable';
+const pName = document.getElementById('newProductName').value.trim().toUpperCase();
+if (pName && window.InterestRateManager && typeof window.InterestRateManager.setLoanTypePenaltyExemption === 'function') {
+    window.InterestRateManager.setLoanTypePenaltyExemption(pName, !isChecked);
+    InterestCalcLogic.showToast(isChecked ? ' Penalty set to Applicable (Yes)' : ' Penalty set to N/A / Exempt (No)');
+    if (typeof InterestCalcLogic !== 'undefined' && typeof InterestCalcLogic.refreshPenaltyLoanStatus === 'function') {
+        InterestCalcLogic.refreshPenaltyLoanStatus();
+    }
+} else {
+    InterestCalcLogic.showToast(isChecked ? ' Penalty set to Applicable (Save product to apply)' : ' Penalty set to N/A (Save product to apply)');
+}
+" class="w-full h-9 px-1 border border-green-300 bg-green-50 rounded-lg text-[10px] font-bold text-green-800 focus:ring-2 focus:ring-green-400 focus:outline-none">
+<option value="Applicable">Yes</option>
+<option value="Exempt">N/A</option>
+</select>
+</div>
+
+</div>
+
+<!-- Row 2: Optional Excel Rate Import & Actions in one compact row -->
               <div class="mt-3 pt-3 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2 text-xs text-gray-500">
                   <span class="font-bold text-gray-700 whitespace-nowrap">Import Rates (Excel):</span>
@@ -1244,29 +1300,40 @@
                   <button type="button" onclick="InterestCalcLogic.toggleAddProductMode(false)"
                     class="btn-unified btn-modal-close h-9">Cancel</button>
                   <button type="button" onclick="InterestCalcLogic.saveNewProduct()"
-                    class="btn-unified btn-modal-primary h-9">💾 Save Product</button>
+                    class="btn-unified btn-modal-primary h-9"> Save Product</button>
                 </div>
               </div>
             </div>
 
             <!-- Read-only Display of Selected Product Properties -->
-            <div id="productPropertiesDisplay" class="mt-3.5 pt-3.5 border-t border-gray-200 grid gap-3 text-xs text-gray-700 hidden"
+            <div id="productPropertiesDisplay"
+              class="mt-3.5 pt-3.5 border-t border-gray-200 grid gap-3 text-xs text-gray-700 hidden"
               style="grid-template-columns: repeat(5, minmax(0, 1fr));">
-              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span class="font-bold text-gray-400 block text-[10px] uppercase">GL Code</span> <span id="dispProductCode" class="font-mono font-bold text-gray-800 text-sm">-</span></div>
-              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span class="font-bold text-gray-400 block text-[10px] uppercase">Loan Type</span> <span id="dispProductCategory" class="font-bold text-gray-800 text-sm">-</span></div>
-              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span class="font-bold text-gray-400 block text-[10px] uppercase">Term Type</span> <span id="dispProductTermType" class="font-bold text-gray-800 text-sm">-</span></div>
-              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span class="font-bold text-gray-400 block text-[10px] uppercase">Capitalization</span> <span id="dispProductCap" class="font-bold text-gray-800 text-sm">-</span></div>
-              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span class="font-bold text-gray-400 block text-[10px] uppercase">Penalty Status</span> <span id="dispProductPenalty" class="font-bold text-sm">-</span></div>
+              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span
+                  class="font-bold text-gray-400 block text-[10px] uppercase">GL Code</span> <span id="dispProductCode"
+                  class="font-mono font-bold text-gray-800 text-sm">-</span></div>
+              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span
+                  class="font-bold text-gray-400 block text-[10px] uppercase">Loan Type</span> <span
+                  id="dispProductCategory" class="font-bold text-gray-800 text-sm">-</span></div>
+              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span
+                  class="font-bold text-gray-400 block text-[10px] uppercase">Term Type</span> <span
+                  id="dispProductTermType" class="font-bold text-gray-800 text-sm">-</span></div>
+              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span
+                  class="font-bold text-gray-400 block text-[10px] uppercase">Capitalization</span> <span
+                  id="dispProductCap" class="font-bold text-gray-800 text-sm">-</span></div>
+              <div class="p-2.5 bg-white rounded-xl border border-gray-200 shadow-2xs"><span
+                  class="font-bold text-gray-400 block text-[10px] uppercase">Penalty Status</span> <span
+                  id="dispProductPenalty" class="font-bold text-sm">-</span></div>
             </div>
           </div>
 
           <!-- Bottom Card: Rate History Table -->
           <div class="border border-gray-300 rounded-xl overflow-hidden bg-white shadow-xs">
-            <div class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
-              <span>📈 Effective Base Rate History Timeline</span>
+            <div
+              class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
+              <span> Effective Base Rate History Timeline</span>
               <button type="button" onclick="InterestCalcLogic.addRateRow()"
-                class="btn-unified btn-modal-primary h-8 text-xs"
-                id="btnAddRateRow">+ Add Rate Row</button>
+                class="btn-unified btn-modal-primary h-8 text-xs" id="btnAddRateRow">+ Add Rate Row</button>
             </div>
             <div class="overflow-y-auto" style="min-height: 180px; max-height: 32vh;">
               <table class="w-full text-xs text-left border-collapse bg-white">
@@ -1289,16 +1356,17 @@
 
         <!-- Tab 2: Dynamic Penalty Rates & Rules (Hidden by default) -->
         <div id="rateModalTabPenaltyRates" class="flex flex-col gap-4 hidden">
-          
+
           <!-- Penalty Overview & Quick Add Card -->
           <div class="p-4 bg-purple-50/80 border border-purple-200 rounded-xl shadow-xs">
             <div class="font-bold text-xs text-purple-900 flex items-center gap-2 mb-2.5">
-              <span>➕ Add / Update Penalty Rate by Date:</span>
+              <span> Add / Update Penalty Rate by Date:</span>
             </div>
             <div class="flex flex-wrap items-center gap-3">
               <div class="flex items-center gap-2">
                 <label class="text-xs font-bold text-gray-700">Effective Date (তারিখ):</label>
-                <input type="date" id="quickPenaltyDate" class="h-10 px-3 border border-gray-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-purple-400 bg-white">
+                <input type="date" id="quickPenaltyDate"
+                  class="h-10 px-3 border border-gray-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-purple-400 bg-white">
               </div>
               <div class="flex items-center gap-2">
                 <label class="text-xs font-bold text-gray-700">Penalty Rate (দণ্ড সুদ %):</label>
@@ -1312,14 +1380,16 @@
               </button>
             </div>
             <p class="text-[11px] text-purple-700 mt-2.5 m-0">
-              Default schedule: <strong>2.00%</strong> from 09/08/2018, and <strong>1.50%</strong> from 20/05/2024. Penalty interest is applied dynamically based on transaction dates.
+              Default schedule: <strong>2.00%</strong> from 09/08/2018, and <strong>1.50%</strong> from 20/05/2024.
+              Penalty interest is applied dynamically based on transaction dates.
             </p>
           </div>
 
           <!-- Dynamic Penalty Rate Timeline Table Section -->
           <div class="border border-gray-300 rounded-xl overflow-hidden bg-white shadow-xs">
-            <div class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
-              <span>📅 Dynamic Penalty Rate Timeline</span>
+            <div
+              class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
+              <span> Dynamic Penalty Rate Timeline</span>
               <button type="button" onclick="InterestCalcLogic.addPenaltyRow()"
                 class="btn-unified btn-modal-purple h-8 text-xs">+ Add Row</button>
             </div>
@@ -1343,21 +1413,26 @@
 
           <!-- Loan Type Applicability Section -->
           <div class="border border-gray-300 rounded-xl p-4 bg-white shadow-xs">
-            <div class="font-bold text-xs text-gray-700 uppercase mb-2.5">🏷️ Loan Type Penalty Exemption / Applicability</div>
+            <div class="font-bold text-xs text-gray-700 uppercase mb-2.5"> Loan Type Penalty Exemption /
+              Applicability</div>
             <div class="flex items-center gap-3 mb-2">
-              <select id="penaltyLoanSelector" class="flex-grow h-10 px-3 rounded-xl border border-gray-300 shadow-xs text-sm font-semibold focus:ring-2 focus:ring-purple-400 bg-white"
+              <select id="penaltyLoanSelector"
+                class="flex-grow h-10 px-3 rounded-xl border border-gray-300 shadow-xs text-sm font-semibold focus:ring-2 focus:ring-purple-400 bg-white"
                 onchange="InterestCalcLogic.refreshPenaltyLoanStatus()">
                 <!-- Populated dynamically -->
               </select>
-              <div id="penaltyStatusBadge" class="h-10 px-4 rounded-xl font-bold text-xs flex items-center justify-center whitespace-nowrap bg-green-100 text-green-800 border border-green-300">
+              <div id="penaltyStatusBadge"
+                class="h-10 px-4 rounded-xl font-bold text-xs flex items-center justify-center whitespace-nowrap bg-green-100 text-green-800 border border-green-300">
                 Applicable
               </div>
-              <button type="button" id="btnTogglePenaltyExempt" onclick="InterestCalcLogic.toggleCurrentLoanPenaltyExemption()"
+              <button type="button" id="btnTogglePenaltyExempt"
+                onclick="InterestCalcLogic.toggleCurrentLoanPenaltyExemption()"
                 class="btn-unified btn-modal-warning h-10">
                 Toggle N/A
               </button>
             </div>
-            <p class="text-xs text-gray-500 m-0">Loan types marked as <strong>N/A</strong> are completely exempt from penalty calculations (e.g. Agri short term loans).</p>
+            <p class="text-xs text-gray-500 m-0">Loan types marked as <strong>N/A</strong> are completely exempt from
+              penalty calculations (e.g. Agri short term loans).</p>
           </div>
 
         </div>
@@ -1369,15 +1444,16 @@
         <div id="rateModalFooterLeft" class="flex items-center gap-3">
           <button type="button" onclick="InterestCalcLogic.openViewLoansFromConfigurator()"
             class="btn-unified btn-modal-close h-10">
-            <span>📋 View All Loan Products</span>
+            <span> View All Loan Products</span>
           </button>
-          <span id="rateModalFooterTip" class="text-[11px] text-gray-500 hidden md:inline">Select a loan product to review or modify effective rate history.</span>
+          <span id="rateModalFooterTip" class="text-[11px] text-gray-500 hidden md:inline">Select a loan product to
+            review or modify effective rate history.</span>
         </div>
         <div class="flex items-center gap-2.5" id="rateModalFooterActions">
           <button type="button" onclick="InterestCalcLogic.hideRateChangeModal()"
             class="btn-unified btn-modal-close h-10">Close</button>
-          <button type="button" onclick="InterestCalcLogic.saveRateManager()"
-            class="btn-unified btn-modal-danger h-10" id="btnSaveRates">Save Rates</button>
+          <button type="button" onclick="InterestCalcLogic.saveRateManager()" class="btn-unified btn-modal-danger h-10"
+            id="btnSaveRates">Save Rates</button>
           <button type="button" onclick="InterestCalcLogic.savePenaltyManager()"
             class="btn-unified btn-modal-purple h-10 hidden" id="btnSavePenalty">Save Penalty Settings</button>
         </div>
@@ -1387,17 +1463,16 @@
 
 
 
-  
+
   <!-- Add New Loan Product Modal -->
   <div id="addLoanProductModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
-    <div class="relative bg-white modal-card flex flex-col w-full overflow-hidden" style="max-width: 900px; max-height: 90vh; margin: auto;">
-      
+    <div class="relative bg-white modal-card flex flex-col w-full overflow-hidden"
+      style="max-width: 900px; max-height: 90vh; margin: auto;">
+
       <!-- Header -->
       <div class="modal-header flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl font-bold shadow-xs">
-            ➕
-          </div>
+          
           <div>
             <h3 class="text-base font-bold text-gray-800 m-0">Add New Loan Type</h3>
             <p class="text-xs text-gray-500 m-0 mt-0.5">Define new loan product structure and optional initial rates</p>
@@ -1408,24 +1483,29 @@
       </div>
 
       <!-- Body -->
-      <div class="flex-grow overflow-y-auto px-6 py-5 bg-slate-50 flex flex-col gap-5" style="max-height: calc(90vh - 145px);">
-        
+      <div class="flex-grow overflow-y-auto px-6 py-5 bg-slate-50 flex flex-col gap-5"
+        style="max-height: calc(90vh - 145px);">
+
         <!-- Form Section -->
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <h4 class="text-sm font-bold text-gray-800 mb-3 m-0">📝 Loan Product Details</h4>
-          
+          <h4 class="text-sm font-bold text-gray-800 mb-3 m-0"> Loan Product Details</h4>
+
           <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Loan Head (GL Code)</label>
-              <input type="text" id="addLoanHead" placeholder="e.g. 3055" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none" maxlength="4">
+              <input type="text" id="addLoanHead" placeholder="e.g. 3055"
+                class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                maxlength="4">
             </div>
             <div style="grid-column: span 2 / span 2;">
               <label class="block text-xs font-bold text-gray-600 mb-1">Scheme Name</label>
-              <input type="text" id="addLoanSchemeName" placeholder="e.g. SPECIAL PERSONAL LOAN" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs uppercase font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
+              <input type="text" id="addLoanSchemeName" placeholder="e.g. SPECIAL PERSONAL LOAN"
+                class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs uppercase font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Loan Type</label>
-              <select id="addLoanType" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
+              <select id="addLoanType"
+                class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 <option value="Agri">Agri</option>
                 <option value="CMSME">CMSME</option>
                 <option value="PROJECT">Project</option>
@@ -1434,41 +1514,35 @@
                 <option value="OTHER">Other</option>
               </select>
             </div>
-            
+
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Term Type</label>
-              <select id="addLoanTermType" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
+              <select id="addLoanTermType"
+                class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 <option value="Short Term">Short-Term</option>
                 <option value="Mid Term">Mid-Term</option>
                 <option value="Long Term">Long Term</option>
                 <option value="Continuous">Continuous</option>
               </select>
             </div>
-            
-            <div>
-              <label class="block text-xs font-bold text-gray-600 mb-1">Rate Type</label>
-              <select id="addLoanRateType" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                <option value="Fixed">Fixed</option>
-                <option value="Variable">Variable</option>
-              </select>
-            </div>
-            
+
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Capitalization Period</label>
-              <select id="addLoanCapPeriod" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
+              <select id="addLoanCapPeriod"
+                class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 <option value="Monthly">Monthly</option>
                 <option value="Quarterly">Quarterly</option>
                 <option value="Half-Yearly">Half-Yearly</option>
                 <option value="Yearly">Yearly</option>
               </select>
             </div>
-            
-            <div>
-              <label class="block text-xs font-bold text-gray-600 mb-1">Penalty</label>
-              <select id="addLoanPenaltyToggle" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
+            <div class="flex items-end">
+              <label
+                style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid #bbf7d0; background-color: #f0fdf4; border-radius: 8px; width: 100%; cursor: pointer;">
+                <input type="checkbox" id="addLoanPenaltyToggle" checked
+                  class="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer">
+                <span id="addLoanPenaltyLabel" class="text-xs font-bold text-green-800">Penalty: Yes</span>
+              </label>
             </div>
           </div>
         </div>
@@ -1476,24 +1550,13 @@
         <!-- Rates Section -->
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-3">
           <div class="flex justify-between items-center">
-            <div class="flex flex-col">
-              <h4 class="text-sm font-bold text-gray-800 m-0">📈 Initial Rates</h4>
-              <span class="text-[10px] text-gray-500 font-medium">Optional. If empty, the default rate for the selected Loan Type will be applied.</span>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button type="button" onclick="InterestCalcLogic.toggleAddLoanRatesTable()" class="btn-unified h-8 text-xs" style="background-color: #3498db; color: white; border: 1px solid #2980b9; font-weight: bold; border-radius: 4px; padding: 0 10px; cursor: pointer;">
-                  ➕ Add Rates
-                </button>
-                <button type="button" onclick="InterestCalcLogic.downloadAddLoanRatesTemplate()" class="btn-unified h-8 text-xs" style="background-color: #f1c40f; color: black; border: 1px solid #f39c12; font-weight: bold; border-radius: 4px; padding: 0 10px; cursor: pointer;">
-                  📥 Excel Format
-                </button>
-                <label class="btn-unified h-8 text-xs flex items-center justify-center cursor-pointer m-0" style="background-color: #e67e22; color: white; border: 1px solid #d35400; font-weight: bold; border-radius: 4px; padding: 0 10px;">
-                  <input type="file" id="addLoanRatesUpload" class="hidden" accept=".xlsx,.xls" onchange="InterestCalcLogic.handleAddLoanRatesUpload(event)" style="display: none;">
-                  📤 Upload File
-                </label>
-            </div>
+            <h4 class="text-sm font-bold text-gray-800 m-0"> Initial Rates</h4>
+            <button type="button" onclick="InterestCalcLogic.toggleAddLoanRatesTable()"
+              class="btn-unified btn-modal-primary h-8 text-xs">
+               Add Rates
+            </button>
           </div>
-          
+
           <div id="addLoanRatesContainer" class="hidden" style="display: flex; flex-direction: column; gap: 8px;">
             <div class="border border-gray-300 rounded-lg overflow-hidden">
               <table class="w-full text-xs text-left border-collapse bg-white">
@@ -1512,26 +1575,29 @@
               </table>
             </div>
             <div class="flex justify-between items-center">
-                <span class="text-[10px] text-gray-500 font-medium">To Date can be left blank for the current/active rate.</span>
-                <button type="button" onclick="InterestCalcLogic.appendAddLoanRateRow()" class="btn-unified btn-modal-info h-8 text-[11px] px-3">+ Add New Date Row</button>
+              <span class="text-[10px] text-gray-500 font-medium">To Date can be left blank for the current/active
+                rate.</span>
+              <button type="button" onclick="InterestCalcLogic.appendAddLoanRateRow()"
+                class="btn-unified btn-modal-info h-8 text-[11px] px-3">+ Add New Date Row</button>
             </div>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-2">
-          <button type="button" onclick="InterestCalcLogic.saveNewDedicatedProduct()" class="btn-unified btn-modal-primary h-10 w-32 shadow-md">
-            💾 Save Product
+          <button type="button" onclick="InterestCalcLogic.saveNewDedicatedProduct()"
+            class="btn-unified btn-modal-primary h-10 w-32 shadow-md">
+             Save Product
           </button>
         </div>
 
         <!-- Recently Added Loans Table -->
         <div class="mt-2 border border-blue-200 bg-blue-50/30 rounded-xl overflow-hidden shadow-sm">
           <div class="bg-blue-100/70 px-4 py-2 border-b border-blue-200 text-xs font-bold text-blue-900">
-            📋 Recently Added In This Session
+             Recently Added In This Session
           </div>
           <table class="w-full text-xs text-left border-collapse bg-white/70">
-            
+
             <thead class="text-[10px] uppercase text-gray-500 font-bold border-b border-gray-200">
               <tr>
                 <th class="px-3 py-1.5 text-center">Sl</th>
@@ -1546,7 +1612,10 @@
             </thead>
 
             <tbody id="recentlyAddedLoansTableBody">
-              <tr><td colspan="6" class="px-3 py-4 text-center text-gray-400 font-medium">No loans added yet in this session.</td></tr>
+              <tr>
+                <td colspan="6" class="px-3 py-4 text-center text-gray-400 font-medium">No loans added yet in this
+                  session.</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -1556,20 +1625,17 @@
   </div>
 
   <!-- Bulk Update Rates Modal (Excel Template & Import) -->
-  <div id="bulkRateUpdateModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+  <div id="bulkRateUpdateModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
     <div class="relative bg-white modal-card flex flex-col w-full overflow-hidden"
       style="max-width: 960px; max-height: 88vh; margin: auto;">
-      
+
       <!-- Modal Header -->
       <div class="modal-header flex justify-between items-center flex-shrink-0">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold shadow-xs mt-0.5 self-start">
-            📊
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-gray-800 m-0 leading-none">Bulk Update Interest Rates (Excel)</h3>
-            <p class="text-xs text-gray-500 m-0 mt-1 leading-tight">Download formatted rate schedule with all loans, modify in Excel, and upload to update</p>
+        <div class="flex items-center gap-3">
+          
+          <div class="flex flex-col justify-center">
+            <h3 class="text-base font-bold text-gray-800 m-0" style="line-height: 1.2;">Bulk Update Interest Rates (Excel)</h3>
+            <p class="text-xs text-gray-500 m-0" style="line-height: 1.2;">Download formatted rate schedule with all loans, modify in Excel, and upload to update</p>
           </div>
         </div>
         <button onclick="InterestCalcLogic.hideBulkRateUpdateModal()"
@@ -1578,38 +1644,42 @@
       </div>
 
       <!-- Modal Body -->
-      <div class="flex-grow overflow-y-auto px-6 py-5 bg-white flex flex-col gap-4" style="max-height: calc(88vh - 145px);">
-        
+      <div class="flex-grow overflow-y-auto px-6 py-5 bg-white flex flex-col gap-4"
+        style="max-height: calc(88vh - 145px);">
+
         <!-- Top Row: 2 Action Cards (Download Template & Upload File) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
+
           <!-- Card 1: Download Formatted Template -->
           <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/70 flex flex-col justify-between shadow-xs">
             <div>
               <div class="flex items-center gap-2 font-bold text-xs text-blue-900 mb-1">
-                <span>📥 Step 1: Download Rates Template</span>
+                <span> Step 1: Download Rates Template</span>
               </div>
               <p class="text-xs text-blue-800 m-0 mb-2">
                 Exports all currently configured loan schemes chronologically with headers:
               </p>
-              <div class="inline-block bg-white px-2.5 py-1.5 rounded-lg border border-blue-200 text-[11px] font-mono font-bold text-blue-950 mb-3 shadow-2xs">
-                Loan Type | From date | To date | Rate | (Blank) | Loan Type | From date...
+              <div
+                class="inline-block bg-white px-2.5 py-1.5 rounded-lg border border-blue-200 text-[11px] font-mono font-bold text-blue-950 mb-3 shadow-2xs">
+                Loan Type | Frm Date | To date | Rate
               </div>
             </div>
             <button type="button" onclick="InterestCalcLogic.downloadBulkRatesTemplate()"
               class="btn-unified btn-modal-info h-10 w-full">
-              <span>📥 Download Formatted Excel Template</span>
+              <span> Download Formatted Excel Template</span>
             </button>
           </div>
 
           <!-- Card 2: Upload Modified Excel File -->
-          <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/70 flex flex-col justify-between shadow-xs">
+          <div
+            class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/70 flex flex-col justify-between shadow-xs">
             <div>
               <div class="flex items-center gap-2 font-bold text-xs text-emerald-900 mb-1">
-                <span>📤 Step 2: Upload Modified Excel Sheet</span>
+                <span> Step 2: Upload Modified Excel Sheet</span>
               </div>
               <p class="text-xs text-emerald-800 m-0 mb-2">
-                Select your edited <code class="font-bold">.xlsx</code> or <code class="font-bold">.xls</code> file to preview and apply changes.
+                Select your edited <code class="font-bold">.xlsx</code> or <code class="font-bold">.xls</code> file to
+                preview and apply changes.
               </p>
               <input type="file" id="bulkRateUploadInput" accept=".xlsx, .xls"
                 class="block w-full text-xs text-gray-600 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer bg-white p-1.5 rounded-xl border border-emerald-300 shadow-2xs mb-2"
@@ -1624,9 +1694,11 @@
 
         <!-- Live Preview Table Section -->
         <div class="border border-gray-300 rounded-xl overflow-hidden bg-white shadow-xs flex flex-col">
-          <div class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
-            <span>📋 Excel Rate Entries Preview</span>
-            <span id="bulkPreviewBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-gray-200 text-gray-700">No file uploaded</span>
+          <div
+            class="bg-gray-100/90 px-4 py-2.5 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase flex justify-between items-center">
+            <span> Excel Rate Entries Preview</span>
+            <span id="bulkPreviewBadge"
+              class="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-gray-200 text-gray-700">No file uploaded</span>
           </div>
           <div class="overflow-y-auto" style="min-height: 180px; max-height: 35vh;">
             <table class="w-full text-xs text-left border-collapse bg-white">
@@ -1655,13 +1727,14 @@
 
       <!-- Modal Footer -->
       <div class="modal-footer flex justify-between items-center text-xs text-gray-500 flex-shrink-0">
-        <span>Dates must be formatted as <strong>dd/mm/yyyy</strong> (e.g. 01/07/2020) or left blank for open end dates.</span>
-        <div class="flex items-center gap-2.5">
+        <span>Dates must be formatted as <strong>dd/mm/yyyy</strong> (e.g. 01/07/2020) or left blank for open end
+          dates.</span>
+        <div class="flex flex-wrap items-center gap-3 space-x-2">
           <button type="button" onclick="InterestCalcLogic.hideBulkRateUpdateModal()"
             class="btn-unified btn-modal-close h-10">Cancel</button>
           <button type="button" id="btnApplyBulkRates" onclick="InterestCalcLogic.applyBulkRates()"
             class="btn-unified btn-modal-primary h-10 opacity-50 cursor-not-allowed" disabled>
-            💾 Apply & Save All Rates
+             Apply & Save All Rates
           </button>
         </div>
       </div>
@@ -1670,19 +1743,60 @@
   </div>
 
 
+
+  <!-- Bulk Penalty Update Modal -->
+  <div id="bulkPenaltyUpdateModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+    <div class="relative w-full max-w-sm modal-card flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div class="modal-header flex items-center justify-between bg-purple-50">
+        <div class="flex flex-col">
+          <h3 class="text-base font-bold text-purple-900 m-0" style="line-height: 1.2;">Bulk Update Penalty</h3>
+          <p class="text-[11px] text-purple-700 m-0 mt-0.5">Apply a new global penalty rate</p>
+        </div>
+        <button type="button" onclick="InterestCalcLogic.hideBulkPenaltyModal()"
+          class="text-gray-400 hover:text-gray-700 text-2xl font-bold leading-none cursor-pointer bg-transparent border-none p-1">&times;</button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 flex flex-col gap-4 bg-white">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1.5">Effective From Date</label>
+          <input type="date" id="bulkPenaltyDate"
+            class="w-full h-10 px-3.5 border border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-400 focus:outline-none shadow-xs">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1.5">Penalty Rate (%)</label>
+          <input type="number" step="0.01" id="bulkPenaltyRate" placeholder="e.g. 1.50"
+            class="w-full h-10 px-3.5 border border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-400 focus:outline-none shadow-xs">
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer flex justify-end gap-3 bg-gray-50 border-t border-gray-100 p-4" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+        <button type="button" onclick="InterestCalcLogic.hideBulkPenaltyModal()" class="btn-unified btn-modal-close">
+          Cancel
+        </button>
+        <button type="button" onclick="InterestCalcLogic.applyBulkPenaltyRate()"
+          class="btn-unified btn-modal-purple">
+          Save & Apply
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Show Available Loans Modal (Catalogue) -->
-  <div id="availableLoansModal"
-    class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
+  <div id="availableLoansModal" class="fixed inset-0 z-50 hidden justify-center items-center p-4 modal-backdrop">
     <div class="relative bg-white modal-card flex flex-col w-full overflow-hidden"
       style="max-width: 1180px; max-height: 90vh; margin: auto;">
-      
+
       <!-- Modal Header (Fixed at top) -->
       <div class="modal-header flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-3">
-          <span class="text-2xl">📋</span>
+          <span class="text-2xl"></span>
           <div>
             <h3 class="text-base font-bold text-gray-800 m-0">Configured Loan Products & Schemes Catalogue</h3>
-            <p class="text-xs text-gray-500 m-0 mt-0.5">Overview of all configured loan types, capitalization schedules, penalty applicability, and base rates</p>
+            <p class="text-xs text-gray-500 m-0 mt-0.5">Overview of all configured loan types, capitalization schedules,
+              penalty applicability, and base rates</p>
           </div>
         </div>
         <button onclick="InterestCalcLogic.hideAvailableLoansModal()"
@@ -1691,40 +1805,42 @@
       </div>
 
       <!-- Search & Action Toolbar (Fixed) -->
-      <div class="px-6 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3.5 flex-shrink-0 bg-white">
+      <div
+        class="px-6 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3.5 flex-shrink-0 bg-white">
         <div class="relative flex-grow">
-          <input type="text" id="searchAvailableLoans" placeholder="🔍 Search by loan scheme name, GL head, loan type, term type, penalty status..."
+          <input type="text" id="searchAvailableLoans"
+            placeholder=" Search by loan scheme name, GL head, loan type, term type, penalty status..."
             oninput="InterestCalcLogic.filterAvailableLoansTable(this.value)"
             class="w-full h-10 px-4 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-green-500 focus:outline-none shadow-2xs font-medium"
             style="font-size: 11pt;">
         </div>
-        <div id="availableLoansCountBadge" class="h-10 px-4 bg-green-50 text-green-700 border border-green-200 rounded-xl whitespace-nowrap shadow-2xs text-xs font-bold flex items-center justify-center"
+        <div id="availableLoansCountBadge"
+          class="h-10 px-4 bg-green-50 text-green-700 border border-green-200 rounded-xl whitespace-nowrap shadow-2xs text-xs font-bold flex items-center justify-center"
           style="font-size: 10pt;">
           Total: 0 Products
         </div>
-        <div class="flex items-center gap-2.5">
+        <div class="flex flex-wrap items-center gap-3 space-x-2">
           <button type="button" onclick="InterestCalcLogic.addNewLoanFromViewLoans()"
-            class="btn-unified btn-modal-info h-10"
-            style="font-size: 10pt; background-color: #3498db; color: white; border-color: #2980b9;">
-            <span>➕ Manage Loan Types</span>
+            class="btn-unified btn-modal-info h-10" style="font-size: 10pt;">
+            <span> Add New Loan Product</span>
           </button>
           <button type="button" onclick="InterestCalcLogic.showBulkRateUpdateModal()"
-            class="btn-unified btn-modal-warning h-10"
-            style="font-size: 10pt; background-color: #f1c40f; color: black; border-color: #f39c12;">
-            <span>📊 Update Rates (Excel)</span>
+            class="btn-unified btn-modal-warning h-10" style="font-size: 10pt;">
+            <span> Update Rates</span>
           </button>
-          <button type="button" onclick="InterestCalcLogic.showRateChangeModal('penalty', true)"
-            class="btn-unified h-10"
-            style="font-size: 10pt; background-color: #e67e22; color: white; border-color: #d35400; font-weight: bold; padding: 0 16px; border-radius: 8px;">
-            <span>⚖️ Update Penalties</span>
+          <button type="button" onclick="InterestCalcLogic.showRateChangeModal('penalty')"
+            class="btn-unified btn-modal-purple h-10" style="font-size: 10pt;">
+            <span> Update Penalty</span>
           </button>
         </div>
       </div>
 
       <!-- Table Section (Scrollable with sticky header) -->
-      <div class="flex-grow overflow-y-auto px-6 py-3.5 bg-white" style="min-height: 240px; max-height: calc(90vh - 180px);">
+      <div class="flex-grow overflow-y-auto px-6 py-3.5 bg-white"
+        style="min-height: 240px; max-height: calc(90vh - 180px);">
         <table class="w-full text-xs text-left border-collapse bg-white" style="font-size: 10.5pt;">
-          <thead class="bg-gray-100 sticky top-0 shadow-xs z-10 text-gray-700 uppercase" style="background-color: #f1f5f9;">
+          <thead class="bg-gray-100 sticky top-0 shadow-xs z-10 text-gray-700 uppercase"
+            style="background-color: #f1f5f9;">
             <tr>
               <th scope="col" class="p-3 text-center w-12 border-b font-bold">Sl</th>
               <th scope="col" class="p-3 w-24 border-b font-bold">GL Head</th>
@@ -1745,7 +1861,8 @@
 
       <!-- Modal Footer (Fixed at bottom) -->
       <div class="modal-footer flex justify-between items-center text-xs text-gray-500 flex-shrink-0">
-        <span style="font-size: 9.5pt;">Tip: Click <strong>✏️ Edit</strong> on any row to configure its parameters, or use <strong>➕ Add New Loan Product</strong> above.</span>
+        <span style="font-size: 9.5pt;">Tip: Click <strong> Edit</strong> on any row to configure its parameters, or
+          use <strong> Add New Loan Product</strong> above.</span>
         <button type="button" onclick="InterestCalcLogic.hideAvailableLoansModal()"
           class="btn-unified btn-modal-close h-10">
           Close
@@ -1768,11 +1885,13 @@
           </p>
           <div class="no-print flex justify-center items-center gap-1 mt-1">
             <span class="font-bold text-sm text-gray-700">Calculation from:</span>
-            <input type="date" id="calcStartDate" onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
+            <input type="date" id="calcStartDate"
+              onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
               class="borderless-input text-sm font-bold text-center"
               style="width: 90pt; padding-top: 0 !important; padding-bottom: 0 !important; cursor: pointer;" />
             <span class="font-bold text-sm text-gray-700">to</span>
-            <input type="date" id="calcEndDate" onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
+            <input type="date" id="calcEndDate"
+              onchange="InterestCalcLogic.updateHeaderMeta(); this.style.removeProperty('outline'); this.style.removeProperty('background-color'); this.style.removeProperty('border-radius');"
               class="borderless-input text-sm font-bold text-center"
               style="width: 90pt; padding-top: 0 !important; padding-bottom: 0 !important; cursor: pointer;" />
           </div>
@@ -1835,7 +1954,9 @@
                 <option value="yearly">Yearly</option>
               </select></div>
             <div class="field-row"><label class="field-label">Penalty</label><input type="text" id="penaltyRate"
-                class="borderless-input field-value border-b border-dashed border-gray-400 font-bold" value="Applicable" readonly style="cursor: pointer;" title="Click to view/edit penalty settings" onclick="InterestCalcLogic.showRateChangeModal('penalty', true)" /></div>
+                class="borderless-input field-value border-b border-dashed border-gray-400 font-bold" value="Applicable"
+                readonly style="cursor: pointer;" title="Click to view/edit penalty settings"
+                onclick="InterestCalcLogic.showRateChangeModal('penalty', true)" /></div>
           </div>
         </div>
         <!-- Fields not in layout but needed for JS -->

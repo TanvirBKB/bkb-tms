@@ -33,7 +33,8 @@ function loadAppData(key) {
         const local = localStorage.getItem(key) || (window.parent && window.parent.localStorage && window.parent.localStorage.getItem(key));
         return local ? JSON.parse(local) : {};
     } catch(e) {
-        return {};
+        
+return {};
     }
 }
 
@@ -229,6 +230,7 @@ try {
                 if (prod.penaltyApplicable !== undefined && window.InterestRateManager && typeof window.InterestRateManager.setLoanTypePenaltyExemption === 'function') {
                     window.InterestRateManager.setLoanTypePenaltyExemption(prod.name, !prod.penaltyApplicable);
                 }
+            if (prod.interestType) interestTypeMap[prod.name] = prod.interestType;
             }
         });
     }
@@ -254,6 +256,7 @@ function resolveTermType(loanName) {
     return 'Continuous';
 }
 
+const interestTypeMap = {};
 const loanStructureMap = {
   'CASH CREDIT HYPOTHICATION': 'Continuous',
   'WORKING CAPITAL CMSME REFINANCE': 'Continuous',
@@ -826,7 +829,7 @@ async function downloadBulkRatesTemplate() {
     link.click();
     document.body.removeChild(link);
     
-    showToast("✓ Downloaded Bulk_Rates_Template.xlsx");
+    showToast(" Downloaded Bulk_Rates_Template.xlsx");
 }
 
 function parseBulkRatesExcel(event) {
@@ -945,7 +948,7 @@ function applyBulkRates() {
 
     hideBulkRateUpdateModal();
     showAvailableLoansModal();
-    showToast(`✓ Successfully updated rates for ${updatedCount} loan products!`);
+    showToast(` Successfully updated rates for ${updatedCount} loan products!`);
 }
 
 function showAvailableLoansModal() {
@@ -1022,8 +1025,8 @@ function renderAvailableLoansRows(dataList) {
 
         // Penalty badge styling
         const penBadge = item.isExempt
-            ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-300">✗ N/A (Exempt)</span>'
-            : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-50 text-green-700 border border-green-300">✓ Applicable</span>';
+            ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-300"> N/A (Exempt)</span>'
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-50 text-green-700 border border-green-300"> Applicable</span>';
 
         html += `
             <tr class="border-b hover:bg-green-50/40 transition">
@@ -1038,7 +1041,7 @@ function renderAvailableLoansRows(dataList) {
                 <td class="p-2.5 text-center">
                     <button type="button" onclick="InterestCalcLogic.editProductFromViewLoans('${item.name.replace(/'/g, "\\'")}')"
                         class="btn-unified btn-modal-warning text-xs h-8 px-3 whitespace-nowrap">
-                        ✏️ Edit
+                         Edit
                     </button>
                 </td>
             </tr>
@@ -3048,7 +3051,7 @@ function saveNewDedicatedProduct() {
         initialRateDisplay = ratesArrayToSave[ratesArrayToSave.length - 1].rate.toFixed(2) + '%';
     }
 
-    showToast("✓ Successfully added " + name);
+    showToast(" Successfully added " + name);
 
     // Append to "Recently Added Loans" Table
     const recentBody = document.getElementById('recentlyAddedLoansTableBody');
@@ -3204,7 +3207,7 @@ function saveNewProduct() {
                 }
             }
 
-            showToast(`✅ Loan Product "${name}" saved successfully!`);
+            showToast(` Loan Product "${name}" saved successfully!`);
 
             // Re-populate dropdown and select it
             populateProductDropdown();
@@ -3252,7 +3255,7 @@ function deleteSelectedProduct() {
                     InterestRateManager.overwriteCustomRates(productName, []);
                 }
 
-                showToast(`✅ Loan Product "${productName}" has been deleted.`);
+                showToast(` Loan Product "${productName}" has been deleted.`);
                 populateProductDropdown();
                 document.getElementById('rateManagerLoanSelector').value = '';
                 refreshRateManagerTable();
@@ -3365,7 +3368,52 @@ function populateProductDropdown() {
     // Build an array of objects to sort by code first, then name
     let items = [...productNames].map(name => {
         let code = Object.keys(loanTypeMap).find(k => loanTypeMap[k] === name) || '9999'; // default to end if no code
-        return { name: name, code: code, display: code !== '9999' ? `${code} - ${name}` : name };
+        
+function showBulkPenaltyModal() {
+    if (typeof InterestCalcLogic !== 'undefined') InterestCalcLogic.hideAvailableLoansModal();
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideBulkPenaltyModal() {
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function applyBulkPenaltyRate() {
+    const dateInput = document.getElementById('bulkPenaltyDate').value;
+    const rateInput = document.getElementById('bulkPenaltyRate').value;
+    if (!dateInput || !rateInput) {
+        showToast("Please enter both Effective Date and Penalty Rate!", "error");
+        return;
+    }
+    
+    if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltySchedule === 'function') {
+        const currentRates = window.InterestRateManager.getPenaltySchedule();
+        currentRates.push({ dateStr: dateInput, rate: parseFloat(rateInput) });
+        // Assuming savePenaltySchedule accepts the array and saves it
+        if (typeof window.InterestRateManager.savePenaltySchedule === 'function') {
+            window.InterestRateManager.savePenaltySchedule(currentRates);
+            hideBulkPenaltyModal();
+            showToast(" Global bulk penalty rate applied successfully!");
+            // Refresh table if needed
+            if (typeof refreshPenaltyManagerTable === 'function') refreshPenaltyManagerTable();
+            if (typeof applyRatesAndRecalculate === 'function') applyRatesAndRecalculate();
+        } else {
+            console.error("savePenaltySchedule not found in InterestRateManager!");
+        }
+    } else {
+        console.error("InterestRateManager or getPenaltySchedule not found!");
+    }
+}
+
+return { name: name, code: code, display: code !== '9999' ? `${code} - ${name}` : name };
     });
     
     items.sort((a, b) => {
@@ -3404,8 +3452,8 @@ function updateProductPropertiesDisplay(productName) {
     if (penEl) {
         const exempt = isPenaltyExempt(productName);
         penEl.innerHTML = exempt
-            ? '<span class="text-gray-500 font-bold">✗ N/A</span>'
-            : '<span class="text-green-700 font-bold">✓ Applicable</span>';
+            ? '<span class="text-gray-500 font-bold"> N/A</span>'
+            : '<span class="text-green-700 font-bold"> Applicable</span>';
     }
 }
 
@@ -3641,7 +3689,7 @@ function savePenaltyManager() {
     if (window.InterestRateManager && typeof window.InterestRateManager.savePenaltySchedule === 'function') {
         window.InterestRateManager.savePenaltySchedule(currentPenaltyManagerState);
     }
-    showToast("✅ Penalty rate schedule and settings saved successfully!");
+    showToast(" Penalty rate schedule and settings saved successfully!");
     hideRateChangeModal();
     updatePenaltyField();
     if (typeof applyRatesAndRecalculate === 'function') {
@@ -3687,7 +3735,7 @@ function showRateChangeModal(initialTab = 'rates') {
         const modalTitle = modal.querySelector('h3');
         const modalDesc = modal.querySelector('p');
         if (initialTab === 'penalty') {
-            if (modalTitle) modalTitle.textContent = "⚖️ Dynamic Penalty Rates Configurator";
+            if (modalTitle) modalTitle.textContent = " Dynamic Penalty Rates Configurator";
             if (modalDesc) modalDesc.textContent = "Manage global penalty schedules applicable across the system";
         } else {
             if (modalTitle) modalTitle.textContent = "Loan Product & Rate Configurator";
@@ -3738,7 +3786,52 @@ function refreshRateManagerTable() {
     
     // Deep copy to local state
     currentRateManagerState = arr.map(entry => {
-        return {
+        
+function showBulkPenaltyModal() {
+    if (typeof InterestCalcLogic !== 'undefined') InterestCalcLogic.hideAvailableLoansModal();
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideBulkPenaltyModal() {
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function applyBulkPenaltyRate() {
+    const dateInput = document.getElementById('bulkPenaltyDate').value;
+    const rateInput = document.getElementById('bulkPenaltyRate').value;
+    if (!dateInput || !rateInput) {
+        showToast("Please enter both Effective Date and Penalty Rate!", "error");
+        return;
+    }
+    
+    if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltySchedule === 'function') {
+        const currentRates = window.InterestRateManager.getPenaltySchedule();
+        currentRates.push({ dateStr: dateInput, rate: parseFloat(rateInput) });
+        // Assuming savePenaltySchedule accepts the array and saves it
+        if (typeof window.InterestRateManager.savePenaltySchedule === 'function') {
+            window.InterestRateManager.savePenaltySchedule(currentRates);
+            hideBulkPenaltyModal();
+            showToast(" Global bulk penalty rate applied successfully!");
+            // Refresh table if needed
+            if (typeof refreshPenaltyManagerTable === 'function') refreshPenaltyManagerTable();
+            if (typeof applyRatesAndRecalculate === 'function') applyRatesAndRecalculate();
+        } else {
+            console.error("savePenaltySchedule not found in InterestRateManager!");
+        }
+    } else {
+        console.error("InterestRateManager or getPenaltySchedule not found!");
+    }
+}
+
+return {
             dateStr: entry.date.toISOString().split('T')[0],
             rate: entry.rate
         };
@@ -4315,6 +4408,93 @@ window.addEventListener('message', (event) => {
 });
 
 // Expose functions to the global scope for event listeners and external calls
+
+function showBulkPenaltyModal() {
+    if (typeof InterestCalcLogic !== 'undefined') InterestCalcLogic.hideAvailableLoansModal();
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideBulkPenaltyModal() {
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function applyBulkPenaltyRate() {
+    const dateInput = document.getElementById('bulkPenaltyDate').value;
+    const rateInput = document.getElementById('bulkPenaltyRate').value;
+    if (!dateInput || !rateInput) {
+        showToast("Please enter both Effective Date and Penalty Rate!", "error");
+        return;
+    }
+    
+    if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltySchedule === 'function') {
+        const currentRates = window.InterestRateManager.getPenaltySchedule();
+        currentRates.push({ dateStr: dateInput, rate: parseFloat(rateInput) });
+        // Assuming savePenaltySchedule accepts the array and saves it
+        if (typeof window.InterestRateManager.savePenaltySchedule === 'function') {
+            window.InterestRateManager.savePenaltySchedule(currentRates);
+            hideBulkPenaltyModal();
+            showToast(" Global bulk penalty rate applied successfully!");
+            // Refresh table if needed
+            if (typeof refreshPenaltyManagerTable === 'function') refreshPenaltyManagerTable();
+            if (typeof applyRatesAndRecalculate === 'function') applyRatesAndRecalculate();
+        } else {
+            console.error("savePenaltySchedule not found in InterestRateManager!");
+        }
+    } else {
+        console.error("InterestRateManager or getPenaltySchedule not found!");
+    }
+}
+
+
+function showBulkPenaltyModal() {
+    if (typeof InterestCalcLogic !== 'undefined') InterestCalcLogic.hideAvailableLoansModal();
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideBulkPenaltyModal() {
+    const modal = document.getElementById('bulkPenaltyUpdateModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function applyBulkPenaltyRate() {
+    const dateInput = document.getElementById('bulkPenaltyDate').value;
+    const rateInput = document.getElementById('bulkPenaltyRate').value;
+    if (!dateInput || !rateInput) {
+        showToast("Please enter both Effective Date and Penalty Rate!", "error");
+        return;
+    }
+    
+    if (window.InterestRateManager && typeof window.InterestRateManager.getPenaltySchedule === 'function') {
+        const currentRates = window.InterestRateManager.getPenaltySchedule();
+        currentRates.push({ dateStr: dateInput, rate: parseFloat(rateInput) });
+        if (typeof window.InterestRateManager.savePenaltySchedule === 'function') {
+            window.InterestRateManager.savePenaltySchedule(currentRates);
+            hideBulkPenaltyModal();
+            showToast(" Global bulk penalty rate applied successfully!");
+            if (typeof refreshPenaltyManagerTable === 'function') refreshPenaltyManagerTable();
+            if (typeof applyRatesAndRecalculate === 'function') applyRatesAndRecalculate();
+        } else {
+            console.error("savePenaltySchedule not found in InterestRateManager!");
+        }
+    } else {
+        console.error("InterestRateManager or getPenaltySchedule not found!");
+    }
+}
 return {
     // Exposed properties
     loanTypeMap: loanTypeMap,
@@ -4344,6 +4524,9 @@ return {
     showAvailableLoansModal: showAvailableLoansModal,
     showBulkRateUpdateModal: showBulkRateUpdateModal,
     hideBulkRateUpdateModal: hideBulkRateUpdateModal,
+showBulkPenaltyModal: showBulkPenaltyModal,
+hideBulkPenaltyModal: hideBulkPenaltyModal,
+applyBulkPenaltyRate: applyBulkPenaltyRate,
     downloadBulkRatesTemplate: downloadBulkRatesTemplate,
     parseBulkRatesExcel: parseBulkRatesExcel,
     applyBulkRates: applyBulkRates,

@@ -551,7 +551,7 @@ window.AgriLoanLogic = {
     saveWork: () => {
         const data = collectFormData();
         window.AppStorage.setItem('agri_loan_saved_work', JSON.stringify(data));
-        appToast('✅ Work saved successfully!');
+        appToast(' Work saved successfully!');
     },
     loadWork: () => {
         const saved = window.AppStorage.getItem('agri_loan_saved_work');
@@ -559,7 +559,7 @@ window.AgriLoanLogic = {
             try {
                 const data = JSON.parse(saved);
                 window.postMessage({ command: 'FILL', data: data }, '*');
-                appToast('✅ Work loaded successfully!');
+                appToast(' Work loaded successfully!');
             } catch (e) { console.error('Error loading saved work', e); }
         }
     },
@@ -1976,7 +1976,7 @@ async function saveLoanRecord(encodedNid, encodedCase) {
 
             const res = await window.parent.ipcRenderer.invoke('db-save-customer', customer);
             if (res.success) {
-                appToast('✅ Loan Account Number updated successfully!');
+                appToast(' Loan Account Number updated successfully!');
                 // Refresh the list seamlessly
                 executeLoanSearch(document.getElementById('loanSearchInput')?.value.trim() === '');
             } else {
@@ -2013,7 +2013,7 @@ async function deleteLoanRecord(encodedNid, encodedCase) {
         customer.loans = JSON.stringify(newLoans);
         const res = await window.parent.ipcRenderer.invoke('db-save-customer', customer);
         if (res.success) {
-            appToast('✅ Loan record deleted successfully!');
+            appToast(' Loan record deleted successfully!');
             executeLoanSearch(document.getElementById('loanSearchInput')?.value.trim() === '');
         } else {
             appToast('Error deleting loan: ' + res.error);
@@ -2051,7 +2051,7 @@ function loadRepeatLoan(encodedPayload) {
         setVal('input_loan_approval_date', '');
 
         closeSearchLoanModal();
-        appToast('✅ Loan data loaded! Enter a new Loan Case No to save as a new entry.');
+        appToast(' Loan data loaded! Enter a new Loan Case No to save as a new entry.');
     } catch (e) {
         console.error(e);
         appToast('Failed to load loan data.', true);
@@ -2576,7 +2576,7 @@ window.saveCustomerToDB = function () {
     if (window.parent && window.parent.ipcRenderer) {
         window.parent.ipcRenderer.invoke('db-save-customer', customer).then(res => {
             if (res && (res.changes !== undefined || res.success)) {
-                appToast('✅ Customer & Loan Data Saved to DB! Remember to update the CBS account number.');
+                appToast(' Customer & Loan Data Saved to DB! Remember to update the CBS account number.');
             } else {
                 appToast('Failed to save to DB.', true);
             }
@@ -2586,7 +2586,7 @@ window.saveCustomerToDB = function () {
         });
     } else {
         window.parent.postMessage({ command: 'SAVE_CUSTOMER_FROM_FORM', customer: customer }, '*');
-        appToast('✅ Saved via fallback.');
+        appToast(' Saved via fallback.');
     }
 };
 

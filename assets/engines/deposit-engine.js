@@ -155,7 +155,7 @@ window.DepositEngine = {
 
         window.parent.postMessage({ command: 'SAVE_CUSTOMER', data: customerData }, '*');
         if (typeof window.appToast === 'function') window.appToast('গ্রাহক তথ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
-        else appToast('✅ গ্রাহক তথ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
+        else appToast(' গ্রাহক তথ্য সফলভাবে সংরক্ষণ করা হয়েছে!');
     },
 
     saveFarmerModalData: function() {
@@ -167,7 +167,7 @@ window.DepositEngine = {
         });
         localStorage.setItem('farmer_saved_data', JSON.stringify(data));
         if(typeof window.appToast === 'function') window.appToast('ডেটা সফলভাবে সেভ করা হয়েছে!');
-        else appToast('✅ ডেটা সফলভাবে সেভ করা হয়েছে!');
+        else appToast(' ডেটা সফলভাবে সেভ করা হয়েছে!');
     },
 
     clearFarmerModalData: function() {
@@ -873,7 +873,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
     window.addEventListener('load', syncBranchState);
 
     function toggleTick(el) {
-        el.innerText = el.innerText === '✓' ? '' : '✓';
+        el.innerText = el.innerText === '' ? '' : '';
     }
 
     // Logic to lock the first 4 digits (branch code) and auto-insert a hyphen after them
@@ -1142,7 +1142,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
     function setCheck(id, checked) {
         document.querySelectorAll('[id="' + id + '"]').forEach(el => {
-            el.innerText = checked ? '✓' : '';
+            el.innerText = checked ? '' : '';
         });
     }
 
@@ -1809,7 +1809,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
             // Helper for checkboxes in context
             const setChk = (idSuffix, state) => {
                 const el = targetContext.querySelector ? targetContext.querySelector(`#${prefix}_${idSuffix}`) : document.getElementById(`${prefix}_${idSuffix}`);
-                if (el) el.innerText = state ? '✓' : '';
+                if (el) el.innerText = state ? '' : '';
             };
 
             setText('name_bn', getVal('modal_name_bn'));
@@ -2351,8 +2351,8 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
                     // Remove ticks from all cells
                     Array.from(row.cells).forEach(cell => {
-                        if (cell.innerText.includes(' (✓)')) {
-                            cell.innerText = cell.innerText.replace(' (✓)', '');
+                        if (cell.innerText.includes(' ()')) {
+                            cell.innerText = cell.innerText.replace(' ()', '');
                         }
                     });
 
@@ -2376,7 +2376,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         if (bizSelect.value) {
             const tbody = document.getElementById('risk_p9_t3_tbody');
             if (tbody && tbody.rows[0]) {
-                tbody.rows[0].cells[1].innerText = bizSelect.options[bizSelect.selectedIndex].text + ' (✓)';
+                tbody.rows[0].cells[1].innerText = bizSelect.options[bizSelect.selectedIndex].text + ' ()';
                 tbody.rows[0].cells[2].innerText = toBanglaDigits(bizScore);
                 tbody.rows[0].style.fontWeight = 'bold';
                 tbody.rows[0].style.backgroundColor = '#e6f7e6';
@@ -2387,8 +2387,8 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         if (profSelect.value) {
             const tbody = document.getElementById('risk_p9_t3_tbody');
             if (tbody && tbody.rows[1]) {
-                tbody.rows[1].cells[1].innerText = profSelect.options[profSelect.selectedIndex].text.split('(')[0] + ' (✓)';
-                tbody.rows[1].cells[1].innerText = profSelect.options[profSelect.selectedIndex].text + ' (✓)';
+                tbody.rows[1].cells[1].innerText = profSelect.options[profSelect.selectedIndex].text.split('(')[0] + ' ()';
+                tbody.rows[1].cells[1].innerText = profSelect.options[profSelect.selectedIndex].text + ' ()';
                 tbody.rows[1].cells[2].innerText = toBanglaDigits(profScore);
                 tbody.rows[1].style.fontWeight = 'bold';
                 tbody.rows[1].style.backgroundColor = '#e6f7e6';
@@ -2398,7 +2398,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         // For other tables, we might just want to ensure the logic is consistent, but since they are pre-filled with scores, 
         // and this is a printable form, maybe we don't need to change anything visually other than maybe bolding the selected row?
         // I will implement bolding the selected row for clarity.
-        // Also adding tick mark (✓) to the selected option text as requested.
+        // Also adding tick mark () to the selected option text as requested.
 
         const markSelectedRow = (tbodyId, rowIndex, cellIndexForTick) => {
             const tbody = document.getElementById(tbodyId);
@@ -2408,8 +2408,8 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
                 row.style.backgroundColor = '#e6f7e6';
 
                 if (cellIndexForTick !== undefined && row.cells[cellIndexForTick]) {
-                    if (!row.cells[cellIndexForTick].innerText.includes('(✓)')) {
-                        row.cells[cellIndexForTick].innerText += ' (✓)';
+                    if (!row.cells[cellIndexForTick].innerText.includes('()')) {
+                        row.cells[cellIndexForTick].innerText += ' ()';
                     }
                 }
             }
@@ -2434,7 +2434,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
             } else if (risk.id === 'modal_risk_cust_biz') {
                 const tbody = document.getElementById('risk_p9_t3_tbody');
                 if (tbody && tbody.rows[0]) {
-                    tbody.rows[0].cells[1].innerText = text + ' (✓)';
+                    tbody.rows[0].cells[1].innerText = text + ' ()';
                     tbody.rows[0].cells[2].innerText = toBanglaDigits(score);
                     tbody.rows[0].style.fontWeight = 'bold';
                     tbody.rows[0].style.backgroundColor = '#e6f7e6';
@@ -2442,7 +2442,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
             } else if (risk.id === 'modal_risk_cust_prof') {
                 const tbody = document.getElementById('risk_p9_t3_tbody');
                 if (tbody && tbody.rows[1]) {
-                    tbody.rows[1].cells[1].innerText = text + ' (✓)';
+                    tbody.rows[1].cells[1].innerText = text + ' ()';
                     tbody.rows[1].cells[2].innerText = toBanglaDigits(score);
                     tbody.rows[1].style.fontWeight = 'bold';
                     tbody.rows[1].style.backgroundColor = '#e6f7e6';
@@ -2676,7 +2676,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
                         // Remove ticks from all cells
                         Array.from(row.cells).forEach(cell => {
-                            cell.innerText = cell.innerText.replace(' (✓)', '');
+                            cell.innerText = cell.innerText.replace(' ()', '');
                         });
 
                         // Specific reset for Table 3 (Business/Profession)
@@ -3043,8 +3043,8 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
         if (hasData) {
             // Set tick mark beside text with spacing to prevent text wrap
-            if (score >= 15 && highCell) highCell.innerText = 'উচ্চ  (✓)';
-            else if (score < 15 && lowCell) lowCell.innerText = 'নিম্ন  (✓)';
+            if (score >= 15 && highCell) highCell.innerText = 'উচ্চ  ()';
+            else if (score < 15 && lowCell) lowCell.innerText = 'নিম্ন  ()';
         }
     }
 
@@ -3869,8 +3869,8 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         if (lowCell) lowCell.innerText = 'নিম্ন';
 
         if (hasData) {
-            if (score >= 15 && highCell) highCell.innerText = 'উচ্চ  (✓)';
-            else if (score < 15 && lowCell) lowCell.innerText = 'নিম্ন  (✓)';
+            if (score >= 15 && highCell) highCell.innerText = 'উচ্চ  ()';
+            else if (score < 15 && lowCell) lowCell.innerText = 'নিম্ন  ()';
         }
     }
 
@@ -4505,7 +4505,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
     function setCheck(id, checked) {
         document.querySelectorAll('[id="' + id + '"]').forEach(el => {
-            el.innerText = checked ? '✓' : '';
+            el.innerText = checked ? '' : '';
         });
     }
 
@@ -4592,7 +4592,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         const pTxt = document.getElementById('applicant_photo_text');
         if (pTxt) pTxt.style.display = 'block';
     }
-    function toggleTick(el) { el.innerText = el.innerText === '✓' ? '' : '✓'; }
+    function toggleTick(el) { el.innerText = el.innerText === '' ? '' : ''; }
 
     function populateFromCustomer(data) {
         if (!data) return;

@@ -142,7 +142,7 @@ window.WebEngine = {
                         const sender = tx.sender_name_en || tx.sender_name_bn || tx.sender_name || 'Unknown Sender';
                         const receiver = tx.receiver_name_en || tx.receiver_name_bn || tx.receiver_name || 'Unknown Receiver';
                         const amt = tx.amount_num || tx.amount || '0';
-                        opt.innerText = `${tx.is_injected ? '✅ ' : ''}${sender} ➔ ${receiver} (BDT ${amt})`;
+                        opt.innerText = `${tx.is_injected ? ' ' : ''}${sender}  ${receiver} (BDT ${amt})`;
                         txSelect.appendChild(opt);
                     });
                 } else {
