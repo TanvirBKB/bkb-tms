@@ -11,8 +11,6 @@ window.CalculatorEngine = {
             'calc-calculate-balance': 'calculate',
             'calc-download-excel': 'downloadExcel',
             'calc-clear-data': 'clear',
-            'calc-update-rates': 'updateRates',
-            'calc-penalty-rates': 'penaltyRates',
             'calc-show-loans': 'showLoans'
         };
 

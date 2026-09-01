@@ -429,7 +429,7 @@ function activateTab(tabId) {
     // Show relevant buttons based on tab type
     if (isNidPortal) {
         if (formSpecificContainer) formSpecificContainer.classList.remove('hidden-panel');
-        if (btnPullNid) btnPullNid.classList.remove('hidden-panel');
+        if (btnPullNid) { btnPullNid.classList.remove('hidden-panel'); btnPullNid.style.display = 'inline-block'; }
 
         // Automatically expand the right panel for NID interactions
         if (rightPanel) {
@@ -529,11 +529,27 @@ function activateTab(tabId) {
             if (borrowerControls) borrowerControls.style.display = 'block';
             if (borrowerListBtns) borrowerListBtns.style.display = 'block';
         } else {
-            // Show standard form buttons
-            if (btnDataEntry) btnDataEntry.classList.remove('hidden-panel');
-            if (btnStartNew) btnStartNew.classList.remove('hidden-panel');
-            if (btnImport) btnImport.classList.remove('hidden-panel');
-            if (formActionsSection) formActionsSection.classList.remove('hidden-panel');
+            // Show standard form buttons (Loan, Deposit, General Forms)
+            if (btnDataEntry) {
+                btnDataEntry.classList.remove('hidden-panel');
+                btnDataEntry.style.display = 'inline-block';
+            }
+            if (btnStartNew) {
+                btnStartNew.classList.remove('hidden-panel');
+                btnStartNew.style.display = 'inline-block';
+            }
+            if (btnImport) {
+                btnImport.classList.remove('hidden-panel');
+                btnImport.style.display = 'inline-block';
+            }
+            if (btnClearForm) {
+                btnClearForm.classList.remove('hidden-panel');
+                btnClearForm.style.display = 'inline-block';
+            }
+            if (formActionsSection) {
+                formActionsSection.classList.remove('hidden-panel');
+                formActionsSection.style.display = 'block';
+            }
         }
 
         // Automatically expand the right panel for form actions

@@ -1,3 +1,93 @@
+
+// ---- Reliable App Storage & IPC Bridge ----
+function getAppIPC() {
+    try {
+        if (window.ipcRenderer) return window.ipcRenderer;
+        if (window.parent && window.parent.ipcRenderer) return window.parent.ipcRenderer;
+        if (window.require) {
+            const electron = window.require('electron');
+            if (electron && electron.ipcRenderer) return electron.ipcRenderer;
+        }
+        if (window.parent && window.parent.require) {
+            const electron = window.parent.require('electron');
+            if (electron && electron.ipcRenderer) return electron.ipcRenderer;
+        }
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function loadAppData(key) {
+    const ipc = getAppIPC();
+    if (ipc) {
+        try {
+            let r = ipc.sendSync('db-get-kv', key);
+            if (typeof r === 'string') {
+                try { r = JSON.parse(r); } catch(e) {}
+            }
+            if (r && typeof r === 'object') return r;
+        } catch(e) {}
+    }
+    try {
+        const local = localStorage.getItem(key) || (window.parent && window.parent.localStorage && window.parent.localStorage.getItem(key));
+        return local ? JSON.parse(local) : {};
+    } catch(e) {
+        return {};
+    }
+}
+
+function saveAppData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        if (window.parent && window.parent.localStorage) {
+            window.parent.localStorage.setItem(key, JSON.stringify(data));
+        }
+    } catch(e) {}
+    const ipc = getAppIPC();
+    if (ipc) {
+        try {
+            ipc.sendSync('db-set-kv', key, data);
+        } catch(e) {}
+    }
+}
+
+
+function showToast(message, isError = false) {
+    // 1. Trigger parent toast if available
+    try {
+        if (window.parent && typeof window.parent.showAppToast === 'function') {
+            window.parent.showAppToast(message, isError);
+        }
+    } catch(e) {}
+
+    // 2. Local floating toast inside frame
+    const toast = document.getElementById('calcFloatingToast');
+    const toastMsg = document.getElementById('calcToastMsg');
+    const toastContent = document.getElementById('calcToastContent');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.textContent = message;
+    if (toastContent) {
+        if (isError) {
+            toastContent.className = 'px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold text-white bg-red-600 border border-red-400 flex items-center gap-2 animate-bounce';
+        } else {
+            toastContent.className = 'px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold text-white bg-green-700 border border-green-500 flex items-center gap-2';
+        }
+    }
+
+    toast.classList.remove('hidden');
+    toast.style.opacity = '1';
+    toast.style.transform = 'translate(-50%, 0)';
+
+    if (window._toastTimer) clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, -10px)';
+        setTimeout(() => toast.classList.add('hidden'), 300);
+    }, 2500);
+}
+
 window.InterestCalcLogic = (function() {
 
 /* IndexedDB setup (kept for future extensions; not used yet in this file) */
@@ -125,28 +215,22 @@ const loanCategoryMap = {
   'PAST DUE (AGRI)- MID TERM': 'Agri Loans'
 };
 
-// ---- Load Custom Loan Products from Database ----
+// ---- Load Custom Loan Products from Database & Storage ----
 try {
-    const ipc = (window.require && window.require('electron')) ? window.require('electron').ipcRenderer : null;
-    if (ipc) {
-        let customProductsRaw = ipc.sendSync('db-get-kv', 'custom_loan_products');
-        let customProducts = null;
-        if (typeof customProductsRaw === 'string') {
-            try { customProducts = JSON.parse(customProductsRaw); } catch(e) {}
-        } else if (customProductsRaw && typeof customProductsRaw === 'object') {
-            customProducts = customProductsRaw;
-        }
-
-        if (customProducts && typeof customProducts === 'object') {
-            Object.keys(customProducts).forEach(code => {
-                const prod = customProducts[code];
-                if (prod && prod.name) {
-                    loanTypeMap[code] = prod.name;
-                    if (prod.category) loanCategoryMap[prod.name] = prod.category;
-                    if (prod.capitalization) capitalizationMap[prod.name] = prod.capitalization.toLowerCase();
+    const customProducts = loadAppData('custom_loan_products');
+    if (customProducts && typeof customProducts === 'object') {
+        Object.keys(customProducts).forEach(code => {
+            const prod = customProducts[code];
+            if (prod && prod.name) {
+                loanTypeMap[code] = prod.name;
+                if (prod.category) loanCategoryMap[prod.name] = prod.category;
+                if (prod.termType) loanStructureMap[prod.name] = prod.termType;
+                if (prod.capitalization) capitalizationMap[prod.name] = prod.capitalization.toLowerCase();
+                if (prod.penaltyApplicable !== undefined && window.InterestRateManager && typeof window.InterestRateManager.setLoanTypePenaltyExemption === 'function') {
+                    window.InterestRateManager.setLoanTypePenaltyExemption(prod.name, !prod.penaltyApplicable);
                 }
-            });
-        }
+            }
+        });
     }
 } catch (e) {
     console.warn("Failed to load custom loan products:", e);
@@ -154,6 +238,22 @@ try {
 // --------------------------------------------------
 
 // This map determines if a loan has a fixed term for installment calculations.
+function resolveTermType(loanName) {
+    if (!loanName) return 'Continuous';
+    const upper = loanName.toUpperCase().trim();
+    if (loanStructureMap[loanName] && ['Short Term', 'Mid Term', 'Long Term', 'Continuous'].includes(loanStructureMap[loanName])) {
+        return loanStructureMap[loanName];
+    }
+    if (loanStructureMap[upper] && ['Short Term', 'Mid Term', 'Long Term', 'Continuous'].includes(loanStructureMap[upper])) {
+        return loanStructureMap[upper];
+    }
+    if (upper.includes('LONG TERM') || upper.includes('LONG-TERM')) return 'Long Term';
+    if (upper.includes('SHORT TERM') || upper.includes('SHORT-TERM') || upper.includes('SHORT')) return 'Short Term';
+    if (upper.includes('MID TERM') || upper.includes('MID-TERM') || upper.includes('TERM')) return 'Mid Term';
+    if (upper.includes('CASH CREDIT') || upper.includes('WORKING CAPITAL') || upper.includes('CC ') || upper.includes('HYPOTHICATION')) return 'Continuous';
+    return 'Continuous';
+}
+
 const loanStructureMap = {
   'CASH CREDIT HYPOTHICATION': 'Continuous',
   'WORKING CAPITAL CMSME REFINANCE': 'Continuous',
@@ -582,6 +682,262 @@ function cancelAndContinue() {
 /* ===== Available Loans Modal Functions ===== */
 let allAvailableLoansData = [];
 
+
+// =========================================================================
+// BULK UPDATE RATES (EXCEL TEMPLATE & IMPORT)
+// =========================================================================
+let parsedBulkRatesState = [];
+
+function showBulkRateUpdateModal() {
+    parsedBulkRatesState = [];
+    const tbody = document.getElementById('bulkRatePreviewTableBody');
+    if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 font-medium">Upload an Excel file or download the template to view rate records.</td></tr>`;
+    }
+    const badge = document.getElementById('bulkPreviewBadge');
+    if (badge) {
+        badge.textContent = 'No file uploaded';
+        badge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-gray-200 text-gray-700';
+    }
+    const statsEl = document.getElementById('bulkUploadStats');
+    if (statsEl) statsEl.classList.add('hidden');
+    const applyBtn = document.getElementById('btnApplyBulkRates');
+    if (applyBtn) {
+        applyBtn.disabled = true;
+        applyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    const fileInp = document.getElementById('bulkRateUploadInput');
+    if (fileInp) fileInp.value = '';
+
+    const modal = document.getElementById('bulkRateUpdateModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideBulkRateUpdateModal() {
+    const modal = document.getElementById('bulkRateUpdateModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function downloadBulkRatesTemplate() {
+    if (typeof XLSX === 'undefined') {
+        showMessageBox('Excel export library (XLSX) not loaded.', true);
+        return;
+    }
+
+    const loanHeads = Object.keys(loanTypeMap).sort((a, b) => Number(a) - Number(b));
+    const rows = [
+        ["Loan Type", "Frm Date", "To date", "Rate"]
+    ];
+
+    loanHeads.forEach(head => {
+        const loanName = loanTypeMap[head];
+        const upper = loanName.toUpperCase().trim();
+        const history = interestRateHistory[upper] || [];
+
+        if (history && history.length > 0) {
+            const sorted = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
+            sorted.forEach((h, idx) => {
+                const d = new Date(h.date);
+                const frmDate = formatDate(d);
+                let toDate = '';
+                if (idx < sorted.length - 1) {
+                    const nextD = new Date(sorted[idx + 1].date);
+                    nextD.setDate(nextD.getDate() - 1);
+                    toDate = formatDate(nextD);
+                }
+                const rateVal = typeof h.rate === 'number' ? Number(h.rate.toFixed(2)) : parseFloat(h.rate) || 9.0;
+                rows.push([loanName, frmDate, toDate, rateVal]);
+            });
+        } else {
+            const baseRate = fixedTermLoanRates[upper] !== undefined ? fixedTermLoanRates[upper] : 9.0;
+            rows.push([loanName, "01/01/2020", "", baseRate]);
+        }
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [
+        { wch: 45 }, // Loan Type
+        { wch: 15 }, // Frm Date
+        { wch: 15 }, // To date
+        { wch: 12 }  // Rate
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Interest Rates");
+    XLSX.writeFile(wb, "BKB_Loan_Interest_Rates_Template.xlsx");
+    showToast("✓ Downloaded BKB_Loan_Interest_Rates_Template.xlsx");
+}
+
+function parseBulkRatesExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (typeof XLSX === 'undefined') {
+        showMessageBox('Excel parser library (XLSX) not available.', true);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+            if (!rawRows || rawRows.length < 2) {
+                showMessageBox('Uploaded Excel file is empty or missing headers.', true);
+                return;
+            }
+
+            // Detect column indices
+            const headers = rawRows[0].map(h => String(h).toLowerCase().trim().replace(/[^a-z0-9]/g, ''));
+            let colLoanType = headers.findIndex(h => h.includes('loantype') || h.includes('loan') || h.includes('type') || h.includes('scheme'));
+            let colFrmDate = headers.findIndex(h => h.includes('frmdate') || h.includes('fromdate') || h.includes('startdate') || h.includes('frm'));
+            let colToDate = headers.findIndex(h => h.includes('todate') || h.includes('enddate') || h.includes('to'));
+            let colRate = headers.findIndex(h => h.includes('rate') || h.includes('interest'));
+
+            if (colLoanType === -1) colLoanType = 0;
+            if (colFrmDate === -1) colFrmDate = 1;
+            if (colToDate === -1) colToDate = 2;
+            if (colRate === -1) colRate = 3;
+
+            parsedBulkRatesState = [];
+            const tbody = document.getElementById('bulkRatePreviewTableBody');
+            let previewHtml = '';
+
+            for (let i = 1; i < rawRows.length; i++) {
+                const r = rawRows[i];
+                if (!r || r.length === 0) continue;
+                const loanTypeRaw = String(r[colLoanType] || '').trim();
+                if (!loanTypeRaw) continue;
+
+                const frmDateRaw = r[colFrmDate];
+                const toDateRaw = r[colToDate];
+                const rateRaw = r[colRate];
+
+                let parsedFrmDate = '';
+                if (frmDateRaw instanceof Date && !isNaN(frmDateRaw)) {
+                    parsedFrmDate = formatDate(frmDateRaw);
+                } else if (typeof frmDateRaw === 'string' && frmDateRaw.trim()) {
+                    parsedFrmDate = frmDateRaw.trim();
+                } else if (typeof frmDateRaw === 'number') {
+                    const d = XLSX.SSF.parse_date_code(frmDateRaw);
+                    if (d) parsedFrmDate = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
+                }
+
+                let parsedToDate = '';
+                if (toDateRaw instanceof Date && !isNaN(toDateRaw)) {
+                    parsedToDate = formatDate(toDateRaw);
+                } else if (typeof toDateRaw === 'string' && toDateRaw.trim()) {
+                    parsedToDate = toDateRaw.trim();
+                } else if (typeof toDateRaw === 'number') {
+                    const d = XLSX.SSF.parse_date_code(toDateRaw);
+                    if (d) parsedToDate = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
+                }
+
+                const rateNum = parseFloat(String(rateRaw).replace(/[^\d.]/g, ''));
+                const isValidRate = !isNaN(rateNum) && rateNum > 0 && rateNum <= 100;
+
+                parsedBulkRatesState.push({
+                    loanType: loanTypeRaw,
+                    frmDate: parsedFrmDate,
+                    toDate: parsedToDate,
+                    rate: isValidRate ? rateNum : 0,
+                    isValid: isValidRate && !!parsedFrmDate
+                });
+
+                const statusBadge = isValidRate && !!parsedFrmDate
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-50 text-green-700 border border-green-300">✓ Valid</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-50 text-red-700 border border-red-300">⚠ Review</span>';
+
+                previewHtml += `
+                    <tr class="border-b hover:bg-slate-50 transition">
+                        <td class="p-2.5 text-center font-bold text-gray-400">${parsedBulkRatesState.length}</td>
+                        <td class="p-2.5 font-bold text-gray-800">${loanTypeRaw}</td>
+                        <td class="p-2.5 font-mono text-gray-700">${parsedFrmDate || '-'}</td>
+                        <td class="p-2.5 font-mono text-gray-700">${parsedToDate || 'Open'}</td>
+                        <td class="p-2.5 text-right font-mono font-bold text-emerald-700">${isValidRate ? rateNum.toFixed(2) + '%' : '<span class="text-red-500 font-bold">Invalid</span>'}</td>
+                        <td class="p-2.5 text-center">${statusBadge}</td>
+                    </tr>
+                `;
+            }
+
+            if (tbody) tbody.innerHTML = previewHtml || `<tr><td colspan="6" class="p-6 text-center text-gray-400">No valid rows found in sheet.</td></tr>`;
+
+            const badge = document.getElementById('bulkPreviewBadge');
+            if (badge) {
+                badge.textContent = `${parsedBulkRatesState.length} Rows Loaded`;
+                badge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+            }
+
+            const statsEl = document.getElementById('bulkUploadStats');
+            if (statsEl) statsEl.classList.remove('hidden');
+            const countEl = document.getElementById('bulkParsedCount');
+            if (countEl) countEl.textContent = parsedBulkRatesState.length;
+
+            const applyBtn = document.getElementById('btnApplyBulkRates');
+            if (applyBtn && parsedBulkRatesState.length > 0) {
+                applyBtn.disabled = false;
+                applyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            showToast(`✓ Parsed ${parsedBulkRatesState.length} rate records from Excel`);
+        } catch (err) {
+            console.error('Failed to parse bulk rates Excel:', err);
+            showMessageBox('Failed to parse Excel file: ' + (err.message || err), true);
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function applyBulkRates() {
+    if (!parsedBulkRatesState || parsedBulkRatesState.length === 0) {
+        showMessageBox('No rate entries loaded to apply.', true);
+        return;
+    }
+
+    // Group parsed rates by normalized Loan Type
+    const grouped = {};
+    parsedBulkRatesState.forEach(item => {
+        if (!item.isValid) return;
+        const norm = item.loanType.toUpperCase().trim();
+        if (!grouped[norm]) grouped[norm] = [];
+
+        const dt = parseDateFromDisplay(item.frmDate);
+        if (dt && !isNaN(dt)) {
+            grouped[norm].push({
+                date: dt,
+                dateStr: dt.toISOString().split('T')[0],
+                rate: item.rate
+            });
+        }
+    });
+
+    let updatedCount = 0;
+    Object.keys(grouped).forEach(normLoanName => {
+        const rates = grouped[normLoanName].sort((a, b) => a.date - b.date);
+        if (rates.length > 0) {
+            interestRateHistory[normLoanName] = rates;
+            if (window.InterestRateManager && typeof window.InterestRateManager.overwriteCustomRates === 'function') {
+                window.InterestRateManager.overwriteCustomRates(normLoanName, rates.map(r => ({ dateStr: r.dateStr, rate: r.rate })));
+            }
+            updatedCount++;
+        }
+    });
+
+    hideBulkRateUpdateModal();
+    showAvailableLoansModal();
+    showToast(`✓ Successfully updated rates for ${updatedCount} loan products!`);
+}
+
 function showAvailableLoansModal() {
     const tableBody = document.getElementById('availableLoansTableBody');
     if (!tableBody) return;
@@ -593,7 +949,7 @@ function showAvailableLoansModal() {
     loanHeads.forEach(head => {
         const loanName = loanTypeMap[head];
         const category = loanCategoryMap[loanName] || 'Other';
-        const structure = loanStructureMap[loanName] || (loanName.includes('TERM') ? 'Term' : 'Continuous');
+        const structure = resolveTermType(loanName);
         const cap = (resolveCapFreq(loanName) || capitalizationMap[loanName] || 'quarterly').toLowerCase();
         const capDisplay = cap.charAt(0).toUpperCase() + cap.slice(1);
         const isExempt = isPenaltyExempt(loanName);
@@ -636,7 +992,7 @@ function renderAvailableLoansRows(dataList) {
     if (!tableBody) return;
 
     if (!dataList || dataList.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-gray-500 font-medium">No matching loan products found.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-gray-500 font-medium">No matching loan products found.</td></tr>`;
         return;
     }
 
@@ -647,12 +1003,12 @@ function renderAvailableLoansRows(dataList) {
         if (item.capitalization.toLowerCase().includes('year')) capBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
         else if (item.capitalization.toLowerCase().includes('month')) capBadgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
 
-        // Structure badge styling
+        // Term Type badge styling (Long Term, Mid Term, Short Term, Continuous)
         let structBadgeClass = 'bg-gray-100 text-gray-700';
-        if (item.structure === 'Term') structBadgeClass = 'bg-indigo-50 text-indigo-700 border border-indigo-200';
-        else if (item.structure === 'Continuous') structBadgeClass = 'bg-amber-50 text-amber-800 border border-amber-200';
-        else if (item.structure === 'Agri') structBadgeClass = 'bg-teal-50 text-teal-700 border border-teal-200';
-        else if (item.structure === 'Project') structBadgeClass = 'bg-cyan-50 text-cyan-700 border border-cyan-200';
+        if (item.structure === 'Long Term') structBadgeClass = 'bg-purple-50 text-purple-700 border border-purple-200 font-semibold';
+        else if (item.structure === 'Mid Term') structBadgeClass = 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold';
+        else if (item.structure === 'Short Term') structBadgeClass = 'bg-teal-50 text-teal-700 border border-teal-200 font-semibold';
+        else if (item.structure === 'Continuous') structBadgeClass = 'bg-amber-50 text-amber-800 border border-amber-200 font-semibold';
 
         // Penalty badge styling
         const penBadge = item.isExempt
@@ -669,6 +1025,12 @@ function renderAvailableLoansRows(dataList) {
                 <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${capBadgeClass}">${item.capitalization}</span></td>
                 <td class="p-2 text-center">${penBadge}</td>
                 <td class="p-2 text-right font-mono font-bold text-green-700">${item.rate}</td>
+                <td class="p-2.5 text-center">
+                    <button type="button" onclick="InterestCalcLogic.editProductFromViewLoans('${item.name.replace(/'/g, "\\'")}')"
+                        class="btn-unified btn-modal-warning text-xs h-8 px-3 whitespace-nowrap">
+                        ✏️ Edit
+                    </button>
+                </td>
             </tr>
         `;
     });
@@ -696,6 +1058,46 @@ function filterAvailableLoansTable(query) {
     const countBadge = document.getElementById('availableLoansCountBadge');
     if (countBadge) countBadge.textContent = `Showing: ${filtered.length} of ${allAvailableLoansData.length}`;
 }
+
+
+
+
+function addNewLoanFromViewLoans() {
+    modalOrigin = 'viewLoans';
+    hideAvailableLoansModal();
+    showRateChangeModal('rates', 'viewLoans');
+    toggleAddProductMode(true);
+}
+
+function editProductFromViewLoans(loanName) {
+    modalOrigin = 'viewLoans';
+    hideAvailableLoansModal();
+    showRateChangeModal('rates', 'viewLoans');
+
+    const sel = document.getElementById('rateManagerLoanSelector');
+    if (sel) {
+        sel.value = loanName;
+        refreshRateManagerTable();
+        editSelectedProduct();
+    }
+}
+
+function goBackToPreviousModal() {
+    if (modalOrigin === 'viewLoans') {
+        hideRateChangeModal();
+        modalOrigin = null;
+        showAvailableLoansModal();
+    } else {
+        hideRateChangeModal();
+    }
+}
+
+function openViewLoansFromConfigurator() {
+    hideRateChangeModal();
+    modalOrigin = null;
+    showAvailableLoansModal();
+}
+
 
 function hideAvailableLoansModal() {
     document.getElementById('availableLoansModal').classList.add('hidden');
@@ -838,13 +1240,19 @@ function copyRateHistory(newLoanType, sourceCategory) {
 
 /* ===== Calculation Method Modal Functions ===== */
 function showCalculationMethodModal() {
-    document.getElementById('calculationMethodModal').classList.remove('hidden');
-    document.getElementById('calculationMethodModal').classList.add('flex');
+    const el = document.getElementById('calculationMethodModal');
+    if (el) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+    }
 }
 
 function hideCalculationMethodModal() {
-    document.getElementById('calculationMethodModal').classList.add('hidden');
-    document.getElementById('calculationMethodModal').classList.remove('flex');
+    const el = document.getElementById('calculationMethodModal');
+    if (el) {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+    }
 }
 
 function selectCalculationMethod(method) {
@@ -2322,13 +2730,23 @@ function editSelectedProduct() {
     document.getElementById('newProductCode').value = code;
     document.getElementById('newProductName').value = productName;
     document.getElementById('newProductCategory').value = cat;
+    const termTypeVal = resolveTermType(productName);
+    const termSelect = document.getElementById('newProductTermType');
+    if (termSelect) {
+        for (let i = 0; i < termSelect.options.length; i++) {
+            if (termSelect.options[i].value.toLowerCase() === termTypeVal.toLowerCase()) {
+                termSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
 
     const isExempt = isPenaltyExempt(productName);
     const penCheck = document.getElementById('newProductPenalty');
     if (penCheck) {
         penCheck.checked = !isExempt;
         const penLbl = document.getElementById('newProductPenaltyLabel');
-        if (penLbl) penLbl.textContent = !isExempt ? 'Yes (Applicable)' : 'No (N/A / Exempt)';
+        if (penLbl) penLbl.textContent = !isExempt ? 'Penalty: Yes' : 'Penalty: N/A';
     }
     
     // Select capitalization (capitalize first letter to match options like 'Monthly', 'Yearly')
@@ -2357,13 +2775,14 @@ function toggleAddProductMode(show) {
             document.getElementById('newProductCode').value = '';
             document.getElementById('newProductName').value = '';
             document.getElementById('newProductCategory').value = 'CMSME';
+            if (document.getElementById('newProductTermType')) document.getElementById('newProductTermType').value = 'Continuous';
             document.getElementById('newProductCap').value = 'Monthly';
             document.getElementById('newProductExcelFile').value = '';
             const penCheck = document.getElementById('newProductPenalty');
             if (penCheck) {
                 penCheck.checked = true;
                 const penLbl = document.getElementById('newProductPenaltyLabel');
-                if (penLbl) penLbl.textContent = 'Yes (Applicable)';
+                if (penLbl) penLbl.textContent = 'Penalty: Yes';
             }
             currentRateManagerState = [];
             renderRateManagerTableFromState();
@@ -2391,6 +2810,7 @@ function saveNewProduct() {
     const code = document.getElementById('newProductCode').value.trim();
     const name = document.getElementById('newProductName').value.trim().toUpperCase();
     const cat = document.getElementById('newProductCategory').value;
+    const termType = document.getElementById('newProductTermType') ? document.getElementById('newProductTermType').value : 'Continuous';
     const cap = document.getElementById('newProductCap').value;
 
     if (!code || code.length !== 4) {
@@ -2436,14 +2856,21 @@ function saveNewProduct() {
                 }
             }
             
-            customProducts[code] = { name: name, category: cat, capitalization: cap };
+                        const isPenaltyApplicable = document.getElementById('newProductPenalty') ? document.getElementById('newProductPenalty').checked : true;
+            customProducts[code] = { name: name, category: cat, termType: termType, capitalization: cap, penaltyApplicable: isPenaltyApplicable };
             ipc.sendSync('db-set-kv', 'custom_loan_products', customProducts);
-            
+
             // Update in-memory maps
             loanTypeMap[code] = name;
             loanCategoryMap[name] = cat;
+            loanStructureMap[name] = termType;
             capitalizationMap[name] = cap.toLowerCase();
-            
+
+            // Save Penalty Exemption status directly into InterestRateManager & localStorage
+            if (window.InterestRateManager && typeof window.InterestRateManager.setLoanTypePenaltyExemption === 'function') {
+                window.InterestRateManager.setLoanTypePenaltyExemption(name, !isPenaltyApplicable);
+            }
+
             // If rates were imported via Excel (or migrated from edit), save them too!
             let ratesSavedMsg = '';
             if (currentRateManagerState.length > 0) {
@@ -2452,16 +2879,21 @@ function saveNewProduct() {
                     interestRateHistory[name] = currentRateManagerState.map(r => ({ date: new Date(r.dateStr), rate: parseFloat(r.rate) }));
                     interestRateHistory[name].sort((a, b) => a.date - b.date);
                     interestRateHistory[code] = interestRateHistory[name];
-                    ratesSavedMsg = ` and ${currentRateManagerState.length} rates`;
+                    ratesSavedMsg = ` with ${currentRateManagerState.length} rates`;
                 }
             }
 
-            InterestCalcLogic.showMessageBox(`Loan Product "${name}"${ratesSavedMsg} saved successfully!`);
-            
+            showToast(`✅ Loan Product "${name}" saved successfully!`);
+
             // Re-populate dropdown and select it
             populateProductDropdown();
             document.getElementById('rateManagerLoanSelector').value = name;
-            
+
+            // Update UI elements
+            updatePenaltyField(name);
+            updateProductPropertiesDisplay(name);
+            refreshPenaltyLoanStatus();
+
             toggleAddProductMode(false);
         } else {
             InterestCalcLogic.showMessageBox('Database connection unavailable.', true);
@@ -2475,52 +2907,39 @@ function saveNewProduct() {
 function deleteSelectedProduct() {
     const productName = document.getElementById('rateManagerLoanSelector') ? document.getElementById('rateManagerLoanSelector').value : '';
     if (!productName) {
-        InterestCalcLogic.showMessageBox('Please select a Loan Product to delete.', true);
+        showToast('Please select a Loan Product to delete.', true);
         return;
     }
 
     if (confirm(`Are you sure you want to completely delete the product '${productName}' and its rate history? This cannot be undone.`)) {
         try {
-            const ipc = (window.require && window.require('electron')) ? window.require('electron').ipcRenderer : null;
-            if (ipc) {
-                // Delete from custom products DB
-                let customProductsRaw = ipc.sendSync('db-get-kv', 'custom_loan_products');
-                let customProducts = {};
-                if (typeof customProductsRaw === 'string') {
-                    try { customProducts = JSON.parse(customProductsRaw); } catch(e) {}
-                } else if (customProductsRaw && typeof customProductsRaw === 'object') {
-                    customProducts = customProductsRaw;
-                }
-                
-                let foundCode = Object.keys(customProducts).find(code => customProducts[code].name === productName);
-                if (foundCode) {
-                    delete customProducts[foundCode];
-                    ipc.sendSync('db-set-kv', 'custom_loan_products', customProducts);
-                }
-                
+            let customProducts = loadAppData('custom_loan_products') || {};
+            let codeToDelete = Object.keys(customProducts).find(c => customProducts[c].name === productName);
+            
+            if (codeToDelete) {
+                delete customProducts[codeToDelete];
+                saveAppData('custom_loan_products', customProducts);
+
                 // Remove from in-memory maps
-                let mapCode = Object.keys(loanTypeMap).find(code => loanTypeMap[code] === productName);
-                if (mapCode) delete loanTypeMap[mapCode];
-                if (loanCategoryMap[productName]) delete loanCategoryMap[productName];
-                if (capitalizationMap[productName]) delete capitalizationMap[productName];
+                delete loanTypeMap[codeToDelete];
+                delete loanCategoryMap[productName];
+                delete capitalizationMap[productName];
+                delete interestRateHistory[productName];
+                delete interestRateHistory[codeToDelete];
 
-                // Delete its rate history
                 if (window.InterestRateManager && typeof InterestRateManager.overwriteCustomRates === 'function') {
-                    InterestRateManager.overwriteCustomRates(productName, []); // clear it out from DB
-                    delete interestRateHistory[productName];
-                    if (mapCode) delete interestRateHistory[mapCode];
+                    InterestRateManager.overwriteCustomRates(productName, []);
                 }
 
-                InterestCalcLogic.showMessageBox(`Loan Product "${productName}" has been deleted.`);
+                showToast(`✅ Loan Product "${productName}" has been deleted.`);
                 populateProductDropdown();
                 document.getElementById('rateManagerLoanSelector').value = '';
                 refreshRateManagerTable();
             } else {
-                InterestCalcLogic.showMessageBox('Database connection unavailable.', true);
+                showToast(`Cannot delete default core product '${productName}'. Only custom products can be deleted.`, true);
             }
         } catch (e) {
-            InterestCalcLogic.showMessageBox('Error deleting product.', true);
-            console.error(e);
+            showToast('Error deleting product: ' + e.message, true);
         }
     }
 }
@@ -2677,31 +3096,56 @@ function switchRateModalTab(tab) {
     const tabPen = document.getElementById('rateModalTabPenaltyRates');
     const btnBase = document.getElementById('tab-btn-base-rates');
     const btnPen = document.getElementById('tab-btn-penalty-rates');
+    const btnSaveRates = document.getElementById('btnSaveRates');
+    const btnSavePenalty = document.getElementById('btnSavePenalty');
+    const tipEl = document.getElementById('rateModalFooterTip');
 
     if (tab === 'penalty') {
         if (tabBase) { tabBase.classList.add('hidden'); tabBase.style.display = 'none'; }
         if (tabPen) { tabPen.classList.remove('hidden'); tabPen.style.display = 'flex'; }
+        
+        // Active Penalty Tab Color Styling (Vibrant Purple)
         if (btnBase) {
-            btnBase.classList.remove('bg-white', 'text-green-800', 'shadow-sm');
-            btnBase.classList.add('text-gray-600');
+            btnBase.className = "px-4 py-1.5 text-xs font-bold rounded-lg text-gray-700 hover:text-green-800 transition cursor-pointer";
+            btnBase.style.backgroundColor = "transparent";
+            btnBase.style.color = "#374151";
+            btnBase.style.boxShadow = "none";
         }
         if (btnPen) {
-            btnPen.classList.add('bg-white', 'text-green-800', 'shadow-sm');
-            btnPen.classList.remove('text-gray-600');
+            btnPen.className = "px-4 py-1.5 text-xs font-bold rounded-lg bg-purple-700 text-white shadow-sm transition cursor-pointer";
+            btnPen.style.backgroundColor = "#7e22ce";
+            btnPen.style.color = "#ffffff";
+            btnPen.style.boxShadow = "0 1px 3px rgba(0,0,0,0.2)";
         }
+        if (btnSaveRates) btnSaveRates.classList.add('hidden');
+        if (btnSavePenalty) btnSavePenalty.classList.remove('hidden');
+        if (tipEl) tipEl.textContent = "Penalty rates are applied dynamically according to transaction dates.";
+        
         refreshPenaltyManagerTable();
         populatePenaltyLoanSelector();
+        refreshPenaltyLoanStatus();
     } else {
         if (tabPen) { tabPen.classList.add('hidden'); tabPen.style.display = 'none'; }
         if (tabBase) { tabBase.classList.remove('hidden'); tabBase.style.display = 'flex'; }
-        if (btnPen) {
-            btnPen.classList.remove('bg-white', 'text-green-800', 'shadow-sm');
-            btnPen.classList.add('text-gray-600');
-        }
+        
+        // Active Base Rates Tab Color Styling (Vibrant Forest Green)
         if (btnBase) {
-            btnBase.classList.add('bg-white', 'text-green-800', 'shadow-sm');
-            btnBase.classList.remove('text-gray-600');
+            btnBase.className = "px-4 py-1.5 text-xs font-bold rounded-lg bg-green-700 text-white shadow-sm transition cursor-pointer";
+            btnBase.style.backgroundColor = "#047857";
+            btnBase.style.color = "#ffffff";
+            btnBase.style.boxShadow = "0 1px 3px rgba(0,0,0,0.2)";
         }
+        if (btnPen) {
+            btnPen.className = "px-4 py-1.5 text-xs font-bold rounded-lg text-gray-700 hover:text-purple-900 transition cursor-pointer";
+            btnPen.style.backgroundColor = "transparent";
+            btnPen.style.color = "#374151";
+            btnPen.style.boxShadow = "none";
+        }
+        if (btnSaveRates) btnSaveRates.classList.remove('hidden');
+        if (btnSavePenalty) btnSavePenalty.classList.add('hidden');
+        if (tipEl) tipEl.textContent = "Select a loan product to review or modify effective rate history.";
+        
+        refreshRateManagerTable();
     }
 }
 
@@ -2876,9 +3320,12 @@ function savePenaltyManager() {
     if (window.InterestRateManager && typeof window.InterestRateManager.savePenaltySchedule === 'function') {
         window.InterestRateManager.savePenaltySchedule(currentPenaltyManagerState);
     }
-    showMessageBox("Penalty rate schedule and applicability saved successfully!");
+    showToast("✅ Penalty rate schedule and settings saved successfully!");
     hideRateChangeModal();
     updatePenaltyField();
+    if (typeof applyRatesAndRecalculate === 'function') {
+        applyRatesAndRecalculate();
+    }
 }
 
 function resetDefaultPenaltySchedule() {
@@ -3550,7 +3997,16 @@ return {
     saveInstallmentDataAndContinue: saveInstallmentDataAndContinue,
     cancelAndContinue: cancelAndContinue,
     showAvailableLoansModal: showAvailableLoansModal,
+    showBulkRateUpdateModal: showBulkRateUpdateModal,
+    hideBulkRateUpdateModal: hideBulkRateUpdateModal,
+    downloadBulkRatesTemplate: downloadBulkRatesTemplate,
+    parseBulkRatesExcel: parseBulkRatesExcel,
+    applyBulkRates: applyBulkRates,
     filterAvailableLoansTable: filterAvailableLoansTable,
+    addNewLoanFromViewLoans: addNewLoanFromViewLoans,
+    editProductFromViewLoans: editProductFromViewLoans,
+    goBackToPreviousModal: goBackToPreviousModal,
+    openViewLoansFromConfigurator: openViewLoansFromConfigurator,
     hideAvailableLoansModal: hideAvailableLoansModal,
     handleNewLoanRateTypeChange: handleNewLoanRateTypeChange,
     handleNewLoanGroupChange: handleNewLoanGroupChange,
@@ -3595,6 +4051,7 @@ return {
     showCalculationMethodModal: showCalculationMethodModal,
     clearAllData: clearAllData,
     rebuildTable: rebuildTable,
+    showToast: showToast,
     showMessageBox: showMessageBox,
     hideMessageBox: hideMessageBox,
     populate: populate,
@@ -3603,59 +4060,64 @@ return {
 };
 })();
 
-// Event listeners (outside the IIFE to attach to DOM elements)
-document.addEventListener('DOMContentLoaded', function() {
-    // Sidebar buttons are removed; shell now triggers logic via postMessage
-    // The message listener is now outside the IIFE, so it should be fine.
-    // The DOMContentLoaded listener in the HTML file is removed, so this is the only one.
-    // This ensures InterestCalcLogic is fully defined before being called.
+// Event listeners & initial setup (outside the IIFE to attach to DOM elements)
+function initInterestCalculator() {
     InterestCalcLogic.showCalculationMethodModal();
+    
     // Auto-recalculation on table edit
     let debounceTimer;
     function handleTableEdit(event) {
         if (!InterestCalcLogic.isAutoRecalcActive) return;
         let target = event.target;
 
-        // Traverse up to find the TD if the target is a text node or inner element
         while (target && target.tagName !== 'TD' && target.id !== 'loanTableBody') {
             target = target.parentNode;
         }
-        // Ensure we're editing a TD cell and it's one of the financial columns
         if (target && target.tagName === 'TD' && target.isContentEditable) {
             const cellIndex = target.cellIndex;
-            // Trigger columns: Amount(3), Debit(4), Penalty(5), Credit(6), Balance(7)
-            if ([3, 4, 5, 6, 7].includes(cellIndex)) { // Financial columns
+            if ([3, 4, 5, 6, 7].includes(cellIndex)) {
                 clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => InterestCalcLogic.calculateAndCapitalizeInterest(true), 750); // Recalculate after 750ms of inactivity
-            } else if (cellIndex === 1) { // Date column
+                debounceTimer = setTimeout(() => InterestCalcLogic.calculateAndCapitalizeInterest(true), 750);
+            } else if (cellIndex === 1) {
                 clearTimeout(debounceTimer);
-                // Update rates after a brief pause, then recalculate everything
                 debounceTimer = setTimeout(() => { InterestCalcLogic.updateRatesForManualEntry(); InterestCalcLogic.calculateAndCapitalizeInterest(true); }, 750);
             }
         }
     }
-    document.getElementById('loanTableBody').addEventListener('input', handleTableEdit);
+    const tableBodyEl = document.getElementById('loanTableBody');
+    if (tableBodyEl) tableBodyEl.addEventListener('input', handleTableEdit);
 
-    const gracePeriodInput=document.getElementById('gracePeriod');
-    gracePeriodInput.addEventListener('blur',()=>{
-      const v=(gracePeriodInput.value||'').trim();
-      if(v && !/months?$/i.test(v)) gracePeriodInput.value=v+' Months';
-    });
+    const gracePeriodInput = document.getElementById('gracePeriod');
+    if (gracePeriodInput) {
+        gracePeriodInput.addEventListener('blur', () => {
+            const v = (gracePeriodInput.value || '').trim();
+            if (v && !/months?$/i.test(v)) gracePeriodInput.value = v + ' Months';
+        });
+    }
+
     const loanSchemeInput = document.getElementById('loan_scheme_name');
     if (loanSchemeInput) {
         ['input', 'change', 'blur'].forEach(evt => {
             loanSchemeInput.addEventListener(evt, () => {
-                updatePenaltyField(loanSchemeInput.value);
+                InterestCalcLogic.updatePenaltyField(loanSchemeInput.value);
             });
         });
     }
-    updatePenaltyField();
+    InterestCalcLogic.updatePenaltyField();
+
     const calcEndDateInputForClass = document.getElementById('calcEndDate');
-    calcEndDateInputForClass.addEventListener('change', () => {
-        // Parse as UTC to match other date logic
-        const dateParts = calcEndDateInputForClass.value.split('-');
-        const calcEndDateForClass = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
-        const loanDueDateForClass = InterestCalcLogic.parseDateFromDisplay(document.getElementById('loanDueDate').value);
-        document.getElementById('classification').value = InterestCalcLogic.determineClassification(calcEndDateForClass, loanDueDateForClass);
-    });
-});
+    if (calcEndDateInputForClass) {
+        calcEndDateInputForClass.addEventListener('change', () => {
+            const dateParts = calcEndDateInputForClass.value.split('-');
+            const calcEndDateForClass = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+            const loanDueDateForClass = InterestCalcLogic.parseDateFromDisplay(document.getElementById('loanDueDate').value);
+            document.getElementById('classification').value = InterestCalcLogic.determineClassification(calcEndDateForClass, loanDueDateForClass);
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInterestCalculator);
+} else {
+    initInterestCalculator();
+}

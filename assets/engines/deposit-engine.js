@@ -2653,7 +2653,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
 
             // Reset Global Arrays & Tables
             transactions = []; renderTransactionTable();
-            kycDocs = []; renderKycDocTable();
+            kycDocs = []; if (typeof renderKycDocTable === 'function') renderKycDocTable();
             addedRisks = []; renderRiskSummaryTable();
 
             // Hide "Others" inputs & Remove Generated Pages
@@ -3075,6 +3075,7 @@ window.addEventListener('message', function (event) { // SHARED GLOBAL EVENT ROU
         document.getElementById(prefix + '_other_desc').value = '';
     }
 
+    function renderKycDocTable() { /* no-op for backward compatibility */ }
     function renderTransactionTable() {
         const depTbody = document.getElementById('modal_tp_dep_tbody');
         const withTbody = document.getElementById('modal_tp_with_tbody');
