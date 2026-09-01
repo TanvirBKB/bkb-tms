@@ -1318,11 +1318,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         openLocalForm('forms/loan/Agri_Loan_Rcc_Disbursement.html', 'Agri RCC Loan');
     }, 'Agri RCC Loan Form');
 
-    // Commented out: 'Agri Beef & Cow Loan' form not listed in readme.md
-    // setupNavLink('nav-loan-beef', () => {
-    //     console.log('Clicked: Agri Beef & Cow Loan Form');
-    //     openLocalForm('forms/loan/beef_cow_loan_form.html', 'Beef & Cow Loan');
-    // }, 'Agri Beef & Cow Loan Form');
+    setupNavLink('nav-loan-beef', () => {
+        console.log('Clicked: Agri Beef & Cow Loan Form');
+        openLocalForm('forms/under_construction.html', 'Beef & Cow Loan');
+    }, 'Agri Beef & Cow Loan Form');
 
     setupNavLink('nav-loan-deposit', () => {
         console.log('Clicked: Deposit Loan Form');
@@ -1336,7 +1335,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupNavLink('nav-loan-project', () => {
         console.log('Clicked: Project Loan Form');
-        openLocalForm('forms/loan/project_loan.html', 'Project Loan');
+        openLocalForm('forms/under_construction.html', 'Project Loan');
     }, 'Project Loan Form');
 
     setupNavLink('nav-beftn', () => {
@@ -1356,8 +1355,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setupNavLink('nav-salary-lunch', () => {
         console.log('Clicked: Lunch Bill Form');
-        openLocalForm('forms/salary&bills/lunch_bill.html', 'Lunch Bill');
+        openLocalForm('forms/under_construction.html', 'Lunch Bill');
     }, 'Lunch Bill Form');
+
+    setupNavLink('nav-salary-staff', () => {
+        console.log('Clicked: Staff Salary Form');
+        openLocalForm('forms/under_construction.html', 'Staff Salary');
+    }, 'Staff Salary Form');
 
     setupNavLink('nav-customer-list', () => {
         console.log('Clicked: সংরক্ষিত গ্রাহক তালিকা');

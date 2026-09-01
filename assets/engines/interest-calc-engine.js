@@ -689,6 +689,7 @@ let allAvailableLoansData = [];
 let parsedBulkRatesState = [];
 
 function showBulkRateUpdateModal() {
+    InterestCalcLogic.hideAvailableLoansModal();
     parsedBulkRatesState = [];
     const tbody = document.getElementById('bulkRatePreviewTableBody');
     if (tbody) {
@@ -724,22 +725,24 @@ function hideBulkRateUpdateModal() {
     }
 }
 
-function downloadBulkRatesTemplate() {
-    if (typeof XLSX === 'undefined') {
-        showMessageBox('Excel export library (XLSX) not loaded.', true);
+async function downloadBulkRatesTemplate() {
+    if (typeof ExcelJS === 'undefined') {
+        showToast('ExcelJS library not loaded.', true);
         return;
     }
 
     const loanHeads = Object.keys(loanTypeMap).sort((a, b) => Number(a) - Number(b));
-    const rows = [
-        ["Loan Type", "Frm Date", "To date", "Rate"]
-    ];
-
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Interest Rates');
+    
+    const loanDataList = [];
+    
     loanHeads.forEach(head => {
         const loanName = loanTypeMap[head];
         const upper = loanName.toUpperCase().trim();
         const history = interestRateHistory[upper] || [];
-
+        const loanRows = [];
+        
         if (history && history.length > 0) {
             const sorted = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
             sorted.forEach((h, idx) => {
@@ -752,26 +755,78 @@ function downloadBulkRatesTemplate() {
                     toDate = formatDate(nextD);
                 }
                 const rateVal = typeof h.rate === 'number' ? Number(h.rate.toFixed(2)) : parseFloat(h.rate) || 9.0;
-                rows.push([loanName, frmDate, toDate, rateVal]);
+                loanRows.push([loanName, frmDate, toDate, rateVal]);
             });
         } else {
             const baseRate = fixedTermLoanRates[upper] !== undefined ? fixedTermLoanRates[upper] : 9.0;
-            rows.push([loanName, "01/01/2020", "", baseRate]);
+            loanRows.push([loanName, "01/01/2020", "", baseRate]);
+        }
+        loanDataList.push(loanRows);
+    });
+
+    let maxRows = 0;
+    loanDataList.forEach(list => {
+        if (list.length > maxRows) maxRows = list.length;
+    });
+
+    const headerData = [];
+    loanDataList.forEach((_, idx) => {
+        headerData.push("Loan Type", "From date", "To date", "Rate");
+        if (idx < loanDataList.length - 1) {
+            headerData.push(""); // Blank column separator
+        }
+    });
+    
+    const headerRow = sheet.addRow(headerData);
+    
+    headerRow.eachCell((cell) => {
+        if (cell.value) { 
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF203764' } }; // Dark blue
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.border = {
+                top: { style: 'thin' }, left: { style: 'thin' },
+                bottom: { style: 'thin' }, right: { style: 'thin' }
+            };
         }
     });
 
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [
-        { wch: 45 }, // Loan Type
-        { wch: 15 }, // Frm Date
-        { wch: 15 }, // To date
-        { wch: 12 }  // Rate
-    ];
+    for (let r = 0; r < maxRows; r++) {
+        const dataRow = [];
+        loanDataList.forEach((list, idx) => {
+            if (r < list.length) {
+                dataRow.push(...list[r]);
+            } else {
+                dataRow.push("", "", "", "");
+            }
+            if (idx < loanDataList.length - 1) {
+                dataRow.push("");
+            }
+        });
+        sheet.addRow(dataRow);
+    }
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Interest Rates");
-    XLSX.writeFile(wb, "BKB_Loan_Interest_Rates_Template.xlsx");
-    showToast("✓ Downloaded BKB_Loan_Interest_Rates_Template.xlsx");
+    let colIdx = 1;
+    loanDataList.forEach((_, idx) => {
+        sheet.getColumn(colIdx++).width = 25; 
+        sheet.getColumn(colIdx++).width = 15; 
+        sheet.getColumn(colIdx++).width = 15; 
+        sheet.getColumn(colIdx++).width = 10; 
+        if (idx < loanDataList.length - 1) {
+            sheet.getColumn(colIdx++).width = 5; 
+        }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Bulk_Rates_Template.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast("✓ Downloaded Bulk_Rates_Template.xlsx");
 }
 
 function parseBulkRatesExcel(event) {
@@ -779,7 +834,7 @@ function parseBulkRatesExcel(event) {
     if (!file) return;
 
     if (typeof XLSX === 'undefined') {
-        showMessageBox('Excel parser library (XLSX) not available.', true);
+        showToast('Excel parser library (XLSX) not available.', true);
         return;
     }
 
@@ -787,113 +842,68 @@ function parseBulkRatesExcel(event) {
     reader.onload = function(e) {
         try {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheet];
+            const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            if (!rawRows || rawRows.length < 2) {
-                showMessageBox('Uploaded Excel file is empty or missing headers.', true);
+            parsedBulkRatesState = [];
+            
+            if (json.length < 2) {
+                showToast("The Excel file doesn't seem to have valid data rows.", true);
                 return;
             }
 
-            // Detect column indices
-            const headers = rawRows[0].map(h => String(h).toLowerCase().trim().replace(/[^a-z0-9]/g, ''));
-            let colLoanType = headers.findIndex(h => h.includes('loantype') || h.includes('loan') || h.includes('type') || h.includes('scheme'));
-            let colFrmDate = headers.findIndex(h => h.includes('frmdate') || h.includes('fromdate') || h.includes('startdate') || h.includes('frm'));
-            let colToDate = headers.findIndex(h => h.includes('todate') || h.includes('enddate') || h.includes('to'));
-            let colRate = headers.findIndex(h => h.includes('rate') || h.includes('interest'));
-
-            if (colLoanType === -1) colLoanType = 0;
-            if (colFrmDate === -1) colFrmDate = 1;
-            if (colToDate === -1) colToDate = 2;
-            if (colRate === -1) colRate = 3;
-
-            parsedBulkRatesState = [];
-            const tbody = document.getElementById('bulkRatePreviewTableBody');
-            let previewHtml = '';
-
-            for (let i = 1; i < rawRows.length; i++) {
-                const r = rawRows[i];
-                if (!r || r.length === 0) continue;
-                const loanTypeRaw = String(r[colLoanType] || '').trim();
-                if (!loanTypeRaw) continue;
-
-                const frmDateRaw = r[colFrmDate];
-                const toDateRaw = r[colToDate];
-                const rateRaw = r[colRate];
-
-                let parsedFrmDate = '';
-                if (frmDateRaw instanceof Date && !isNaN(frmDateRaw)) {
-                    parsedFrmDate = formatDate(frmDateRaw);
-                } else if (typeof frmDateRaw === 'string' && frmDateRaw.trim()) {
-                    parsedFrmDate = frmDateRaw.trim();
-                } else if (typeof frmDateRaw === 'number') {
-                    const d = XLSX.SSF.parse_date_code(frmDateRaw);
-                    if (d) parsedFrmDate = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
+            const headerRow = json[0];
+            
+            // The file is built with blocks of 4 columns, optionally separated by a blank column.
+            // We iterate column blocks by finding "Loan Type" headers.
+            const blocks = [];
+            for (let c = 0; c < headerRow.length; c++) {
+                if (typeof headerRow[c] === 'string' && headerRow[c].toLowerCase().includes('loan type')) {
+                    blocks.push(c); // starting column index of a block
                 }
+            }
 
-                let parsedToDate = '';
-                if (toDateRaw instanceof Date && !isNaN(toDateRaw)) {
-                    parsedToDate = formatDate(toDateRaw);
-                } else if (typeof toDateRaw === 'string' && toDateRaw.trim()) {
-                    parsedToDate = toDateRaw.trim();
-                } else if (typeof toDateRaw === 'number') {
-                    const d = XLSX.SSF.parse_date_code(toDateRaw);
-                    if (d) parsedToDate = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
-                }
+            // Now iterate rows and blocks to extract data
+            for (let r = 1; r < json.length; r++) {
+                const row = json[r];
+                if (!row || row.length === 0) continue;
 
-                const rateNum = parseFloat(String(rateRaw).replace(/[^\d.]/g, ''));
-                const isValidRate = !isNaN(rateNum) && rateNum > 0 && rateNum <= 100;
+                blocks.forEach(c => {
+                    const loanTypeStr = row[c];
+                    const fromDateStr = row[c + 1];
+                    const toDateStr = row[c + 2] || '';
+                    const rateStr = row[c + 3];
 
-                parsedBulkRatesState.push({
-                    loanType: loanTypeRaw,
-                    frmDate: parsedFrmDate,
-                    toDate: parsedToDate,
-                    rate: isValidRate ? rateNum : 0,
-                    isValid: isValidRate && !!parsedFrmDate
+                    if (loanTypeStr && fromDateStr && rateStr !== undefined) {
+                        const parsedRate = parseFloat(String(rateStr).replace(/[^0-9.]/g, ''));
+                        if (!isNaN(parsedRate)) {
+                            parsedBulkRatesState.push({
+                                loanType: String(loanTypeStr).trim().toUpperCase(),
+                                fromDate: String(fromDateStr).trim(),
+                                toDate: String(toDateStr).trim(),
+                                rate: parsedRate
+                            });
+                        }
+                    }
                 });
-
-                const statusBadge = isValidRate && !!parsedFrmDate
-                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-50 text-green-700 border border-green-300">✓ Valid</span>'
-                    : '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-50 text-red-700 border border-red-300">⚠ Review</span>';
-
-                previewHtml += `
-                    <tr class="border-b hover:bg-slate-50 transition">
-                        <td class="p-2.5 text-center font-bold text-gray-400">${parsedBulkRatesState.length}</td>
-                        <td class="p-2.5 font-bold text-gray-800">${loanTypeRaw}</td>
-                        <td class="p-2.5 font-mono text-gray-700">${parsedFrmDate || '-'}</td>
-                        <td class="p-2.5 font-mono text-gray-700">${parsedToDate || 'Open'}</td>
-                        <td class="p-2.5 text-right font-mono font-bold text-emerald-700">${isValidRate ? rateNum.toFixed(2) + '%' : '<span class="text-red-500 font-bold">Invalid</span>'}</td>
-                        <td class="p-2.5 text-center">${statusBadge}</td>
-                    </tr>
-                `;
             }
 
-            if (tbody) tbody.innerHTML = previewHtml || `<tr><td colspan="6" class="p-6 text-center text-gray-400">No valid rows found in sheet.</td></tr>`;
-
-            const badge = document.getElementById('bulkPreviewBadge');
-            if (badge) {
-                badge.textContent = `${parsedBulkRatesState.length} Rows Loaded`;
-                badge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+            if (parsedBulkRatesState.length === 0) {
+                showToast("No valid rates found in the uploaded file.", true);
+            } else {
+                showToast(`Successfully parsed ${parsedBulkRatesState.length} rates from Excel!`);
+                renderBulkRatesPreview();
             }
 
-            const statsEl = document.getElementById('bulkUploadStats');
-            if (statsEl) statsEl.classList.remove('hidden');
-            const countEl = document.getElementById('bulkParsedCount');
-            if (countEl) countEl.textContent = parsedBulkRatesState.length;
-
-            const applyBtn = document.getElementById('btnApplyBulkRates');
-            if (applyBtn && parsedBulkRatesState.length > 0) {
-                applyBtn.disabled = false;
-                applyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-
-            showToast(`✓ Parsed ${parsedBulkRatesState.length} rate records from Excel`);
         } catch (err) {
-            console.error('Failed to parse bulk rates Excel:', err);
-            showMessageBox('Failed to parse Excel file: ' + (err.message || err), true);
+            console.error("Error parsing Excel:", err);
+            showToast("Failed to parse the Excel file.", true);
         }
+        
+        // Reset file input
+        event.target.value = '';
     };
     reader.readAsArrayBuffer(file);
 }
@@ -1062,12 +1072,7 @@ function filterAvailableLoansTable(query) {
 
 
 
-function addNewLoanFromViewLoans() {
-    modalOrigin = 'viewLoans';
-    hideAvailableLoansModal();
-    showRateChangeModal('rates', 'viewLoans');
-    toggleAddProductMode(true);
-}
+/* replaced addNewLoanFromViewLoans */
 
 function editProductFromViewLoans(loanName) {
     modalOrigin = 'viewLoans';
@@ -2762,6 +2767,322 @@ function editSelectedProduct() {
     toggleAddProductMode(true);
 }
 
+
+// =========================================================================
+// NEW DEDICATED ADD LOAN PRODUCT MODAL LOGIC
+// =========================================================================
+
+function showAddLoanProductModal() {
+    hideAvailableLoansModal();
+    hideRateChangeModal();
+    
+    // Clear the form
+    document.getElementById('addLoanHead').value = '';
+    document.getElementById('addLoanSchemeName').value = '';
+    document.getElementById('addLoanType').value = 'Agri';
+    
+    document.getElementById('addLoanTermType').value = 'Short Term';
+    
+    document.getElementById('addLoanCapPeriod').value = 'Monthly';
+    
+    const penaltySel = document.getElementById('addLoanPenaltyToggle');
+    if (penaltySel) {
+        penaltySel.value = 'Applicable';
+    }
+    
+    // Reset rates container
+    document.getElementById('addLoanRatesContainer').classList.add('hidden');
+    const tbody = document.getElementById('addLoanRatesTableBody');
+    if (tbody) {
+        tbody.innerHTML = '';
+        appendAddLoanRateRow(); // Start with 1 empty row
+    }
+
+    const modal = document.getElementById('addLoanProductModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function hideAddLoanProductModal() {
+    const modal = document.getElementById('addLoanProductModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    showAvailableLoansModal(); // Go back to catalogue
+}
+
+// Override existing addNewLoanFromViewLoans to use the new modal
+function addNewLoanFromViewLoans() {
+    showAddLoanProductModal();
+}
+
+function toggleAddLoanRatesTable() {
+    const container = document.getElementById('addLoanRatesContainer');
+    if (container) {
+        container.classList.toggle('hidden');
+    }
+}
+
+
+
+async function downloadAddLoanRatesTemplate() {
+    if (typeof ExcelJS === 'undefined') {
+        showToast('ExcelJS library not loaded.', true);
+        return;
+    }
+    
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Rates Template');
+    
+    // Add Headers
+    const headerRow = sheet.addRow(["Loan Type", "From Date (dd/mm/yyyy)", "To Date (dd/mm/yyyy)", "Interest Rate (%)"]);
+    
+    // Apply styling to headers
+    headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF203764' } };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = {
+            top: { style: 'thin' }, left: { style: 'thin' },
+            bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+    });
+    
+    // Add example row
+    sheet.addRow(["New Loan", "01/01/2020", "", 9.00]);
+    
+    // Set column widths
+    sheet.columns = [
+        { width: 25 }, { width: 25 }, { width: 25 }, { width: 20 }
+    ];
+    
+    // Save file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'New_Loan_Rates_Template.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function handleAddLoanRatesUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheet];
+            const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            // Ensure rates container is visible
+            const container = document.getElementById('addLoanRatesContainer');
+            if (container) container.classList.remove('hidden');
+
+            const tbody = document.getElementById('addLoanRatesTableBody');
+            if (tbody) {
+                // Clear existing
+                tbody.innerHTML = '';
+                
+                // Skip header row, start from index 1
+                let addedCount = 0;
+                for (let i = 1; i < json.length; i++) {
+                    const row = json[i];
+                    if (!row || row.length === 0) continue;
+                    
+                    // Header format: Loan Type, From Date (dd/mm/yyyy), To Date (dd/mm/yyyy), Interest Rate (%)
+                    const fromDate = row[1] || '';
+                    const toDate = row[2] || '';
+                    const rateStr = row[3] !== undefined ? String(row[3]).replace(/[^0-9.]/g, '') : '';
+                    
+                    if (fromDate && rateStr) {
+                        const tr = document.createElement('tr');
+                        tr.className = 'border-b border-gray-100 hover:bg-slate-50 transition';
+                        tr.innerHTML = `
+                            <td class="p-2 text-center text-gray-500 font-bold border-r">${addedCount + 1}</td>
+                            <td class="p-1 border-r"><input type="text" class="add-loan-frmdate w-full h-8 px-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="dd/mm/yyyy" value="${fromDate}"></td>
+                            <td class="p-1 border-r"><input type="text" class="add-loan-todate w-full h-8 px-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="Open" value="${toDate}"></td>
+                            <td class="p-1 border-r"><input type="number" step="0.01" class="add-loan-rate w-full h-8 px-2 text-xs border border-gray-300 rounded text-right font-bold text-emerald-700 focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="e.g. 9.00" value="${parseFloat(rateStr).toFixed(2)}"></td>
+                            <td class="p-1 text-center"><button type="button" onclick="this.closest('tr').remove(); updateAddLoanRateSl();" class="text-red-500 font-bold hover:bg-red-50 px-2 py-1 rounded">X</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                        addedCount++;
+                    }
+                }
+                
+                if (addedCount === 0) {
+                    showToast("No valid rates found in the uploaded file.", true);
+                    appendAddLoanRateRow();
+                } else {
+                    showToast(`Successfully populated ${addedCount} rate(s) from Excel!`);
+                }
+            }
+        } catch (err) {
+            console.error("Error parsing rates Excel:", err);
+            showToast("Failed to parse the Excel file.", true);
+        }
+        
+        // Reset the file input so the same file can be uploaded again if needed
+        event.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function appendAddLoanRateRow() {
+    const tbody = document.getElementById('addLoanRatesTableBody');
+    if (!tbody) return;
+    
+    const rowCount = tbody.rows.length;
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-gray-100 hover:bg-slate-50 transition';
+    
+    // Auto-generate "From Date" if there's a previous row
+    let suggestedFromDate = '';
+    if (rowCount > 0) {
+        const prevRow = tbody.rows[rowCount - 1];
+        const prevToDateInput = prevRow.querySelector('.add-loan-todate');
+        if (prevToDateInput && prevToDateInput.value) {
+            const dt = parseDateFromDisplay(prevToDateInput.value);
+            if (dt && !isNaN(dt)) {
+                dt.setDate(dt.getDate() + 1); // Next day
+                suggestedFromDate = formatDate(dt);
+            }
+        }
+    }
+    
+    tr.innerHTML = `
+        <td class="p-2 text-center text-gray-500 font-bold border-r">${rowCount + 1}</td>
+        <td class="p-1 border-r"><input type="text" class="add-loan-frmdate w-full h-8 px-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="dd/mm/yyyy" value="${suggestedFromDate}"></td>
+        <td class="p-1 border-r"><input type="text" class="add-loan-todate w-full h-8 px-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="Open"></td>
+        <td class="p-1 border-r"><input type="number" step="0.01" class="add-loan-rate w-full h-8 px-2 text-xs border border-gray-300 rounded text-right font-bold text-emerald-700 focus:ring-1 focus:ring-blue-400 focus:outline-none" placeholder="e.g. 9.00"></td>
+        <td class="p-1 text-center"><button type="button" onclick="this.closest('tr').remove(); updateAddLoanRateSl();" class="text-red-500 font-bold hover:bg-red-50 px-2 py-1 rounded">X</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+function updateAddLoanRateSl() {
+    const tbody = document.getElementById('addLoanRatesTableBody');
+    if (!tbody) return;
+    Array.from(tbody.rows).forEach((row, idx) => {
+        row.cells[0].textContent = idx + 1;
+    });
+}
+
+function saveNewDedicatedProduct() {
+    const code = document.getElementById('addLoanHead').value.trim();
+    let name = document.getElementById('addLoanSchemeName').value.trim().toUpperCase();
+    const sector = document.getElementById('addLoanType').value;
+    
+    const repayment = document.getElementById('addLoanTermType').value;
+    
+    const cap = document.getElementById('addLoanCapPeriod').value;
+    const isPenaltyApplicable = document.getElementById('addLoanPenaltyToggle') ? document.getElementById('addLoanPenaltyToggle').value === 'Yes' : true;
+
+    if (!code || !name) {
+        showMessageBox("Please provide both GL Code and Scheme Name.", true);
+        return;
+    }
+
+    if (customProducts[code] || loanTypeMap[code] || loanCategoryMap[name]) {
+        showMessageBox("A loan product with this GL Code or Name already exists.", true);
+        return;
+    }
+
+    // Save rates if provided and container is visible
+    const ratesContainer = document.getElementById('addLoanRatesContainer');
+    const hasRates = ratesContainer && !ratesContainer.classList.contains('hidden');
+    let ratesArrayToSave = [];
+    let initialRateDisplay = '-';
+
+    if (hasRates) {
+        const tbody = document.getElementById('addLoanRatesTableBody');
+        const rows = tbody ? tbody.rows : [];
+        for (let i = 0; i < rows.length; i++) {
+            const frm = rows[i].querySelector('.add-loan-frmdate').value.trim();
+            const rt = rows[i].querySelector('.add-loan-rate').value.trim();
+            
+            if (frm && rt) {
+                const dt = parseDateFromDisplay(frm);
+                if (dt && !isNaN(dt)) {
+                    ratesArrayToSave.push({
+                        date: dt,
+                        dateStr: dt.toISOString().split('T')[0],
+                        rate: parseFloat(rt)
+                    });
+                }
+            }
+        }
+    }
+
+    // Update Data Structures
+    customProducts[code] = { 
+        name: name, 
+        category: sector, 
+        termType: repayment,
+        capitalization: cap, 
+        penaltyApplicable: isPenaltyApplicable 
+    };
+
+    loanTypeMap[code] = name;
+    loanCategoryMap[name] = sector;
+    loanStructureMap[name] = repayment;
+    capitalizationMap[name] = cap.toLowerCase();
+
+    // Ensure it triggers custom product persistence in `interestRateManager` if applicable
+    saveCustomProducts();
+
+    if (ratesArrayToSave.length > 0) {
+        ratesArrayToSave.sort((a, b) => a.date - b.date);
+        interestRateHistory[name] = ratesArrayToSave;
+        if (window.InterestRateManager && typeof window.InterestRateManager.overwriteCustomRates === 'function') {
+            window.InterestRateManager.overwriteCustomRates(name, ratesArrayToSave.map(r => ({ dateStr: r.dateStr, rate: r.rate })));
+        }
+        initialRateDisplay = ratesArrayToSave[ratesArrayToSave.length - 1].rate.toFixed(2) + '%';
+    }
+
+    showToast("✓ Successfully added " + name);
+
+    // Append to "Recently Added Loans" Table
+    const recentBody = document.getElementById('recentlyAddedLoansTableBody');
+    if (recentBody) {
+        if (recentBody.innerHTML.includes('No loans added')) {
+            recentBody.innerHTML = '';
+        }
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-gray-100/50 hover:bg-white/50 transition';
+        // Calculate new Sl number
+        const slNumber = recentBody.children.length + (recentBody.innerHTML.includes('No loans added') ? 0 : 1);
+        
+        tr.innerHTML = `
+            <td class="px-3 py-2 text-center text-gray-500 font-bold">${slNumber}</td>
+            <td class="px-3 py-2 font-mono font-bold text-gray-700 text-center">${code}</td>
+            <td class="px-3 py-2 font-bold text-gray-800">${name}</td>
+            <td class="px-3 py-2">${sector}</td>
+            <td class="px-3 py-2">${repayment}</td>
+            <td class="px-3 py-2">${cap}</td>
+            <td class="px-3 py-2 text-center">
+                ${isPenaltyApplicable ? '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-[10px] font-bold">Yes</span>' : '<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold">No</span>'}
+            </td>
+            <td class="px-3 py-2 text-center font-bold text-emerald-700">${initialRateDisplay}</td>
+        `;
+        recentBody.insertBefore(tr, recentBody.firstChild); // Insert at top
+    }
+
+    // Clear form for next entry
+    document.getElementById('addLoanHead').value = '';
+    document.getElementById('addLoanSchemeName').value = '';
+}
+
+
+
 function toggleAddProductMode(show) {
     if (show) {
         document.getElementById('productSelectMode').classList.add('hidden');
@@ -3337,6 +3658,7 @@ function resetDefaultPenaltySchedule() {
 }
 
 function showRateChangeModal(initialTab = 'rates') {
+    InterestCalcLogic.hideAvailableLoansModal();
     populateProductDropdown();
     toggleAddProductMode(false);
 
@@ -3356,11 +3678,34 @@ function showRateChangeModal(initialTab = 'rates') {
 
     const modal = document.getElementById('rateChangeModal');
     if (modal) {
+        // Always act as Standalone Mode to separate UI components
+        const headerTabs = modal.querySelector('.bg-slate-200\\/90');
+        if (headerTabs) {
+            headerTabs.style.display = 'none';
+        }
+        
+        const modalTitle = modal.querySelector('h3');
+        const modalDesc = modal.querySelector('p');
+        if (initialTab === 'penalty') {
+            if (modalTitle) modalTitle.textContent = "⚖️ Dynamic Penalty Rates Configurator";
+            if (modalDesc) modalDesc.textContent = "Manage global penalty schedules applicable across the system";
+        } else {
+            if (modalTitle) modalTitle.textContent = "Loan Product & Rate Configurator";
+            if (modalDesc) modalDesc.textContent = "Manage products and their effective base interest rate timelines";
+        }
+
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
 
     refreshRateManagerTable();
+    
+    // Switch to the correct tab (rates vs penalty)
+    if (typeof InterestCalcLogic !== 'undefined' && InterestCalcLogic.switchRateModalTab) {
+        InterestCalcLogic.switchRateModalTab(initialTab);
+    } else if (typeof switchRateModalTab === 'function') {
+        switchRateModalTab(initialTab);
+    }
 }
 
 function hideRateChangeModal() {
@@ -4026,6 +4371,12 @@ return {
     toggleAddProductMode: toggleAddProductMode,
     editSelectedProduct: editSelectedProduct,
     saveNewProduct: saveNewProduct,
+    hideAddLoanProductModal: hideAddLoanProductModal,
+    toggleAddLoanRatesTable: toggleAddLoanRatesTable,
+    appendAddLoanRateRow: appendAddLoanRateRow,
+    saveNewDedicatedProduct: saveNewDedicatedProduct,
+    downloadAddLoanRatesTemplate: downloadAddLoanRatesTemplate,
+    handleAddLoanRatesUpload: handleAddLoanRatesUpload,
     deleteSelectedProduct: deleteSelectedProduct,
     importRatesFromExcel: importRatesFromExcel,
     updateRateState: updateRateState,
