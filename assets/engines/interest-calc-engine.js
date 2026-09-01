@@ -2019,7 +2019,8 @@ function recalculateTable(suppressMessage = false) {
                 row.cells[9].innerText = typeof data.rate === 'number' ? formatRate(data.rate) : "";
             }
         }
-        if (!suppressMessage) showMessageBox("Balance calculated successfully!");
+        if (typeof updateCalculationSummary === 'function') updateCalculationSummary();
+if (!suppressMessage) showMessageBox("Balance calculated successfully!");
     } catch (error) {
         console.error("Auto-calculation failed:", error);
         showMessageBox("Calculation failed. Please check your inputs. Error: " + error.message, true);
@@ -2665,7 +2666,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
                 // Standard formula: Interest = Principal x Rate% x Days / 365
                 currentInterest = Math.round(balance * rate * days / 36500);
             }
-            row.cells[10].innerText = currentInterest > 0 ? currentInterest : ''; // Update interest cell
+            row.cells[10].innerText = currentInterest > 0 ? currentInterest : '0'; // Update interest cell
             interestSum += currentInterest;
         }
 
@@ -2686,7 +2687,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     recalculateTable(true);
 
     // Last row's interest is always 0
-    if (activeRows.length > 0) activeRows[activeRows.length - 1].cells[10].innerText = "";
+    if (activeRows.length > 0) activeRows[activeRows.length - 1].cells[10].innerText = "0";
 
     // 4. Add a total row at the end of the table
     let totalAmount = 0, totalDebit = 0, totalCredit = 0;
@@ -4659,3 +4660,110 @@ if (document.readyState === 'loading') {
 } else {
     initInterestCalculator();
 }
+
+// Number to Words Converter for Summary
+function convertNumberToWords(amount) {
+    var words = new Array();
+    words[0] = ''; words[1] = 'One'; words[2] = 'Two'; words[3] = 'Three'; words[4] = 'Four';
+    words[5] = 'Five'; words[6] = 'Six'; words[7] = 'Seven'; words[8] = 'Eight'; words[9] = 'Nine';
+    words[10] = 'Ten'; words[11] = 'Eleven'; words[12] = 'Twelve'; words[13] = 'Thirteen'; words[14] = 'Fourteen';
+    words[15] = 'Fifteen'; words[16] = 'Sixteen'; words[17] = 'Seventeen'; words[18] = 'Eighteen'; words[19] = 'Nineteen';
+    words[20] = 'Twenty'; words[30] = 'Thirty'; words[40] = 'Forty'; words[50] = 'Fifty';
+    words[60] = 'Sixty'; words[70] = 'Seventy'; words[80] = 'Eighty'; words[90] = 'Ninety';
+    amount = amount.toString();
+    var atemp = amount.split(".");
+    var number = atemp[0].split(",").join("");
+    var n_length = number.length;
+    var words_string = "";
+    if (n_length <= 9) {
+        var n_array = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        var received_n_array = new Array();
+        for (var i = 0; i < n_length; i++) {
+            received_n_array[i] = number.substr(i, 1);
+        }
+        for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+            n_array[i] = received_n_array[j];
+        }
+        for (var i = 0, j = 1; i < 9; i++, j++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                if (n_array[i] == 1) {
+                    n_array[j] = 10 + parseInt(n_array[j]);
+                    n_array[i] = 0;
+                }
+            }
+        }
+        value = "";
+        for (var i = 0; i < 9; i++) {
+            if (i == 0 || i == 2 || i == 4 || i == 7) {
+                value = n_array[i] * 10;
+            } else {
+                value = n_array[i];
+            }
+            if (value != 0) {
+                words_string += words[value] + " ";
+            }
+            if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Crore ";
+            }
+            if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Lakh ";
+            }
+            if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+                words_string += "Thousand ";
+            }
+            if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                words_string += "Hundred and ";
+            } else if (i == 6 && value != 0) {
+                words_string += "Hundred ";
+            }
+        }
+        words_string = words_string.split("  ").join(" ");
+    }
+    return words_string.trim();
+}
+window.convertNumberToWords = convertNumberToWords;
+
+function updateCalculationSummary() {
+    const tableBody = document.getElementById('loanTableBody');
+    if (!tableBody || tableBody.rows.length === 0) return;
+
+    let finalBalance = 0;
+    let finalDate = '';
+
+    const rows = tableBody.rows;
+    // Find the last row that is NOT the total row
+    let lastDataRow = null;
+    for (let i = rows.length - 1; i >= 0; i--) {
+        if (rows[i].id !== 'total-row') {
+            lastDataRow = rows[i];
+            break;
+        }
+    }
+
+    if (lastDataRow) {
+        // Unbold everything first to be safe
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].cells.length >= 8) {
+                rows[i].cells[7].style.fontWeight = 'normal';
+                rows[i].cells[7].style.color = '';
+            }
+        }
+        
+        lastDataRow.cells[7].style.fontWeight = '900';
+        lastDataRow.cells[7].style.color = '#7e22ce'; // purple-700
+        finalBalance = parseFloat(String(lastDataRow.cells[7].innerText).replace(/,/g, '')) || 0;
+        finalDate = lastDataRow.cells[1].innerText;
+    }
+
+    const summaryDiv = document.getElementById('calculationSummary');
+    if (summaryDiv) {
+        summaryDiv.classList.remove('hidden');
+        document.getElementById('summaryTotalDueAmount').innerText = Math.round(finalBalance).toLocaleString('en-IN');
+        document.getElementById('summaryAsOfDate').innerText = finalDate;
+        
+        if (typeof convertNumberToWords === 'function') {
+            document.getElementById('summaryTotalInWords').innerText = "In words: " + convertNumberToWords(Math.round(finalBalance)) + " Taka Only.";
+        }
+    }
+}
+window.updateCalculationSummary = updateCalculationSummary;

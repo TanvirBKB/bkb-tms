@@ -1094,7 +1094,7 @@
           style="background: linear-gradient(135deg, #3b82f6, #4f46e5); color: #ffffff;">
           
           <div>
-            <div class="text-base font-bold text-white">Calculation of loans from Ledger</div>
+            <div class="text-xl font-bold text-white">Calculation of loans from Ledger</div>
             <div class="text-xs text-blue-100 mt-1 opacity-90">Calculate individual or batch accounts from ledger sheets</div>
           </div>
         </button>
@@ -1105,7 +1105,7 @@
           style="background: linear-gradient(135deg, #10b981, #0d9488); color: #ffffff;">
           
           <div>
-            <div class="text-base font-bold text-white">Calculation of Loans from CBS</div>
+            <div class="text-xl font-bold text-white">Calculation of Loans from CBS</div>
             <div class="text-xs text-emerald-100 mt-1 opacity-90">Extract statement balances & interest transactions directly from CBS</div>
           </div>
         </button>
@@ -1116,7 +1116,7 @@
           style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: #ffffff;">
           
           <div>
-            <div class="text-base font-bold text-white">Calculate Head Change Loans</div>
+            <div class="text-xl font-bold text-white">Calculate Head Change Loans</div>
             <div class="text-xs text-orange-100 mt-1 opacity-90">Recompute interest across transfer periods and GL head adjustments</div>
           </div>
         </button>
@@ -1794,7 +1794,7 @@ if (pName && window.InterestRateManager && typeof window.InterestRateManager.set
         <div class="flex items-center gap-3">
           <span class="text-2xl"></span>
           <div>
-            <h3 class="text-base font-bold text-gray-800 m-0">Configured Loan Products & Schemes Catalogue</h3>
+            <h3 class="text-xl font-bold text-gray-800 m-0">Configured Loan Products & Schemes Catalogue</h3>
             <p class="text-xs text-gray-500 m-0 mt-0.5">Overview of all configured loan types, capitalization schedules,
               penalty applicability, and base rates</p>
           </div>
@@ -1985,6 +1985,13 @@ if (pName && window.InterestRateManager && typeof window.InterestRateManager.set
               <!-- rows injected by JS -->
             </tbody>
           </table>
+        </div>
+
+        <!-- Dynamic Summary -->
+        <div id="calculationSummary" class="mt-4 p-5 bg-purple-50 rounded-xl border border-purple-100 hidden">
+            <p class="font-bold text-xl text-purple-900 m-0">Total Due: <span id="summaryTotalDueAmount" class="text-3xl">0</span> <span class="text-sm font-normal text-purple-700">as of <span id="summaryAsOfDate"></span></span></p>
+            <p class="text-sm italic text-purple-800 m-0 mt-2 font-medium" id="summaryTotalInWords"></p>
+            <p class="text-xs text-gray-500 mt-4 m-0 border-t border-purple-200 pt-3">This calculation is subject to interest rate, penalty rate, and calculation date.</p>
         </div>
 
         <!-- Print-only Footer -->
