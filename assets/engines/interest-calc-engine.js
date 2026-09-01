@@ -2750,12 +2750,14 @@ function editSelectedProduct() {
     }
 
     const isExempt = isPenaltyExempt(productName);
-    const penCheck = document.getElementById('newProductPenalty');
-    if (penCheck) {
-        penCheck.checked = !isExempt;
-        const penLbl = document.getElementById('newProductPenaltyLabel');
-        if (penLbl) penLbl.textContent = !isExempt ? 'Penalty: Yes' : 'Penalty: N/A';
-    }
+const penCheck = document.getElementById('newProductPenalty');
+if (penCheck) {
+penCheck.value = isExempt ? 'Exempt' : 'Applicable';
+}
+const intTypeEl = document.getElementById('newProductInterestType');
+if (intTypeEl && typeof interestTypeMap !== 'undefined') {
+intTypeEl.value = interestTypeMap[productName] || 'Fixed';
+}
     
     // Select capitalization (capitalize first letter to match options like 'Monthly', 'Yearly')
     let capSelect = document.getElementById('newProductCap');
@@ -3103,11 +3105,11 @@ function toggleAddProductMode(show) {
             document.getElementById('newProductCap').value = 'Monthly';
             document.getElementById('newProductExcelFile').value = '';
             const penCheck = document.getElementById('newProductPenalty');
-            if (penCheck) {
-                penCheck.checked = true;
-                const penLbl = document.getElementById('newProductPenaltyLabel');
-                if (penLbl) penLbl.textContent = 'Penalty: Yes';
-            }
+if (penCheck) {
+penCheck.value = 'Applicable';
+}
+const intTypeEl = document.getElementById('newProductInterestType');
+if (intTypeEl) intTypeEl.value = 'Fixed';
             currentRateManagerState = [];
             renderRateManagerTableFromState();
         }
@@ -3136,6 +3138,7 @@ function saveNewProduct() {
     const cat = document.getElementById('newProductCategory').value;
     const termType = document.getElementById('newProductTermType') ? document.getElementById('newProductTermType').value : 'Continuous';
     const cap = document.getElementById('newProductCap').value;
+const interestType = document.getElementById('newProductInterestType') ? document.getElementById('newProductInterestType').value : 'Fixed';
 
     if (!code || code.length !== 4) {
         InterestCalcLogic.showMessageBox('Please enter a valid 4-digit GL Code.', true);
@@ -3180,8 +3183,9 @@ function saveNewProduct() {
                 }
             }
             
-                        const isPenaltyApplicable = document.getElementById('newProductPenalty') ? document.getElementById('newProductPenalty').checked : true;
-            customProducts[code] = { name: name, category: cat, termType: termType, capitalization: cap, penaltyApplicable: isPenaltyApplicable };
+                        const isPenaltyApplicable = document.getElementById('newProductPenalty') ? (document.getElementById('newProductPenalty').value === 'Applicable') : true;
+            customProducts[code] = { name: name, category: cat, termType: termType, capitalization: cap, penaltyApplicable: isPenaltyApplicable, interestType: interestType };
+if (typeof interestTypeMap !== 'undefined') interestTypeMap[name] = interestType;
             ipc.sendSync('db-set-kv', 'custom_loan_products', customProducts);
 
             // Update in-memory maps
