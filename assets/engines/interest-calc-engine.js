@@ -1725,7 +1725,7 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
             rateChanges.forEach(change => {
                 if (change.date >= startDate && change.date <= endDate) {
                     const dateExists = allRowsData.some(r => r.date && r.date.getTime() === change.date.getTime());
-                    if (!dateExists) allRowsData.push({ date: change.date, particulars: '', amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+                    if (!dateExists) allRowsData.push({ date: change.date, particulars: 'Int. Rate changed', amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
                 }
             });
         }
@@ -1810,7 +1810,7 @@ function applyRatesAndRecalculate() {
         rateChanges.forEach(change => {
             if (change.date >= startDate && change.date <= endDate) {
                 const dateExists = allRowsData.some(r => r.date && r.date.getTime() === change.date.getTime());
-                if (!dateExists) allRowsData.push({ date: change.date, particulars: '', amount: '', debit: '', penalty: '', credit: '', balance: '' });
+                if (!dateExists) allRowsData.push({ date: change.date, particulars: 'Int. Rate changed', amount: '', debit: '', penalty: '', credit: '', balance: '' });
             }
         });
     }
@@ -2581,7 +2581,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
             if (change.date >= effectiveCapStart && change.date <= endDate) {
                 const dateExists = allRowsData.some(r => r.date && r.date.getTime() === change.date.getTime());
                 if (!dateExists) {
-                    allRowsData.push({ date: change.date, particulars: '', amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+                    allRowsData.push({ date: change.date, particulars: 'Int. Rate changed', amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
                 }
             }
         });
@@ -4765,7 +4765,7 @@ function updateCalculationSummary() {
     // Create new plain lines summary div
     plainSummary = document.createElement('div');
     plainSummary.id = 'calculation-summary-plain';
-    plainSummary.classList.add('mt-4', 'p-3', 'bg-gray-50', 'border', 'border-gray-300', 'rounded-lg', 'text-gray-800', 'leading-relaxed', 'print-friendly-summary');
+    plainSummary.classList.add('mt-4', 'p-4', 'bg-gray-50', 'border', 'border-gray-300', 'rounded', 'text-gray-800', 'leading-relaxed', 'print-friendly-summary');
     
     plainSummary.innerHTML = `
         <div class="font-bold mb-2 pb-2 border-b border-gray-300 text-[13.5px] whitespace-nowrap overflow-hidden text-ellipsis flex justify-between">
