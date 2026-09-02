@@ -1956,6 +1956,10 @@ function importData(append = false, ignoreStartDate = false) {
 
 function recalculateTable(suppressMessage = false) {
     try {
+        // ALWAYS remove total row first
+        const existingTotal = document.getElementById("total-row");
+        if (existingTotal) existingTotal.remove();
+
         const tableBody = document.getElementById('loanTableBody');
         const rows = tableBody.rows;
         if (rows.length === 0) return;
@@ -1964,6 +1968,9 @@ function recalculateTable(suppressMessage = false) {
         const tableData = [];
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
+            if (row.cells && row.cells.length > 2 && typeof cleanParticulars === "function") {
+                row.cells[2].innerText = cleanParticulars(row.cells[2].innerText);
+            }
             tableData.push({
                 date: parseDateFromDisplay(row.cells[1].innerText),
                 amount: parseFloat(row.cells[3].innerText) || 0,
@@ -2658,6 +2665,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         let interestSum = 0;
         for (let i = lastIndex; i < capIndex; i++) {
             const row = activeRows[i];
+            if (row.id === 'total-row' || row.cells.length < 11) continue;
             const balance = parseFloat(String(row.cells[7].innerText).replace(/,/g, '')) || 0;
             const days = parseInt(String(row.cells[8].innerText).replace(/,/g, '')) || 0;
             const rate = parseFloat(String(row.cells[9].innerText).replace(/[%,]/g, '')) || 0;
@@ -2687,30 +2695,16 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     recalculateTable(true);
 
     // Last row's interest is always 0
-    if (activeRows.length > 0) activeRows[activeRows.length - 1].cells[10].innerText = "0";
-
-    // 4. Add a total row at the end of the table
-    let totalAmount = 0, totalDebit = 0, totalCredit = 0;
-    for (let i = 0; i < activeRows.length; i++) {
-        const row = activeRows[i];
-        totalAmount += parseFloat(row.cells[3].innerText) || 0;
-        totalDebit += parseFloat(row.cells[4].innerText) || 0;
-        totalCredit += parseFloat(row.cells[6].innerText) || 0;
+    if (activeRows.length > 0) {
+    const lastR = activeRows[activeRows.length - 1];
+    if (lastR.id !== "total-row" && lastR.cells && lastR.cells.length > 10) {
+        lastR.cells[10].innerText = "0";
+    } else if (activeRows.length > 1 && activeRows[activeRows.length - 2].cells && activeRows[activeRows.length - 2].cells.length > 10) {
+        activeRows[activeRows.length - 2].cells[10].innerText = "0";
     }
+}
 
-    const totalRow = document.createElement('tr');
-    totalRow.id = 'total-row';
-    totalRow.classList.add('bg-gray-200', 'font-bold');
-    totalRow.innerHTML = `
-        <td colspan="3" class="p-2 border border-gray-400 text-right">Total</td>
-        <td class="p-2 border border-gray-400 text-center">${totalAmount > 0 ? Math.round(totalAmount) : ''}</td>
-        <td class="p-2 border border-gray-400 text-center">${totalDebit > 0 ? Math.round(totalDebit) : ''}</td>
-        <td class="p-2 border border-gray-400 text-center"></td>
-        <td class="p-2 border border-gray-400 text-center">${totalCredit > 0 ? Math.round(totalCredit) : ''}</td>
-        <td class="p-2 border border-gray-400 text-center"></td>
-        <td colspan="3" class="p-2 border border-gray-400"></td>
-    `;
-    tableBody.appendChild(totalRow);
+    // Total row generation removed as per request, summary table is used instead.
 
     if (!isAuto) {
         InterestCalcLogic.showMessageBox("Interest capitalized and balances recalculated.", true);
@@ -4729,41 +4723,72 @@ function updateCalculationSummary() {
 
     let finalBalance = 0;
     let finalDate = '';
+    let totalAmount = 0; // The standard Dr
+    let totalDr = 0; // The interest/capitalized Dr
+    let totalCr = 0;
+    let totalPenalty = 0;
 
     const rows = tableBody.rows;
-    // Find the last row that is NOT the total row
     let lastDataRow = null;
-    for (let i = rows.length - 1; i >= 0; i--) {
-        if (rows[i].id !== 'total-row') {
-            lastDataRow = rows[i];
-            break;
-        }
-    }
 
-    if (lastDataRow) {
-        // Unbold everything first to be safe
-        for (let i = 0; i < rows.length; i++) {
-            if (rows[i].cells.length >= 8) {
-                rows[i].cells[7].style.fontWeight = 'normal';
-                rows[i].cells[7].style.color = '';
-            }
-        }
-        
-        lastDataRow.cells[7].style.fontWeight = '900';
-        lastDataRow.cells[7].style.color = '#7e22ce'; // purple-700
-        finalBalance = parseFloat(String(lastDataRow.cells[7].innerText).replace(/,/g, '')) || 0;
-        finalDate = lastDataRow.cells[1].innerText;
-    }
-
-    const summaryDiv = document.getElementById('calculationSummary');
-    if (summaryDiv) {
-        summaryDiv.classList.remove('hidden');
-        document.getElementById('summaryTotalDueAmount').innerText = Math.round(finalBalance).toLocaleString('en-IN');
-        document.getElementById('summaryAsOfDate').innerText = finalDate;
-        
-        if (typeof convertNumberToWords === 'function') {
-            document.getElementById('summaryTotalInWords').innerText = "In words: " + convertNumberToWords(Math.round(finalBalance)) + " Taka Only.";
-        }
-    }
+    // Remove old total row/tfoot if it exists
+    let tfoot = document.getElementById('loanTableFoot');
+    if (tfoot) tfoot.remove();
+    
+    // We create a tfoot so it doesn't interfere with tableBody.rows
+    const table = document.getElementById('loanTableBody').parentNode;
+    tfoot = document.createElement('tfoot');
+    tfoot.id = 'loanTableFoot';
+    
+    const totalRow = document.createElement('tr');
+    totalRow.id = 'total-row';
+    totalRow.classList.add('bg-purple-50', 'font-bold', 'text-purple-900', 'border-t-2', 'border-purple-300');
+    
+    let combinedDr = Math.round(totalAmount + totalDr);
+    
+    totalRow.innerHTML = `
+        <td colspan="11" class="p-3 border border-purple-200">
+            <div class="flex flex-col gap-2">
+                <!-- Top Row: Sums -->
+                <div class="flex flex-wrap gap-4 items-center justify-start text-sm">
+                    <span><span class="text-gray-600">Total Dr:</span> ${combinedDr.toLocaleString('en-IN')}</span>
+                    <span class="text-gray-300">|</span>
+                    <span><span class="text-gray-600">Cr:</span> ${Math.round(totalCr).toLocaleString('en-IN')}</span>
+                    <span class="text-gray-300">|</span>
+                    <span><span class="text-gray-600">Other Dr (Penalty):</span> <span class="text-red-600">${Math.round(totalPenalty).toLocaleString('en-IN')}</span></span>
+                    <span class="text-gray-300">|</span>
+                    <span class="text-lg"><span class="text-gray-600 text-sm">Balance:</span> <span class="text-purple-700">${Math.round(finalBalance).toLocaleString('en-IN')}</span></span>
+                </div>
+                
+                <!-- Bottom Row: Comments -->
+                <div class="text-sm italic text-gray-700 bg-white p-2 rounded border border-purple-100">
+                    <div class="font-bold text-purple-800 mb-1">Total Due: ${Math.round(finalBalance).toLocaleString('en-IN')} as of ${finalDate}</div>
+                    <div>In words: ${wordsText} Taka Only.</div>
+                    <div class="text-xs mt-1 text-gray-500">This calculation is subject to interest rate, penalty rate, and calculation date.</div>
+                </div>
+            </div>
+        </td>
+    `;
+    
+    tfoot.appendChild(totalRow);
+    table.appendChild(tfoot);
 }
 window.updateCalculationSummary = updateCalculationSummary;
+
+function cleanParticulars(text) {
+    if (!text) return "";
+    let cleaned = text.trim();
+    
+    // 1. Remove anything from "Batch" to the end of the line
+    // This matches "Batch", "Batch-", "Batch 123", etc.
+    cleaned = cleaned.replace(/(?:^|\s)batch[- :]*.*$/i, '').trim();
+    
+    // 2. Remove duplicate consecutive phrases (e.g., "Excise Duty Excise Duty" -> "Excise Duty")
+    // This regex finds any word or sequence of words that repeats immediately
+    cleaned = cleaned.replace(/\b([A-Za-z]+(?:\s+[A-Za-z]+)*)\s+\1\b/gi, '$1').trim();
+    
+    // 3. Clean up trailing hyphens or weird spaces
+    cleaned = cleaned.replace(/[- \s]+$/, '').trim();
+    
+    return cleaned;
+}

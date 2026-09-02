@@ -1,0 +1,295 @@
+function calculateAndCapitalizeInterest(isAuto = false) {
+    const btn = document.getElementById('calculateBalance');
+    if (!isAuto && btn) {
+        isAutoRecalcActive = true;
+        btn.setAttribute('disabled', true);
+        btn.classList.add('button-disabled');
+    } else {
+        if (btn && btn.hasAttribute('disabled')) return;
+    }
+
+    const tableBody = document.getElementById('loanTableBody');
+    const rowsInTable = tableBody.rows;
+    if (rowsInTable.length === 0) {
+        if (!isAuto) showMessageBox("Please import data first.", true);
+        if (btn) { btn.removeAttribute('disabled'); btn.classList.remove('button-disabled'); isAutoRecalcActive = false; }
+        return;
+    }
+
+    // --- 0. Robust Date Range Detection ---
+    let calcStartInput = document.getElementById('calcStartDate');
+    let calcEndInput = document.getElementById('calcEndDate');
+    
+    // If dates are missing, fallback to the table's actual data range
+    if (!calcStartInput.value || !calcEndInput.value) {
+        const firstDate = parseDateFromDisplay(rowsInTable[0].cells[1].innerText);
+        const lastDate = parseDateFromDisplay(rowsInTable[rowsInTable.length - 1].cells[1].innerText);
+        
+        if (!calcStartInput.value && firstDate) calcStartInput.value = formatDateForInput(firstDate);
+        if (!calcEndInput.value && lastDate) calcEndInput.value = formatDateForInput(lastDate);
+    }
+
+    const startParts = calcStartInput.value.split('-');
+    const calcStartDate = new Date(Date.UTC(startParts[0], startParts[1] - 1, startParts[2]));
+    const endParts = calcEndInput.value.split('-');
+    const endDate = new Date(Date.UTC(endParts[0], endParts[1] - 1, endParts[2]));
+
+    if (isNaN(calcStartDate.getTime()) || isNaN(endDate.getTime())) {
+        if (!isAuto) showMessageBox("Calculation range is invalid. Please check your start and end dates.", true);
+        if (btn) { btn.removeAttribute('disabled'); btn.classList.remove('button-disabled'); isAutoRecalcActive = false; }
+        return;
+    }
+
+    const tableFirstDate = rowsInTable.length > 0 ? parseDateFromDisplay(rowsInTable[0].cells[1].innerText) : null;
+    const effectiveCapStart = (tableFirstDate && tableFirstDate > calcStartDate) ? tableFirstDate : calcStartDate;
+
+    // 1. Remove existing total row to prevent it being treated as a data row
+    const existingTotalRow = document.getElementById('total-row');
+    if (existingTotalRow) existingTotalRow.remove();
+
+    // 2. Extract current rows into an array for processing/augmentation
+    let allRowsData = [];
+    for (let i = 0; i < rowsInTable.length; i++) {
+        const row = rowsInTable[i];
+        // Extract all existing rows, but we will tag those marked as capitalization
+        const particularsText = (row.cells[2].innerText || "").trim();
+        const isCapRow = row.dataset.isCapitalization === 'true' || 
+                         particularsText === 'Interest Capitalization' || 
+                         particularsText.includes('Int. Cap');
+                         
+        if (isCapRow || particularsText === 'Calculation End Date') {
+            continue; // Strip out existing capitalization and end-date rows to prevent duplicates on recalculation
+        }
+
+        allRowsData.push({
+            originalIndex: i,
+            date: parseDateFromDisplay(row.cells[1].innerText),
+            particulars: row.cells[2].innerText,
+            amount: parseFloat(row.cells[3].innerText.replace(/,/g, '')) || 0,
+            debit: parseFloat(row.cells[4].innerText.replace(/,/g, '')) || 0,
+            penalty: parseFloat(row.cells[5].innerText.replace(/,/g, '')) || 0,
+            credit: parseFloat(row.cells[6].innerText.replace(/,/g, '')) || 0,
+            balance: parseFloat(row.cells[7].innerText.replace(/,/g, '')) || 0,
+            rate: String(row.cells[9].innerText).trim(),
+            isCapitalization: isCapRow
+        });
+    }
+
+    // 3. Inject Missing Capitalization Rows (The "Yearly/Quarterly" Logic)
+    const loanInputVal = (document.getElementById('loan_scheme_name').value || "").trim();
+    
+    // PRIORITY 1: Use the UI Inst. Frequency field set by the user
+    const uiFrequency = (document.getElementById('installmentFrequency').value || '').trim().toLowerCase();
+    
+    // PRIORITY 2: Fall back to the capitalizationMap (product-based)
+        // 1. Resolve Capitalization Frequency strictly from loan name/code
+    let capFrequency = null;
+    
+    // Helper to check the maps
+
+
+    capFrequency = resolveCapFreq(loanInputVal);
+
+
+    
+    // If STILL not found, check if it's a known Term Loan that might use uiFrequency or default to yearly?
+    // Based on user feedback: Inst. Frequency is for PENALTY, not capitalization.
+    // So we will NOT use uiFrequency. If we can't find it, we throw an error.
+    if (!capFrequency) {
+        if (!isAuto) showMessageBox("Capitalization frequency (Yearly/Quarterly) could not be determined for loan: " + loanInputVal + ". Please ensure the loan name/code is correct.", true);
+        if (btn) { btn.removeAttribute('disabled'); btn.classList.remove('button-disabled'); isAutoRecalcActive = false; }
+        return;
+    }
+
+    // Read sanction date to use its month/day as the anniversary anchor for yearly/half-yearly
+    const sanctionDateStr = (document.getElementById('sanction_date') ? document.getElementById('sanction_date').value : '') || '';
+    let anchorMonth = 5; // Default June (0-indexed) for legacy fallback
+    let anchorDay   = 30;
+    if (sanctionDateStr) {
+        const sancParsed = parseDateFromDisplay(sanctionDateStr);
+        if (sancParsed && !isNaN(sancParsed)) {
+            anchorMonth = sancParsed.getUTCMonth();
+            anchorDay   = sancParsed.getUTCDate();
+        }
+    }
+    
+    console.log('[CAP DEBUG] uiFrequency:', uiFrequency, '| capFrequency:', capFrequency, '| effectiveCapStart:', effectiveCapStart ? effectiveCapStart.toISOString() : null, '| endDate:', endDate ? endDate.toISOString() : null);
+    if (capFrequency) {
+        const capDates = [];
+        let cursor = new Date(Date.UTC(effectiveCapStart.getUTCFullYear(), effectiveCapStart.getUTCMonth(), 1));
+        
+        while (cursor <= endDate) {
+            let month = cursor.getUTCMonth();
+            let year  = cursor.getUTCFullYear();
+            let targetDate = null;
+            
+            if (capFrequency === 'monthly') {
+                // Last day of every month
+                targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'quarterly') {
+                // Fiscal year quarters: 30/09, 31/12, 31/03, 30/06
+                // months: Sep=8, Dec=11, Mar=2, Jun=5
+                if ([8, 11, 2, 5].includes(month)) targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'half-yearly') {
+                // Fiscal year halves: 31/12 and 30/06
+                // months: Dec=11, Jun=5
+                if ([11, 5].includes(month)) targetDate = new Date(Date.UTC(year, month + 1, 0));
+            } else if (capFrequency === 'yearly') {
+                // Economic year end: always 30/06 (June, month index 5)
+                if (month === 5) targetDate = new Date(Date.UTC(year, 5, 30));
+            }
+
+            if (targetDate && targetDate >= effectiveCapStart && targetDate <= endDate) {
+                if (!capDates.some(d => d.getTime() === targetDate.getTime())) capDates.push(targetDate);
+            }
+            cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+        }
+        
+        capDates.forEach(date => {
+            // If the cap date is exactly the end date, combine them into one row
+            if (date.getTime() === endDate.getTime()) {
+                allRowsData.push({ date: date, particulars: 'Calculation End Date', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            } else {
+                allRowsData.push({ date: date, particulars: 'Interest Capitalization', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+            }
+        });
+
+        // Always ensure the final calc end date is present and acts as a capitalization row
+        const lastCapAlreadyOnEndDate = capDates.some(d => d.getTime() === endDate.getTime());
+        if (!lastCapAlreadyOnEndDate) {
+            allRowsData.push({ date: endDate, particulars: 'Calculation End Date', isCapitalization: true, amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+        }
+    }
+
+    // NEW: Inject Interest Rate Change Dates to ensure period breaks during calculation
+    const rateChanges = interestRateHistory[loanInputVal.toUpperCase().trim()];
+    if (rateChanges && rateChanges.length > 0) {
+        rateChanges.sort((a, b) => a.date - b.date);
+        rateChanges.forEach(change => {
+            if (change.date >= effectiveCapStart && change.date <= endDate) {
+                const dateExists = allRowsData.some(r => r.date && r.date.getTime() === change.date.getTime());
+                if (!dateExists) {
+                    allRowsData.push({ date: change.date, particulars: '', amount: 0, debit: 0, penalty: 0, credit: 0, balance: 0 });
+                }
+            }
+        });
+    }
+
+    // 4. Chronological Sort (Ensuring capitalization rows come AFTER transactions on the same day)
+    allRowsData.sort((a, b) => {
+        const diff = a.date.getTime() - b.date.getTime();
+        if (diff !== 0) return diff;
+        if (a.isCapitalization && !b.isCapitalization) return 1;
+        if (!a.isCapitalization && b.isCapitalization) return -1;
+        return 0;
+    });
+
+    // 4b. Apply correct Interest Rates to all rows (The "Between dates" logic) with AUTOMATED DYNAMIC PENALTY
+    const loanTypeUpper = loanInputVal.toUpperCase().trim();
+    const fixedRate = fixedTermLoanRates[loanTypeUpper];
+    const sanctionRate = parseFloat(String(document.getElementById('sanctionRate').value).replace(/[^\d.]/g, '')) || 0;
+    const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate').value);
+    const loanStructure = loanStructureMap[loanTypeUpper];
+    const isExempt = isPenaltyExempt(loanTypeUpper);
+
+    // Auto-determine penalty start date (if loan is not exempt from penalty)
+    let penaltyStartDate = null;
+    if (!isExempt && loanDueDateForRates && endDate > loanDueDateForRates) {
+        const graceMonths = parseInt((document.getElementById('gracePeriod')?.value || '').match(/\d+/)?.[0] || '0', 10);
+        if (loanStructure === 'Term' && graceMonths > 0) {
+            penaltyStartDate = addMonths(loanDueDateForRates, graceMonths);
+        } else {
+            penaltyStartDate = loanDueDateForRates;
+        }
+    }
+
+    allRowsData.forEach(row => {
+        let applicableRate = sanctionRate;
+        if (fixedRate !== undefined && row.date < loanDueDateForRates) {
+            applicableRate = fixedRate;
+        } else if (rateChanges && rateChanges.length > 0) {
+            // Find the latest rate where change date <= row date
+            rateChanges.forEach(change => {
+                if (row.date && change.date <= row.date) {
+                    applicableRate = change.rate;
+                }
+            });
+        }
+
+        // Automated Dynamic Penalty Integration:
+        if (penaltyStartDate && row.date >= penaltyStartDate && !row.isPenaltyExempt) {
+            const dynamicPenaltyRate = getPenaltyRateForDate(row.date, loanTypeUpper);
+            applicableRate += dynamicPenaltyRate;
+        }
+
+        row.rate = formatRate(applicableRate);
+    });
+    
+    rebuildTable(allRowsData);
+
+    // ==================================================================
+    // STEP 3: Interest Recalculation loop
+    // ==================================================================
+    const activeRows = tableBody.rows;
+    recalculateTable(true); // Ensure balances/days are updated for the new rows
+
+    const capitalizationIndices = [];
+    for (let i = 0; i < activeRows.length; i++) {
+        // Identify rows tagged as capitalization or the very last row (final settlement)
+        if (activeRows[i].dataset.isCapitalization === 'true' || activeRows[i].cells[2].innerText === 'Interest Capitalization') {
+            capitalizationIndices.push(i);
+        }
+    }
+    if (activeRows.length > 0 && !capitalizationIndices.includes(activeRows.length - 1)) capitalizationIndices.push(activeRows.length - 1);
+    const uniqueIndices = [...new Set(capitalizationIndices)].sort((a, b) => a - b);
+
+    // 2. Iterate through capitalization periods, calculating and capitalizing sequentially.
+    let lastIndex = 0;
+    uniqueIndices.forEach(capIndex => {
+        // A. Recalculate balances to incorporate debits from previous periods.
+        recalculateTable(true);
+
+        // B. Calculate interest for the current period using the updated balances.
+        let interestSum = 0;
+        for (let i = lastIndex; i < capIndex; i++) {
+            const row = activeRows[i];
+            const balance = parseFloat(String(row.cells[7].innerText).replace(/,/g, '')) || 0;
+            const days = parseInt(String(row.cells[8].innerText).replace(/,/g, '')) || 0;
+            const rate = parseFloat(String(row.cells[9].innerText).replace(/[%,]/g, '')) || 0;
+            let currentInterest = 0;
+            if (days > 0 && rate > 0 && balance > 0) {
+                // Standard formula: Interest = Principal x Rate% x Days / 365
+                currentInterest = Math.round(balance * rate * days / 36500);
+            }
+            row.cells[10].innerText = currentInterest > 0 ? currentInterest : '0'; // Update interest cell
+            interestSum += currentInterest;
+        }
+
+        // C. Put the sum in the debit column of the capitalization row.
+        if (capIndex > 0) {
+            const debitCell = activeRows[capIndex].cells[4];
+            debitCell.innerText = Math.round(interestSum);
+            activeRows[capIndex].classList.add('bg-inserted-row');
+        }
+
+        lastIndex = capIndex; // The next period starts ON this capitalization date
+    });
+
+    // 3. Finalize and Recalculate
+    if (activeRows.length > 0) {
+        activeRows[0].cells[2].innerText = 'Opening Balance';
+    }
+    recalculateTable(true);
+
+    // Last row's interest is always 0
+    if (activeRows.length > 0) activeRows[activeRows.length - 1].cells[10].innerText = "0";
+
+    // Total row generation removed as per request, summary table is used instead.
+
+    if (!isAuto) {
+        InterestCalcLogic.showMessageBox("Interest capitalized and balances recalculated.", true);
+        // Re-enable the button after calculation is complete
+        if (btn) { btn.removeAttribute('disabled'); btn.classList.remove('button-disabled'); } // isAutoRecalcActive is reset earlier
+    }
+}
+
