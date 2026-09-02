@@ -4723,55 +4723,71 @@ function updateCalculationSummary() {
 
     let finalBalance = 0;
     let finalDate = '';
-    let totalAmount = 0; // The standard Dr
+    let totalAmount = 0; // Other DR (Amount column excluding first row)
     let totalDr = 0; // The interest/capitalized Dr
     let totalCr = 0;
     let totalPenalty = 0;
 
     const rows = tableBody.rows;
     let lastDataRow = null;
+    
+    // Accumulate all values
+    let isFirstValidRow = true;
+    for (let i = 0; i < rows.length; i++) {
+        const r = rows[i];
+        if (r.id === 'total-row' || r.cells.length < 8) continue;
+        
+        lastDataRow = r;
+        const amt = parseFloat(r.cells[3].innerText.replace(/,/g, '')) || 0;
+        if (isFirstValidRow) {
+            // First valid row is opening balance, ignore from Other DR
+            isFirstValidRow = false;
+        } else {
+            totalAmount += amt;
+        }
+        
+        totalDr += parseFloat(r.cells[4].innerText.replace(/,/g, '')) || 0;
+        totalPenalty += parseFloat(r.cells[5].innerText.replace(/,/g, '')) || 0;
+        totalCr += parseFloat(r.cells[6].innerText.replace(/,/g, '')) || 0;
+    }
+    
+    if (lastDataRow) {
+        finalDate = lastDataRow.cells[1].innerText || '';
+        finalBalance = parseFloat(lastDataRow.cells[7].innerText.replace(/,/g, '')) || 0;
+    }
+    
+    const wordsText = typeof numberToWords === 'function' ? numberToWords(Math.round(finalBalance)) : '';
 
-    // Remove old total row/tfoot if it exists
-    let tfoot = document.getElementById('loanTableFoot');
-    if (tfoot) tfoot.remove();
+    // Remove old plain summary if it exists
+    let plainSummary = document.getElementById('calculation-summary-plain');
+    if (plainSummary) plainSummary.remove();
     
-    // We create a tfoot so it doesn't interfere with tableBody.rows
-    const table = document.getElementById('loanTableBody').parentNode;
-    tfoot = document.createElement('tfoot');
-    tfoot.id = 'loanTableFoot';
+    // Create new plain lines summary div
+    plainSummary = document.createElement('div');
+    plainSummary.id = 'calculation-summary-plain';
+    plainSummary.classList.add('mt-4', 'p-3', 'bg-gray-50', 'border', 'border-gray-300', 'rounded-lg', 'text-gray-800', 'leading-relaxed', 'print-friendly-summary');
     
-    const totalRow = document.createElement('tr');
-    totalRow.id = 'total-row';
-    totalRow.classList.add('bg-purple-50', 'font-bold', 'text-purple-900', 'border-t-2', 'border-purple-300');
-    
-    let combinedDr = Math.round(totalAmount + totalDr);
-    
-    totalRow.innerHTML = `
-        <td colspan="11" class="p-3 border border-purple-200">
-            <div class="flex flex-col gap-2">
-                <!-- Top Row: Sums -->
-                <div class="flex flex-wrap gap-4 items-center justify-start text-sm">
-                    <span><span class="text-gray-600">Total Dr:</span> ${combinedDr.toLocaleString('en-IN')}</span>
-                    <span class="text-gray-300">|</span>
-                    <span><span class="text-gray-600">Cr:</span> ${Math.round(totalCr).toLocaleString('en-IN')}</span>
-                    <span class="text-gray-300">|</span>
-                    <span><span class="text-gray-600">Other Dr (Penalty):</span> <span class="text-red-600">${Math.round(totalPenalty).toLocaleString('en-IN')}</span></span>
-                    <span class="text-gray-300">|</span>
-                    <span class="text-lg"><span class="text-gray-600 text-sm">Balance:</span> <span class="text-purple-700">${Math.round(finalBalance).toLocaleString('en-IN')}</span></span>
-                </div>
-                
-                <!-- Bottom Row: Comments -->
-                <div class="text-sm italic text-gray-700 bg-white p-2 rounded border border-purple-100">
-                    <div class="font-bold text-purple-800 mb-1">Total Due: ${Math.round(finalBalance).toLocaleString('en-IN')} as of ${finalDate}</div>
-                    <div>In words: ${wordsText} Taka Only.</div>
-                    <div class="text-xs mt-1 text-gray-500">This calculation is subject to interest rate, penalty rate, and calculation date.</div>
-                </div>
-            </div>
-        </td>
+    plainSummary.innerHTML = `
+        <div class="font-bold mb-2 pb-2 border-b border-gray-300 text-[13.5px] whitespace-nowrap overflow-hidden text-ellipsis flex justify-between">
+            <span>Total DR: <span class="text-blue-700">${Math.round(totalDr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Other DR: <span class="text-orange-600">${Math.round(totalAmount).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Penalty: <span class="text-red-600">${Math.round(totalPenalty).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Total CR: <span class="text-green-700">${Math.round(totalCr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Balance: <span class="text-purple-800">${Math.round(finalBalance).toLocaleString('en-IN')}</span></span>
+        </div>
+        <div class="text-[14px] mb-1 font-semibold">
+            Total due: ${Math.round(finalBalance).toLocaleString('en-IN')} (In words: ${wordsText} Taka Only.) as of ${finalDate}.
+        </div>
+        <div class="text-[12px] italic text-gray-600">
+            This calculation is subject to variable interest rates, penalty and calculation date.
+        </div>
     `;
     
-    tfoot.appendChild(totalRow);
-    table.appendChild(tfoot);
+    // Append it right after the table wrapper
+    const tableWrapper = document.getElementById('loanTableBody').closest('div');
+    if (tableWrapper && tableWrapper.parentNode) {
+        tableWrapper.parentNode.insertBefore(plainSummary, tableWrapper.nextSibling);
+    }
 }
 window.updateCalculationSummary = updateCalculationSummary;
 
