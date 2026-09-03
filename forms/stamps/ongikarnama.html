@@ -170,6 +170,12 @@
       padding-top: 4px;
       min-width: 2.0in;
     }
+  
+    /* Table Cell Grid Protection */
+    table td, table th, .custom-table td, .custom-table th, .execution-table td, .execution-table th, td[contenteditable], th[contenteditable] {
+      display: table-cell !important;
+      box-sizing: border-box !important;
+    }
   </style>
 </head>
 

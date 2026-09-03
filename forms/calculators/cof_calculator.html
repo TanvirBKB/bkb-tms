@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost of Fund Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 30px;
+            color: var(--text-main);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-title::before {
+            content: '📊';
+            font-size: 28px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input {
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .ledger-section {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .ledger-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .ledger-table th, .ledger-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .ledger-table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .ledger-table td {
+            background-color: #ffffff;
+            font-size: 14px;
+        }
+        .ledger-table td input {
+            width: 100%;
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: transparent;
+            transition: all 0.2s;
+        }
+        .ledger-table td input:hover {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+        }
+        .ledger-table td input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+        
+        .ledger-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .amount-col {
+            text-align: right !important;
+            width: 120px;
+        }
+        .amount-col input {
+            text-align: right;
+        }
+        
+        .summary-panel {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 12px;
+            padding: 25px;
+            color: white;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .summary-item {
+            text-align: center;
+        }
+        .summary-label {
+            font-size: 13px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .summary-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .summary-value.highlight {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <h1 class="header-title">Cost of Fund Calculator</h1>
+            <div style="font-size: 14px; color: var(--text-muted); font-weight: 500;">Ledger Analysis Module</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="input-group">
+                <label>Branch Name</label>
+                <input type="text" id="branch-name" placeholder="Enter branch name...">
+            </div>
+            <div class="input-group">
+                <label>Account Number</label>
+                <input type="text" id="account-number" placeholder="Enter account number...">
+            </div>
+            <div class="input-group">
+                <label>Account Name</label>
+                <input type="text" id="account-name" placeholder="Enter account name...">
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: center;">
+            <div class="input-group" style="flex: 1; max-width: 200px;">
+                <label>Interest Rate (%)</label>
+                <input type="number" id="interest-rate" value="7.5" step="0.1" style="text-align: right;">
+            </div>
+        </div>
+
+        <div class="ledger-section">
+            <table class="ledger-table" id="ledger-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">SL</th>
+                        <th style="width: 130px;">Date</th>
+                        <th>Particulars / Purpose</th>
+                        <th class="amount-col">Debit Amount</th>
+                        <th class="amount-col">Credit Amount</th>
+                        <th class="amount-col">Balance</th>
+                        <th style="width: 80px; text-align: center;">Days</th>
+                        <th class="amount-col">Product</th>
+                    </tr>
+                </thead>
+                <tbody id="ledger-body">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions">
+            <button class="btn-secondary" onclick="addRow()">+ Add Row</button>
+            <button class="btn-primary" onclick="calculateCostOfFund()" style="margin-left: auto;">Calculate Cost of Fund</button>
+        </div>
+        
+        <div class="summary-panel" style="display: none;" id="summary-panel">
+            <div class="summary-item">
+                <div class="summary-label">Total Days</div>
+                <div class="summary-value" id="total-days">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Total Product</div>
+                <div class="summary-value" id="total-product">0.00</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Calculated Interest</div>
+                <div class="summary-value highlight" id="total-interest">৳ 0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rowCount = 0;
+
+        function addRow() {
+            rowCount++;
+            const tbody = document.getElementById('ledger-body');
+            const tr = document.createElement('tr');
+            
+            // Get today's date in YYYY-MM-DD
+            const today = new Date().toISOString().split('T')[0];
+            
+            tr.innerHTML = `
+                <td style="text-align: center; font-weight: 500; color: #64748b;">${rowCount}</td>
+                <td><input type="date" class="row-date" value="${rowCount === 1 ? today : ''}"></td>
+                <td><input type="text" class="row-purpose" placeholder="Transaction details..."></td>
+                <td class="amount-col"><input type="number" class="row-debit" placeholder="0.00" step="0.01"></td>
+                <td class="amount-col"><input type="number" class="row-credit" placeholder="0.00" step="0.01"></td>
+                <td class="amount-col"><input type="text" class="row-balance" readonly style="background: #f8fafc; font-weight: 600;"></td>
+                <td style="text-align: center;"><input type="text" class="row-days" readonly style="background: #f8fafc; text-align: center;"></td>
+                <td class="amount-col"><input type="text" class="row-product" readonly style="background: #f8fafc; font-weight: 600;"></td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+
+        function calculateCostOfFund() {
+            const rows = document.querySelectorAll('#ledger-body tr');
+            let currentBalance = 0;
+            let totalProduct = 0;
+            let totalDays = 0;
+            
+            const rate = parseFloat(document.getElementById('interest-rate').value) || 0;
+            
+            for(let i=0; i<rows.length; i++) {
+                const tr = rows[i];
+                const dateVal = tr.querySelector('.row-date').value;
+                const debit = parseFloat(tr.querySelector('.row-debit').value) || 0;
+                const credit = parseFloat(tr.querySelector('.row-credit').value) || 0;
+                
+                // Update Balance (Loan style)
+                currentBalance = currentBalance + debit - credit;
+                tr.querySelector('.row-balance').value = currentBalance.toFixed(2);
+                
+                // Calculate days to next transaction
+                let days = 0;
+                if(i < rows.length - 1) {
+                    const nextDateVal = rows[i+1].querySelector('.row-date').value;
+                    if(dateVal && nextDateVal) {
+                        const d1 = new Date(dateVal);
+                        const d2 = new Date(nextDateVal);
+                        const diffTime = Math.abs(d2 - d1);
+                        days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    }
+                } else {
+                    // For the last row, usually days is calculated up to "Today" or end of year.
+                    // For now, if no next row, days = 0
+                    days = 0;
+                }
+                
+                tr.querySelector('.row-days').value = days;
+                
+                // Calculate product
+                const product = currentBalance * days;
+                tr.querySelector('.row-product').value = product.toFixed(2);
+                
+                totalProduct += product;
+                totalDays += days;
+            }
+            
+            document.getElementById('total-days').innerText = totalDays;
+            document.getElementById('total-product').innerText = totalProduct.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            const interest = (totalProduct * rate) / 36500;
+            document.getElementById('total-interest').innerText = '৳ ' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            document.getElementById('summary-panel').style.display = 'flex';
+        }
+
+        window.onload = () => {
+            for(let i=0; i<3; i++) {
+                addRow();
+            }
+        };
+    </script>
+</body>
+</html>

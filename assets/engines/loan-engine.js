@@ -160,8 +160,11 @@ window.LoanEngine = {
         const runId = Symbol();
         this._currentLoadId = runId;
 
-        // Clear container to prevent duplicate stamps during PDF worker rendering
+        // Clear container to prevent duplicate stamps
         container.innerHTML = '';
+
+        // Clean up any previously injected stamp styles to avoid style leakage
+        document.querySelectorAll('style[data-injected-stamp-style]').forEach(el => el.remove());
 
         for (const url of stampUrls) {
             if (this._currentLoadId !== runId) return; // Abort if a new load started
@@ -174,24 +177,33 @@ window.LoanEngine = {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlString, 'text/html');
 
-                // Extract all styles and inject into head if not already present
+                const stampKey = url.split('/').pop().replace(/\.html$/i, '').toLowerCase();
+
+                // Extract all styles and scope them to .stamp-bundle-${stampKey}
                 const styles = doc.querySelectorAll('style');
                 styles.forEach(style => {
-                    const existingStyles = document.querySelectorAll('style');
-                    let exists = false;
-                    existingStyles.forEach(es => {
-                        if (es.innerHTML.trim() === style.innerHTML.trim()) exists = true;
-                    });
-                    if (!exists) {
-                        document.head.appendChild(style.cloneNode(true));
-                    }
+                    let cssText = style.innerHTML;
+                    cssText = this._scopeStampCss(cssText, stampKey);
+
+                    const newStyle = document.createElement('style');
+                    newStyle.setAttribute('data-injected-stamp-style', url);
+                    newStyle.setAttribute('data-stamp-bundle', stampKey);
+                    newStyle.innerHTML = cssText;
+                    document.head.appendChild(newStyle);
                 });
 
-                // Extract and append stamp pages
+                // Extract stamp pages
                 const stampPages = doc.querySelectorAll('.stamp-page');
-                
-                // Fix relative paths for images in CMSME loan which is 1 level deeper
                 const isCmsme = window.location.href.includes('/cmsme/');
+
+                // Create a wrapper bundle for this stamp to maintain strict CSS scoping and centered layout
+                const bundleDiv = document.createElement('div');
+                bundleDiv.className = `stamp-bundle stamp-bundle-${stampKey}`;
+                bundleDiv.setAttribute('data-stamp-id', stampKey);
+                bundleDiv.style.width = '100%';
+                bundleDiv.style.display = 'flex';
+                bundleDiv.style.flexDirection = 'column';
+                bundleDiv.style.alignItems = 'center';
 
                 stampPages.forEach(page => {
                     if (isCmsme) {
@@ -203,8 +215,12 @@ window.LoanEngine = {
                             }
                         });
                     }
-                    container.appendChild(page.cloneNode(true));
+                    const clonedPage = page.cloneNode(true);
+                    clonedPage.setAttribute('data-stamp-src', stampKey);
+                    bundleDiv.appendChild(clonedPage);
                 });
+
+                container.appendChild(bundleDiv);
 
             } catch (err) {
                 console.error(`Failed to load external stamp ${url}:`, err);
@@ -215,20 +231,89 @@ window.LoanEngine = {
         this.setupAutoFillExternalStamps();
     },
 
+    _scopeStampCss: function(cssText, stampKey) {
+        const bundleClass = `.stamp-bundle-${stampKey}`;
+        const preservedBlocks = [];
+        
+        // Preserve @font-face and @keyframes untouched
+        let css = cssText.replace(/(@font-face\s*\{[^}]*\}|@keyframes\s+[^{]+\{(?:[^{}]*\{[^{}]*\})*[^}]*\})/gi, (match) => {
+            preservedBlocks.push(match);
+            return `/*__PRESERVED_BLOCK_${preservedBlocks.length - 1}__*/`;
+        });
+
+        const processRules = (content) => {
+            return content.replace(/([^{}]+)\{([^{}]+)\}/g, (match, selectorStr, bodyStr) => {
+                const trimmedSel = selectorStr.trim();
+                if (trimmedSel.startsWith('@')) return match; // @page etc.
+                
+                const scopedSelectors = trimmedSel.split(',').map(sel => {
+                    let s = sel.trim();
+                    if (!s) return '';
+                    s = s.replace(/\b(html\s*,\s*body|html|body|\.stamp-body-wrapper)\b/g, bundleClass);
+                    if (s.startsWith(bundleClass)) return s;
+                    if (s.startsWith('*')) return `${bundleClass} *`;
+                    return `${bundleClass} ${s}`;
+                }).filter(Boolean);
+
+                return `${scopedSelectors.join(', ')} {${bodyStr}}`;
+            });
+        };
+
+        // Handle @media queries
+        css = css.replace(/(@media[^{]+)\{((?:[^{}]*\{[^{}]*\})*)\}/gi, (match, mediaHeader, mediaBody) => {
+            return `${mediaHeader} {\n${processRules(mediaBody)}\n}`;
+        });
+
+        css = processRules(css);
+
+        // Restore preserved @font-face and @keyframes
+        preservedBlocks.forEach((block, idx) => {
+            css = css.replace(`/*__PRESERVED_BLOCK_${idx}__*/`, block);
+        });
+
+        return css;
+    },
+
     setupAutoFillExternalStamps: function() {
         const updateFields = () => {
             const container = document.getElementById('external_stamps_container');
             if (!container) return;
 
-            // Get standard branch data from the parent if available
-            let branchName = '';
-            let branchLocation = '';
+            // Get standard branch data from central storage or parent
+            let branchNameBn = '';
+            let branchNameEn = '';
+            let branchUpazilaEn = '';
+            let branchDistrictEn = '';
+            let central = null;
             try {
-                if (window.parent && window.parent.document) {
-                    branchName = window.parent.document.getElementById('display-branch-name')?.innerText || '';
-                    branchLocation = window.parent.document.getElementById('display-branch-location')?.innerText || '';
+                if (window.parent && typeof window.parent.getCentralBranchData === 'function') {
+                    central = window.parent.getCentralBranchData();
+                } else if (typeof window.getCentralBranchData === 'function') {
+                    central = window.getCentralBranchData();
                 }
             } catch (e) {}
+
+            if (!central) {
+                try {
+                    const raw = localStorage.getItem('bkb_central_branch_info') || localStorage.getItem('central_branch_info');
+                    if (raw) central = JSON.parse(raw);
+                } catch (e) {}
+            }
+
+            if (central) {
+                branchNameBn = central.nameBn || central.branch_name || '';
+                branchNameEn = central.nameEn || central.branch_name_en || '';
+                branchUpazilaEn = central.upazilaEn || central.thanaEn || central.locationEn || central.branch_upazila_en || '';
+                branchDistrictEn = central.districtEn || central.branch_district_en || '';
+            } else {
+                try {
+                    if (window.parent && window.parent.document) {
+                        branchNameBn = window.parent.document.getElementById('display-branch-name')?.innerText || '';
+                        branchUpazilaEn = window.parent.document.getElementById('display-branch-location')?.innerText || '';
+                        branchNameEn = branchNameBn;
+                    }
+                } catch (e) {}
+            }
 
             const tryGetVal = (ids) => {
                 for (const id of ids) {
@@ -239,11 +324,26 @@ window.LoanEngine = {
             };
 
             const dbFieldSources = {
-                'branch_name': [branchName],
-                'branch_upazila': [branchLocation],
-                'applicant_name_en': ['input_applicant_name_en'],
-                'loan_amount': ['input_loan_amount_num', 'applied_amount'],
-                'loan_amount_words': ['input_loan_total_amount_words', 'applied_amount_words']
+                'branch_name': [branchNameBn],
+                'branch_name_en': [branchNameEn],
+                'branch_upazila': [branchUpazilaEn],
+                'branch_upazila_en': [branchUpazilaEn],
+                'branch_thana': [branchUpazilaEn],
+                'branch_thana_en': [branchUpazilaEn],
+                'branch_location_en': [branchUpazilaEn],
+                'branch_district': [branchDistrictEn],
+                'branch_district_en': [branchDistrictEn],
+                'applicant_name_en': ['input_applicant_name_en', 'applicant_name_en', 'doc_borrower_name'],
+                'applicant_father_name_en': ['input_applicant_father_name_en', 'applicant_father_name_en', 'doc_father_name'],
+                'address_en': ['input_address_en', 'address_en', 'doc_borrower_address'],
+                'loan_amount': ['input_loan_amount_num', 'applied_amount', 'loan_amount'],
+                'loan_amount_words': ['input_loan_total_amount_words', 'applied_amount_words', 'loan_amount_words'],
+                'loan_amount_en': ['input_loan_amount_num', 'applied_amount', 'loan_amount'],
+                'loan_amount_words_en': ['input_loan_total_amount_words', 'applied_amount_words', 'loan_amount_words'],
+                'guarantor_name_en': ['guarantor_1_name', 'input_guarantor_name_en', 'doc_guarantor_1_name'],
+                'guarantor_father_name_en': ['guarantor_1_father', 'input_guarantor_father_name_en', 'doc_guarantor_1_father'],
+                'guarantor_address_en': ['guarantor_1_address', 'input_guarantor_address_en', 'doc_guarantor_1_address'],
+                'guarantor_mobile_en': ['guarantor_1_mobile', 'input_guarantor_mobile_en', 'doc_guarantor_1_mobile']
             };
 
             for (const [dbField, sourceIds] of Object.entries(dbFieldSources)) {
@@ -261,10 +361,14 @@ window.LoanEngine = {
         };
 
         // Run once initially
-        setTimeout(updateFields, 500);
+        setTimeout(updateFields, 300);
+        setTimeout(updateFields, 1000);
 
         // Attach listeners to source inputs
-        const allSourceIds = ['input_applicant_name_en', 'input_loan_amount_num', 'applied_amount', 'input_loan_total_amount_words', 'applied_amount_words'];
+        const allSourceIds = [
+            'input_applicant_name_en', 'input_applicant_father_name_en', 'input_address_en',
+            'input_loan_amount_num', 'applied_amount', 'input_loan_total_amount_words', 'applied_amount_words'
+        ];
         for (const id of allSourceIds) {
             const el = document.getElementById(id);
             if (el) {
@@ -278,22 +382,47 @@ window.LoanEngine = {
 
 /* Agri Loan Logic */
 
+function isUnsecuredCollateral() {
+    const unsecCb = document.getElementById('collateral_type_unsecured');
+    if (unsecCb && unsecCb.checked) return true;
+    const checkedRadio = document.querySelector('input[name="collateral_type"]:checked');
+    if (checkedRadio && (checkedRadio.value === 'unsecured' || checkedRadio.id === 'collateral_type_unsecured')) return true;
+    return false;
+}
+
+function isLandCollateral() {
+    const landCb = document.getElementById('collateral_type_land');
+    if (landCb && landCb.checked) return true;
+    const checkedRadio = document.querySelector('input[name="collateral_type"]:checked');
+    if (checkedRadio && (checkedRadio.value === 'land' || checkedRadio.id === 'collateral_type_land')) return true;
+    if (!landCb && !checkedRadio) return true; // default fallback
+    return false;
+}
+
 function toggleStampPages() {
-    const category = document.getElementById('input_loan_category')?.value;
-    const isUnsecured = document.querySelector('input[name="collateral_type"]:checked')?.value === 'unsecured';
+    const category = (document.getElementById('input_loan_category')?.value || '').trim();
+    const isUnsecured = isUnsecuredCollateral();
+    const isLand = isLandCollateral();
 
     let stampsToLoad = [];
     
-    // 1. Sector-based stamps
-    if (category === 'মৎস') {
-        stampsToLoad.push('../stamps/fish_stamp.html');
-    } else if (category === 'প্রাণীসম্পদ' || category === 'কৃষি যন্ত্রপাতি' || category === 'শস্য ও কৃষি যন্ত্রপাতি') {
-        stampsToLoad.push('../stamps/agri_mrtg_stamp.html');
+    // 1. Sector/Land-based mortgage stamps
+    if (isLand) {
+        if (category === 'মৎস') {
+            stampsToLoad.push('../stamps/fish_stamp.html');
+        } else if (
+            category === 'প্রাণীসম্পদ কৃষি যন্ত্রপাতি' ||
+            category === 'প্রাণীসম্পদ ও কৃষি যন্ত্রপাতি' ||
+            category === 'শস্য ও কৃষি যন্ত্রপাতি' ||
+            category === 'কৃষি যন্ত্রপাতি' ||
+            category === 'প্রাণীসম্পদ'
+        ) {
+            stampsToLoad.push('../stamps/agri_mrtg_stamp.html');
+        }
     }
 
-    // 2. Collateral-based stamps
+    // 2. Collateral/Cheque-based stamps
     if (isUnsecured) {
-        // Memorandum cheque is always included for unsecured
         stampsToLoad.push('../stamps/memorandum_cheque.html');
         stampsToLoad.push('../stamps/spouse_gurantee.html');
         stampsToLoad.push('../stamps/personal_gurantee.html');
@@ -306,9 +435,18 @@ function toggleStampPages() {
 }
 
 function toggleCollateralType() {
-    const isUnsecured = document.querySelector('input[name="collateral_type"]:checked')?.value === 'unsecured';
-    document.getElementById('modal_land_details_section').style.display = isUnsecured ? 'none' : 'block';
-    document.getElementById('modal_unsecured_details_section').style.display = isUnsecured ? 'block' : 'none';
+    const isUnsecured = isUnsecuredCollateral();
+    const isLand = isLandCollateral();
+
+    const landSec = document.getElementById('modal_land_details_section');
+    if (landSec) landSec.style.display = isLand ? 'block' : 'none';
+
+    const unsecSec = document.getElementById('modal_unsecured_details_section');
+    if (unsecSec) unsecSec.style.display = isUnsecured ? 'block' : 'none';
+
+    const unsecTxt = document.getElementById('unsecured_collateral_text_container');
+    if (unsecTxt) unsecTxt.style.display = isUnsecured ? 'block' : 'none';
+
     if (typeof toggleStampPages === 'function') toggleStampPages();
 }
 
@@ -1518,11 +1656,15 @@ function renderLandPage2() {
         tbody.innerHTML = '';
         
         function generateTableHTML() {
+            const isUnsecured = (typeof isUnsecuredCollateral === 'function') && isUnsecuredCollateral();
+            if (isUnsecured && landData.length === 0) {
+                return `<tr style="height: 5mm;"><td colspan="7" style="text-align: center; font-weight: bold; color: #222; font-size: 9.5pt; padding: 2px;">চেক / জামানতবিহীন (স্থাবর সম্পত্তি বন্ধক প্রযোজ্য নহে)</td></tr>`;
+            }
             let html = '';
             for (let tKey in types) {
                 let typeData = landData.filter(d => d.type === tKey);
                 if (typeData.length === 0) {
-                    html += `<tr style="height: 8mm;"><td style="text-align: left;">${types[tKey]}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+                    html += `<tr style="height: 5mm;"><td style="text-align: left;">${types[tKey]}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
                     continue;
                 }
                 
@@ -1543,7 +1685,7 @@ function renderLandPage2() {
                 mouzaGroups.forEach(group => {
                     let isFirstOfMouza = true;
                     group.items.forEach(d => {
-                        html += `<tr style="height: 8mm;">`;
+                        html += `<tr style="height: 5.5mm;">`;
                         
                         if (isFirstOfType) {
                             html += `<td rowspan="${typeRowSpan}" style="text-align: left;">${types[tKey]}</td>`;
@@ -1612,8 +1754,9 @@ function renderLandPage2() {
             tbody.innerHTML = generateTableHTML();
         }
     }
+    const isUnsec = (typeof isUnsecuredCollateral === 'function') && isUnsecuredCollateral();
     const totalEl = document.getElementById('land_total_area');
-    if (totalEl) totalEl.innerText = toBanglaDigits(totalLand.toFixed(2));
+    if (totalEl) totalEl.innerText = (isUnsec && totalLand === 0) ? 'জামানতবিহীন' : toBanglaDigits(totalLand.toFixed(2));
 
     // Populate Recommendation Table (Table 12)
     const recSector = document.getElementById('recommendation_1_sector');

@@ -59,3 +59,84 @@ span[contenteditable]:focus, div[contenteditable]:not(.digit-box):focus {
 td[contenteditable] {
     outline: none;
 }
+
+
+/* Universal Table Styles for Stamp & Legal Documents */
+.custom-table, .execution-table, .cheque-schedule-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    margin-top: 3mm !important;
+    margin-bottom: 6mm !important;
+    border: 1px solid #000000 !important;
+    font-size: 10.5pt !important;
+}
+
+.custom-table th, .custom-table td,
+.execution-table th, .execution-table td,
+.cheque-schedule-table th, .cheque-schedule-table td {
+    border: 1px solid #000000 !important;
+    padding: 5px 4px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    height: 28px !important;
+}
+
+.custom-table th, .execution-table th, .cheque-schedule-table th {
+    font-weight: bold !important;
+    background-color: #f2f2f2 !important;
+}
+
+.custom-table td[contenteditable], .execution-table td[contenteditable], .cheque-schedule-table td[contenteditable] {
+    outline: none !important;
+    border: 1px solid #000000 !important;
+    background: transparent !important;
+}
+
+.custom-table td span, .execution-table td span, .cheque-schedule-table td span {
+    border-bottom: none !important;
+    text-decoration: none !important;
+    min-width: 0 !important;
+    display: inline !important;
+}
+
+
+/* External Stamp Pages Support */
+.stamp-page {
+    background: #ffffff;
+    width: 215.9mm;
+    height: 355.5mm;
+    padding-top: 109.22mm;
+    padding-bottom: 20mm;
+    padding-left: 15mm;
+    padding-right: 15mm;
+    box-sizing: border-box;
+    box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.4);
+    position: relative;
+    margin-bottom: 8mm;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    overflow: hidden;
+    font-family: 'SolaimanLipi', Arial, sans-serif;
+}
+
+@media print {
+    .stamp-page {
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        height: 355.5mm !important;
+        width: 215.9mm !important;
+        padding-top: 109.22mm !important;
+        padding-bottom: 20mm !important;
+        padding-left: 15mm !important;
+        padding-right: 15mm !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .stamp-page:last-of-type {
+        page-break-after: avoid !important;
+    }
+}

@@ -148,9 +148,7 @@
       min-width: 0.5in;
     }
 
-    .dotted-input,
-    span[contenteditable="true"],
-    .data-input {
+    .dotted-input:not(td):not(th), span.dotted-input, span.data-input, span[contenteditable="true"]:not(td):not(th) {
       display: inline-block;
       border-bottom: 1.5px dotted #000;
       outline: none;
@@ -159,9 +157,7 @@
       font-weight: bold;
     }
 
-    .dotted-input:empty,
-    span[contenteditable="true"]:empty,
-    .data-input:empty {
+    .dotted-input:not(td):not(th):empty, span.dotted-input:empty, span.data-input:empty, span[contenteditable="true"]:not(td):not(th):empty {
       min-width: 0.5in;
     }
 
@@ -201,6 +197,12 @@
     .witness-table .dotted-input {
       width: 100%;
       display: block;
+    }
+  
+    /* Table Cell Grid Protection */
+    table td, table th, .custom-table td, .custom-table th, .execution-table td, .execution-table th, td[contenteditable], th[contenteditable] {
+      display: table-cell !important;
+      box-sizing: border-box !important;
     }
   </style>
 </head>

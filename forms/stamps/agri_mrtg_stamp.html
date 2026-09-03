@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>অস্থাবর সম্পত্তি বন্ধকীকরণ দলিল</title>
 
-  <style>
+  
+<style>
     @font-face {
       font-family: 'SolaimanLipi';
       src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
@@ -20,35 +21,39 @@
       padding: 0;
     }
 
+    @page {
+      size: 8.5in 14in portrait;
+      margin: 0;
+    }
+
     body.stamp-body-wrapper {
       background-color: #374151;
-      font-family: 'SolaimanLipi', 'Noto Serif Bengali', Arial, sans-serif;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
       color: #000000;
-      padding: 20px 0;
+      padding: 10mm 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* Legal Stamp Paper Dimension (8.5in x 14in) */
+    /* Legal Stamp Paper Dimension (8.5in x 14in / 215.9mm x 355.5mm) */
     .stamp-page {
       background: #ffffff;
-      width: 8.5in;
-      height: 13.9in;
-      /* Legal size clearance */
-      padding-top: 4.3in;
-      /* Cartridge / Stamp Emblem clearance */
-      padding-bottom: 0.4in;
-      padding-left: 0.75in;
-      padding-right: 0.75in;
+      width: 215.9mm;
+      height: 355.5mm;
+      padding-top: 109.22mm; /* Cartridge / Stamp Emblem clearance */
+      padding-bottom: 20mm;
+      padding-left: 15mm;
+      padding-right: 15mm;
       box-sizing: border-box;
       box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.4);
       position: relative;
-      margin-bottom: 10mm;
-      font-size: 10pt;
-      line-height: 1.6;
+      margin-bottom: 8mm;
+      font-size: 10.5pt;
+      line-height: 1.45;
       overflow: hidden;
+      font-family: 'SolaimanLipi', Arial, sans-serif;
     }
 
     .page-badge {
@@ -66,18 +71,18 @@
     /* Header Title Style */
     .doc-main-title {
       text-align: center;
-      font-size: 14.5pt;
+      font-size: 13.5pt;
       font-weight: 700;
       margin-top: 0mm;
       margin-bottom: 3mm;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
     /* Paragraph & Clause Styling */
     .bengali-p {
-      font-size: 12pt;
+      font-size: 11pt;
       text-align: justify;
-      line-height: 1.6;
+      line-height: 1.45;
       margin-bottom: 1.5mm;
       word-spacing: 0.5px;
       text-justify: inter-word;
@@ -87,8 +92,8 @@
       display: flex;
       align-items: flex-start;
       margin-bottom: 1.5mm;
-      font-size: 12pt;
-      line-height: 1.6;
+      font-size: 11pt;
+      line-height: 1.45;
       text-align: justify;
     }
 
@@ -100,122 +105,214 @@
 
     .clause-content {
       flex-grow: 1;
+      text-align: justify;
     }
 
     /* Dotted Editable Input Fields */
-    .dotted-input,
-    span[contenteditable="true"],
-    .data-input {
-      display: inline-block;
-      border-bottom: 1.5px dotted #000;
+    span.dotted-input,
+    span.data-input,
+    span.dotted-field,
+    span[contenteditable="true"]:not(td):not(th) {
+      font-weight: bold !important;
+      display: inline !important;
+      vertical-align: baseline !important;
+      line-height: inherit !important;
+      border-bottom: none !important;
+      text-decoration: underline !important;
+      text-decoration-style: dotted !important;
+      text-underline-offset: 4px !important;
+      text-decoration-thickness: 1.5px !important;
+      text-align: left !important;
       outline: none;
-      text-align: left;
-      min-width: 1px;
     }
 
-    .dotted-input:empty,
-    span[contenteditable="true"]:empty,
-    .data-input:empty {
-      min-width: 0.5in;
+    span.dotted-input:empty,
+    span.data-input:empty,
+    span.dotted-field:empty,
+    span[contenteditable="true"]:not(td):not(th):empty {
+      display: inline-block !important;
+      min-width: 0.5in !important;
+      text-decoration: none !important;
+      border-bottom: 1.5px dotted #000000 !important;
     }
 
-    /* Execution Table Styling */
+    /* Plain Clean Table Layout (Standard Bank Grid) */
+    .custom-table,
     .execution-table {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-      margin-top: 2mm;
-      margin-bottom: 2mm;
+      width: 100% !important;
+      table-layout: fixed !important;
+      border-collapse: collapse !important;
+      margin-top: 3mm !important;
+      margin-bottom: 3mm !important;
+      font-size: 10pt !important;
+      background-color: transparent !important;
     }
 
+    .custom-table th,
+    .custom-table td,
     .execution-table th,
-    .execution-table td {
-      border: 1px solid #000000;
-      padding: 2px 4px;
-      font-size: 9.5pt;
-      text-align: center;
-      vertical-align: middle;
-      height: 31px;
+    .execution-table td,
+    td[contenteditable],
+    th[contenteditable] {
+      border: 1px solid #000000 !important;
+      padding: 4px 4px !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      height: 28px !important;
+      background-color: transparent !important;
+      box-sizing: border-box !important;
+      display: table-cell !important;
     }
 
+    .custom-table th,
     .execution-table th {
-      font-weight: 700;
-      background-color: #ffffff;
+      font-weight: bold !important;
+      background-color: transparent !important;
     }
 
-    /* Page 2 Specific Guarantor Layout */
+    .custom-table td[contenteditable="true"],
+    .custom-table td[contenteditable],
+    .execution-table td[contenteditable="true"],
+    .execution-table td[contenteditable] {
+      outline: none !important;
+      border: 1px solid #000000 !important;
+      background-color: transparent !important;
+      text-align: center !important;
+    }
+
+    .custom-table td[contenteditable="true"]:focus,
+    .execution-table td[contenteditable="true"]:focus {
+      background-color: #f0f7ff !important;
+    }
+
+    /* Page 2 & 3 Guarantor / Witness Layout */
     .guarantor-statement {
-      font-size: 12pt;
+      font-size: 11pt;
       text-align: justify;
-      line-height: 1.7;
-      margin-bottom: 6mm;
+      line-height: 1.45;
+      margin-bottom: 2mm;
     }
 
     .date-right-align {
       text-align: right;
       font-size: 10.5pt;
       font-weight: 700;
-      margin-bottom: 8mm;
-      padding-right: 0.5in;
+      margin-bottom: 3mm;
+      padding-right: 0.1in;
     }
 
     .guarantor-block {
-      margin-bottom: 8mm;
+      margin-bottom: 3mm;
       font-size: 10.5pt;
-      line-height: 2.2;
+      line-height: 1.4;
     }
 
     .guarantor-row {
       display: flex;
       align-items: flex-end;
       width: 100%;
-      margin-bottom: 2mm;
+      margin-bottom: 1.5mm;
     }
 
     .guarantor-flex-fill {
       flex-grow: 1;
-      border-bottom: 1px dotted #000000;
+      border: none !important;
+      border-bottom: 1px dotted #000000 !important;
       margin: 0 4px;
-      min-height: 18px;
+      min-height: 20px;
+      outline: none !important;
+      background: transparent !important;
     }
 
     .guarantor-fixed-dotted {
-      border-bottom: 1px dotted #000000;
+      border: none !important;
+      border-bottom: 1px dotted #000000 !important;
       display: inline-block;
       margin: 0 4px;
-      min-height: 18px;
+      min-height: 20px;
+      outline: none !important;
+      background: transparent !important;
     }
 
+    /* Witness Table Styles */
+    .witness-table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      font-size: 10.5pt !important;
+    }
+
+    .witness-table td {
+      padding: 2.5px 0 !important;
+      vertical-align: bottom !important;
+      border: none !important;
+    }
+
+    .witness-table td:nth-child(1) {
+      width: 6%;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(2) {
+      width: 20%;
+    }
+
+    .witness-table td:nth-child(3) {
+      width: 4%;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .witness-table td:nth-child(4) {
+      width: 70%;
+    }
+
+    .witness-table .dotted-input {
+      width: 100%;
+      display: block;
+    }
+
+    /* Print Setup */
     @media print {
       @page {
-        size: legal portrait;
+        size: 8.5in 14in portrait;
         margin: 0;
       }
 
       body.stamp-body-wrapper {
         background-color: transparent !important;
-        padding: 0;
+        padding: 0 !important;
+        margin: 0 !important;
       }
 
       .stamp-page {
-        box-shadow: none;
-        margin-bottom: 0;
-        page-break-after: always;
-        page-break-inside: avoid;
-        height: 14in;
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        height: 355.5mm !important;
+        width: 215.9mm !important;
+        padding-top: 109.22mm !important;
+        padding-bottom: 20mm !important;
+        padding-left: 15mm !important;
+        padding-right: 15mm !important;
+      }
+
+      .stamp-page:last-of-type {
+        page-break-after: avoid !important;
       }
 
       .page-badge {
         display: none !important;
       }
     }
-  </style>
+</style>
 </head>
 
 <body class="stamp-body-wrapper">
 
-  <!-- PAGE 1 SHEET -->
+  <!-- PAGE 1 CONTAINER -->
   <div class="stamp-page">
+
     <span class="page-badge">PAGE 1</span>
 
     <!-- Document Main Header Title -->
@@ -245,38 +342,48 @@
       <div class="clause-num">১।</div>
       <div class="clause-content">
         আমার/আমাদের নিম্ন তফসিল বর্ণিত নিজ মালিকানাধীন সামগ্রী/সামগ্রীসমূহ যাহা আমার/আমাদের নিজ হেফাজতে আছে উক্ত ঋণের
-        জামানত হিসাবে গণ্য হইবে এবং উক্ত ঋণ পরিশোধ না করা পর্যন্ত ব্যাংকের নিকট দায়বদ্ধ থাকিবে যেন প্রয়োজন বোধে ব্যাংক
-        উক্ত সামগ্রী/সামগ্রী সমূহ বিক্রয় করিয়া ব্যাংকের ঋণ বাবদ পাওনা আসল সুদসহ ওয়াশীল করিয়া নিতে পারেন। ইহাতে
-        আমার/আমাদের কোন ওজর আপত্তি থাকিবেনা ও আইনতঃগ্রাহ্য হইবেনা।
+        জামানত হিসাবে গণ্য হইবে এবং উক্ত ঋণ পরিশোধ না করা পর্যন্ত ব্যাংকের নিকট দায়বদ্ধ থাকিবে যেন প্রথম দায় (ফার্ষ্ট
+        চার্জ)।
       </div>
     </div>
 
     <div class="clause-block">
       <div class="clause-num">২।</div>
       <div class="clause-content">
-        ব্যাংক হইতে গৃহীত ঋণ পরিশোধ না করা পর্যন্ত তফসিল বর্ণিত সামগ্রী/ সামগ্রী সমূহ কাহার ও নিকট দায়বদ্ধ অথবা
-        হস্তান্তর করিবনা এবং নিয়মিত ব্যাংকের শর্তানুসারে ব্যাংকের প্রাপ্য পাওনা পরিশোধ করিতে থাকিব।
+        আমি/আমরা উক্ত দায়বদ্ধ সামগ্রী হস্তান্তর করিতে বা অন্যের নিকট দায়বদ্ধ করিতে পারিবে না ।
       </div>
     </div>
 
     <div class="clause-block">
       <div class="clause-num">৩।</div>
       <div class="clause-content">
-        ব্যাংক যে উদ্দেশ্যে ঋণ মঞ্জুর করিতে সম্মত হইয়াছেন ব্যাংকের টাকা সেই উদ্দেশ্য ব্যতীত অন্য কোন অনুৎপাদনমূলক কাজে
-        ব্যবহার করা হইবেনা। ইহার অন্যথা হইলে ব্যাংক কর্তৃক মঞ্জুরীকৃত ঋণের সমুদয় টাকা চাহিবা মাত্র সুদসহ পরিশোধ করিতে
-        বাধ্য থাকিব।
+        আমি/আমরা উক্ত দায়বদ্ধ সামগ্রীসমূহ সবসময় সন্তোষজনক ও কার্যপোযোগী অবস্থায় রাখিব ।
       </div>
     </div>
 
-    <!-- Execution Statement -->
-    <p class="bengali-p" style="margin-top: 2mm; margin-bottom: 3mm;">
-      উপরোক্ত শর্তে ব্যাংক কর্তৃপক্ষ মঞ্জুরীকৃত ঋণের <span class="dotted-input" contenteditable="true"></span> টাকা নগদ
-      বা সামগ্রীর মাধ্যমে বুঝিয়া পাইয়া স্বেচ্ছায় ও সজ্ঞানে অত্র দলিল সম্পাদন
-      করিলাম।
+    <div class="clause-block">
+      <div class="clause-num">৪।</div>
+      <div class="clause-content">
+        ব্যাংকের অফিসার বা মনোনীত প্রতিনিধি যে কোন সময়ে আমার/আমাদের বাড়ীতে বা যেখানে সামগ্রীসমূহ থাকিবে সেখানে গিয়া তাহা
+        পরিদর্শন করিতে পারিবেন।
+      </div>
+    </div>
+
+    <div class="clause-block">
+      <div class="clause-num">৫।</div>
+      <div class="clause-content">
+        ঋণ পরিশোধে ব্যর্থ হইলে ব্যাংক যে কোন সময়ে বিনা নোটিশে বা নোটিশ দিয়া উক্ত দায়বদ্ধ সামগ্রী নিজ দখলে নিতে পারিবেন
+        এবং প্রকাশ্য নিলামে বা ব্যক্তিগত চুক্তির মাধ্যমে বিক্রয় করিয়া ব্যাংকের সমুদয় পাওনা আদায় করিতে পারিবেন। বিক্রয়লব্ধ
+        অর্থ পাওনা অপেক্ষা কম হইলে বাকী টাকার জন্য আমি/আমরা ব্যক্তিগতভাবে দায়ী থাকিব ।
+      </div>
+    </div>
+
+    <p class="bengali-p" style="margin-top: 3mm; margin-bottom: 2mm;">
+      স্বেচ্ছায়, সজ্ঞানে ও সুস্থ মস্তিষ্কে অত্র বন্ধকনামা দলিলে স্বাক্ষর করিলাম ।
     </p>
 
-    <!-- Execution Table -->
-    <table class="execution-table">
+    <!-- Execution Plain Table -->
+    <table class="custom-table">
       <thead>
         <tr>
           <th style="width: 12%;">ক্রমিকনং</th>
@@ -287,31 +394,19 @@
       </thead>
       <tbody>
         <tr>
-          <td>০১</td>
+          <td>১</td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
         </tr>
         <tr>
-          <td>০২</td>
+          <td>২</td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
         </tr>
         <tr>
-          <td>০৩</td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-        </tr>
-        <tr>
-          <td>০৪</td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-        </tr>
-        <tr>
-          <td>০৫</td>
+          <td>৩</td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
           <td contenteditable="true"></td>
@@ -321,8 +416,9 @@
 
   </div>
 
-  <!-- PAGE 2 SHEET -->
+  <!-- PAGE 2 CONTAINER -->
   <div class="stamp-page">
+
     <span class="page-badge">PAGE 2</span>
 
     <!-- Top Guarantor Declaration -->
@@ -332,8 +428,8 @@
     </p>
 
     <!-- Date Section -->
-    <div class="date-right-align">
-      তারিখ: <span class="dotted-input" contenteditable="true"></span>
+    <div style="font-size: 11pt; font-weight: bold; margin-top: 2mm; margin-bottom: 3mm; text-align: left;">
+      তারিখ: <span class="dotted-input" contenteditable="true" style="min-width: 1.2in;"></span>
     </div>
 
     <!-- Guarantor 1 Details -->
@@ -366,7 +462,7 @@
     </div>
 
     <!-- Guarantor 2 Details -->
-    <div class="guarantor-block" style="margin-top: 10mm;">
+    <div class="guarantor-block">
       <div class="guarantor-row">
         <span style="font-weight: bold; min-width: 0.6in;">২ । নাম</span>
         <div class="guarantor-flex-fill" contenteditable="true"></div>
@@ -396,8 +492,9 @@
 
   </div>
 
-  <!-- PAGE 3 SHEET -->
+  <!-- PAGE 3 CONTAINER -->
   <div class="stamp-page">
+
     <span class="page-badge">PAGE 3</span>
 
     <!-- Loan Disbursement Witness Statement -->
@@ -412,7 +509,7 @@
     </div>
 
     <!-- Witness 1 Details -->
-    <div class="guarantor-block" style="margin-bottom: 6mm;">
+    <div class="guarantor-block" style="margin-bottom: 3.5mm;">
       <div class="guarantor-row">
         <span style="font-weight: bold; min-width: 0.8in;">১ । স্বাক্ষর</span>
         <div class="guarantor-flex-fill" contenteditable="true"></div>
@@ -444,7 +541,7 @@
     </div>
 
     <!-- Witness 2 Details -->
-    <div class="guarantor-block" style="margin-bottom: 6mm;">
+    <div class="guarantor-block" style="margin-bottom: 3.5mm;">
       <div class="guarantor-row">
         <span style="font-weight: bold; min-width: 0.8in;">২ । স্বাক্ষর</span>
         <div class="guarantor-flex-fill" contenteditable="true"></div>
@@ -480,8 +577,8 @@
       তফসিল <span class="dotted-input" contenteditable="true"></span>
     </div>
 
-    <!-- Schedule Table of Hypothecated Assets -->
-    <table class="execution-table">
+    <!-- Schedule Plain Table of Hypothecated Assets -->
+    <table class="custom-table">
       <thead>
         <tr>
           <th style="width: 12%;">ক্রমিকনং</th>
@@ -520,60 +617,65 @@
 
   </div>
 
-  <style>
-    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
-    .stamp-page,
-    .page,
-    .a4-page {
-      font-family: 'SolaimanLipi', Arial, sans-serif !important;
-    }
-
-    /* Fix excessive line gap - ONLY IN STAMPS */
-    .stamp-page {
-      line-height: 1.6 !important;
-    }
-
-    .stamp-page .content-body,
-    .stamp-page .paragraph,
-    .stamp-page p {
-      line-height: 1.6 !important;
-    }
-
-    /* Fix dotted line alignment and wrapping behavior */
-    span.dotted-input,
-    span.data-input,
-    span.dotted-field,
-    span[contenteditable="true"] {
-      font-weight: bold !important;
-      display: inline !important;
-      /* Allow wrapping to 2nd/3rd line, fixes boundary overflow */
-      vertical-align: baseline !important;
-      /* Align exactly with text */
-      line-height: inherit !important;
-      border-bottom: none !important;
-      text-decoration: underline !important;
-      text-decoration-style: dotted !important;
-      text-underline-offset: 4px !important;
-      text-decoration-thickness: 1.5px !important;
-      text-align: left !important;
-    }
-
-    /* Exception: When empty, force inline-block to respect min-width (0.5in) */
-    span.dotted-input:empty,
-    span.data-input:empty,
-    span.dotted-field:empty,
-    span[contenteditable="true"]:empty {
-      display: inline-block !important;
-      min-width: 0.5in !important;
-      text-decoration: none !important;
-      border-bottom: 1.5px dotted #000000 !important;
-    }
-  </style>
+  
   <script>
     const enToBn = {
       '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
       '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'
     };
+
+    function populateFromCentralStorage() {
+      let central = null;
+      try {
+        if (window.parent && typeof window.parent.getCentralBranchData === 'function') {
+          central = window.parent.getCentralBranchData();
+        } else if (typeof window.getCentralBranchData === 'function') {
+          central = window.getCentralBranchData();
+        }
+      } catch (e) {}
+
+      if (!central) {
+        try {
+          const raw = localStorage.getItem('bkb_central_branch_info') || localStorage.getItem('central_branch_info');
+          if (raw) central = JSON.parse(raw);
+        } catch (e) {}
+      }
+
+      if (central) {
+        const data = {
+          branch_name: central.nameBn || central.branch_name || '',
+          branch_name_en: central.nameEn || central.branch_name_en || '',
+          branch_location_1: central.locationBn || central.branch_location_1 || '',
+          branch_location_en: central.locationEn || central.branch_location_en || '',
+          branch_upazila_en: central.upazilaEn || central.thanaEn || central.locationEn || central.branch_upazila_en || '',
+          branch_district_en: central.districtEn || central.branch_district_en || '',
+          branch_mobile: central.mobile || '',
+          branch_email: central.email || ''
+        };
+        applyDataToFields(data);
+      }
+    }
+
+    function applyDataToFields(data) {
+      if (!data) return;
+      Object.keys(data).forEach(key => {
+        const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
+        const els = document.querySelectorAll(queryStr);
+        els.forEach(el => {
+          let val = data[key] || '';
+
+          if (el.classList.contains('bangla-numbers') && val) {
+            val = val.replace(/[0-9]/g, match => enToBn[match]);
+          }
+
+          if (el.tagName === 'SPAN' || el.tagName === 'DIV' || el.tagName === 'TD') {
+            el.innerText = val;
+          } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+            el.value = val;
+          }
+        });
+      });
+    }
 
     // Automatic conversion of keyboard digits (0-9) to standard Bengali digits (০-৯) inside .bangla-numbers
     document.addEventListener('input', (e) => {
@@ -587,7 +689,6 @@
         if (val !== converted) {
           e.target.innerText = converted;
 
-          // Seamless caret position restoration
           let newRange = document.createRange();
           let selection = window.getSelection();
 
@@ -607,27 +708,15 @@
     // Listen for FILL command to populate branch info and auto-convert Bangla numbers
     window.addEventListener('message', function (event) {
       if (event.data && event.data.command === 'FILL') {
-        const data = event.data.data;
-        Object.keys(data).forEach(key => {
-          const queryStr = '#' + key + ', .' + key + ', [data-db-field="' + key + '"]';
-          const els = document.querySelectorAll(queryStr);
-          els.forEach(el => {
-            let val = data[key] || '';
-
-            // Automatically convert digits to Bangla if the class is present
-            if (el.classList.contains('bangla-numbers') && val) {
-              val = val.replace(/[0-9]/g, match => enToBn[match]);
-            }
-
-            if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
-              el.innerText = val;
-            } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-              el.value = val;
-            }
-          });
-        });
+        applyDataToFields(event.data.data);
       }
     });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', populateFromCentralStorage);
+    } else {
+      populateFromCentralStorage();
+    }
   </script>
 
 </body>

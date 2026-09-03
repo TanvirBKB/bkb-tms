@@ -43,11 +43,12 @@
             width: var(--page-width);
             height: var(--page-height);
             background: white;
-            padding: 5mm 12mm 4mm 12mm;
+            padding: 4mm 10mm 4mm 10mm;
             margin-bottom: 5mm;
             box-shadow: 0 0 2.5mm rgba(0, 0, 0, 0.2);
             position: relative;
-
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         /* Print Styles */
@@ -122,17 +123,16 @@
 
         .content-area {
             height: 100%;
-            font-size: 10pt;
+            font-size: 10.5pt;
+            line-height: 1.3;
             /* Add your form content here */
         }
 
-        #page1 .content-area {
-            font-size: 10.5pt;
-        }
-
+        #page1 .content-area,
         #page2 .content-area,
         #page3 .content-area {
-            font-size: 11pt;
+            font-size: 10.5pt;
+            line-height: 1.35;
         }
 
         .footer {
@@ -158,7 +158,7 @@
         .loan-table td {
             border: 0.5pt solid black;
             height: auto;
-            padding: 0.5mm 1mm;
+            padding: 0.3mm 0.8mm;
             vertical-align: top;
         }
 
@@ -364,84 +364,50 @@
             min-height: 100vh;
         }
 
-        /* =========================================================
-       PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
-       Margins: 0.7 inch Left & Right, 4.5 inch Top Clearance
-       ========================================================= */
-        .stamp-page {
-            background: #ffffff;
-            width: 8.3in;
-            /* 210.82mm */
-            min-height: 13.3in;
-            /* 337.82mm */
-            padding-top: 4.1in;
-            /* 4.1 Inches Top Overhead Clearance */
-            padding-left: 0.7in;
-            /* Exact 0.7 Inch Left Clearance */
-            padding-right: 0.7in;
-            /* Exact 0.7 Inch Right Clearance */
-            padding-bottom: 1in;
-            /* 1 Inch Bottom Clearance */
-            box-shadow: 0 11pt 9mm rgba(0, 0, 0, 0.5);
-            position: relative;
-            font-size: 11pt;
-            line-height: 1.4;
-        }
-
-        /* Page Footer Slogan (Bottom 0.7in margin area) */
-        .stamp-footer-slogan {
-            position: absolute;
-            bottom: 0.25in;
-            left: 0.7in;
-            right: 0.7in;
-            text-align: center;
-            font-family: 'SolaimanLipi', Arial, sans-serif;
-            font-size: 12pt;
-            font-weight: bold;
-            color: #1b4332;
-            letter-spacing: 0.1.5mm;
-        }
-
-        /* Representational 100 BDT Stamp Header Graphic */
-        .stamp-header-graphic {
-            position: absolute;
-            top: 0.3in;
-            left: 0.5in;
-            right: 0.5in;
-            height: 3.9in;
-            background: #f4f8f3;
+        /* External Stamps Container Layout */
+        #external_stamps_container {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            overflow: hidden;
-
+        }
+    
+        /* Ensure Table Borders in Stamps */
+        .custom-table, .cheque-schedule-table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+            border: 1px solid #000000 !important;
+            margin-top: 3mm !important;
+            margin-bottom: 6mm !important;
+            font-size: 10pt !important;
+        }
+        .custom-table th, .custom-table td,
+        .cheque-schedule-table th, .cheque-schedule-table td {
+            border: 1px solid #000000 !important;
+            padding: 5px 4px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            height: 28px !important;
+        }
+        .custom-table th, .cheque-schedule-table th {
+            font-weight: bold !important;
+            background-color: #f2f2f2 !important;
+        }
+        .custom-table td[contenteditable], .cheque-schedule-table td[contenteditable] {
+            outline: none !important;
+            border: 1px solid #000000 !important;
+            background: transparent !important;
         }
 
-        /* =========================================================
-       PRINT RULES FOR REAL STAMP PAPER / PDF EXPORT
-       ========================================================= */
-        @media print {
-            .stamp-header-graphic {
-                display: none !important;
-                /* Hide representational header when printing on real stamp paper */
-            }
-
-            @page stamp-layout {
-                size: 8.3in 13.3in portrait;
-                /* 8.3in x 13.3in */
-                margin: 0;
-            }
-
-            .stamp-page {
-                page: stamp-layout;
-                width: 100% !important;
-                min-height: auto !important;
-                box-shadow: none !important;
-                /* Note: We do NOT set padding: 0 because we need the padding-top: 4.1in 
-                   to avoid printing over the physical emblem on the first page. */
-            }
+        /* Table Cell Integrity Guard */
+        table td, table th, .loan-table td, .loan-table th, .top-table td, .top-table th,
+        .custom-table td, .custom-table th, .execution-table td, .execution-table th,
+        td[contenteditable], th[contenteditable] {
+            display: table-cell !important;
+            box-sizing: border-box !important;
         }
+
     </style>
 
     <link rel="stylesheet" href="../../assets/css/common.css">
@@ -660,53 +626,9 @@
                 </div>
                 <div style="display: flex; align-items: flex-start; margin-top: 1.5mm;">
                     <div style="width: 6.5mm; flex-shrink: 0;">০২।</div>
-                    <div style="flex-grow: 1; text-align: justify; line-height: 1.6;">
-                        <span>ইহা একটি নতুন/রিপিট ঋণ কেস। পূর্বেকার ঋণের তথ্যাদি নিম্নে প্রদত্ত হলো :- </span><br>
-                        <span>এল এফ ও স্ট্যাটাস</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_status"></span>
-                        </div>
-                        <span>আসল</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_principal_amount"></span>
-                        </div>
-                        <span>সুদ ও অন্যান্য</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_interest_amount"></span>
-                        </div>
-                        <span>মোট</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_total_amount"></span>
-                        </div>
-                        <span>মোট আদায় ও তারিখসহ সর্বশেষ আদায়</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_last_collected_info"></span>
-                        </div>
-                        <span>তারিখ</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_last_collected_date"></span>
-                        </div>
-                        <span>টাকা</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span id="lf_last_collected_amount"></span>
-                        </div>
-                        <span>শাখা/আইও রশিদের আদায়</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span></span>
-                        </div>
-                        <span>আদায়কৃত টাকা শাখায় হিসাবভুক্তির তারিখ:</span>
-                        <div
-                            style="display: inline-block; min-width: 0.7in; border-bottom: 0.5pt dotted #000; margin: 0 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box; padding: 0mm;">
-                            <span></span>
-                        </div>
+                    <div style="flex-grow: 1; text-align: justify; line-height: 1.5;">
+                        <span>ইহা একটি নতুন/রিপিট ঋণ কেস। পূর্বেকার ঋণের তথ্যাদি নিম্নে প্রদত্ত হলো :-</span><br>
+                        <span>এল এফ ও স্ট্যাটাস</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_status"></span></span><span>, আসল</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_principal_amount"></span></span><span>, সুদ ও অন্যান্য</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_interest_amount"></span></span><span>, মোট</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_total_amount"></span></span><span>, মোট আদায় ও তারিখসহ সর্বশেষ আদায়</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_last_collected_info"></span></span><span>, তারিখ</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_last_collected_date"></span></span><span>, টাকা</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span id="lf_last_collected_amount"></span></span><span>, শাখা/আইও রশিদের আদায়</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span></span></span><span>, আদায়কৃত টাকা শাখায় হিসাবভুক্তির তারিখ:</span> <span style="display: inline-block; min-width: 7mm; border-bottom: 0.5pt dotted #000; text-align: center; padding: 0 1px;"><span></span></span>
                     </div>
                 </div>
                 <div style="display: flex; align-items: flex-start; margin-top: 1.5mm;">
@@ -769,7 +691,7 @@
                             <td><span class="loan_amount_num"></span></td>
                         </tr>
                     </table>
-                    <div style="margin-top: 11mm; display: flex; justify-content: flex-end;">
+                    <div style="margin-top: 13mm; display: flex; justify-content: flex-end;">
                         <div style="width: 79mm; text-align: center;">
                             <div style="border-top: 0.5pt dotted #000;"></div>
                             <div style="margin-top: 1.5mm;">সুপারিশকারীর তারিখসহ স্বাক্ষর ও নামের সীল</div>
@@ -826,7 +748,7 @@
                             </td>
                         </tr>
                     </table>
-                    <div style="margin-top: 11mm; display: flex; justify-content: flex-end;">
+                    <div style="margin-top: 13mm; display: flex; justify-content: flex-end;">
                         <div style="width: 79mm; text-align: center;">
                             <div style="border-top: 0.5pt dotted #000;"></div>
                             <div style="margin-top: 1.5mm;">মঞ্জুরকারীর তারিখসহ স্বাক্ষর ও নামের সীল</div>
@@ -853,7 +775,7 @@
                         <span>টাকা ঋণ প্রদানের সুপারিশ করা হলো।</span>
                     </div>
                 </div>
-                <div style="margin-top: 11mm; display: flex; justify-content: flex-end;">
+                <div style="margin-top: 13mm; display: flex; justify-content: flex-end;">
                     <div style="width: 79mm; text-align: center;">
                         <div style="border-top: 0.5pt dotted #000;"></div>
                         <div style="margin-top: 1.5mm;">২য় কর্মকর্তার তারিখসহ স্বাক্ষর ও নামের সীল</div>
@@ -875,7 +797,7 @@
                         <span>) টাকা প্রদান করা হউক।</span>
                     </div>
                 </div>
-                <div style="margin-top: 8mm; display: flex; justify-content: flex-end;">
+                <div style="margin-top: 9mm; display: flex; justify-content: flex-end;">
                     <div style="width: 79mm; text-align: center;">
                         <div style="border-top: 0.5pt dotted #000;"></div>
                         <div style="margin-top: 1.5mm;">ব্যবস্থাপকের তারিখসহ স্বাক্ষর ও নামের সীল</div>
@@ -927,7 +849,7 @@
                 </div>
                 <div style="flex: 1; display: flex; justify-content: center;">
                     <div
-                        style="border: 0.5pt solid #000; padding: 0.5mm 1mm; width: 69mm; font-size: 9pt; align-self: center;">
+                        style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm; width: 69mm; font-size: 9pt; align-self: center;">
                         <div style="text-align: center; margin-bottom: 1.5mm;">শাখার জন্য প্রযোজ্য :</div>
                         <div style="display: flex; align-items: flex-end; margin-bottom: 1.5mm;">
                             <span style="white-space: nowrap;">পাস বই নম্বর:</span>
@@ -963,12 +885,11 @@
             <div style="margin-top: 1.5mm;">
                 <div>জনাব,</div>
                 <div
-                    style="display: flex; align-items: baseline; margin-left: 9mm; font-size: 10pt; letter-spacing: -0.0.5pt;">
-                    <span style="white-space: nowrap;">আমি/আমরা আপনার ব্যাংক শাখা থেকে</span>
+                    style="display: flex; align-items: baseline; margin-left: 5mm; font-size: 10pt; letter-spacing: -0.15pt; white-space: nowrap;">
+                    <span>আমি/আমরা আপনার ব্যাংক শাখা থেকে</span>
                     <span id="fiscal_year"
-                        style="border-bottom: 0.5pt dotted #000; display: inline-block; min-width: 0.8in; text-align: left; padding-left: 2mm; box-sizing: border-box; margin: 0 1.5mm;"></span>
-                    <span style="white-space: nowrap;">অর্থ বছরের শস্য ঋণ/বিনিয়োগ গ্রহণে ইচ্ছুক এবং এতদুদ্দেশ্যে
-                        নিম্নলিখিত তথ্যাবলী সরবরাহ করছি।</span>
+                        style="border-bottom: 0.5pt dotted #000; display: inline-block; min-width: 0.5in; text-align: center; padding: 0 1mm; margin: 0 1mm;"></span>
+                    <span>অর্থ বছরের শস্য ঋণ/বিনিয়োগ গ্রহণে ইচ্ছুক এবং এতদুদ্দেশ্যে নিম্নলিখিত তথ্যাবলী সরবরাহ করছি।</span>
                 </div>
             </div>
             <div style="margin-top: 3mm;">
@@ -978,7 +899,7 @@
                 <div style="margin-left: 2.5mm; font-weight: bold; margin-bottom: 1.5mm;">ক) মুল আবেদনকারীর তথ্য</div>
                 <table class="loan-table" style="width: 100%; margin-bottom: 2.5mm;">
                     <tr>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 34mm; display: flex; justify-content: space-between;"><span>I)
                                         নাম</span><span>:</span></div>
@@ -1012,7 +933,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 41mm; white-space: nowrap;">V) জাতীয় পরিচয়পত্র নম্বর:</div>
                                 <div
@@ -1053,7 +974,7 @@
                     তথ্য (এক বা একাধিক: প্রয়োজনে অতিরিক্ত কাগজ সংযুক্ত করতে হবে।)</div>
                 <table class="loan-table" style="width: 100%; margin-bottom: 2.5mm;">
                     <tr>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 34mm; display: flex; justify-content: space-between;"><span>I)
                                         নাম</span><span>:</span></div>
@@ -1087,7 +1008,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 41mm; white-space: nowrap;">V) জাতীয় পরিচয়পত্র নম্বর:</div>
                                 <div
@@ -1128,7 +1049,7 @@
                 </div>
                 <table class="loan-table" style="width: 100%; margin-bottom: 2.5mm;">
                     <tr>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 34mm; display: flex; justify-content: space-between;"><span>I)
                                         নাম</span><span>:</span></div>
@@ -1162,7 +1083,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 41mm; white-space: nowrap;">V) জাতীয় পরিচয়পত্র নম্বর:</div>
                                 <div
@@ -1202,7 +1123,7 @@
                 <div style="font-weight: bold; margin-bottom: 1.5mm;">৩। পার্টনার (অংশীদার) এর তথ্য (এক বা একাধিক)</div>
                 <table class="loan-table" style="width: 100%; margin-bottom: 2.5mm;">
                     <tr>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 34mm; display: flex; justify-content: space-between;"><span>I)
                                         নাম</span><span>:</span></div>
@@ -1236,7 +1157,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="width: 50%; padding: 0.5mm 1mm; vertical-align: top;">
+                        <td style="width: 50%; padding: 0.3mm 0.8mm; vertical-align: top;">
                             <div style="display: flex;">
                                 <div style="width: 41mm; white-space: nowrap;">V) জাতীয় পরিচয়পত্র নম্বর:</div>
                                 <div
@@ -1327,7 +1248,7 @@
                         </tr>
                     </table>
                     <div id="unsecured_collateral_text_container"
-                        style="display: none; margin-top: 3mm; font-weight: bold;">
+                        style="display: none; margin-top: 1.5mm; font-weight: bold; font-size: 9.5pt; line-height: 1.25;">
                         এই ঋণটির বিপরীতে <span id="doc_unsecured_bank_name"
                             style="border-bottom: 0.5pt dotted #000; display: inline-block; min-width: 1.5in; text-align: left; padding-left: 2mm; box-sizing: border-box;"></span>
                         , <span id="doc_unsecured_branch_name"
@@ -1396,7 +1317,7 @@
                             মাধ্যমে ব্যাংক আমার কাছ থেকে সমুদয় পাওনা আদায়ের ব্যবস্থা গ্রহণ করতে পারবে।</div>
                     </div>
                     <div
-                        style="margin-top: 11pt; display: flex; justify-content: space-between; align-items: flex-end;">
+                        style="margin-top: calc(11pt + 5mm); display: flex; justify-content: space-between; align-items: flex-end;">
                         <div style="display: flex; flex-direction: column; align-items: center;">
                             <div style="display: flex; align-items: baseline;">
                                 <span>তারিখ:</span>
@@ -1466,7 +1387,7 @@
                 </table>
             </div>
             <div
-                style="margin-top: 11pt; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5mm;">
+                style="margin-top: 14mm; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2mm;">
                 <div style="display: flex; align-items: baseline; margin-bottom: 9mm;">
                     <span>তারিখ:</span>
                     <div style="border-bottom: 0.5pt dotted #000; width: 1in; margin-left: 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box;">
@@ -1545,51 +1466,51 @@
                 <div style="flex-grow: 1;"><span style="white-space: nowrap;">ফসলওয়ারী ঋণ/বিনিয়োগের পরিমাণ:</span></div>
             </div>
             <div style="margin-top: 3mm;">
-                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 10pt;">
+                <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 10.5pt;">
                     <thead>
                         <tr>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">ক্রমিক</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">ফসলের নাম</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">নগদ টাকা</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">উপকরণ (টাকায়)</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">মোট টাকা</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">ঋণ/বিনিয়োগের পরিমাণ</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">বিতরণের তারিখ</th>
-                            <th style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">পরিশোধের তারিখ</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">ক্রমিক</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">ফসলের নাম</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">নগদ টাকা</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">উপকরণ (টাকায়)</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">মোট টাকা</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">ঋণ/বিনিয়োগের পরিমাণ</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">বিতরণের তারিখ</th>
+                            <th style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">পরিশোধের তারিখ</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">১)</td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span id="section_13_crop_1_name"></span>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">১)</td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span id="section_13_crop_1_name"></span>
                             </td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span id="section_13_crop_1_cash"></span>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span id="section_13_crop_1_cash"></span>
                             </td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span
                                     id="section_13_crop_1_materials"></span></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span id="section_13_crop_1_total"></span>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span id="section_13_crop_1_total"></span>
                             </td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span id="section_13_crop_1_loan"></span>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span id="section_13_crop_1_loan"></span>
                             </td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span
                                     id="section_13_crop_1_disbursement_date"></span></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"><span
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"><span
                                     id="section_13_crop_1_repayment_date"></span></td>
                         </tr>
                         <tr>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;">২)</td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
-                            <td style="border: 0.5pt solid #000; padding: 0.5mm 1mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;">২)</td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
+                            <td style="border: 0.5pt solid #000; padding: 0.3mm 0.8mm;"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div style="margin-top: 15pt; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="margin-top: 14mm; display: flex; justify-content: space-between; align-items: flex-end;">
                 <div style="display: flex; align-items: baseline; margin-bottom: 13pt;">
                     <span>তারিখ:</span>
                     <div style="border-bottom: 0.5pt dotted #000; width: 1in; margin-left: 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box;">
@@ -1648,7 +1569,7 @@
                     <div style="border-bottom: 0.5pt dotted #000; width: 93mm; text-align: left; padding-left: 2mm; box-sizing: border-box;"></div>
                 </div>
             </div>
-            <div style="margin-top: 1.5mm; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="margin-top: 12mm; display: flex; justify-content: space-between; align-items: flex-end;">
                 <div style="display: flex; align-items: baseline; margin-bottom: 2.5mm;">
                     <span>চুক্তি সম্পাদনের তারিখ:</span>
                     <div style="border-bottom: 0.5pt dotted #000; width: 1.5in; margin-left: 1.5mm; text-align: left; padding-left: 2mm; box-sizing: border-box;">
@@ -1662,7 +1583,7 @@
                     <div>(টিপসহি সনাক্ত করতে হবে)</div>
                 </div>
             </div>
-            <div style="margin-top: 8mm; text-align: justify; line-height: 1.6;">
+            <div style="margin-top: 4mm; text-align: justify; line-height: 1.35;">
                 <span>১২।</span>
                 <span style="font-weight: bold;">ক) জামিনদারের হলফনামা: (বর্গা চাষীর ক্ষেত্রে প্রযোজ্য)</span><br>
                 <span>আমি এই মর্মে নিশ্চয়তা প্রদান করছি যে, উপরোক্ত ঋণ/বিনিয়োগ গ্রহীতার অনুকূলে মঞ্জুরীকৃত ঋণ/বিনিয়োগের
@@ -1680,7 +1601,7 @@
                     জামিনদার হিসেবে উক্ত ঋণ/বিনিয়োগের সমুদয় টাকা সুদ/মুনাফাসহ ব্যাংক কর্তৃক চাহিবামাত্র পরিশোধ করতে
                     বাধ্য থাকবো।</span>
             </div>
-            <div style="margin-top: 8mm; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="margin-top: 14mm; display: flex; justify-content: space-between; align-items: flex-end;">
                 <!-- Column 1 -->
                 <div style="width: 25%; display: flex; flex-direction: column;">
                     <div style="display: flex; align-items: baseline;">
@@ -2002,7 +1923,7 @@
                 </div>
             </div>
 
-            <div style="border: 0.5pt solid #000; margin-top: 13pt; padding: 0.5mm 1mm;">
+            <div style="border: 0.5pt solid #000; margin-top: 13pt; padding: 0.3mm 0.8mm;">
                 <div style="text-align: center; font-weight: bold; margin-bottom: 1.5mm;">সাক্ষী</div>
                 <div style="display: flex;">
                     <div style="flex: 1; padding-right: 2.5mm;">
@@ -2312,6 +2233,8 @@
                                     <option value="মৎস">মৎস</option>
                                     <option value="প্রাণীসম্পদ">প্রাণীসম্পদ</option>
                                     <option value="কৃষি যন্ত্রপাতি">কৃষি যন্ত্রপাতি</option>
+                                    <option value="প্রাণীসম্পদ কৃষি যন্ত্রপাতি">প্রাণীসম্পদ কৃষি যন্ত্রপাতি</option>
+                                    <option value="প্রাণীসম্পদ ও কৃষি যন্ত্রপাতি">প্রাণীসম্পদ ও কৃষি যন্ত্রপাতি</option>
                                     <option value="শস্য ও কৃষি যন্ত্রপাতি">শস্য ও কৃষি যন্ত্রপাতি</option>
                                 </select>
                             </div>
@@ -2417,14 +2340,10 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5mm;">
                     <h4 style="margin: 0;">জামানতের বিবরণ</h4>
                     <div style="display: flex; gap: 11pt; font-weight: bold;">
-                        <label style="cursor: pointer; min-width: unset;"><input type="radio" name="collateral_type"
-                                value="land" checked
-                                onchange="if(typeof toggleCollateralType === 'function') toggleCollateralType()"> স্থাবর
+                        <label style="cursor: pointer; min-width: unset;"><input type="checkbox" name="collateral_type" id="collateral_type_land" value="land" checked onchange="if(typeof toggleCollateralType === 'function') toggleCollateralType()"> স্থাবর
                             সম্পত্তি</label>
-                        <label style="cursor: pointer; min-width: unset;"><input type="radio" name="collateral_type"
-                                value="unsecured"
-                                onchange="if(typeof toggleCollateralType === 'function') toggleCollateralType()">
-                            জামানতবিহীন</label>
+                        <label style="cursor: pointer; min-width: unset;"><input type="checkbox" name="collateral_type" id="collateral_type_unsecured" value="unsecured" onchange="if(typeof toggleCollateralType === 'function') toggleCollateralType()">
+                            চেক/জামানতবিহীন</label>
                     </div>
                 </div>
 
@@ -2434,7 +2353,7 @@
                         <div style="display:flex; flex-direction:column; flex: none; width: 13mm; text-align: center;">
                             <label
                                 style="min-width:unset; font-size: 12pt; padding: 0 1.5mm; border: 0.5pt solid #ccc; background: #eee; border-radius: 1.5mm; margin-bottom: 1.5mm; display: inline-block; align-self: center; white-space: nowrap;">মালিকানা</label>
-                            <select id="input_land_ownership_type" style="width: 100%; padding: 0.5mm 1mm;">
+                            <select id="input_land_ownership_type" style="width: 100%; padding: 0.3mm 0.8mm;">
                                 <option value="own">নিজ</option>
                                 <option value="share">বর্গা</option>
                                 <option value="lease">লিজ</option>
@@ -2443,7 +2362,7 @@
                         <div style="display:flex; flex-direction:column; flex: 0.7; text-align: center;">
                             <label
                                 style="min-width:unset; font-size: 12pt; padding: 0 1.5mm; border: 0.5pt solid #ccc; background: #eee; border-radius: 1.5mm; margin-bottom: 1.5mm; display: inline-block; align-self: center;">মৌজা</label><input
-                                id="input_land_mouza" type="text" style="padding: 0.5mm 1mm;" />
+                                id="input_land_mouza" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 1.5; text-align: center;">
                             <label
@@ -2451,7 +2370,7 @@
                                 ধরণ</label>
                             <div style="display:flex; align-items:center; gap:1.5mm; flex: 1; width: 100%;">
                                 <div style="width: 48%;">
-                                    <select id="input_land_khatian_type_1_select" style="width: 100%; padding: 0.5mm 1mm;"
+                                    <select id="input_land_khatian_type_1_select" style="width: 100%; padding: 0.3mm 0.8mm;"
                                         onchange="handleKhatianSelect(1)">
                                         <option value="">সিলেক্ট</option>
                                         <option value="দিয়ারা">দিয়ারা</option>
@@ -2462,13 +2381,13 @@
                                         <option value="write">লিখুন</option>
                                     </select>
                                     <input id="input_land_khatian_type_1_text" type="text"
-                                        style="display: none; padding: 0.5mm 1mm; width: 100%; text-align: center;"
+                                        style="display: none; padding: 0.3mm 0.8mm; width: 100%; text-align: center;"
                                         placeholder="লিখুন" title="Double click to reset to dropdown"
                                         ondblclick="resetKhatianSelect(1)" oninput="syncKhatianToDag(1)" />
                                 </div>
                                 <span>/</span>
                                 <div style="width: 48%;">
-                                    <select id="input_land_khatian_type_2_select" style="width: 100%; padding: 0.5mm 1mm;"
+                                    <select id="input_land_khatian_type_2_select" style="width: 100%; padding: 0.3mm 0.8mm;"
                                         onchange="handleKhatianSelect(2)">
                                         <option value="">সিলেক্ট</option>
                                         <option value="দিয়ারা">দিয়ারা</option>
@@ -2479,7 +2398,7 @@
                                         <option value="write">লিখুন</option>
                                     </select>
                                     <input id="input_land_khatian_type_2_text" type="text"
-                                        style="display: none; padding: 0.5mm 1mm; width: 100%; text-align: center;"
+                                        style="display: none; padding: 0.3mm 0.8mm; width: 100%; text-align: center;"
                                         placeholder="লিখুন" title="Double click to reset to dropdown"
                                         ondblclick="resetKhatianSelect(2)" oninput="syncKhatianToDag(2)" />
                                 </div>
@@ -2491,10 +2410,10 @@
                                 নং</label>
                             <div style="display:flex; align-items:center; gap:1.5mm;">
                                 <input id="input_land_khatian_no_1" type="text"
-                                    style="padding: 0.5mm 1mm; width: 48%; text-align: center;" />
+                                    style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" />
                                 <span>/</span>
                                 <input id="input_land_khatian_no_2" type="text"
-                                    style="padding: 0.5mm 1mm; width: 48%; text-align: center;" />
+                                    style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" />
                             </div>
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 1.2; text-align: center;">
@@ -2503,10 +2422,10 @@
                                 ধরণ</label>
                             <div style="display:flex; align-items:center; gap:1.5mm;">
                                 <input id="input_land_dag_type_1" type="text"
-                                    style="padding: 0.5mm 1mm; width: 48%; text-align: center;" readonly placeholder="auto" />
+                                    style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" readonly placeholder="auto" />
                                 <span>/</span>
                                 <input id="input_land_dag_type_2" type="text"
-                                    style="padding: 0.5mm 1mm; width: 48%; text-align: center;" readonly placeholder="auto" />
+                                    style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" readonly placeholder="auto" />
                             </div>
                         </div>
                         <div style="display:flex; align-items: flex-end; flex: 2; gap:1.5mm;">
@@ -2519,27 +2438,27 @@
                                     <div id="land_dag_normal_container"
                                         style="display:flex; align-items:center;">
                                         <input id="input_land_dag_no_1" type="text"
-                                            style="padding: 0.5mm 1mm; width: 48%; text-align: center;" />
+                                            style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" />
                                         <span>/</span>
                                         <input id="input_land_dag_no_2" type="text"
-                                            style="padding: 0.5mm 1mm; width: 48%; text-align: center;" />
+                                            style="padding: 0.3mm 0.8mm; width: 48%; text-align: center;" />
                                     </div>
                                     <div id="land_dag_bata_container"
                                         style="display:none; align-items:center; gap:1.5mm;">
                                         <div
                                             style="display:flex; flex-direction:column; width: 48%; border: 0.5pt solid #ccc; border-radius: 1.5mm;">
                                             <input id="input_land_dag_batta_1_num" type="text"
-                                                style="width: 100%; border: none; border-bottom: 0.5pt solid #ccc; padding: 0.5mm 1mm; text-align: center; font-size: 11pt;" />
+                                                style="width: 100%; border: none; border-bottom: 0.5pt solid #ccc; padding: 0.3mm 0.8mm; text-align: center; font-size: 11pt;" />
                                             <input id="input_land_dag_batta_1_den" type="text"
-                                                style="width: 100%; border: none; padding: 0.5mm 1mm; text-align: center; font-size: 11pt;" />
+                                                style="width: 100%; border: none; padding: 0.3mm 0.8mm; text-align: center; font-size: 11pt;" />
                                         </div>
                                         <span>/</span>
                                         <div
                                             style="display:flex; flex-direction:column; width: 48%; border: 0.5pt solid #ccc; border-radius: 1.5mm;">
                                             <input id="input_land_dag_batta_2_num" type="text"
-                                                style="width: 100%; border: none; border-bottom: 0.5pt solid #ccc; padding: 0.5mm 1mm; text-align: center; font-size: 11pt;" />
+                                                style="width: 100%; border: none; border-bottom: 0.5pt solid #ccc; padding: 0.3mm 0.8mm; text-align: center; font-size: 11pt;" />
                                             <input id="input_land_dag_batta_2_den" type="text"
-                                                style="width: 100%; border: none; padding: 0.5mm 1mm; text-align: center; font-size: 11pt;" />
+                                                style="width: 100%; border: none; padding: 0.3mm 0.8mm; text-align: center; font-size: 11pt;" />
                                         </div>
                                     </div>
                                 </div>
@@ -2556,7 +2475,7 @@
                             style="display:flex; flex-direction:column; flex: none; width: 25mm; text-align: center; margin-left: 0mm;">
                             <label
                                 style="min-width:unset; font-size: 12pt; padding: 0 1.5mm; border: 0.5pt solid #ccc; background: #eee; border-radius: 1.5mm; margin-bottom: 1.5mm; display: inline-block; align-self: center; white-space: nowrap;">পরিমাণ
-                                (একর)</label><input id="input_land_area" type="text" style="padding: 0.5mm 1mm;" />
+                                (একর)</label><input id="input_land_area" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div
                             style="padding-bottom: 0.5pt; width: 22mm; display: flex; justify-content: center; flex-shrink: 0;">
@@ -2571,12 +2490,12 @@
                             style="width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 2.5mm;">
                             <thead>
                                 <tr style="background: #f0f0f0;">
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm;">ধরন</th>
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm;">মৌজা</th>
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm;">খতিয়ান</th>
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm;">দাগ</th>
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm; width: 32mm;">পরিমাণ (একর)</th>
-                                    <th style="border: 0.5pt solid #ddd; padding: 0.5mm 1mm; width: 1%; white-space: nowrap;">
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm;">ধরন</th>
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm;">মৌজা</th>
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm;">খতিয়ান</th>
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm;">দাগ</th>
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm; width: 32mm;">পরিমাণ (একর)</th>
+                                    <th style="border: 0.5pt solid #ddd; padding: 0.3mm 0.8mm; width: 1%; white-space: nowrap;">
                                         Action
                                     </th>
                                 </tr>
@@ -2591,27 +2510,27 @@
                     <div style="display: flex; gap: 2.5mm; flex-wrap: wrap; align-items: flex-end; margin-bottom: 2.5mm;">
                         <div style="display:flex; flex-direction:column; flex: 0.5;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">ক্রম</label>
-                            <input id="input_unsecured_serial" type="text" style="padding: 0.5mm 1mm;" value="১" />
+                            <input id="input_unsecured_serial" type="text" style="padding: 0.3mm 0.8mm;" value="১" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 2;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">ব্যাংকের নাম</label>
-                            <input id="input_unsecured_bank_name" type="text" style="padding: 0.5mm 1mm;" />
+                            <input id="input_unsecured_bank_name" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 2;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">শাখার নাম</label>
-                            <input id="input_unsecured_branch_name" type="text" style="padding: 0.5mm 1mm;" />
+                            <input id="input_unsecured_branch_name" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 1.5;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">হিসাব নম্বর</label>
-                            <input id="input_unsecured_account_no" type="text" style="padding: 0.5mm 1mm;" />
+                            <input id="input_unsecured_account_no" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 1.5;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">চেক নম্বর হতে</label>
-                            <input id="input_unsecured_check_from" type="text" style="padding: 0.5mm 1mm;" />
+                            <input id="input_unsecured_check_from" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                         <div style="display:flex; flex-direction:column; flex: 1.5;">
                             <label style="min-width:unset; font-size: 12pt; margin-bottom: 1.5mm;">পর্যন্ত</label>
-                            <input id="input_unsecured_check_to" type="text" style="padding: 0.5mm 1mm;" />
+                            <input id="input_unsecured_check_to" type="text" style="padding: 0.3mm 0.8mm;" />
                         </div>
                     </div>
                 </div>

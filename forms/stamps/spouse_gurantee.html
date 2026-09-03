@@ -6,17 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spouse Guarantee (সংযুক্তি- 'ঘ')</title>
 
-  <style>
+  
+<style>
     /* Font Definition */
     @font-face {
       font-family: 'SolaimanLipi';
       src: local('SolaimanLipi'), url('../../assets/fonts/SolaimanLipi.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
     }
 
-    .stamp-body-wrapper * {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    @page {
+      size: 8.5in 14in portrait;
+      margin: 0;
     }
 
     /* Screen Canvas Setup */
@@ -24,7 +32,7 @@
       background-color: #374151;
       font-family: 'SolaimanLipi', Arial, sans-serif;
       color: #000000;
-      padding: 5mm 0;
+      padding: 10mm 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -34,83 +42,52 @@
     }
 
     /* =========================================================
-     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in)
+     PHYSICAL LEGAL STAMP SHEET DIMENSIONS (8.5in x 14in / 215.9mm x 355.5mm)
      ========================================================= */
     .stamp-page {
       background: #ffffff;
-      width: 8.5in;
-      height: 13.9in;
-      padding-top: 4.3in;
-      padding-bottom: 0.8in;
-      padding-left: 0.7in;
-      padding-right: 0.7in;
+      width: 215.9mm;
+      height: 355.5mm;
+      padding-top: 109.22mm; /* 4.3 inch top emblem clearance */
+      padding-bottom: 25.4mm; /* Bottom blank margin */
+      padding-left: 15mm;
+      padding-right: 15mm;
       box-sizing: border-box;
       box-shadow: 0 4mm 9mm rgba(0, 0, 0, 0.5);
       position: relative;
       margin-bottom: 8mm;
       font-size: 11pt;
-      line-height: 2.1;
+      line-height: 1.45;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    span[contenteditable] {
-      min-width: 1px;
-    }
-
-    /* Print Controls */
-    @media print {
-      @page {
-        size: Legal portrait;
-        margin: 0;
-      }
-
-      body.stamp-body-wrapper {
-        background-color: transparent !important;
-        padding: 0;
-      }
-
-      .stamp-page {
-        box-shadow: none;
-        margin-bottom: 0;
-        page-break-after: always;
-        page-break-inside: avoid;
-        height: 14in;
-      }
-
-      .no-print {
-        display: none !important;
-      }
+      font-family: 'SolaimanLipi', Arial, sans-serif;
     }
 
     .page-top-label {
       text-align: center;
-      font-size: 14pt;
+      font-size: 11.5pt;
       font-weight: 600;
-      margin-bottom: 15px;
+      margin-bottom: 3mm;
     }
 
     .main-title {
       text-align: center;
-      font-size: 16pt;
+      font-size: 13.5pt;
       font-weight: 700;
       text-decoration: underline;
-      margin-bottom: 35px;
+      margin-bottom: 3mm;
     }
 
     .content-body {
-      font-size: 12.5pt;
-      line-height: 2.2;
+      font-size: 11pt;
+      line-height: 1.45;
       text-align: justify;
     }
 
     .clause-item {
-      margin-top: 25px;
+      margin-bottom: 2.5mm;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 8px;
     }
 
     .clause-num {
@@ -124,7 +101,7 @@
     }
 
     .dotted-field,
-    [contenteditable="true"] {
+    span[contenteditable="true"]:not(td):not(th) {
       border-bottom: 1.5px dotted #000000;
       padding: 0 4px;
       display: inline-block;
@@ -137,7 +114,7 @@
     }
 
     .dotted-field:empty,
-    [contenteditable="true"]:empty {
+    span[contenteditable="true"]:not(td):not(th):empty {
       min-width: 0.5in;
     }
 
@@ -148,16 +125,16 @@
 
     .page-footer-indicator {
       text-align: right;
-      font-size: 12pt;
+      font-size: 10.5pt;
       font-weight: 600;
-      margin-top: 20px;
+      margin-top: 4mm;
     }
 
     .witness-grid {
       display: flex;
       justify-content: space-between;
-      gap: 30px;
-      font-size: 11pt;
+      gap: 20px;
+      font-size: 10.5pt;
     }
 
     .witness-col {
@@ -166,18 +143,18 @@
 
     .witness-heading {
       font-weight: bold;
-      margin-bottom: 15px;
-      font-size: 12.5pt;
+      margin-bottom: 3mm;
+      font-size: 11.5pt;
     }
 
     /* Witness Table Styles */
     .witness-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11pt;
+      font-size: 10.5pt;
     }
     .witness-table td {
-      padding: 4px 0;
+      padding: 2.5px 0;
       vertical-align: bottom;
       border: none;
     }
@@ -185,7 +162,48 @@
     .witness-table td:nth-child(2) { width: 5%; text-align: center; font-weight: bold; }
     .witness-table td:nth-child(3) { width: 65%; }
     .witness-table .dotted-field { width: 100%; display: block; }
-  </style>
+  
+    /* Table Cell Grid Protection */
+    table td, table th, .custom-table td, .custom-table th, .execution-table td, .execution-table th, td[contenteditable], th[contenteditable] {
+      display: table-cell !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Print Controls */
+    @media print {
+      @page {
+        size: 8.5in 14in portrait;
+        margin: 0;
+      }
+
+      body.stamp-body-wrapper {
+        background-color: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .stamp-page {
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        height: 355.5mm !important;
+        width: 215.9mm !important;
+        padding-top: 109.22mm !important;
+        padding-bottom: 25.4mm !important;
+        padding-left: 15mm !important;
+        padding-right: 15mm !important;
+      }
+
+      .stamp-page:last-of-type {
+        page-break-after: avoid !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+</style>
 </head>
 
 <body class="stamp-body-wrapper">
@@ -362,51 +380,7 @@
     </div>
   </div>
 
-  <style>
-    /* Force SolaimanLipi on pages even if body wrapper is lost during injection */
-    .stamp-page,
-    .page,
-    .a4-page {
-      font-family: 'SolaimanLipi', Arial, sans-serif !important;
-    }
-
-    /* Fix excessive line gap - ONLY IN STAMPS */
-    .stamp-page {
-      line-height: 1.6 !important;
-    }
-
-    .stamp-page .content-body,
-    .stamp-page .paragraph,
-    .stamp-page p {
-      line-height: 1.6 !important;
-    }
-
-    /* Input Field Fixes: Keeps baseline tight and avoids line-height expansion */
-    span.dotted-input,
-    span.data-input,
-    span.dotted-field,
-    span[contenteditable="true"] {
-      display: inline !important;
-      vertical-align: baseline !important;
-      font-weight: bold !important;
-      outline: none;
-      border-bottom: none !important;
-      text-decoration: underline !important;
-      text-decoration-style: dotted !important;
-      text-underline-offset: 4px !important;
-      text-decoration-thickness: 1.5px !important;
-      line-height: inherit !important;
-    }
-
-    /* Padding trick ensures empty fields show dots without breaking line height */
-    span.dotted-input:empty,
-    span.data-input:empty,
-    span.dotted-field:empty,
-    span[contenteditable="true"]:empty {
-      padding-left: 0.25in;
-      padding-right: 0.25in;
-    }
-  </style>
+  
   <script>
     const enToBn = {
       '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',

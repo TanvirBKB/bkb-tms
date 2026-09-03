@@ -1,0 +1,30 @@
+function collectFormData() {
+    const data = {};
+    const fields = document.querySelectorAll('#dataEntryModal input, #dataEntryModal select');
+    fields.forEach(f => {
+        if (f.id && f.id.startsWith('input_')) {
+            const key = f.id.replace('input_', '');
+            data[key] = f.value;
+        }
+    });
+    data['land_data_json'] = JSON.stringify(landData);
+    data['collateral_type'] = document.querySelector('input[name="collateral_type"]:checked')?.value || 'land';
+
+    // Collect arrays
+    ['co_applicant', 'guarantor', 'partner'].forEach(type => {
+        const container = document.getElementById(type + '_container');
+        if (container) {
+            const entries = container.querySelectorAll('.dynamic-entry');
+            const arr = [];
+            entries.forEach(entry => {
+                const obj = {
+                    name_bn: entry.querySelector('.input_name')?.value || '',
+                    father_name: entry.querySelector('.input_father')?.value || '',
+                    mother_name: entry.querySelector('.input_mother')?.value || '',
+                    spouse_name: entry.querySelector('.input_spouse')?.value || '',
+                    dob: entry.querySelector('.input_dob')?.value || '',
+                    address: entry.querySelector('.input_address')?.value || '',
+                    mobile: entry.querySelector('.input_mobile')?.value || '',
+                    nid: entry.querySelector('.input_nid')?.value || ''
+                };
+  

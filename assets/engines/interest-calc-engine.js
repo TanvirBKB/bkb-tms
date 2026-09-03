@@ -1388,7 +1388,7 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         const row = rows[i];
         if (row && row.some(cell => {
             const val = String(cell).trim().toUpperCase();
-            return ['ACCOUNTNO', 'TXNDATE', 'GLHEAD', 'REFERENCE', 'LIMIT'].includes(val);
+            return ['ACCOUNTNO', 'VDATE', 'VALUE_DATE', 'VAL_DATE', 'VALUE DATE', 'TXNDATE', 'TDATE', 'GLHEAD', 'REFERENCE', 'LIMIT'].includes(val);
         })) {
             headerRowIndex = i;
             break;
@@ -1421,17 +1421,29 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         interestRate: findColIndex(['INTEREST_RATE', 'RATE'])
     };
 
-    // Define column mappings based on headers, with fallbacks for standard positions
+    // Define column mappings based on headers, with VDATE taking precedence over TDATE
+    const vdateIdx = findColIndex(['VDATE', 'VALUE_DATE', 'VAL_DATE', 'VALUE DATE', 'VAL_DT', 'V_DATE', 'VDT', 'VALUE_DT', 'VALUE-DATE']);
+    const tdateIdx = findColIndex(['TXNDATE', 'TDATE', 'TRANSACTION_DATE', 'TXN_DATE', 'TRAN_DATE', 'POSTING_DATE', 'ENTRY_DATE', 'DATE']);
+
     let colMap = {
-        date: findColIndex(['TXNDATE', 'DATE', 'TRANSACTION_DATE']),
-        particulars: findColIndex(['REFERENCE', 'PARTICULARS', 'DESCRIPTION']), 
-        debit: findColIndex(['DEBIT', 'DR_AMT']),
-        credit: findColIndex(['CREDIT', 'CR_AMT']),
-        balance: findColIndex(['BALANCE', 'BAL_AMT'])
+        vdate: vdateIdx,
+        tdate: tdateIdx,
+        date: vdateIdx !== -1 ? vdateIdx : (tdateIdx !== -1 ? tdateIdx : -1),
+        particulars: findColIndex(['REFERENCE', 'PARTICULARS', 'DESCRIPTION', 'REMARKS', 'NARRATION']), 
+        debit: findColIndex(['DEBIT', 'DR_AMT', 'DR', 'DEBIT_AMOUNT']),
+        credit: findColIndex(['CREDIT', 'CR_AMT', 'CR', 'CREDIT_AMOUNT']),
+        balance: findColIndex(['BALANCE', 'BAL_AMT', 'BAL', 'BALANCE_AMOUNT'])
     };
     
     // Transactional Column Fallbacks (if headers not found, use default indices)
-    if (colMap.date === -1) colMap.date = 12;
+    if (colMap.vdate === -1 && colMap.tdate === -1) {
+        colMap.vdate = 12; // VDATE column position in standard BKB Flora CBS exports
+        colMap.tdate = 11; // TDATE column position in standard BKB Flora CBS exports
+        colMap.date = 12;
+    } else if (colMap.date === -1) {
+        colMap.date = colMap.vdate !== -1 ? colMap.vdate : colMap.tdate;
+    }
+
     if (colMap.particulars === -1) colMap.particulars = 13;
     if (colMap.debit === -1) colMap.debit = 14;
     if (colMap.credit === -1) colMap.credit = 15;
@@ -1562,8 +1574,18 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
     for (let i = dataRowIndex; i < rows.length; i++) {
         const r = rows[i];
         if (!r || r.length === 0) continue; // Skip empty rows
-        const rawDate = r[colMap.date]; // Use map
-        if (rawDate == null || rawDate === '') continue;
+
+        // Prioritize VDATE (Value Date), fallback to TDATE (Transaction Date)
+        let rawDate = null;
+        if (colMap.vdate !== -1 && r[colMap.vdate] !== undefined && r[colMap.vdate] !== null && String(r[colMap.vdate]).trim() !== '') {
+            rawDate = r[colMap.vdate];
+        } else if (colMap.tdate !== -1 && r[colMap.tdate] !== undefined && r[colMap.tdate] !== null && String(r[colMap.tdate]).trim() !== '') {
+            rawDate = r[colMap.tdate];
+        } else if (colMap.date !== -1) {
+            rawDate = r[colMap.date];
+        }
+
+        if (rawDate == null || String(rawDate).trim() === '') continue;
 
         let d;
         if (!isNaN(Number(rawDate))) {
@@ -1601,7 +1623,6 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
         // Ensure particulars is pulled as a clean string. 
         // If the cell contains a number (like a Reference ID), it converts it exactly.
         const particulars = (r[colMap.particulars] !== undefined && r[colMap.particulars] !== null) ? String(r[colMap.particulars]).trim() : '';
-        if (initialBalanceSet && particulars.toLowerCase().includes('interest')) continue;
 
         let balance = '';
         if (!initialBalanceSet) {
@@ -1705,8 +1726,11 @@ function processAndDisplayData(rows, appendData = false, ignoreStartDate = false
                 else if (capFrequency === 'yearly') { if (month === 5) capitalizationDate = new Date(Date.UTC(year, 5, 30)); } // June 30
 
                 if (capitalizationDate && capitalizationDate >= startDate && capitalizationDate <= endDate) {
-                    if (!capDates.some(d => d.getTime() === capitalizationDate.getTime())) capDates.push(capitalizationDate);
-                } // Add capitalization date if it's within the range and not already present
+                    // Do not capitalize during the loan period (sanction to due date)
+                    if (!loanDueDate || capitalizationDate > loanDueDate) {
+                        if (!capDates.some(d => d.getTime() === capitalizationDate.getTime())) capDates.push(capitalizationDate);
+                    }
+                } // Add capitalization date if it's after loanDueDate and within range
                 currentDate.setUTCMonth(currentDate.getUTCMonth() + 1);
             }
             capDates.forEach(date => {
@@ -2454,6 +2478,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
 
     const tableFirstDate = rowsInTable.length > 0 ? parseDateFromDisplay(rowsInTable[0].cells[1].innerText) : null;
     const effectiveCapStart = (tableFirstDate && tableFirstDate > calcStartDate) ? tableFirstDate : calcStartDate;
+    const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate')?.value);
 
     // 1. Remove existing total row to prevent it being treated as a data row
     const existingTotalRow = document.getElementById('total-row');
@@ -2463,14 +2488,13 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     let allRowsData = [];
     for (let i = 0; i < rowsInTable.length; i++) {
         const row = rowsInTable[i];
-        // Extract all existing rows, but we will tag those marked as capitalization
+        // Extract all existing rows, but we will tag those marked as synthetic capitalization
         const particularsText = (row.cells[2].innerText || "").trim();
         const isCapRow = row.dataset.isCapitalization === 'true' || 
-                         particularsText === 'Interest Capitalization' || 
-                         particularsText.includes('Int. Cap');
+                         (row.classList.contains('bg-inserted-row') && particularsText.toLowerCase().includes('capitalization'));
                          
         if (isCapRow || particularsText === 'Calculation End Date') {
-            continue; // Strip out existing capitalization and end-date rows to prevent duplicates on recalculation
+            continue; // Strip out existing synthetic capitalization and end-date rows to prevent duplicates on recalculation
         }
 
         allRowsData.push({
@@ -2551,7 +2575,10 @@ function calculateAndCapitalizeInterest(isAuto = false) {
                 if (month === 5) targetDate = new Date(Date.UTC(year, 5, 30));
             }
 
-            if (targetDate && targetDate >= effectiveCapStart && targetDate <= endDate) {
+            // Do not capitalize during the loan period (sanction to due date)
+            const isDuringLoanPeriod = loanDueDateForRates && targetDate <= loanDueDateForRates;
+
+            if (targetDate && !isDuringLoanPeriod && targetDate >= effectiveCapStart && targetDate <= endDate) {
                 if (!capDates.some(d => d.getTime() === targetDate.getTime())) capDates.push(targetDate);
             }
             cursor.setUTCMonth(cursor.getUTCMonth() + 1);
@@ -2600,7 +2627,6 @@ function calculateAndCapitalizeInterest(isAuto = false) {
     const loanTypeUpper = loanInputVal.toUpperCase().trim();
     const fixedRate = fixedTermLoanRates[loanTypeUpper];
     const sanctionRate = parseFloat(String(document.getElementById('sanctionRate').value).replace(/[^\d.]/g, '')) || 0;
-    const loanDueDateForRates = parseDateFromDisplay(document.getElementById('loanDueDate').value);
     const loanStructure = loanStructureMap[loanTypeUpper];
     const isExempt = isPenaltyExempt(loanTypeUpper);
 
@@ -2666,6 +2692,16 @@ function calculateAndCapitalizeInterest(isAuto = false) {
         for (let i = lastIndex; i < capIndex; i++) {
             const row = activeRows[i];
             if (row.id === 'total-row' || row.cells.length < 11) continue;
+
+            const rowDate = parseDateFromDisplay(row.cells[1].innerText);
+
+            // CRITICAL: During loan period (rowDate < loanDueDateForRates), interest is already charged by CBS.
+            // Do NOT calculate or capitalize uncharged interest for rows before the loan due date!
+            if (loanDueDateForRates && rowDate && rowDate < loanDueDateForRates) {
+                row.cells[10].innerText = '0';
+                continue;
+            }
+
             const balance = parseFloat(String(row.cells[7].innerText).replace(/,/g, '')) || 0;
             const days = parseInt(String(row.cells[8].innerText).replace(/,/g, '')) || 0;
             const rate = parseFloat(String(row.cells[9].innerText).replace(/[%,]/g, '')) || 0;
@@ -2683,6 +2719,7 @@ function calculateAndCapitalizeInterest(isAuto = false) {
             const debitCell = activeRows[capIndex].cells[4];
             debitCell.innerText = Math.round(interestSum);
             activeRows[capIndex].classList.add('bg-inserted-row');
+            activeRows[capIndex].dataset.isCapitalization = 'true';
         }
 
         lastIndex = capIndex; // The next period starts ON this capitalization date
@@ -4721,10 +4758,20 @@ function updateCalculationSummary() {
     const tableBody = document.getElementById('loanTableBody');
     if (!tableBody || tableBody.rows.length === 0) return;
 
+    const parseDateFn = (window.InterestCalcLogic && window.InterestCalcLogic.parseDateFromDisplay) ? window.InterestCalcLogic.parseDateFromDisplay : (str) => {
+        if (!str || typeof str !== 'string') return null;
+        const parts = str.split('/');
+        if (parts.length !== 3) return null;
+        return new Date(Date.UTC(parts[2], parts[1] - 1, parts[0]));
+    };
+
+    const loanDueDate = parseDateFn(document.getElementById('loanDueDate')?.value);
+
     let finalBalance = 0;
     let finalDate = '';
-    let totalAmount = 0; // Other DR (Amount column excluding first row)
-    let totalDr = 0; // The interest/capitalized Dr
+    let totalOtherDr = 0; // Other DR (Amount/Debit not related to interest)
+    let totalChargedInterest = 0; // Interest charged during loan period (sanction to due date)
+    let totalUnchargedInterest = 0; // Capitalized interest calculated by app after due date
     let totalCr = 0;
     let totalPenalty = 0;
 
@@ -4738,19 +4785,43 @@ function updateCalculationSummary() {
         if (r.id === 'total-row' || r.cells.length < 8) continue;
         
         lastDataRow = r;
+        const rowDate = parseDateFn(r.cells[1].innerText);
+        const particulars = (r.cells[2].innerText || '').trim();
         const amt = parseFloat(r.cells[3].innerText.replace(/,/g, '')) || 0;
-        if (isFirstValidRow) {
-            // First valid row is opening balance, ignore from Other DR
-            isFirstValidRow = false;
+        const dr = parseFloat(r.cells[4].innerText.replace(/,/g, '')) || 0;
+        const penalty = parseFloat(r.cells[5].innerText.replace(/,/g, '')) || 0;
+        const cr = parseFloat(r.cells[6].innerText.replace(/,/g, '')) || 0;
+
+        const isAppCap = r.dataset.isCapitalization === 'true' || 
+                         (particulars === 'Interest Capitalization' && r.classList.contains('bg-inserted-row')) ||
+                         (particulars === 'Calculation End Date' && r.classList.contains('bg-inserted-row'));
+
+        const isInterestRow = particulars.toLowerCase().includes('interest') || 
+                              particulars.toLowerCase().includes('int.') ||
+                              particulars.toLowerCase().includes('int ');
+
+        if (isAppCap) {
+            totalUnchargedInterest += (dr || amt);
+        } else if (isInterestRow) {
+            // Charged interest from the statement is recorded in the Amount column (cells[3])
+            const chargedAmt = amt > 0 ? amt : dr;
+            totalChargedInterest += chargedAmt;
         } else {
-            totalAmount += amt;
+            // Other DR: non-interest amounts (excluding opening balance row)
+            if (!isFirstValidRow) {
+                totalOtherDr += amt;
+            }
+            totalOtherDr += dr;
         }
-        
-        totalDr += parseFloat(r.cells[4].innerText.replace(/,/g, '')) || 0;
-        totalPenalty += parseFloat(r.cells[5].innerText.replace(/,/g, '')) || 0;
-        totalCr += parseFloat(r.cells[6].innerText.replace(/,/g, '')) || 0;
+
+        if (isFirstValidRow) {
+            isFirstValidRow = false;
+        }
     }
     
+    const totalInterest = totalChargedInterest + totalUnchargedInterest;
+    const totalDr = totalChargedInterest + totalUnchargedInterest + totalOtherDr;
+
     if (lastDataRow) {
         finalDate = lastDataRow.cells[1].innerText || '';
         finalBalance = parseFloat(lastDataRow.cells[7].innerText.replace(/,/g, '')) || 0;
@@ -4768,12 +4839,32 @@ function updateCalculationSummary() {
     plainSummary.classList.add('mt-4', 'p-4', 'bg-gray-50', 'border', 'border-gray-300', 'rounded', 'text-gray-800', 'leading-relaxed', 'print-friendly-summary');
     
     plainSummary.innerHTML = `
-        <div class="font-bold mb-2 pb-2 border-b border-gray-300 text-[13.5px] whitespace-nowrap overflow-hidden text-ellipsis flex justify-between">
-            <span>Total DR: <span class="text-blue-700">${Math.round(totalDr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
-            <span>Other DR: <span class="text-orange-600">${Math.round(totalAmount).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
-            <span>Penalty: <span class="text-red-600">${Math.round(totalPenalty).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
-            <span>Total CR: <span class="text-green-700">${Math.round(totalCr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
-            <span>Balance: <span class="text-purple-800">${Math.round(finalBalance).toLocaleString('en-IN')}</span></span>
+        <div class="font-bold mb-2 pb-2 border-b border-gray-300 text-[13px] flex flex-wrap justify-between gap-1.5">
+            <span>Charged Int: <span class="text-blue-700 font-extrabold">${Math.round(totalChargedInterest).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Uncharged Int: <span class="text-indigo-700 font-extrabold">${Math.round(totalUnchargedInterest).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Total Interest: <span class="text-blue-900 font-extrabold">${Math.round(totalInterest).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Other DR: <span class="text-orange-600 font-bold">${Math.round(totalOtherDr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Penalty: <span class="text-red-600 font-bold">${Math.round(totalPenalty).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Total CR: <span class="text-green-700 font-bold">${Math.round(totalCr).toLocaleString('en-IN')}</span></span> <span class="text-gray-400">|</span> 
+            <span>Balance: <span class="text-purple-800 font-extrabold">${Math.round(finalBalance).toLocaleString('en-IN')}</span></span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs my-2.5 p-2.5 bg-white rounded border border-gray-200">
+            <div class="border-r border-gray-200 pr-2">
+                <span class="text-gray-500 block font-medium">Charged Interest (Sanction to Due)</span>
+                <span class="text-sm font-bold text-blue-700">${Math.round(totalChargedInterest).toLocaleString('en-IN')} BDT</span>
+            </div>
+            <div class="border-r border-gray-200 pr-2">
+                <span class="text-gray-500 block font-medium">Uncharged Interest (App Capitalized)</span>
+                <span class="text-sm font-bold text-indigo-700">${Math.round(totalUnchargedInterest).toLocaleString('en-IN')} BDT</span>
+            </div>
+            <div class="border-r border-gray-200 pr-2">
+                <span class="text-gray-500 block font-medium">Total Interest</span>
+                <span class="text-sm font-bold text-blue-900">${Math.round(totalInterest).toLocaleString('en-IN')} BDT</span>
+            </div>
+            <div>
+                <span class="text-gray-500 block font-medium">Total Outstanding Balance</span>
+                <span class="text-sm font-bold text-purple-900">${Math.round(finalBalance).toLocaleString('en-IN')} BDT</span>
+            </div>
         </div>
         <div class="text-[14px] mb-1 font-semibold">
             Total due: ${Math.round(finalBalance).toLocaleString('en-IN')} (In words: ${wordsText} Taka Only.) as of ${finalDate}.

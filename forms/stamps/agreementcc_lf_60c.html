@@ -110,7 +110,7 @@
 
     /* Editable Field Dotted Line */
     .dotted-input,
-    [contenteditable="true"],
+    span[contenteditable="true"]:not(td):not(th),
     .data-input {
       display: inline-block;
       border-bottom: 1.5px dotted #000;
@@ -120,7 +120,7 @@
     }
 
     .dotted-input:empty,
-    [contenteditable="true"]:empty,
+    span[contenteditable="true"]:not(td):not(th):empty,
     .data-input:empty {
       min-width: 0.5in;
     }

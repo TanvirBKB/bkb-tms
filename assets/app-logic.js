@@ -1373,6 +1373,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         openLocalForm('forms/calculators/interest_calculator.html', 'Loan Calculator');
     }, 'Loan Calculator');
 
+    setupNavLink('nav-calc-cof', () => {
+        console.log('Clicked: Cost of Fund Calculator');
+        openLocalForm('forms/calculators/cof_calculator.html', 'Cost of Fund Calculator');
+    }, 'Cost of Fund Calculator');
+
     setupNavLink('nav-loan-classification', () => {
         console.log('Clicked: Loan Classification Tool');
         openLocalForm('forms/reportgeneration/loan_classification_Tool.html', 'Loan Classification');
